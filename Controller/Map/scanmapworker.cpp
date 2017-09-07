@@ -79,10 +79,9 @@ void ScanMapWorker::readTcpDataSlot(){
             while(!gotMapInfo && i < data.size() - 6){
                 if(static_cast<uint8_t>(data.at(i)) == 252 && static_cast<uint8_t>(data.at(i+1)) == 252
                         && static_cast<uint8_t>(data.at(i+2)) == 252 && static_cast<uint8_t>(data.at(i+3)) == 252 &&
-                        static_cast<uint8_t>(data.at(i+4)) == 252) {
-
+                        static_cast<uint8_t>(data.at(i+4)) == 252)
                     gotMapInfo = true;
-                } else
+                else
                     mapInfo.append(static_cast<char>(data.at(i)));
                 i++;
             }
@@ -107,10 +106,9 @@ void ScanMapWorker::readTcpDataSlot(){
             while(!gotMapInfo && i < data.size() - 6){
                 if(static_cast<uint8_t>(data.at(i)) == 252 && static_cast<uint8_t>(data.at(i+1)) == 252
                         && static_cast<uint8_t>(data.at(i+2)) == 252 && static_cast<uint8_t>(data.at(i+3)) == 252 &&
-                        static_cast<uint8_t>(data.at(i+4)) == 252) {
-
+                        static_cast<uint8_t>(data.at(i+4)) == 252)
                     gotMapInfo = true;
-                } else
+                else
                     mapInfo.append(static_cast<char>(data.at(i)));
                 i++;
             }

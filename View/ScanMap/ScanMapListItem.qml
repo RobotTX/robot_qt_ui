@@ -17,7 +17,7 @@ Frame {
     signal centerOnRobot(string ip)
 
     padding: 0
-    height: 240
+    height: 260
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -36,9 +36,7 @@ Frame {
             triggeredOnStart: false
             repeat: true
             property int elapsed_time
-            onTriggered: {
-                elapsed_time += interval;
-            }
+            onTriggered: elapsed_time += interval;
         }
 
         MouseArea {

@@ -159,6 +159,8 @@ private slots:
     void shortcutDeleteRobot(void);
     void callForRebootRobot(QString ip);
     void backupSystemIsDownSlot(QString ip);
+    void setLoopingSlot(QString ip, bool looping);
+    void setCmdLoopingSlot(QString ip, bool loop);
 
 signals:
     void stopRobotServerWorker(void);
@@ -194,6 +196,7 @@ signals:
     void resetHome(QVariant ip);
     void playedExploration(QVariant ip);
     void pausedExploration(QVariant ip);
+    void setLooping(QVariant ip, QVariant looping);
 
 private:
     QQmlApplicationEngine* engine_;

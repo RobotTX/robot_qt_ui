@@ -17,6 +17,7 @@ ListModel {
     signal setBusy(string ip, bool busy)
     signal setMessageTop(int status, string msg)
     signal activateLaser(string ip, bool activate)
+    signal setLoopingPathSignal(string ip, bool loop)
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -40,7 +41,8 @@ ListModel {
             "scanningOnConnection": false,
             "processingCmd": false,
             "dockStatus": -2,
-            "charging": false
+            "charging": false,
+            "looping": false
         });
         robotConnection(ip);
         setMessageTop(3, "The robot \"" + name + "\" just connected");
@@ -215,6 +217,14 @@ ListModel {
             if(get(i).ip === ip)
                 name = get(i).name;
         return name;
+    }
+
+    function setLooping(ip, loop){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip){
+                setProperty(i, "looping", loop);
+                console.log(ip + " looping : " + loop);
+            }
     }
 
     /**

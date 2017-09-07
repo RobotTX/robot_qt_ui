@@ -63,8 +63,8 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
     /// Compress and push the map to send
     int last = 205;
     uint32_t count = 0;
-    for(int i = 0; i < map.width(); i++){
-        for(int j = 0; j < map.height(); j++){
+    for(int i = 0; i < map.height(); i++){
+        for(int j = 0; j < map.width(); j++){
             int curr = map.pixelColor(j, i).red();
             if(last != curr && count != 0){
                 /// count being an int, we divide it in 4 bytes to push in the QByteArray

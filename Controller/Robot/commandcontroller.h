@@ -155,6 +155,14 @@ signals:
      */
     void updateLaser(QString ip, bool activated);
 
+    /**
+     * @brief setLooping
+     * @param ip
+     * @param looping
+     * Tell the robot model that the robot is looping its path
+     */
+    void setLooping(QString ip, bool looping);
+
 private:
     QString ip;
     /// Only used to set messages on top of the application

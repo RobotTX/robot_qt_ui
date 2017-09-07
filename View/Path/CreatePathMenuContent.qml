@@ -275,7 +275,7 @@ Frame {
                         horizontalCenter: parent.horizontalCenter
                         verticalCenter: parent.verticalCenter
                     }
-                    width: dragArea.width; height: 90 + 4
+                    width: dragArea.width; height: 114
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 

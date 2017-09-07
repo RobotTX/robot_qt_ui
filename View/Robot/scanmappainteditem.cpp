@@ -12,7 +12,7 @@ ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent)
 }
 
 void ScanMapPaintedItem::paint(QPainter *painter){
-    qDebug() << "ScanMapPaintedItem::paint called" << _image.size() << 1984/2-left << 1984/2-top;
+    qDebug() << "ScanMapPaintedItem::paint called" << _image.size();
     painter->drawImage(QPoint(0, 0), _image);
 }
 

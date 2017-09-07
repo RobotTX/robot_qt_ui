@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Model/Path"
 import "../../Model/Robot"
@@ -326,6 +327,7 @@ Frame {
 
         Item {
             id: bottomItem
+
             height: 28
 
             anchors {
@@ -333,7 +335,6 @@ Frame {
                 left: parent.left
                 right: parent.right
             }
-
 
             SmallButton {
                 id: playPausePathButton
@@ -348,7 +349,7 @@ Frame {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
-                    leftMargin: 8
+                    leftMargin: 12
                 }
 
                 onClicked: playingPath ? robotModel.pausePathSignal(ip) : robotModel.playPathSignal(ip)
@@ -359,16 +360,37 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
-                width: 32
+                width: playPausePathButton.width
                 imgSrc: "qrc:/icons/stop"
                 tooltip: "Stop the robot in its path"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
-                    horizontalCenter: parent.horizontalCenter
+                    left: playPausePathButton.right
+                    leftMargin: (bottomItem.width - playPausePathButton.anchors.leftMargin * 2 - playPausePathButton.width * 4) / 3
                 }
 
                 onClicked: robotModel.stopPathSignal(ip)
+            }
+
+            SmallButton {
+                id: loopPathButton
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
+                height: parent.height - 2
+                width: playPausePathButton.width
+                imgSrc: "qrc:/icons/reset"
+                tooltip: "Loop the path"
+                checkable: true
+                checked: looping
+
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right: goHomeButton.left
+                    rightMargin: (bottomItem.width - playPausePathButton.anchors.leftMargin * 2 - playPausePathButton.width * 4) / 3
+                }
+
+                onClicked: robotModel.setLoopingPathSignal(ip, !looping);
             }
 
             SmallButton {
@@ -376,7 +398,7 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
-                width: 32
+                width: playPausePathButton.width
                 padding: 0
                 imgSrc: {
                     switch(dockStatus){
@@ -414,7 +436,7 @@ Frame {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     right: parent.right
-                    rightMargin: 8
+                    rightMargin: 12
                 }
 
                 enabled: dockStatus != -2

@@ -33,6 +33,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
         connect(this, SIGNAL(updateDockStatus(QVariant, QVariant)), robotModel, SLOT(setDockStatus(QVariant, QVariant)));
+        connect(this, SIGNAL(setLooping(QVariant,QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
@@ -44,6 +45,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
         connect(robotModel, SIGNAL(stopScanning(QString, bool)), parent, SLOT(stopScanningSlot(QString, bool)));
         connect(robotModel, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
+        connect(robotModel, SIGNAL(setLoopingPathSignal(QString, bool)), this, SLOT(setCmdLoopingSlot(QString, bool)));
 
 
         /// MainController signals
@@ -401,4 +403,14 @@ void RobotsController::callForRebootRobot(QString ip){
 void RobotsController::backupSystemIsDownSlot(QString ip){
     qDebug() << "RobotController::backup System is down at ip" << ip;
     backupControllers.remove(ip);
+}
+
+
+void RobotsController::setCmdLoopingSlot(QString ip, bool loop){
+    sendCommand(ip, QString("/") + QChar(31) + QString::number(loop));
+}
+
+void RobotsController::setLoopingSlot(QString ip, bool looping){
+    qDebug() << "RobotController::setLoopingSlot" << ip << "looping :" << looping;
+    emit setLooping(ip, looping);
 }

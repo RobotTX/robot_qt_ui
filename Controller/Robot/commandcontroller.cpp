@@ -137,6 +137,10 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Pause exploration
                     emit pausedExploration(ip);
                 break;
+                case '/':
+                    /// Pause exploration
+                    emit setLooping(ip, list.at(2).toInt());
+                break;
                 default:
                     /// Unknown/unused command
                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
