@@ -18,8 +18,8 @@ Button {
         anchors.verticalCenter: parent.verticalCenter
         width: Math.min(btn.width, btn.height)
         height: Math.min(btn.width, btn.height)
-        color: btn.pressed ? Style.lightGreyBorder : btn.hovered ? Style.lightGreyBackgroundHover : backColor
-        radius: btn.hovered ? btn.width/2 : 0
+        color: btn.pressed ? Style.lightGreyBorder : btn.hovered ? Style.lightGreyBackgroundHover : btn.checked ? Style.selectedItemColor : backColor
+        radius: (btn.hovered || btn.pressed || btn.checked) ? btn.width/2 : 0
     }
 
     contentItem : Item {
