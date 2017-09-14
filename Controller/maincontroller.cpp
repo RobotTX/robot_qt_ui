@@ -323,6 +323,7 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
 void MainController::updatePathSlot(QString ip, QStringList strList){
     if(strList.size() > 0){
         if(strList.size() % 4 == 1){
+            qDebug() << "RobotsController::updatePathSlot" << ip << " updating the path";
             emit setPath(ip, strList.takeFirst());
             for(int i = 0; i < strList.size(); i+=4){
                 QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
@@ -335,7 +336,9 @@ void MainController::updatePathSlot(QString ip, QStringList strList){
             }
         } else
             qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";
-    }
+    } else
+        qDebug() << "RobotsController::updatePathSlot" << ip << "the path is empty";
+
 }
 
 void MainController::updateHomeSlot(QString ip, double homeX, double homeY, double homeOri){
@@ -350,13 +353,13 @@ void MainController::updateHomeSlot(QString ip, double homeX, double homeY, doub
 }
 
 void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, int homeOri){
-    qDebug() << "MainController::sendCommandNewHome";
     QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
-    QPointF(homeX, homeY),
-    mapController->getOrigin().x(),
-    mapController->getOrigin().y(),
-    mapController->getResolution(),
-    mapController->getHeight());
+                    QPointF(homeX, homeY),
+                    mapController->getOrigin().x(),
+                    mapController->getOrigin().y(),
+                    mapController->getResolution(),
+                    mapController->getHeight());
+    qDebug() << "MainController::sendCommandNewHome" << homeX << homeY << homePos;
     QString cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
     robotsController->sendCommand(ip, cmd);
 }

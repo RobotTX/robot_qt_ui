@@ -182,11 +182,15 @@ void RobotsController::shortcutDeleteRobot(void){
         qDebug() << "You already have no robot";
 }
 
-void RobotsController::sendCommand(const QString ip, const QString cmd){
+bool RobotsController::sendCommand(const QString ip, const QString cmd){
     if(robots.contains(ip))
         robots.value(ip)->sendCommand(cmd);
-    else
+    else {
         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+        return false;
+    }
+
+    return true;
 }
 
 void RobotsController::newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori){
@@ -255,9 +259,10 @@ void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray ma
 void RobotsController::requestMap(const QString ip){
     qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
     if(!receivingMap){
-        sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
-        receivingMap = true;
-        requestMapTimer->start();
+        if(sendCommand(ip, QString("s") + QChar(31) + QString::number(1))){
+            receivingMap = true;
+            requestMapTimer->start();
+        }
     } else {
         /// TODO some queue to request the map ?
         qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
@@ -285,9 +290,10 @@ void RobotsController::requestMapTimerSlot(void){
 void RobotsController::requestMapForMerging(const QString ip){
     qDebug() << "RobotsController::requestMapForMerging Requesting the map for merging from robot at ip" << ip;
     if(!receivingMap){
-        sendCommand(ip, QString("s") + QChar(31) + QString::number(2));
-        receivingMap = true;
-        requestMapTimer->start();
+        if(sendCommand(ip, QString("s") + QChar(31) + QString::number(2))){
+            receivingMap = true;
+            requestMapTimer->start();
+        }
     } else {
         /// TODO some queue to request the map ?
         qDebug() << "RobotsController::requestMapForMerging Already receiving a map, please wait";

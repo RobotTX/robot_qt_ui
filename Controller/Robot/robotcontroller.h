@@ -275,6 +275,15 @@ signals:
      * To hide or show the laser depending on <activated>
      */
     void updateLaser(QString ip, bool activated);
+
+    /**
+     * @brief setLooping
+     * @param ip
+     * @param looping
+     * When the robot connects, we want to know if the robot is looping its path
+     */
+    void setLooping(QString ip, bool looping);
+
     /**
      * @brief resetHomePath
      * @param ip

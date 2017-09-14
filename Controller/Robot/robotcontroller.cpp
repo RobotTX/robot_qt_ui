@@ -60,6 +60,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
+    connect(this, SIGNAL(setLooping(QString, bool)), parent, SLOT(setLoopingSlot(QString, bool)));
     connect(this, SIGNAL(resetHomePath(QString)), parent, SLOT(resetHomePathSlot(QString)));
 
     QList<QObject*> qmlList = engine->rootObjects();
@@ -250,11 +251,11 @@ void RobotController::robotIsDeadSlot(void){
 }
 
 void RobotController::updateRobotInfo(const QString robotInfo){
-
+    QThread::sleep(3);
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo ip" << ip << " : " << strList;
 
-    if(strList.size() > 7){
+    if(strList.size() > 8){
         /// Remove the "Connected" in the list
         strList.removeFirst();
         QString mapId = strList.takeFirst();
@@ -265,6 +266,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
+        bool looping = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
         if(!strList.empty())
@@ -279,6 +281,8 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         emit checkScanning(ip, scanning);
 
         emit updateLaser(ip, laser);
+
+        emit setLooping(ip, looping);
 /*
         if(recovering){
             if(robotPositionRecoveryWidget){

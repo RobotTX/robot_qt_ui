@@ -42,9 +42,11 @@ public:
      * @brief sendCommand
      * @param ip
      * @param cmd
+     * @return true if we could send the command
      * Send the command to the robotController
      */
-    void sendCommand(const QString ip, const QString cmd);
+    bool sendCommand(const QString ip, const QString cmd);
+
     /**
      * @brief sendNewMap
      * @param ip
