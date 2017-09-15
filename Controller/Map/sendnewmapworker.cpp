@@ -59,6 +59,8 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
     byteArray.push_back(metadata.toUtf8());
     byteArray.push_back(';');
 
+    map.save("/home/m-a/Desktop/pute.pgm", "PGM");
+
     QByteArray mapArray;
     /// Compress and push the map to send
     int last = 205;

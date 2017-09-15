@@ -119,13 +119,13 @@ void MapController::savePositionSlot(const double posX, const double posY, const
     if(file){
         qDebug() << "Map::savePositionSlot called with following parameters";
         qDebug() << "map file - height - width - centerX - centerY - zoom - originX - originY - resolution - date - id";
-        qDebug() << mapSrc << map->getHeight() << map->getWidth() << posX << posY
+        qDebug() << mapSrc << map->getWidth() << map->getHeight() << posX << posY
                  << zoom << mapRotation << map->getOrigin().x() << map->getOrigin().y() <<  map->getResolution()
                  << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
                  << map->getMapId().toString();
 
         file << mapSrc.toStdString() << std::endl
-             << map->getHeight() << " " << map->getWidth() << std::endl
+             << map->getWidth() << " " << map->getHeight() << std::endl
              << posX << " " << posY << std::endl
              << zoom << " " << mapRotation << std::endl
              << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
@@ -192,10 +192,10 @@ bool MapController::loadMapConfig(const QString fileName) {
         double centerX, centerY, originX, originY, resolution, zoom;
         QPair<QPointF, double> _mapState;
         std::string mapId;
-        file >> _mapFile >> _height >> _width >> centerX >> centerY >> zoom >> mapRotation >> originX >> originY >> resolution >> mapId;
+        file >> _mapFile >> _width >> _height >> centerX >> centerY >> zoom >> mapRotation >> originX >> originY >> resolution >> mapId;
         qDebug() << "Loading map with config : \n\t" <<
-                    "Height:" << _height << "\n\t" <<
                     "Width:" << _width << "\n\t" <<
+                    "Height:" << _height << "\n\t" <<
                     "center X:" << centerX << "\n\t" <<
                     "center Y:" << centerY << "\n\t" <<
                     "zoom:" << zoom << "\n\t" <<
@@ -209,8 +209,8 @@ bool MapController::loadMapConfig(const QString fileName) {
             qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
             /// for the qml side to reload the main window map file
             emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
-            map->setHeight(_height);
             map->setWidth(_width);
+            map->setHeight(_height);
             map->setOrigin(QPointF(originX, originY));
             map->setResolution(resolution);
             map->setMapId(QUuid(QString::fromStdString(mapId)));
@@ -250,7 +250,7 @@ void MapController::saveEditedImage(const QString location){
     if(file2.open(QFile::WriteOnly|QFile::Truncate)){
         QTextStream stream(&file2);
         stream << map->getMapFile() << endl
-             << map->getHeight() << " " << map->getWidth() << endl
+             << map->getWidth() << " " << map->getHeight() << endl
              << centerX << " " << centerY << endl
              << zoom << " " << mapRotation << endl
              << map->getOrigin().x() << " " << map->getOrigin().y() << endl
@@ -358,7 +358,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
         if(file2.open(QFile::WriteOnly|QFile::Truncate)){
             QTextStream stream(&file2);
             stream << map->getMapFile() << endl
-                 << map->getHeight() << " " << map->getWidth() << endl
+                 << map->getWidth() << " " << map->getHeight() << endl
                  << centerX << " " << centerY << endl
                  << zoom << " " << mapRotation << endl
                  << map->getOrigin().x() << " " << map->getOrigin().y() << endl

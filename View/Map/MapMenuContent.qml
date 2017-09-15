@@ -111,8 +111,10 @@ Frame {
 
         onAccepted: {
             var fileStr = fileUrl.toString();
-            console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://"));
-            if(fileStr.indexOf("file://") === 0)
+            /// TODO need testing on windows
+            console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://") + " or " + fileStr.indexOf("file:/C"));
+            /// file:// for linux, file:/C for windows
+            if(fileStr.indexOf("file://") === 0 || fileStr.indexOf("file:/C") === 0)
                 fileStr = fileStr.slice(7);
 
             // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
