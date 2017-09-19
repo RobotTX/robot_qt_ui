@@ -184,6 +184,10 @@ namespace Helper {
 
         QDir appDir = QApplication::applicationDirPath();
 
+        #if defined(Q_OS_WIN)
+            return appDir.path().replace('/', "\\");
+        #endif
+
         #if defined(Q_OS_MAC)
             if (appDir.dirName() == "MacOS") {
                 appDir.cdUp();

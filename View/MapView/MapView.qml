@@ -93,7 +93,7 @@ Frame {
         TopView {
             id: topViewId
             objectName: "topView"
-            // qml got a path of this format : file://path_understood_by_Qt for linux or file:/C:/path_understood_by_Qt, so we get rid of the first 6 characters
+            // qml got a path of this format : file://path_understood_by_Qt for linux or file:C:/path_understood_by_Qt
             onSavePosition: emitPosition()
             onLoadPosition: mapViewFrame.loadPosition()
             /// If we have a map, the mapImage is visible
@@ -403,11 +403,12 @@ Frame {
     function setMap(_mapSrc){
         // little trick as the binding property does not allow the map to be reloaded unless the filename changes
         mapSrc = "qrc:/icons/hand";
-        /// TODO test on windows
-        if(_mapSrc.indexOf("file://") !== 0)
+        /// TODO need to check for mac + test windows
+        if(Qt.platform.os === "linux" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
-        else if(_mapSrc.indexOf("file:/C") !== 0)
+        if(Qt.platform.os === "windows" && _mapSrc.indexOf("file:") !== 0)
             _mapSrc = "file:/C" + _mapSrc;
+
         console.log("setMap source : " + _mapSrc);
         mapSrc = _mapSrc;
         emptyMap.visible = false;
