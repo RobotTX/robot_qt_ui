@@ -106,7 +106,8 @@ ListModel {
                     setMessageTop(2, "The robot \"" + get(i).name + "\" just completed its path");
                     stage = 0;
                     setProperty(i, "playingPath", false);
-                    stopPathSignal(ip);
+                    if(get(i).dockStatus !== 3)
+                        stopPathSignal(ip);
                 } else if(get(i).stage >= 0 && stage < 0)
                     setMessageTop(0, "The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"");
                 setProperty(i, "stage", stage);
