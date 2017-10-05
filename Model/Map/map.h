@@ -37,7 +37,7 @@ public:
     void setDateTime(const QDateTime _dateTime) { /// if the time is not valid we use the current date
         dateTime = (_dateTime.isValid()) ? _dateTime : QDateTime::currentDateTime(); }
 
-    void setMapImage(const QImage image) { mapImage = image; }
+    void setMapImage(const QImage image) { mapImage = image; width = image.width(); height = image.height(); }
     void setOrigin(const QPointF _origin) { origin = _origin; }
     void setHeight(const int _height) { height = _height; }
     void setWidth(const int _width) { width = _width; }
