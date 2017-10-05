@@ -1,13 +1,13 @@
-#include "localmapworker.h"
+#include "laserworker.h"
 #include <QDataStream>
 
-LocalMapWorker::LocalMapWorker(const QString _ipAddress, const int _port): ipAddress(_ipAddress), port(_port), data(QByteArray()) {}
+LaserWorker::LaserWorker(const QString _ipAddress, const int _port): ipAddress(_ipAddress), port(_port), data(QByteArray()) {}
 
-LocalMapWorker::~LocalMapWorker(){
+LaserWorker::~LaserWorker(){
     stopWorker();
 }
 
-void LocalMapWorker::connectSocket(){
+void LaserWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
@@ -24,14 +24,14 @@ void LocalMapWorker::connectSocket(){
     qDebug() << "(Local Map Thread) connectSocket done";
 }
 
-void LocalMapWorker::stopWorker(){
+void LaserWorker::stopWorker(){
     if(socket && socket->isOpen()){
         socket->close();
         delete socket;
     }
 }
 
-void LocalMapWorker::readTcpDataSlot(){
+void LaserWorker::readTcpDataSlot(){
 
     data.append(socket->readAll());
 
@@ -99,7 +99,7 @@ void LocalMapWorker::readTcpDataSlot(){
     }
 }
 
-void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
+void LaserWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         /// if the connection has been refused we symply try again after a short sleep
@@ -107,79 +107,79 @@ void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         socket->connectToHost(ipAddress, port);
         break;
     case(QAbstractSocket::RemoteHostClosedError):
-        qDebug() << "(LocalMapWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        qDebug() << "(LaserWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
         emit robotIsDead();
         break;
     case(QAbstractSocket::HostNotFoundError):
-        qDebug() << "(LocalMapWorker) The host address was not found.";
+        qDebug() << "(LaserWorker) The host address was not found.";
         break;
     case(QAbstractSocket::SocketAccessError):
-        qDebug() << "(LocalMapWorker) The socket operation failed because the application lacked the required privileges.";
+        qDebug() << "(LaserWorker) The socket operation failed because the application lacked the required privileges.";
         break;
     case(QAbstractSocket::SocketResourceError):
-        qDebug() << "(LocalMapWorker) The local system ran out of resources (e.g., too many sockets).";
+        qDebug() << "(LaserWorker) The local system ran out of resources (e.g., too many sockets).";
         break;
     case(QAbstractSocket::SocketTimeoutError):
-        qDebug() << "(LocalMapWorker) The socket operation timed out.";
+        qDebug() << "(LaserWorker) The socket operation timed out.";
         break;
     case(QAbstractSocket::DatagramTooLargeError):
-        qDebug() << "(LocalMapWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
+        qDebug() << "(LaserWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
         break;
     case(QAbstractSocket::NetworkError):
-        qDebug() << "(LocalMapWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
+        qDebug() << "(LaserWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
         break;
     case(QAbstractSocket::AddressInUseError):
-        qDebug() << "(LocalMapWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
+        qDebug() << "(LaserWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
         break;
     case(QAbstractSocket::SocketAddressNotAvailableError):
-        qDebug() << "(LocalMapWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
+        qDebug() << "(LaserWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
         break;
     case(QAbstractSocket::UnsupportedSocketOperationError):
-        qDebug() << "(LocalMapWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
+        qDebug() << "(LaserWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
         break;
     case(QAbstractSocket::ProxyAuthenticationRequiredError):
-        qDebug() << "(LocalMapWorker) The socket is using a proxy, and the proxy requires authentication.";
+        qDebug() << "(LaserWorker) The socket is using a proxy, and the proxy requires authentication.";
         break;
     case(QAbstractSocket::SslHandshakeFailedError):
-        qDebug() << "(LocalMapWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
+        qDebug() << "(LaserWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
         break;
     case(QAbstractSocket::UnfinishedSocketOperationError):
-        qDebug() << "(LocalMapWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
+        qDebug() << "(LaserWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
         break;
     case(QAbstractSocket::ProxyConnectionRefusedError):
-        qDebug() << "(LocalMapWorker) Could not contact the proxy server because the connection to that server was denied";
+        qDebug() << "(LaserWorker) Could not contact the proxy server because the connection to that server was denied";
         break;
     case(QAbstractSocket::ProxyConnectionClosedError):
-        qDebug() << "(LocalMapWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
+        qDebug() << "(LaserWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
         break;
     case(QAbstractSocket::ProxyConnectionTimeoutError):
-        qDebug() << "(LocalMapWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
+        qDebug() << "(LaserWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
         break;
     case(QAbstractSocket::ProxyNotFoundError):
-        qDebug() << "(LocalMapWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
+        qDebug() << "(LaserWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
         break;
     case(QAbstractSocket::ProxyProtocolError):
-        qDebug() << "(LocalMapWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
+        qDebug() << "(LaserWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
         break;
     case(QAbstractSocket::OperationError):
-        qDebug() << "(LocalMapWorker) An operation was attempted while the socket was in a state that did not permit it.";
+        qDebug() << "(LaserWorker) An operation was attempted while the socket was in a state that did not permit it.";
         break;
     case(QAbstractSocket::SslInternalError):
-        qDebug() << "(LocalMapWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
+        qDebug() << "(LaserWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
         break;
     case(QAbstractSocket::SslInvalidUserDataError):
-        qDebug() << "(LocalMapWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
+        qDebug() << "(LaserWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
         break;
     case(QAbstractSocket::TemporaryError):
-        qDebug() << "(LocalMapWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
+        qDebug() << "(LaserWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
         break;
     case(QAbstractSocket::UnknownSocketError):
-        qDebug() << "(LocalMapWorker) An unidentified error occurred.";
+        qDebug() << "(LaserWorker) An unidentified error occurred.";
         break;
     default:
         /// NOTE can prob remove that when testing phase is over
         Q_UNREACHABLE();
-        qDebug() << "(LocalMapWorker) Not supposed to be here.";
+        qDebug() << "(LaserWorker) Not supposed to be here.";
         break;
     }
 }

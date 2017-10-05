@@ -27,7 +27,6 @@ SOURCES += main.cpp \
     Controller/Robot/cmdrobotworker.cpp \
     Controller/Robot/robotpositionworker.cpp \
     Controller/Robot/teleopworker.cpp \
-    Controller/Map/localmapworker.cpp \
     Controller/Map/scanmapworker.cpp \
     Controller/Map/sendnewmapworker.cpp \
     Controller/Map/mergemapcontroller.cpp \
@@ -37,7 +36,8 @@ SOURCES += main.cpp \
     View/Robot/scanmappainteditem.cpp \
     View/Robot/obstaclespainteditem.cpp \
     Controller/Robot/backuprobotworker.cpp \
-    Controller/Robot/backupcontroller.cpp
+    Controller/Robot/backupcontroller.cpp \
+    Controller/Map/laserworker.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -88,7 +88,6 @@ HEADERS += \
     Controller/Robot/cmdrobotworker.h \
     Controller/Robot/robotpositionworker.h \
     Controller/Robot/teleopworker.h \
-    Controller/Map/localmapworker.h \
     Controller/Map/scanmapworker.h \
     Controller/Map/sendnewmapworker.h \
     Controller/Map/mergemapcontroller.h \
@@ -98,4 +97,5 @@ HEADERS += \
     View/Robot/scanmappainteditem.h \
     View/Robot/obstaclespainteditem.h \
     Controller/Robot/backuprobotworker.h \
-    Controller/Robot/backupcontroller.h
+    Controller/Robot/backupcontroller.h \
+    Controller/Map/laserworker.h

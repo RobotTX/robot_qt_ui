@@ -12,8 +12,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     if (robotModel){
         /// Signals from the controller to the qml model
         connect(this, SIGNAL(displayRobots()), robotModel, SLOT(display()));
-        connect(this, SIGNAL(addRobot(QVariant, QVariant, QVariant, QVariant, QVariant)),
-                robotModel, SLOT(addRobot(QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(addRobot(QVariant, QVariant, QVariant, QVariant)),
+                robotModel, SLOT(addRobot(QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(removeRobot(QVariant)),
                 robotModel, SLOT(removeRobot(QVariant)));
         connect(this, SIGNAL(setPos(QVariant, QVariant, QVariant, QVariant)),
@@ -122,14 +122,14 @@ RobotsController::~RobotsController(){
 
 void RobotsController::launchServer(void){
     robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int, bool, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int, bool, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, int, int, bool, int)), this, SLOT(robotIsAliveSlot(QString, QString, int, int, bool, int)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
 }
 
-void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery, const bool charging, const int dockStatus){
+void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus){
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
         emit setBattery(ip, battery, charging);
@@ -139,11 +139,11 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
         robots.insert(ip, robotController);
         //qDebug() << "find new robot called" << name;
-        emit addRobot(name, ip, ssid, stage, battery);
+        emit addRobot(name, ip, stage, battery);
     }
-
+/*
     if(!backupControllers.contains(ip))
-        backupControllers.insert(ip, QPointer<BackupController>(new BackupController(ip, PORT_BACKUP_SYSTEM, this)));
+        backupControllers.insert(ip, QPointer<BackupController>(new BackupController(ip, PORT_BACKUP_SYSTEM, this)));*/
 }
 
 void RobotsController::robotIsDeadSlot(const QString ip){
@@ -158,7 +158,7 @@ void RobotsController::shortcutAddRobot(void){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100, false, 0);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, 0, (robots.size()*10)%100, false, 0);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
@@ -403,12 +403,12 @@ void RobotsController::resetHomePathSlot(QString ip){
 
 void RobotsController::callForRebootRobot(QString ip){
     qDebug() << "robotsController::callForRebootRobot called";
-    backupControllers.value(ip)->callForReboot();
+    //backupControllers.value(ip)->callForReboot();
 }
 
 void RobotsController::backupSystemIsDownSlot(QString ip){
     qDebug() << "RobotController::backup System is down at ip" << ip;
-    backupControllers.remove(ip);
+    //backupControllers.remove(ip);
 }
 
 

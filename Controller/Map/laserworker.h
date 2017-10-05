@@ -1,5 +1,5 @@
-#ifndef LOCALMAPWORKER_H
-#define LOCALMAPWORKER_H
+#ifndef LASERWORKER_H
+#define LASERWORKER_H
 
 #include <QObject>
 #include <QThread>
@@ -7,12 +7,12 @@
 #include <QtNetwork/QTcpSocket>
 #include <QPointer>
 
-class LocalMapWorker: public QObject
+class LaserWorker: public QObject
 {
     Q_OBJECT
 public:
-    LocalMapWorker(const QString _ipAddress, const int _port);
-    ~LocalMapWorker();
+    LaserWorker(const QString _ipAddress, const int _port);
+    ~LaserWorker();
 
 private slots:
     /**
@@ -57,4 +57,4 @@ private:
     QByteArray data;
 };
 
-#endif /// LOCALMAPWORKER_H
+#endif /// LASERWORKER_H

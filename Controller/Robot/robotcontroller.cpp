@@ -11,7 +11,7 @@
 #include "Controller/Robot/teleopworker.h"
 #include "Controller/Robot/commandcontroller.h"
 #include "Controller/Map/sendnewmapworker.h"
-#include "Controller/Map/localmapworker.h"
+#include "Controller/Map/laserworker.h"
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/mapcontroller.h"
@@ -105,9 +105,9 @@ void RobotController::stopThreads(void) {
     newMapThread.quit();
     newMapThread.wait();
 
-    emit stopLocalMapWorker();
-    localMapThread.quit();
-    localMapThread.wait();
+    emit stopLaserWorker();
+    laserThread.quit();
+    laserThread.wait();
 
     emit stopMapWorker();
     mapThread.quit();
@@ -123,7 +123,7 @@ void RobotController::stopThreads(void) {
 void RobotController::portSentSlot(void){
     emit startRobotWorker();
     emit startNewMapWorker();
-    emit startLocalMapWorker();
+    emit startLaserWorker();
     emit startMapWorker();
     emit startTeleopWorker();
 }
@@ -135,7 +135,7 @@ void RobotController::launchWorkers(void){
 
     qDebug() << "RobotController at ip" << ip << " launching its cmd thread";
 
-    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP));
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LASER));
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
@@ -168,16 +168,16 @@ void RobotController::launchWorkers(void){
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
 
-    localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
-    connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
-    connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
+    laserWorker = QPointer<LaserWorker>(new LaserWorker(ip, PORT_LASER));
+    connect(laserWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
+    connect(this, SIGNAL(stopLaserWorker()), laserWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startLaserWorker()), laserWorker, SLOT(connectSocket()));
+    connect(&laserThread, SIGNAL(finished()), laserWorker, SLOT(deleteLater()));
     qRegisterMetaType<QVector<float>>("QVector<float>");
-    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
+    connect(laserWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
             this, SLOT(updateObstacles(float, float, float, QVector<float>)));
-    localMapWorker->moveToThread(&localMapThread);
-    localMapThread.start();
+    laserWorker->moveToThread(&laserThread);
+    laserThread.start();
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
@@ -205,13 +205,6 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
     qDebug() << "RobotController::mapReceivedSlot received a map" << who;
 
     switch(who){
-        case 3:
-            qDebug() << "RobotController::mapReceivedSlot received a map while recovering";
-            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
-            QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
-            image.save(Helper::getAppPath() + QDir::separator() + "brutos", "PNG");
-            emit receivedScanMap(robotName, image, resolution.toDouble());*/
-        break;
         case 2:
             qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
             emit mapToMergeFromRobot(mapArray, resolution);

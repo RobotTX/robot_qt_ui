@@ -34,12 +34,11 @@ signals:
      * @brief robotIsAlive
      * @param hostname
      * @param ip
-     * @param ssid
      * @param stage
      * @param battery
      * notifies the robots controller that a new robot has connected
      */
-    void robotIsAlive(QString hostname, QString ip, QString ssid, int stage, int battery, bool charging, int dockStatus);
+    void robotIsAlive(QString hostname, QString ip, int stage, int battery, bool charging, int dockStatus);
 
 private:
     int port;

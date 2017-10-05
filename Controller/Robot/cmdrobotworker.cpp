@@ -77,7 +77,7 @@ void CmdRobotWorker::connectedSlot(){
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = QString("h") + QChar(31) + QString::number(robotPort) + QChar(31) +
-            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(23);
+            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(31) + QChar(23) + QChar(31);
 
     bool tmpBool(false);
     while(!tmpBool && socket->isOpen()){

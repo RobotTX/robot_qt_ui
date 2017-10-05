@@ -15,9 +15,8 @@
 #define PORT_CMD 5600
 #define PORT_NEW_MAP 5601
 #define PORT_TELEOP 5602
-#define PORT_LOCAL_MAP 5605
-#define PORT_PARTICLE_CLOUD 4005
-#define PORT_BACKUP_SYSTEM 6498
+#define PORT_LASER 5605
+//#define PORT_BACKUP_SYSTEM 6498
 
 namespace Helper {
 

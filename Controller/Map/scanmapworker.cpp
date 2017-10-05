@@ -60,15 +60,11 @@ void ScanMapWorker::readTcpDataSlot(){
         /// 0 : scan
         /// 1 : application requesting at connection time
         /// 2 : to merge
-        /// 3 : recovering position
         int who = 0;
         if(static_cast<uint8_t>(data.at(data.size()-1)) == 254)
             who = 1;
         else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
             who = 2;
-        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 251)
-            who = 3;
-        /// TODO who = 3 -> recovering position -> local map
 
         qDebug() << "(ScanMapWorker) Who :" << who;
 
@@ -128,12 +124,6 @@ void ScanMapWorker::readTcpDataSlot(){
             } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
-        } else if(who == 3){
-            map_width = static_cast<uint32_t> (static_cast<uint8_t> (data.at(0)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(1)) << 16)
-                            + static_cast<uint32_t> (static_cast<uint8_t> (data.at(2)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(3)));
-            map_height = static_cast<uint32_t> (static_cast<uint8_t> (data.at(4)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(5)) << 16)
-                            + static_cast<uint32_t> (static_cast<uint8_t> (data.at(6)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(7)));
-            data.remove(0, 8);
         }
 
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them

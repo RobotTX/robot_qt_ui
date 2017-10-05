@@ -4,7 +4,7 @@
 class CmdRobotWorker;
 class RobotPositionWorker;
 class SendNewMapWorker;
-class LocalMapWorker;
+class LaserWorker;
 class ScanMapWorker;
 class TeleopWorker;
 class CommandController;
@@ -295,7 +295,7 @@ signals:
     void stopCmdRobotWorker(void);
     void stopRobotWorker(void);
     void stopNewMapWorker(void);
-    void stopLocalMapWorker(void);
+    void stopLaserWorker(void);
     void stopMapWorker(void);
     void stopTeleopWorker(void);
 
@@ -303,7 +303,7 @@ signals:
     void startCmdRobotWorker(void);
     void startRobotWorker(void);
     void startNewMapWorker(void);
-    void startLocalMapWorker(void);
+    void startLaserWorker(void);
     void startMapWorker(void);
     void startTeleopWorker(void);
 
@@ -315,14 +315,14 @@ private:
     QPointer<CmdRobotWorker> cmdRobotWorker;
     QPointer<RobotPositionWorker> robotWorker;
     QPointer<SendNewMapWorker> newMapWorker;
-    QPointer<LocalMapWorker> localMapWorker;
+    QPointer<LaserWorker> laserWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
 
     QThread cmdThread;
     QThread robotThread;
     QThread newMapThread;
-    QThread localMapThread;
+    QThread laserThread;
     QThread mapThread;
     QThread teleopThread;
 

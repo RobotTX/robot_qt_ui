@@ -148,8 +148,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
             }
         } else {
-            qDebug() << "CommandController::cmdAnswerSlot The command failed : " << list;
-            /// TO debug in case it happens
+            qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
+            /// TODO debug or handle the busy case
             //Q_UNREACHABLE();
         }
     } else {

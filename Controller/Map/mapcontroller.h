@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPointer>
 #include "Model/Map/map.h"
-#include "Controller/Map/localmapworker.h"
+#include "Controller/Map/laserworker.h"
 
 class EditMapController;
 class QQmlApplicationEngine;

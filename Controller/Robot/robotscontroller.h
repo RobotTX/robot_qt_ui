@@ -104,14 +104,13 @@ private slots:
      * @brief robotIsAliveSlot
      * @param name
      * @param ip
-     * @param ssid
      * @param stage
      * @param battery
      * Received several times per second to notify that the robot at address <ip>
      * is still connected with the robot, carries useful information such as path stage and battery level
      * along the way
      */
-    void robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery, const bool charging, const int dockStatus);
+    void robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus);
     /**
      * @brief robotIsDeadSlot
      * @param ip
@@ -166,7 +165,7 @@ private slots:
 
 signals:
     void stopRobotServerWorker(void);
-    void addRobot(QVariant name, QVariant ip, QVariant ssid, QVariant stage, QVariant battery);
+    void addRobot(QVariant name, QVariant ip, QVariant stage, QVariant battery);
     void removeRobot(QVariant ip);
     void setPos(QVariant ip, QVariant posX, QVariant posY, QVariant orientation);
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
@@ -203,7 +202,7 @@ signals:
 private:
     QQmlApplicationEngine* engine_;
     QMap<QString, QPointer<RobotController>> robots;
-    QMap<QString, QPointer<BackupController>> backupControllers;
+    //QMap<QString, QPointer<BackupController>> backupControllers;
     QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
     bool receivingMap;

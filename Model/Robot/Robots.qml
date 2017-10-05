@@ -19,11 +19,10 @@ ListModel {
     signal activateLaser(string ip, bool activate)
     signal setLoopingPathSignal(string ip, bool loop)
 
-    function addRobot(name, ip, wifi, stage, battery){
+    function addRobot(name, ip, stage, battery){
         append({
             "name": name,
             "ip": ip,
-            "wifi": wifi,
             "stage": stage,
             "battery": battery,
             "posX": -1,
