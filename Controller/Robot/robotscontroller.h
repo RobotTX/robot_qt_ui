@@ -165,6 +165,14 @@ private slots:
      */
     void updateRobotInfoSlot(QString ip, QString robotInfo);
 
+    void updatePathSlot(const QString ip, const QStringList strList);
+
+    void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
+
+    void updateLaserSlot(QString ip, bool activated);
+
+    void setLoopingSlot(QString ip, bool looping);
+
 signals:
     void stopRobotServerWorker(void);
     void addRobot(QVariant name, QVariant ip, QVariant stage, QVariant battery);

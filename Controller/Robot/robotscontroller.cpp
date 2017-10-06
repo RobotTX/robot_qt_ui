@@ -391,6 +391,7 @@ void RobotsController::setCmdLoopingSlot(QString ip, bool loop){
 }
 
 void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
+    /// TODO use timer
     QThread::sleep(1);
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
     qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
@@ -410,10 +411,10 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         /// What remains in the list is the path
 
         if(!strList.empty())
-            emit updatePath(ip, strList);
+            updatePathSlot(ip, strList);
 
         if(homeX >= -100 && homeY >= -100)
-            emit updateHome(ip, homeX, homeY, homeOri);
+            updateHomeSlot(ip, homeX, homeY, homeOri);
         qDebug() << "RobotsController::updateRobotInfoSlot" << ip << "home :" << homeX << homeY << homeOri;
 
         emit checkMapInfo(ip, mapId, mapDate);
@@ -430,12 +431,10 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         /// Stop the scan if a scanning robot reconnect after the window has been closed
         emit checkScanWindow(ip, scanning);
 
-        if(robots.contains(ip))
-            robots.value(ip)->clearObstacles(laser);
+        updateLaserSlot(ip, laser);
 
-        emit updateLaser(ip, laser);
+        setLoopingSlot(ip, looping);
 
-        emit setLooping(ip, looping);
 
         emit setPlayingPath(ip, playing_path);
 
@@ -444,4 +443,24 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
         //Q_UNREACHABLE();
     }
+}
+
+void RobotsController::updatePathSlot(const QString ip, const QStringList strList){
+    emit updatePath(ip, strList);
+}
+
+void RobotsController::updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri){
+    emit updateHome(ip, homeX, homeY, homeOri);
+}
+
+void RobotsController::updateLaserSlot(QString ip, bool activated){
+    if(robots.contains(ip))
+        robots.value(ip)->clearObstacles(activated);
+
+    emit updateLaser(ip, activated);
+}
+
+void RobotsController::setLoopingSlot(QString ip, bool looping){
+    qDebug() << "RobotController::setLoopingSlot" << ip << "looping :" << looping;
+    emit setLooping(ip, looping);
 }

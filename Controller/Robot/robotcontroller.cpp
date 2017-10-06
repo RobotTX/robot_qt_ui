@@ -43,12 +43,6 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
     /// Update the position of the robot
     connect(this, SIGNAL(newRobotPos(QString, double, double, double)), parent, SLOT(newRobotPosSlot(QString, double, double, double)));
-    /// Update the path of the robot when it connects
-    connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
-    /// Update the home of the robot when it connects
-    connect(this, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
-    /// Check if the robot has the same map as the application
-    connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     /// Signal that we just received a new map fron the robot
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
             parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
@@ -57,12 +51,8 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Signal that we received a new map while scanning
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
             parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
-    /// Check if the robot is scanning when it connects
-    connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
-    connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
-    connect(this, SIGNAL(setLooping(QString, bool)), parent, SLOT(setLoopingSlot(QString, bool)));
-    connect(this, SIGNAL(playingPath(QString, bool)), parent, SLOT(playingPathSlot(QString, bool)));
     connect(this, SIGNAL(resetHomePath(QString)), parent, SLOT(resetHomePathSlot(QString)));
+    connect(this, SIGNAL(updateRobotInfo(QString, QString)), parent, SLOT(updateRobotInfoSlot(QString, QString)));
 
     QList<QObject*> qmlList = engine->rootObjects();
     /// The main parent element in the QML tree
