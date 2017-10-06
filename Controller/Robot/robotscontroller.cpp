@@ -33,7 +33,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
         connect(this, SIGNAL(updateDockStatus(QVariant, QVariant)), robotModel, SLOT(setDockStatus(QVariant, QVariant)));
-        connect(this, SIGNAL(setLooping(QVariant,QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
+        connect(this, SIGNAL(setLooping(QVariant, QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
@@ -201,14 +201,6 @@ void RobotsController::setRobotPos(const QString ip, const double posX, const do
     emit setPos(ip, posX, posY, ori);
 }
 
-void RobotsController::updatePathSlot(const QString ip, const QStringList strList){
-    emit updatePath(ip, strList);
-}
-
-void RobotsController::updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri){
-    emit updateHome(ip, homeX, homeY, homeOri);
-}
-
 void RobotsController::sendCommandNewName(const QString ip, const QString name){
     sendCommand(ip, QString("a") + QChar(31) + name);
 }
@@ -240,10 +232,6 @@ void RobotsController::sendCommandStopPath(const QString ip){
 
 void RobotsController::updatePlayingPathSlot(const QString ip, const bool playingPath){
     emit setPlayingPath(ip, playingPath);
-}
-
-void RobotsController::checkMapInfoSlot(const QString ip, const QString mapId, const QString mapDate){
-    emit checkMapInfo(ip, mapId, mapDate);
 }
 
 void RobotsController::sendNewMap(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage) {
@@ -348,20 +336,6 @@ void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString m
     }
 }
 
-void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
-    /// update the robot model
-    emit setScanningOnConnection(ip, scanning);
-
-    /// update the scanning menu
-    if(scanning)
-        emit startedScanning(ip);
-    else
-        emit pausedScanning(ip);
-
-    /// Stop the scan if a scanning robot reconnect after the window has been closed
-    emit checkScanWindow(ip, scanning);
-}
-
 void RobotsController::processingCmdSlot(QString ip, bool processing){
     emit processingCmd(ip, processing);
 }
@@ -375,13 +349,6 @@ void RobotsController::activateLaserSlot(QString ip, bool activate){
         sendCommand(ip, QString("q"));
     else
         sendCommand(ip, QString("r"));
-}
-
-void RobotsController::updateLaserSlot(QString ip, bool activated){
-    if(robots.contains(ip))
-        robots.value(ip)->clearObstacles(activated);
-
-    emit updateLaser(ip, activated);
 }
 
 void RobotsController::updateRobotPos(QString ip, double x, double y, double orientation){
@@ -416,7 +383,58 @@ void RobotsController::setCmdLoopingSlot(QString ip, bool loop){
     sendCommand(ip, QString("/") + QChar(31) + QString::number(loop));
 }
 
-void RobotsController::setLoopingSlot(QString ip, bool looping){
-    qDebug() << "RobotController::setLoopingSlot" << ip << "looping :" << looping;
-    emit setLooping(ip, looping);
+void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
+    QThread::sleep(1);
+    QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
+    qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
+
+    if(strList.size() > 8){
+        /// Remove the "Connected" in the list
+        strList.removeFirst();
+        QString mapId = strList.takeFirst();
+        QString mapDate = strList.takeFirst();
+        double homeX = static_cast<QString>(strList.takeFirst()).toDouble();
+        double homeY = static_cast<QString>(strList.takeFirst()).toDouble();
+        double homeOri = static_cast<QString>(strList.takeFirst()).toDouble();
+        bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
+        bool laser = static_cast<QString>(strList.takeFirst()).toInt();
+        bool playing_path = static_cast<QString>(strList.takeFirst()).toInt();
+        bool looping = static_cast<QString>(strList.takeFirst()).toInt();
+        /// What remains in the list is the path
+
+        if(!strList.empty())
+            emit updatePath(ip, strList);
+
+        if(homeX >= -100 && homeY >= -100)
+            emit updateHome(ip, homeX, homeY, homeOri);
+        qDebug() << "RobotsController::updateRobotInfoSlot" << ip << "home :" << homeX << homeY << homeOri;
+
+        emit checkMapInfo(ip, mapId, mapDate);
+
+        /// update the robot model
+        emit setScanningOnConnection(ip, scanning);
+
+        /// update the scanning menu
+        if(scanning)
+            emit startedScanning(ip);
+        else
+            emit pausedScanning(ip);
+
+        /// Stop the scan if a scanning robot reconnect after the window has been closed
+        emit checkScanWindow(ip, scanning);
+
+        if(robots.contains(ip))
+            robots.value(ip)->clearObstacles(laser);
+
+        emit updateLaser(ip, laser);
+
+        emit setLooping(ip, looping);
+
+        emit setPlayingPath(ip, playing_path);
+
+    } else {
+        /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
+        qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
+        //Q_UNREACHABLE();
+    }
 }

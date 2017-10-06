@@ -461,7 +461,7 @@ void MainController::sendNewMap(QString ip){
 
     QString date = mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
+    qDebug() << "MainController::sendNewMap" << mapController->getMetadataString() << mapController->getMapImage().size();
 
     QString mapMetadata = mapController->getMetadataString();
 

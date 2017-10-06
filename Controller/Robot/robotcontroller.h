@@ -130,17 +130,17 @@ private slots:
     void robotIsDeadSlot(void);
 
     /**
-     * @brief updateRobotInfo
+     * @brief updateRobotInfoSlot
      * @param robotInfo
      * The robot just connected so we update all its info
      */
-    void updateRobotInfo(const QString robotInfo);
+    void updateRobotInfoSlot(const QString robotInfo);
 
     /**
-     * @brief portSentSlot
-     * The port have ben sent successfuly to the robot so we start all the workers/threads
+     * @brief connectedSlot
+     * We are connected to the robot so we start all the workers/threads
      */
-    void portSentSlot(void);
+    void connectedSlot(void);
 
     /**
      * @brief updateObstacles
@@ -193,32 +193,6 @@ signals:
     void newRobotPos(QString ip, double posX, double posY, double ori);
 
     /**
-     * @brief updatePath
-     * @param ip
-     * @param strList
-     * Tell the robotsController to update the path of this robot with the given one in <strList>
-     */
-    void updatePath(QString ip, QStringList strList);
-
-    /**
-     * @brief updateHome
-     * @param ip
-     * @param homeX
-     * @param homeY
-     * Tell the robotsController to update the home of this robot with the given one
-     */
-    void updateHome(QString ip, double homeX, double homeY, double homeOri);
-
-    /**
-     * @brief checkMapInfo
-     * @param ip
-     * @param mapId
-     * @param mapDate
-     * Tell the robotsController to check if the robot has the same map as the application
-     */
-    void checkMapInfo(QString ip, QString mapId, QString mapDate);
-
-    /**
      * @brief newMapFromRobot
      * @param ip
      * @param mapArray
@@ -261,35 +235,19 @@ signals:
     void receivedMap(QVariant ip);
 
     /**
-     * @brief checkScanning
-     * @param ip
-     * @param scanning
-     * Tell the robotsController to check if the robot is still scanning and act accordingly
-     */
-    void checkScanning(QString ip, bool scanning);
-
-    /**
-     * @brief updateLaser
-     * @param ip
-     * @param activated
-     * To hide or show the laser depending on <activated>
-     */
-    void updateLaser(QString ip, bool activated);
-
-    /**
-     * @brief setLooping
-     * @param ip
-     * @param looping
-     * When the robot connects, we want to know if the robot is looping its path
-     */
-    void setLooping(QString ip, bool looping);
-
-    /**
      * @brief resetHomePath
      * @param ip
      * To reset both the path and home of the robot at ip <ip>
      */
     void resetHomePath(QString ip);
+
+    /**
+     * @brief updateRobotInfo
+     * @param ip
+     * @param robotInfo
+     * Tell the robotsController to update the new robot info
+     */
+    void updateRobotInfo(QString ip, QString robotInfo);
 
     /// Tell the workers to stop their connection to the robot
     void stopCmdRobotWorker(void);

@@ -118,8 +118,6 @@ private slots:
     void robotIsDeadSlot(const QString ip);
 
     void newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori);
-    void updatePathSlot(const QString ip, const QStringList strList);
-    void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
     void sendCommandNewName(const QString ip, const QString name);
     void updateNameSlot(const QString ip, const QString name);
     void sendCommandDeletePath(const QString ip);
@@ -128,7 +126,6 @@ private slots:
     void sendCommandPlayPath(const QString ip);
     void sendCommandStopPath(const QString ip);
     void updatePlayingPathSlot(const QString ip, const bool playingPath);
-    void checkMapInfoSlot(const QString ip, const QString mapId, const QString mapDate);
     void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
     void sendMapTimerSlot(void);
     void requestMapTimerSlot(void);
@@ -139,10 +136,8 @@ private slots:
     void playedExplorationSlot(const QString ip);
     void pausedExplorationSlot(const QString ip);
     void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
-    void checkScanningSlot(const QString ip, const bool scanning);
     void processingCmdSlot(QString ip, bool processing);
     void setMessageTopSlot(int status, QString msg);
-    void updateLaserSlot(QString ip, bool activated);
     void activateLaserSlot(QString ip, bool activate);
     void startedScanningSlot(const QString ip);
 
@@ -160,8 +155,15 @@ private slots:
     void shortcutDeleteRobot(void);
     void callForRebootRobot(QString ip);
     void backupSystemIsDownSlot(QString ip);
-    void setLoopingSlot(QString ip, bool looping);
     void setCmdLoopingSlot(QString ip, bool loop);
+
+    /**
+     * @brief updateRobotInfoSlot
+     * @param ip
+     * @param robotInfo
+     * Update the info when a new robot connects
+     */
+    void updateRobotInfoSlot(QString ip, QString robotInfo);
 
 signals:
     void stopRobotServerWorker(void);
@@ -198,6 +200,7 @@ signals:
     void playedExploration(QVariant ip);
     void pausedExploration(QVariant ip);
     void setLooping(QVariant ip, QVariant looping);
+    void playingPathSlot(QVariant ip, QVariant playing);
 
 private:
     QQmlApplicationEngine* engine_;

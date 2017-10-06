@@ -43,13 +43,6 @@ signals:
     void cmdAnswer(QString answer);
 
     /**
-     * @brief portSent
-     * Send a signal to Robot when we succesfully sent the port we use for the other sockets
-     * so that we start the other workers
-     */
-    void portSent();
-
-    /**
      * @brief newConnection
      * @param ipAddress
      * @param home_pos
@@ -59,6 +52,11 @@ signals:
      */
     void newConnection(QString home_pos);
 
+    /**
+     * @brief connected
+     * Sent we connect to the robot
+     */
+    void connected();
 private slots:
     /**
      * @brief connectSocket

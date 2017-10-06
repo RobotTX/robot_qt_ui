@@ -22,7 +22,7 @@ ScanMapPaintedItem {
         onClicked: {
             console.log(width + " " + height)
             console.log("got clicked , robot view pos is " + robotView.x + " " + robotView.y + " " + parent.xRobot + " " + parent.yRobot + " " + parent.orientationRobot + " " + width + " " + height);
-            robotView.visible = !robotView.visible
+            //robotView.visible = !robotView.visible
         }
         onDoubleClicked: {
             console.log("scan map got double clicked")

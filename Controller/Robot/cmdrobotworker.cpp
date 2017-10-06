@@ -74,22 +74,7 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << ipAddress << ") Connected";
-    /// When we are connected, we send the ports to use for the other workers
-    /// in order to get laser feedback, robot position, map and map metadata
-    QString portStr = QString("h") + QChar(31) + QString::number(robotPort) + QChar(31) +
-            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(31) + QChar(23) + QChar(31);
-
-    bool tmpBool(false);
-    while(!tmpBool && socket->isOpen()){
-        socket->write(portStr.toUtf8());
-        if(socket->waitForBytesWritten(100)){
-            qDebug() << "(Robot" << ipAddress << ") Ports sent";
-            tmpBool = true;
-            emit portSent();
-        } else {
-            qDebug() << "(Robot" << ipAddress << ") Ports could not be sent, trying again";
-        }
-    }
+    emit connected();
 }
 
 void CmdRobotWorker::disconnectedSlot(){

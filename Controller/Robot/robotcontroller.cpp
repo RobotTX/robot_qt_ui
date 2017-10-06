@@ -61,6 +61,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
     connect(this, SIGNAL(setLooping(QString, bool)), parent, SLOT(setLoopingSlot(QString, bool)));
+    connect(this, SIGNAL(playingPath(QString, bool)), parent, SLOT(playingPathSlot(QString, bool)));
     connect(this, SIGNAL(resetHomePath(QString)), parent, SLOT(resetHomePathSlot(QString)));
 
     QList<QObject*> qmlList = engine->rootObjects();
@@ -120,7 +121,7 @@ void RobotController::stopThreads(void) {
     qDebug() << "RobotController::stopThreads" << ip << "all threads stopped";
 }
 
-void RobotController::portSentSlot(void){
+void RobotController::connectedSlot(void){
     emit startRobotWorker();
     emit startNewMapWorker();
     emit startLaserWorker();
@@ -138,8 +139,8 @@ void RobotController::launchWorkers(void){
     cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LASER));
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
-    connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
-    connect(cmdRobotWorker, SIGNAL(newConnection(QString)), this, SLOT(updateRobotInfo(QString)));
+    connect(cmdRobotWorker, SIGNAL(connected()), this, SLOT(connectedSlot()));
+    connect(cmdRobotWorker, SIGNAL(newConnection(QString)), this, SLOT(updateRobotInfoSlot(QString)));
     connect(commandController, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
@@ -243,65 +244,8 @@ void RobotController::robotIsDeadSlot(void){
     emit robotIsDead(ip);
 }
 
-void RobotController::updateRobotInfo(const QString robotInfo){
-    QThread::sleep(3);
-    QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
-    qDebug() << "RobotController::updateRobotInfo ip" << ip << " : " << strList;
-
-    if(strList.size() > 8){
-        /// Remove the "Connected" in the list
-        strList.removeFirst();
-        QString mapId = strList.takeFirst();
-        QString mapDate = strList.takeFirst();
-        double homeX = static_cast<QString>(strList.takeFirst()).toDouble();
-        double homeY = static_cast<QString>(strList.takeFirst()).toDouble();
-        double homeOri = static_cast<QString>(strList.takeFirst()).toDouble();
-        bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
-        bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
-        bool laser = static_cast<QString>(strList.takeFirst()).toInt();
-        bool looping = static_cast<QString>(strList.takeFirst()).toInt();
-        /// What remains in the list is the path
-
-        if(!strList.empty())
-            emit updatePath(ip, strList);
-
-        if(homeX >= -100 && homeY >= -100)
-            emit updateHome(ip, homeX, homeY, homeOri);
-        qDebug() << "RobotController::updateRobotInfo" << ip << "home :" << homeX << homeY << homeOri;
-
-        emit checkMapInfo(ip, mapId, mapDate);
-
-        emit checkScanning(ip, scanning);
-
-        emit updateLaser(ip, laser);
-
-        emit setLooping(ip, looping);
-/*
-        if(recovering){
-            if(robotPositionRecoveryWidget){
-                emit robotReconnected(robotName);
-                playRecoverySlot(true, robotName);
-            } else
-                stopRecoveringRobotsSlot(QStringList(robotName));
-        } else {
-            if(robotPositionRecoveryWidget){
-                QStringList robotRecoveringList = robotPositionRecoveryWidget->getAllRecoveringRobots();
-                for(int i = 0; i < robotRecoveringList.count(); i++){
-                    if(static_cast<QString>(robotRecoveringList.at(i)) == robotName){
-                        emit robotReconnected(robotName);
-                        emit robotRecovering(false, robotName, true);
-                    }
-                }
-            }
-        }
-*/
-
-    } else {
-        /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
-        qDebug() << "RobotController::updateRobotInfo Connected received without enough parameters :" << strList;
-        //Q_UNREACHABLE();
-    }
-
+void RobotController::updateRobotInfoSlot(const QString robotInfo){
+    emit updateRobotInfo(ip, robotInfo);
     ping();
 }
 
