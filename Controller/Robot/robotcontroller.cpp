@@ -60,9 +60,9 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     QObject* mergeMapMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
     /// to update the icon on the list item corresponding to this robot in the merge maps widget
     /// to show that the map has been received
-    if(mergeMapMenu){
+    if(mergeMapMenu)
         connect(this, SIGNAL(receivedMap(QVariant)), mergeMapMenu, SLOT(setMapReceived(QVariant)));
-    } else
+    else
         Q_UNREACHABLE();
 
     /// to draw the obstacles of the robots
