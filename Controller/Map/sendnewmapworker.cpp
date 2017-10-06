@@ -9,10 +9,8 @@ SendNewMapWorker::~SendNewMapWorker(){
 }
 
 void SendNewMapWorker::stopWorker(){
-    if(socket && socket->isOpen()){
+    if(socket && socket->isOpen())
         socket->close();
-        delete socket;
-    }
 }
 
 void SendNewMapWorker::connectSocket(){

@@ -13,17 +13,15 @@ CmdRobotWorker::~CmdRobotWorker(){
 }
 
 void CmdRobotWorker::stopWorker(){
-    if(socket && socket->isOpen()){
+    if(socket && socket->isOpen())
         socket->close();
-        delete socket;
-    }
 }
 
 void CmdRobotWorker::connectSocket(){
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// We create the timer used to know for how long we haven't receive any ping
-    timer = new QTimer(this);
+    timer = QPointer<QTimer>(new QTimer(this));
 
     timer->setInterval(1000);
 

@@ -63,10 +63,8 @@ void BackupRobotWorker::readTcpDataSlot(){
 }
 
 void BackupRobotWorker::stopWorker(){
-    if(socket && socket->isOpen()){
+    if(socket && socket->isOpen())
         socket->close();
-        delete socket;
-    }
 }
 
 void BackupRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
