@@ -352,7 +352,14 @@ void RobotsController::activateLaserSlot(QString ip, bool activate){
 }
 
 void RobotsController::updateRobotPos(QString ip, double x, double y, double orientation){
-    robots.value(ip)->updateRobotPosition(x, y, orientation);
+    try {
+        if(robots.contains(ip))
+            robots.value(ip)->updateRobotPosition(x, y, orientation);
+        else
+            qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << "which is disconnected";
+    } catch (std::exception& e) {
+        qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << ":" << e.what();
+    }
 }
 
 void RobotsController::startDockingRobot(QString ip){
