@@ -31,7 +31,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
     QList<QObject*> qmlList = engine->rootObjects();
 
-    if(qmlList.size() == 1){
+    if(qmlList.size() >= 1){
         /// The main parent element in the QML tree
         QObject *applicationWindow = qmlList.at(0);
 
@@ -104,6 +104,15 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         } else {
             /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the topView";
+            Q_UNREACHABLE();
+        }
+
+        QObject* deconnexionBtn = applicationWindow->findChild<QObject*>("deconnexionBtn");
+        if(deconnexionBtn){
+            connect(deconnexionBtn, SIGNAL(deconnexion()), this, SLOT(deconnexionSlot()));
+        } else {
+            /// NOTE can probably remove that when testing phase is over
+            qDebug() << "Authentification::Authentification could not find the deconnexionBtn";
             Q_UNREACHABLE();
         }
 
@@ -195,6 +204,10 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
     }
 
     connect(this, SIGNAL(updateRobotPos(QString,double,double,double)), robotsController, SLOT(updateRobotPos(QString, double, double, double)));
+}
+
+void MainController::deconnexionSlot() {
+    emit deco();
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
@@ -377,7 +390,8 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
         pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
                 + QChar(31) + QString::number(pathPointPos.x())
                 + QChar(31) + QString::number(pathPointPos.y())
-                + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime());
+                + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
+                + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation());
     }
     QString cmd = QString("i") + QChar(31) + pathName + pathStr;
     robotsController->sendCommand(ip, cmd);

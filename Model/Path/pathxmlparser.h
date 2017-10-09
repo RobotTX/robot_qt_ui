@@ -27,9 +27,9 @@ public:
     static void readPaths(PathController *pathController, const QString fileName);
 
 private:
-    static QString readNameElement(QXmlStreamReader &xmlReader);
-    static double readCoordinateElement(QXmlStreamReader &xmlReader);
-    static int readWaitTimeElement(QXmlStreamReader &xmlReader);
+    static QString readStringElement(QXmlStreamReader &xmlReader);
+    static double readDoubleElement(QXmlStreamReader &xmlReader);
+    static int readIntElement(QXmlStreamReader &xmlReader);
     static void clear(PathController *pathController, const QString fileName);
 };
 

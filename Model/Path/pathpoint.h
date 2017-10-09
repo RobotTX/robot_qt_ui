@@ -10,7 +10,7 @@ class PathPoint : public QObject {
 
 public:
 
-    PathPoint(const QString _name, const double _x, const double _y, const int _waitTime, QObject *parent);
+    PathPoint(const QString _name, const double _x, const double _y, const int _waitTime, const int _orientation, QObject *parent);
 
     QPointer<Point> getPoint(void) const { return point; }
     int getWaitTime(void) const { return waitTime; }

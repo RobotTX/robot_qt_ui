@@ -311,18 +311,16 @@ Frame {
         }
     }
 
-    Item {
+    Rectangle {
         visible: processingCmd
-        Rectangle {
-            radius: 3
-            color: Style.lightGreyBackground
-            opacity: 0.5
-            anchors.fill: parent
-        }
+        radius: 3
+        color: Style.lightGreyBackground
+        opacity: 0.5
+        anchors.fill: parent
+    }
 
-        CustomBusyIndicator {
-            running: processingCmd
-            anchors.fill: parent
-        }
+    CustomBusyIndicator {
+        running: processingCmd
+        anchors.fill: parent
     }
 }

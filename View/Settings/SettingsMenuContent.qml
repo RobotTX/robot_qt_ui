@@ -268,6 +268,36 @@ Frame {
         }
     }
 
+    Button {
+            id: deconnexionBtn
+            height: 60
+            width: 70
+            checkable: true
+            text: "Deconnexion"
+            objectName: "deconnexionBtn"
+            signal deconnexion()
+            contentItem: Label {
+                text: deconnexionBtn.text
+                font: deconnexionBtn.font
+                verticalAlignment: Text.AlignVCenter
+                color: Style.midGrey2
+            }
+
+            background: Rectangle {
+                color: deconnexionBtn.checked ? "Red" : "transparent"
+            }
+
+            anchors {
+                left : parent.left
+                top : horizontalSeparation3.bottom;
+            }
+
+            onClicked: {
+                deconnexion()
+    //            Qt.quit()
+            }
+        }
+
     CancelButton {
         id: cancelButton
 

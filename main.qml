@@ -54,7 +54,7 @@ ApplicationWindow {
         mergeMap.close();
         scanMap.close();
         editMap.close();
-        Qt.quit();
+//        Qt.quit();
     }
 
     Item {

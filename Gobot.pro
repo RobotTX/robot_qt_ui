@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     View/Robot/obstaclespainteditem.cpp \
     Controller/Robot/backuprobotworker.cpp \
     Controller/Robot/backupcontroller.cpp \
-    Controller/Map/laserworker.cpp
+    Controller/Map/laserworker.cpp \
+    Controller/authentification.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -98,4 +99,7 @@ HEADERS += \
     View/Robot/obstaclespainteditem.h \
     Controller/Robot/backuprobotworker.h \
     Controller/Robot/backupcontroller.h \
-    Controller/Map/laserworker.h
+    Controller/Map/laserworker.h \
+    Controller/authentification.h
+
+DISTFILES +=

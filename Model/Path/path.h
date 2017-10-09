@@ -15,7 +15,7 @@ public:
 
     QVector<QPointer<PathPoint>> getPathPointVector(void) const { return pathPointVector; }
 
-    void addPathPoint(const QString name, const double x, const double y, const int waitTime);
+    void addPathPoint(const QString name, const double x, const double y, const int waitTime, const int orientation);
 
     void deletePathPoint(const QString name);
 

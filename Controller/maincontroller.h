@@ -275,6 +275,8 @@ private slots:
 
     void testSlot();
 
+    void deconnexionSlot();
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
@@ -285,6 +287,7 @@ signals:
     void openRestartScanMessageDialog(QVariant ip);
     void emitBatteryThreshold(QVariant batteryThreshold);
     void setMessageTop(QVariant status, QVariant msg);
+    void deco();
     /**
      * @brief sendImageToMerge
      * @param resolution

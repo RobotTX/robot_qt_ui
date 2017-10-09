@@ -4,8 +4,8 @@
 
 Path::Path(QObject *parent) : QObject(parent), pathPointVector(QVector<QPointer<PathPoint>>()) {}
 
-void Path::addPathPoint(const QString name, const double x, const double y, const int waitTime){
-    pathPointVector.push_back(QPointer<PathPoint>(new PathPoint(name, x, y, waitTime, this)));
+void Path::addPathPoint(const QString name, const double x, const double y, const int waitTime, const int orientation){
+    pathPointVector.push_back(QPointer<PathPoint>(new PathPoint(name, x, y, waitTime, orientation, this)));
 }
 
 void Path::deletePathPoint(const QString name){

@@ -82,5 +82,6 @@
         <file>View/Tutorial/TutorialDialog.qml</file>
         <file>View/Custom/HelpButton.qml</file>
         <file>View/Custom/ScanMergeMenuButton.qml</file>
+        <file>auth.qml</file>
     </qresource>
 </RCC>

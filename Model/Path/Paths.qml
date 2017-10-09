@@ -33,7 +33,7 @@ ListModel {
                 });
     }
 
-    function addPathPoint(name, pathName, groupName, x, y, waitTime){
+    function addPathPoint(name, pathName, groupName, x, y, waitTime, orientation){
         //console.log("Add pathpoint " + name + " to path " + pathName + " in group " + groupName);
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
@@ -42,13 +42,15 @@ ListModel {
                         if(get(i).paths.get(j).pathPoints.count > 0){
                             // to prevent the same path point to be added twice in a row
                             if(get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posX !== x
-                                    || get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posY !== y)
+                                    || get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posY !== y
+                                    || get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).orientation !== orientation)
                                 get(i).paths.get(j).pathPoints.append({
                                      "name": name,
                                      "posX": x,
                                      "posY": y,
                                      "waitTime": waitTime,
-                                     "validPos": false
+                                     "validPos": false,
+                                     "orientation": orientation
                                 });
                         } else {
                             get(i).paths.get(j).pathPoints.append({
@@ -56,7 +58,8 @@ ListModel {
                                  "posX": x,
                                  "posY": y,
                                  "waitTime": waitTime,
-                                 "validPos": false
+                                 "validPos": false,
+                                 "orientation": orientation
                             });
                         }
                     }
@@ -132,7 +135,8 @@ ListModel {
                                 "posX": get(i).paths.get(j).pathPoints.get(k).posX,
                                 "posY": get(i).paths.get(j).pathPoints.get(k).posY,
                                 "waitTime": get(i).paths.get(j).pathPoints.get(k).waitTime,
-                                "validPos": get(i).paths.get(j).pathPoints.get(k).validPos
+                                "validPos": get(i).paths.get(j).pathPoints.get(k).validPos,
+                                "orientation": get(i).paths.get(j).pathPoints.get(k).orientation
                            });
                         }
 
@@ -171,5 +175,13 @@ ListModel {
     function deleteAllPaths(){
         clear();
         addGroup(Helper.noGroup);
+    }
+
+    function setOrientation(groupName, pathName, index, orientation){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                for(var j = 0; j < get(i).paths.count; j++)
+                    if(get(i).paths.get(j).pathName === pathName)
+                        get(i).paths.get(j).pathPoints.get(index).orientation = orientation;
     }
 }

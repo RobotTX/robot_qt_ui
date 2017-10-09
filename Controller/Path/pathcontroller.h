@@ -57,7 +57,7 @@ public slots:
      * @param saveXML
      * Add a pathpoint
      */
-    void addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const bool saveXML = true);
+    void addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const bool saveXML = true);
 
     /**
      * @brief checkPosition
@@ -143,7 +143,7 @@ signals:
      * @brief addPathPointQml
      * Tell the qml model to add a path point
      */
-    void addPathPointQml(QVariant name, QVariant pathName, QVariant groupName, QVariant x, QVariant y, QVariant waitTime);
+    void addPathPointQml(QVariant name, QVariant pathName, QVariant groupName, QVariant x, QVariant y, QVariant waitTime, QVariant orientation);
 
     /**
      * @brief renameGroupQml

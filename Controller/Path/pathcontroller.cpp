@@ -18,8 +18,8 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         /// Signals from c++ to the qml path model
         connect(this, SIGNAL(addGroupQml(QVariant)), pathModel, SLOT(addGroup(QVariant)));
         connect(this, SIGNAL(addPathQml(QVariant, QVariant)), pathModel, SLOT(addPath(QVariant, QVariant)));
-        connect(this, SIGNAL(addPathPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
-                pathModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(addPathPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
+                pathModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pathModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(this, SIGNAL(deleteAllPathsQml()), pathModel, SLOT(deleteAllPaths()));
 
@@ -68,7 +68,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         /// Clicked on the save button to create the given group
         connect(createPathMenuFrame, SIGNAL(createPath(QString, QString)), this, SLOT(addPath(QString, QString)));
         /// Clicked on the save button while editing a group
-        connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int)));
+        connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int, int)));
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the createPathMenuFrame";
@@ -110,11 +110,11 @@ void PathController::deletePath(const QString groupName, const QString name){
     PathXMLParser::save(this, currentPathsFile);
 }
 
-void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const bool saveXML){
-    paths->addPathPoint(groupName, pathName, name, x, y, waitTime);
+void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const bool saveXML){
+    paths->addPathPoint(groupName, pathName, name, x, y, waitTime, orientation);
     emit addPathPointQml(name, pathName,
                     groupName, x,
-                    y, waitTime);
+                    y, waitTime, orientation);
 
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);

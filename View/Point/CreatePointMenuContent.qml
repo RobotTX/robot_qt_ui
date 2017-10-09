@@ -176,10 +176,9 @@ Frame {
         onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
     }
 
-
     Label {
         id: oriLabel
-        visible: homeCheckBox.checked
+//        visible: homeCheckBox.checked
         text: qsTr("Orientation")
         color: Style.midGrey2
         anchors {
@@ -200,7 +199,7 @@ Frame {
 
         width: 40
         height: 21
-        visible: homeCheckBox.checked
+//        visible: homeCheckBox.checked
 
         padding: 0
         selectByMouse: true
@@ -229,7 +228,7 @@ Frame {
 
         width: 12
         height: 21
-        visible: homeCheckBox.checked
+//        visible: homeCheckBox.checked
 
         anchors {
             left: field.right
@@ -275,7 +274,7 @@ Frame {
 
     CustomSlider {
         id: slider
-        visible: homeCheckBox.checked
+//        visible: homeCheckBox.checked
 
         from: 0
         to: 359
@@ -302,7 +301,7 @@ Frame {
         color: Style.midGrey2
         anchors {
             left: parent.left
-            top: homeCheckBox.checked ? slider.bottom : homeCheckBox.bottom
+            top: slider.bottom
             right: parent.right
             topMargin: 20
         }
@@ -353,7 +352,7 @@ Frame {
             var groupName = groupComboBox.displayText;
             createPoint(newName, groupName, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
-                        homeCheckBox.checked ? Math.round(slider.valueAt(slider.position)) : 0);
+                        Math.round(slider.valueAt(slider.position)));
             backToMenu();
             setMessageTop(2, oldName === "" ? "Created the point \"" + newName + "\" in \"" + groupName + "\"" :
                                             "Edited a point from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")

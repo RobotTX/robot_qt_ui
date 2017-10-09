@@ -21,7 +21,7 @@ Frame {
 
     signal backToMenu()
     signal createPath(string groupName, string name)
-    signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime)
+    signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
 
@@ -60,6 +60,7 @@ Frame {
                                             "posX": pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
                                             "posY": pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
                                             "waitTime": pathModel.get(i).paths.get(j).pathPoints.get(k).waitTime,
+                                            "orientation": pathModel.get(i).paths.get(j).pathPoints.get(k).orientation,
                                             "validPos": true
                                        });
                                     }
@@ -209,7 +210,7 @@ Frame {
             y: addSavedPoint.y
             onPointSelected: {
                 console.log(name + " " + posX + " " + posY)
-                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0);
+                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, 30);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
             }
@@ -275,12 +276,13 @@ Frame {
                         horizontalCenter: parent.horizontalCenter
                         verticalCenter: parent.verticalCenter
                     }
-                    width: dragArea.width; height: 114
+                    width: dragArea.width
+                    height: 139
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
                     radius: 2
-                    Drag.active: dragArea.held
+                    /*Drag.active: dragArea.held
                     Drag.source: dragArea
                     Drag.hotSpot.x: width / 2
                     Drag.hotSpot.y: height / 2
@@ -298,7 +300,7 @@ Frame {
                                 verticalCenter: undefined
                             }
                         }
-                    }
+                    }*/
 
                     Image {
                         id: validBtn
@@ -390,13 +392,17 @@ Frame {
                         }
                     }
 
+
+
                     TextField {
                         id: waitTextField
                         selectByMouse: true
                         text: waitTime
                         height: 20
-                        width: 30
+                        width: 40
                         padding: 2
+                        horizontalAlignment: TextInput.AlignRight
+
                         validator: IntValidator{bottom: 0; top: 999;}
                         anchors {
                             left: waitFor.right
@@ -473,6 +479,124 @@ Frame {
                         }
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
+                    }
+
+                    Label {
+                        id: oriLabel
+                        text: qsTr("Orientation")
+                        font.pointSize: 10
+                        color: Style.greyText
+                        anchors {
+                            left: indexId.left
+                            top: minText.bottom
+                            topMargin: 15
+                        }
+                        width: 80
+                    }
+
+                    TextField {
+                        id: field
+                        background: Rectangle {
+                            border.color: field.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                            border.width: field.activeFocus ? 3 : 1
+                        }
+
+                        height: 20
+                        width: 40
+                        padding: 2
+
+                        selectByMouse: true
+                        // range of accepted values : 0 to 359
+                        validator: IntValidator { bottom: 0; top: 359 }
+                        inputMethodHints: Qt.ImhDigitsOnly
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: TextInput.AlignRight
+                        placeholderText: "0"
+
+                        text: orientation
+                        Component.onCompleted: slider.value = orientation
+
+                        anchors {
+                            left: waitTextField.left
+                            verticalCenter: oriLabel.verticalCenter
+
+                        }
+
+                        // to update the slider value accordingly
+                        onAccepted: {
+                            focus = false;
+                            slider.value = parseInt(text);
+                        }
+                    }
+
+                    Button {
+                        id: incButtonBis
+
+                        width: 12
+                        height: 21
+
+                        anchors {
+                            left: field.right
+                            leftMargin: 4
+                            verticalCenter: oriLabel.verticalCenter
+                        }
+
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+
+                        contentItem: Image {
+                            anchors.fill: parent
+                            source: "qrc:/icons/stepper"
+                            fillMode: Image.PreserveAspectFit
+
+                            MouseArea {
+                                id: mouseAreaBis
+                                anchors.fill: parent
+
+                                // so that you can press the button to increment the value instead of having to click a lot of times
+                                Timer {
+                                    id: timerBis
+                                    interval: 50
+                                    repeat: true
+                                    onTriggered: {
+                                        // if we click the lower half of the button we decrement the value of otherwise we increment it
+                                        if(mouseAreaBis.pressed){
+                                            if(mouseAreaBis.mouseY > parent.height / 2)
+                                                slider.value = slider.value - 1
+                                            else
+                                                slider.value = slider.value + 1
+                                        }
+                                    }
+                                }
+
+                                onPressed: timerBis.start()
+
+                                onReleased: timerBis.stop()
+                            }
+                        }
+                    }
+
+                    CustomSlider {
+                        id: slider
+                //        visible: homeCheckBox.checked
+
+                        from: 0
+                        to: 359
+                        stepSize: 1
+
+                        anchors {
+                            left: oriLabel.left
+                            top: oriLabel.bottom
+                            right: parent.right
+                            rightMargin: 25
+                            topMargin: 10
+                        }
+                        onPositionChanged: {
+                            tmpPathModel.setOrientation("tmpGroup", "tmpPath", index, Math.round(slider.valueAt(slider.position)));
+                            console.log("index : " + index);
+                            field.text = Math.round(slider.valueAt(slider.position));
+                        }
                     }
                 }
 
@@ -581,7 +705,10 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posX,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posY,
-                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).waitTime);
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).waitTime,
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).orientation);
+
+
                 setMessageTop(2, oldName === "" ? "Created the path \"" + newName + "\" in \"" + groupComboBox.displayText + "\"" :
                                                 "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupComboBox.displayText + "\"")
                 backToMenu();

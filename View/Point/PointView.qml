@@ -19,7 +19,8 @@ Item {
     transform: Rotation {
         origin.x: 0
         origin.y: 0
-        angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? pointOrientation : mapOrientation
+//        angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? pointOrientation : mapOrientation
+        angle: pointOrientation
     }
 
      property Image image: img
@@ -51,7 +52,7 @@ Item {
         transform: Rotation {
             origin.x: tooltip.width / 2
             origin.y: tooltip.height + img.height / 2 + tooltip.anchors.bottomMargin
-            angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? -pointOrientation + mapOrientation : 0
+            angle: -pointOrientation + mapOrientation
         }
 
         horizontalAlignment: Text.AlignHCenter
