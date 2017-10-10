@@ -68,10 +68,12 @@ Frame {
         Image {
             id: validIcon
             source: mapReceived ? "qrc:/icons/valid" : "qrc:/icons/notValid"
-            ToolTip {
+
+            CustomToolTip {
                 visible: !mapReceived && hovered
                 text: mapReceived ? "" : "The map has not been received yet"
             }
+
             fillMode: Image.Pad
             anchors {
                 top: parent.top

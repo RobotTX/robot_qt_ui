@@ -18,7 +18,7 @@ Image {
     }
 
     source: "qrc:/icons/robotView"
-    width: 12
+    width: 18
     asynchronous: true
     smooth: false
     fillMode: Image.PreserveAspectFit

@@ -83,7 +83,7 @@ RobotController::~RobotController(){
 }
 
 void RobotController::stopThreads(void) {
-
+    // TODO try to terminate instead of quit or try to sleep after emit
     emit stopCmdRobotWorker();
     cmdThread.quit();
     cmdThread.wait();

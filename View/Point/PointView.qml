@@ -28,7 +28,7 @@ Item {
     Image {
         id: img
         source: imageSource()
-        width: 18
+        width: 27
         asynchronous: true
         smooth: false
         fillMode: Image.PreserveAspectFit
