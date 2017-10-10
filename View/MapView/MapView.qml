@@ -227,6 +227,7 @@ Frame {
                     }
                 }
 
+
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -254,6 +255,11 @@ Frame {
                             }
                         } else if (mouse.button === Qt.RightButton){
                             posClicked(Math.round(mouseX), Math.round(mouseY));
+                            console.log("Qt.RightButton");
+                            if (tmpPointView.visible) {
+
+                            }
+
                         }
                     }
                 }
@@ -395,6 +401,8 @@ Frame {
                                 y: pathPointPosY
                                 tooltipText: pathPointName
                                 mapOrientation: -topViewId.mapRotation
+                                pointOrientation: orientation
+
                             }
                         }
                     }

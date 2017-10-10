@@ -25,8 +25,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(setName(QVariant, QVariant)));
         connect(this, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
         connect(this, SIGNAL(setPlayingPath(QVariant, QVariant)), robotModel, SLOT(setPlayingPath(QVariant, QVariant)));
-        connect(this, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)),
-                robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
+                robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
@@ -50,8 +50,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
         /// MainController signals
         connect(parent, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
-        connect(parent, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)),
-                robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(parent, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
+                robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
 
@@ -170,7 +170,7 @@ void RobotsController::shortcutAddRobot(void){
     if((robots.size() - 1)%3 == 0){
         emit setPath(ip, "pathName avec un nom tres tres long " + ip);
         for(int i = 1; i <= robots.size(); i++)
-            emit addPathPoint(ip, "pathPoint " + QString::number(i), 50 * robots.size() + 50*i%3, 50 * robots.size() + 50*i%3, (robots.size() - 1)%3);
+            emit addPathPoint(ip, "pathPoint " + QString::number(i), 50 * robots.size() + 50*i%3, 50 * robots.size() + 50*i%3, (robots.size() - 1)%3, 0);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
 }

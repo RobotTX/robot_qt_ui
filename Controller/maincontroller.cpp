@@ -335,17 +335,17 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
 
 void MainController::updatePathSlot(QString ip, QStringList strList){
     if(strList.size() > 0){
-        if(strList.size() % 4 == 1){
+        if(strList.size() % 5 == 1){
             qDebug() << "RobotsController::updatePathSlot" << ip << " updating the path";
             emit setPath(ip, strList.takeFirst());
-            for(int i = 0; i < strList.size(); i+=4){
+            for(int i = 0; i < strList.size(); i+=5){
                 QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
                                 QPointF(static_cast<QString>(strList.at(i+1)).toDouble(), static_cast<QString>(strList.at(i+2)).toDouble()),
                                 mapController->getOrigin().x(),
                                 mapController->getOrigin().y(),
                                 mapController->getResolution(),
                                 mapController->getHeight());
-                emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt());
+                emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt(), static_cast<QString>(strList.at(i+4)).toInt());
             }
         } else
             qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";

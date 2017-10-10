@@ -210,7 +210,7 @@ Frame {
             y: addSavedPoint.y
             onPointSelected: {
                 console.log(name + " " + posX + " " + posY)
-                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, 30);
+                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
             }

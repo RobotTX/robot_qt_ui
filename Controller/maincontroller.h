@@ -281,7 +281,7 @@ signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setPath(QVariant ip, QVariant name);
-    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
+    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
     void emitSettings(QVariant mapChoice);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
     void openRestartScanMessageDialog(QVariant ip);
