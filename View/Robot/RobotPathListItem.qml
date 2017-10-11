@@ -303,13 +303,28 @@ Frame {
 
                             /// The item displaying the name of the pathpoint
                             CustomLabel {
+                                id: customLabelPathPointName
                                 text: qsTr(pathPointName)
+//                                text: qsTr(pathPointName + " - " + waitTime)
                                 font.pixelSize: 14
                                 color: Style.midGrey2
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: rect.right
-                                anchors.right: parent.right
+                                anchors.right: customLabelWaitTime.left
                                 anchors.leftMargin: 10
+                                anchors.rightMargin: 5
+                            }
+
+                            CustomLabel {
+                                id: customLabelWaitTime
+                                text: waitTime === -1 ? qsTr("Human Action") : qsTr("Delay : " + waitTime + " s")
+                                horizontalAlignment: Text.AlignRight
+                                font.pixelSize: 14
+                                color: Style.midGrey2
+                                anchors.verticalCenter: parent.verticalCenter
+//                                anchors.left: customLabelPathPointName.right
+                                anchors.right: parent.right
+//                                anchors.leftMargin: 10
                                 anchors.rightMargin: 5
                             }
                         }

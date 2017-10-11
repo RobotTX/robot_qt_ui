@@ -116,7 +116,7 @@ Page {
     Connections {
         target: pathModel
         onSaveCurrentPath: {
-            console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
+            console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count + " waitTime " + waitTime)
             createPathMenuContent.robotPathName = pathName;
             createPathMenuContent.robotPathPoints = pathPoints;
 
