@@ -11,7 +11,7 @@
 #include "Controller/Robot/teleopworker.h"
 #include "Controller/Robot/commandcontroller.h"
 #include "Controller/Map/sendnewmapworker.h"
-#include "Controller/Map/laserworker.h"
+//#include "Controller/Map/laserworker.h"
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/mapcontroller.h"
@@ -36,7 +36,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(pausedExploration(QString)), parent, SLOT(pausedExplorationSlot(QString)));
     connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
     connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
-    connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
+//    connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
     connect(commandController, SIGNAL(setLooping(QString, bool)), parent, SLOT(setLoopingSlot(QString, bool)));
 
     /// Signals to tell the robotsController that the robot just disconnected
@@ -87,9 +87,9 @@ void RobotController::stopThreads(void) {
     newMapThread.quit();
     newMapThread.wait();
 
-    emit stopLaserWorker();
-    laserThread.quit();
-    laserThread.wait();
+//    emit stopLaserWorker();
+//    laserThread.quit();
+//    laserThread.wait();
 
     emit stopMapWorker();
     mapThread.quit();
@@ -105,7 +105,7 @@ void RobotController::stopThreads(void) {
 void RobotController::connectedSlot(void){
     emit startRobotWorker();
     emit startNewMapWorker();
-    emit startLaserWorker();
+//    emit startLaserWorker();
     emit startMapWorker();
     emit startTeleopWorker();
 }
@@ -150,16 +150,16 @@ void RobotController::launchWorkers(void){
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
 
-    laserWorker = QPointer<LaserWorker>(new LaserWorker(ip, PORT_LASER));
-    connect(laserWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(this, SIGNAL(stopLaserWorker()), laserWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startLaserWorker()), laserWorker, SLOT(connectSocket()));
-    connect(&laserThread, SIGNAL(finished()), laserWorker, SLOT(deleteLater()));
-    qRegisterMetaType<QVector<float>>("QVector<float>");
-    connect(laserWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
-            this, SLOT(updateObstacles(float, float, float, QVector<float>)));
-    laserWorker->moveToThread(&laserThread);
-    laserThread.start();
+//    laserWorker = QPointer<LaserWorker>(new LaserWorker(ip, PORT_LASER));
+//    connect(laserWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
+//    connect(this, SIGNAL(stopLaserWorker()), laserWorker, SLOT(stopWorker()));
+//    connect(this, SIGNAL(startLaserWorker()), laserWorker, SLOT(connectSocket()));
+//    connect(&laserThread, SIGNAL(finished()), laserWorker, SLOT(deleteLater()));
+//    qRegisterMetaType<QVector<float>>("QVector<float>");
+//    connect(laserWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
+//            this, SLOT(updateObstacles(float, float, float, QVector<float>)));
+//    laserWorker->moveToThread(&laserThread);
+//    laserThread.start();
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),

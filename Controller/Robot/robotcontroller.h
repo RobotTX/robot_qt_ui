@@ -4,7 +4,7 @@
 class CmdRobotWorker;
 class RobotPositionWorker;
 class SendNewMapWorker;
-class LaserWorker;
+//class LaserWorker;
 class ScanMapWorker;
 class TeleopWorker;
 class CommandController;
@@ -272,14 +272,14 @@ private:
     QPointer<CmdRobotWorker> cmdRobotWorker;
     QPointer<RobotPositionWorker> robotWorker;
     QPointer<SendNewMapWorker> newMapWorker;
-    QPointer<LaserWorker> laserWorker;
+//    QPointer<LaserWorker> laserWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
 
     QThread cmdThread;
     QThread robotThread;
     QThread newMapThread;
-    QThread laserThread;
+//    QThread laserThread;
     QThread mapThread;
     QThread teleopThread;
 
