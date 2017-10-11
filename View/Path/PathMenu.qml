@@ -3,11 +3,12 @@ import QtQuick.Controls 2.1
 import "../Custom"
 import "../../Model/Path"
 import "../../Model/Point"
+import "../../Helper/helper.js" as Helper
 
 Page {
     id: page
     anchors.fill: parent
-    property Paths pathModel
+    property Paths pathModel // Path file in qml model
     property Paths tmpPathModel
     property Points pointModel
     property int menuIndex: 0
@@ -111,5 +112,22 @@ Page {
             onSetMessageTop: page.setMessageTop(status, msg)
         }
     }
+
+    Connections {
+        target: pathModel
+        onSaveCurrentPath: {
+            console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
+            createPathMenuContent.robotPathName = pathName;
+            createPathMenuContent.robotPathPoints = pathPoints;
+
+            page.menuIndex = 1;
+            console.log("menu = " + page.menuIndex);
+        }
+
+    }
+
+//    function saveCurrentPath(pathName, pathPoints) {
+//        console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
+//    }
 }
 

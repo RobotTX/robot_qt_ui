@@ -133,6 +133,7 @@ ListModel {
                                           "orientation": orientation
                                       });
             }
+            console.log("pos x = " + posX + " pos Y = " + posY + " waitTime = " + waitTime);
         visiblePathChanged();
     }
 

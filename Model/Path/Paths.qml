@@ -11,6 +11,7 @@ ListModel {
     signal visiblePathChanged()
     signal validPositionChanged()
     signal setMessageTop(int status, string msg)
+    signal saveCurrentPath(string pathName, ListModel pathPoints)
 
     function addGroup(name){
         console.log("paths adding group " + name)

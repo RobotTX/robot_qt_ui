@@ -23,6 +23,7 @@ Menu {
     signal renameRobot()
     signal deletePath()
     signal laserPressed()
+    signal saveCurrentPath()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -123,7 +124,7 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 2
-//        onTriggered: robotMenu.laserPressed()
+        onTriggered: robotMenu.saveCurrentPath()
     }
 
     Rectangle {

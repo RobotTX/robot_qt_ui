@@ -203,6 +203,10 @@ Frame {
             }
             onDeletePath: robotModel.deletePathSignal(ip)
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
+            onSaveCurrentPath: {
+                pathModel.saveCurrentPath(pathName,pathPoints)
+                console.log("pos x = " + posX)
+            }
         }
     }
 

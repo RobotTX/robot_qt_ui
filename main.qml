@@ -66,6 +66,7 @@ ApplicationWindow {
             id: _pathModel
             objectName: "pathModel"
             onSetMessageTop: mapView.setMessageTop(status, msg)
+            onSaveCurrentPath: mainFrame.currentMenu = 1
         }
 
         Paths {

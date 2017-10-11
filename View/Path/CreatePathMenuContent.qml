@@ -11,9 +11,11 @@ import "../Custom"
 Frame {
     id: createPathMenuFrame
     objectName: "createPathMenuFrame"
-    property string oldName
-    property string oldGroup
+    property string oldName // when editing
+    property string oldGroup // when editing
     property string errorMsg
+    property string robotPathName // when creating a new path from robot
+    property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
     property Paths pathModel
     property Paths tmpPathModel
@@ -39,6 +41,9 @@ Frame {
             }
             oldName = "";
             oldGroup = "";
+            robotPathName = "";
+//            if (robotPathPoints)
+//                robotPathPoints.clear();
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = Helper.noGroup;
         } else {
@@ -47,6 +52,7 @@ Frame {
                 useTmpPathModel(true);
                 tmpPathModel.visiblePathChanged();
 
+                // if editing
                 if(oldName !== ""){
                     for(var i = 0; i < pathModel.count; i++){
                         if(pathModel.get(i).groupName === oldGroup){
@@ -67,11 +73,24 @@ Frame {
                                 }
                             }
                         }
+                    } // if creating path from robot
+                } else if (robotPathName !== "") {
+                    for(var l = 0; l < robotPathPoints.count; l++){
+                        tmpPathModel.get(0).paths.get(0).pathPoints.append({
+                            "name": robotPathPoints.get(l).pathPointName,
+                            "posX": robotPathPoints.get(l).pathPointPosX,
+                            "posY": robotPathPoints.get(l).pathPointPosY,
+                            "waitTime": robotPathPoints.get(l).waitTime,
+                            "orientation": robotPathPoints.get(l).orientation,
+                            "validPos": true
+                       });
                     }
                 }
             }
         }
-        pathTextField.text = oldName;
+
+        pathTextField.text = (oldName !== "" ? oldName : robotPathName);
+
         errorMsg = "";
         setMessageTop(1, errorMsg);
     }
