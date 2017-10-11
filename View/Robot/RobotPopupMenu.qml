@@ -106,14 +106,24 @@ Menu {
         height: 1
     }
 
+//    PopupMenuItem {
+//        height: Style.menuItemHeight
+//        width: parent.width
+//        labelText: laserActivated ? "Hide laser feedback" : "Show laser feedback"
+//        leftPadding: Style.menuItemLeftPadding
+
+//        onHoveredChanged: if(visible) currentMenuIndex = 2
+//        onTriggered: robotMenu.laserPressed()
+//    }
+
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: laserActivated ? "Hide laser feedback" : "Show laser feedback"
+        labelText: "Save current path"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 2
-        onTriggered: robotMenu.laserPressed()
+//        onTriggered: robotMenu.laserPressed()
     }
 
     Rectangle {
