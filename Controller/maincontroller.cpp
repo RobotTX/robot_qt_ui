@@ -12,7 +12,6 @@
 #include <QtMath>
 #include "Helper/helper.h"
 #include "Controller/Map/mapcontroller.h"
-#include "Controller/Map/mergemapcontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
@@ -38,7 +37,6 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         /// to allow the map model and the map view to communicate with each other
         /// and to ensure that they are consistent with each other
         mapController = QPointer<MapController>(new MapController(engine, applicationWindow, this));
-        connect(this, SIGNAL(sendImageToMerge(QImage, double)), mapController->getMergeMapController(), SLOT(importMap(QImage, double)));
 
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other
@@ -178,7 +176,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             case 0: updateTutorialMessageVisibility("edit_map", static_cast<bool>(line.toInt()));
                 break;
 
-            case 1: updateTutorialMessageVisibility("merge_map", static_cast<bool>(line.toInt()));
+            case 1: qDebug("ok");
                 break;
 
             case 2: updateTutorialMessageVisibility("recover_position", static_cast<bool>(line.toInt()));
@@ -510,13 +508,6 @@ void MainController::requestOrSendMap(QString ip, bool request){
 
 void MainController::getMapFromRobot(QString ip){
     robotsController->requestMapForMerging(ip);
-}
-
-void MainController::processMapForMerge(QByteArray mapArray, QString resolution){
-    qDebug() << "MainController::processMapForMerge" << resolution << mapController->getWidth() << mapController->getHeight();
-    QImage image = mapController->getImageFromArray(mapArray, mapController->getWidth(), mapController->getHeight(), true);
-    qDebug() << "Saving image of size" << image.size();
-    emit sendImageToMerge(image, resolution.toDouble());
 }
 
 void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){

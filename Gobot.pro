@@ -29,9 +29,7 @@ SOURCES += main.cpp \
     Controller/Robot/teleopworker.cpp \
     Controller/Map/scanmapworker.cpp \
     Controller/Map/sendnewmapworker.cpp \
-    Controller/Map/mergemapcontroller.cpp \
     Controller/Robot/commandcontroller.cpp \
-    View/MergeMap/mergemapspainteditem.cpp \
     Controller/Map/scanmapcontroller.cpp \
     View/Robot/scanmappainteditem.cpp \
     View/Robot/obstaclespainteditem.cpp \
@@ -91,9 +89,7 @@ HEADERS += \
     Controller/Robot/teleopworker.h \
     Controller/Map/scanmapworker.h \
     Controller/Map/sendnewmapworker.h \
-    Controller/Map/mergemapcontroller.h \
     Controller/Robot/commandcontroller.h \
-    View/MergeMap/mergemapspainteditem.h \
     Controller/Map/scanmapcontroller.h \
     View/Robot/scanmappainteditem.h \
     View/Robot/obstaclespainteditem.h \

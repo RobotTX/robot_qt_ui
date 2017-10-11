@@ -8,7 +8,6 @@
 
 class EditMapController;
 class QQmlApplicationEngine;
-class MergeMapController;
 class MainController;
 class ScanMapController;
 
@@ -21,7 +20,6 @@ public:
     MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent);
 
     /// Getters
-    QPointer<MergeMapController> getMergeMapController(void) const { return mergeMapController; }
     QPointer<ScanMapController> getScanMapController(void) const { return scanMapController; }
 
     QString getMapFile(void) const { return map->getMapFile(); }
@@ -197,7 +195,6 @@ signals:
 
  private:
     QPointer<Map> map;
-    QPointer<MergeMapController> mergeMapController;
     QPointer<EditMapController> editMapController;
     QPointer<ScanMapController> scanMapController;
 };

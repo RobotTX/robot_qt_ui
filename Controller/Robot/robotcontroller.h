@@ -213,7 +213,6 @@ signals:
      * @param resolution
      * Send the new map to the robotsController to be used in the merge window
      */
-    void mapToMergeFromRobot(QByteArray mapArray, QString resolution);
 
     /**
      * @brief receivedScanMap

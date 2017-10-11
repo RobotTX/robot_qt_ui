@@ -63,8 +63,8 @@ void ScanMapWorker::readTcpDataSlot(){
         int who = 0;
         if(static_cast<uint8_t>(data.at(data.size()-1)) == 254)
             who = 1;
-        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
-            who = 2;
+//        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
+//            who = 2;
 
         qDebug() << "(ScanMapWorker) Who :" << who;
 

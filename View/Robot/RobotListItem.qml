@@ -323,14 +323,14 @@ Frame {
         running: processingCmd
         visible: processingCmd
         anchors.fill: parent
-/*
-        Rectangle {
-            color: "transparent"
-            border.width: 2
-            border.color: "red"
-            anchors.fill: parent
-        }
-*/
+
+//        Rectangle {
+//            color: "transparent"
+//            border.width: 2
+//            border.color: "red"
+//            anchors.fill: parent
+//        }
+
     }
 }
 

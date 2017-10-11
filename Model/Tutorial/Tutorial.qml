@@ -19,16 +19,6 @@ ListModel {
     }
 
     ListElement {
-        feature: "merge_map"
-        message: "You are about to merge two or more maps together, here is how to proceed...\n\n\t
-        * Import two or more maps from the robot or from any folder\n\n\t
-        * Drag and rotate your maps until you are satisfied\n\n\t
-        * Click reset to start from scratch\n\n\t
-        * Don't forget to save or cancel your modifications\n"
-        show: true
-    }
-
-    ListElement {
         feature: "recover_position"
         message: "You are about to recover the position of one or more of your robots. This is how to proceed...\n\n\t
         * Choose a robot and click on \"start recovering the position\"

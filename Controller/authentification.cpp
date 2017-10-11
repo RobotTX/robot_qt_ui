@@ -10,7 +10,6 @@
 #include "Controller/maincontroller.h"
 #include "Controller/authentification.h"
 #include "View/EditMap/editmappainteditem.h"
-#include "View/MergeMap/mergemapspainteditem.h"
 #include "View/Robot/scanmappainteditem.h"
 #include "View/Robot/obstaclespainteditem.h"
 
@@ -39,9 +38,9 @@ Authentification::~Authentification() {
 }
 
 void Authentification::checkLoginSlot() {
-    qDebug("okaaaaaaaaaaaaaaay");
     // main application
     mainEngine.load(QUrl("qrc:/main.qml"));
+    qDebug("mainEngine from mainController opening");
     QQuickWindow *applicationWindow = qobject_cast<QQuickWindow*>(mainEngine.rootObjects().at(0));
     if (!applicationWindow) {
         qFatal("Error: Your root item has to be a window.");
@@ -61,8 +60,10 @@ void Authentification::deconnexionAuth() {
         Q_UNREACHABLE();
     } else {
         applicationWindow->close();
-        delete mainController;
+//        delete mainController;
+        qDebug("applicationWindow closed");
         window->show();
+
     }
 }
 

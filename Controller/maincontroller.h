@@ -160,7 +160,6 @@ private slots:
      * @param resolution
      * converts a QByteArray to a QImage to be merged after
      */
-    void processMapForMerge(QByteArray mapArray, QString resolution);
     /**
      * @brief startScanningSlot
      * @param ip
@@ -293,7 +292,6 @@ signals:
      * @param resolution
      * sends the map to the merge map controller
      */
-    void sendImageToMerge(QImage, double resolution);
     void openWarningDialog(QVariant title, QVariant msg);
     /**
      * @brief updateTutorialMessageVisibility

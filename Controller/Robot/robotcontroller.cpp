@@ -46,8 +46,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Signal that we just received a new map fron the robot
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
             parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
-    /// Signal that we just received a map to merge from the robot
-    connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+
     /// Signal that we received a new map while scanning
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
             parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
@@ -57,14 +56,6 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     QList<QObject*> qmlList = engine->rootObjects();
     /// The main parent element in the QML tree
     QObject *applicationWindow = qmlList.at(0);
-    QObject* mergeMapMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
-    /// to update the icon on the list item corresponding to this robot in the merge maps widget
-    /// to show that the map has been received
-    if(mergeMapMenu)
-        connect(this, SIGNAL(receivedMap(QVariant)), mergeMapMenu, SLOT(setMapReceived(QVariant)));
-    else
-        Q_UNREACHABLE();
-
     /// to draw the obstacles of the robots
     QQmlComponent component(engine, QUrl("qrc:/View/Robot/ObstaclesItems.qml"));
     paintedItem = qobject_cast<ObstaclesPaintedItem*>(component.create());
@@ -196,12 +187,6 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
     qDebug() << "RobotController::mapReceivedSlot received a map" << who;
 
     switch(who){
-        case 2:
-            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
-            emit mapToMergeFromRobot(mapArray, resolution);
-            /// to update the icon on the qml side ( the icon that says whether or not the map has arrived
-            emit receivedMap(ip);
-        break;
         case 1:
             emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
         break;

@@ -9,7 +9,6 @@
 #include <fstream>
 #include "Helper/helper.h"
 #include "Controller/Map/editmapcontroller.h"
-#include "Controller/Map/mergemapcontroller.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
 #include "View/EditMap/editmappainteditem.h"
@@ -51,8 +50,6 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     connect(this, SIGNAL(sendMapToRobots(QString, QString, QString, QImage)), parent, SLOT(sendMapToAllRobots(QString, QString, QString, QImage)));
 
     initializeMap();
-
-    mergeMapController = QPointer<MergeMapController>(new MergeMapController(parent, engine, applicationWindow));
 
     editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
 

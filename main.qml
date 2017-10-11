@@ -13,7 +13,6 @@ import "View/MainMenu"
 import "View/MapView"
 import "View/Map"
 import "View/EditMap"
-import "View/MergeMap"
 import "View/Point"
 import "View/Robot"
 import "View/ScanMap"
@@ -51,7 +50,6 @@ ApplicationWindow {
     property real batteryWarningThreshold: 20
 
     onClosing: {
-        mergeMap.close();
         scanMap.close();
         editMap.close();
 //        Qt.quit();
@@ -109,12 +107,6 @@ ApplicationWindow {
         EditMap {
             id: editMap
             imgSource: mapView.mapSrc
-            tutorial: _tutorial
-        }
-
-        MergeMap {
-            id: mergeMap
-            robotModel: _robotModel
             tutorial: _tutorial
         }
 

@@ -65,19 +65,10 @@ Frame {
 
     }
 
-//    NormalButton {
-//        id: mergeButton
-//        txt: "Merge Maps"
-//        imgSrc: "qrc:/icons/merge_map"
-//        anchors.top: editButton.bottom
-//        onClicked: mergeMap.show();
-//    }
-
     NormalButton {
         id: savePositionButton
         txt: "Save the position of the map"
         imgSrc: "qrc:/icons/saveState"
-//        anchors.top: mergeButton.bottom
         anchors.top: editButton.bottom
         onClicked: mapMenuFrame.savePosition()
     }

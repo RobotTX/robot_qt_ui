@@ -129,7 +129,6 @@ private slots:
     void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
     void sendMapTimerSlot(void);
     void requestMapTimerSlot(void);
-    void processMapForMerge(const QByteArray map, const QString resolution);
 
     void stoppedScanningSlot(const QString ip);
     void pausedScanningSlot(const QString ip);
@@ -191,7 +190,6 @@ signals:
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
-    void sendMapToProcessForMerge(QByteArray map, QString resolution);
     void stoppedScanning(QVariant ip);
     void startedScanning(QVariant ip);
     void pausedScanning(QVariant ip);

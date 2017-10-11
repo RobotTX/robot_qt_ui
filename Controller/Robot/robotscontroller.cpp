@@ -83,7 +83,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
             parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
 
-    connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+//    connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     connect(this, SIGNAL(removeScanMap(QString)), parent, SLOT(removeScanMapSlot(QString)));
     connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 
@@ -288,12 +288,12 @@ void RobotsController::requestMapForMerging(const QString ip){
     }
 }
 
-void RobotsController::processMapForMerge(const QByteArray map, const QString resolution){
-    qDebug() << "RobotsController::processMapForMerge";
-    emit sendMapToProcessForMerge(map, resolution);
-    receivingMap = false;
-    requestMapTimer->stop();
-}
+//void RobotsController::processMapForMerge(const QByteArray map, const QString resolution){
+//    qDebug() << "RobotsController::processMapForMerge";
+//    emit sendMapToProcessForMerge(map, resolution);
+//    receivingMap = false;
+//    requestMapTimer->stop();
+//}
 
 void RobotsController::startedScanningSlot(const QString ip){
     emit startedScanning(ip);
