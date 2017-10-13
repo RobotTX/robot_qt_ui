@@ -19,7 +19,7 @@ Frame {
     signal stopDockingRobot(string ip)
     signal rebootRobot(string ip)
 
-    height: 105 + robotPathListItem.height
+    height: 245 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
 
     background: Rectangle {

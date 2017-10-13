@@ -11,6 +11,7 @@ Frame {
     id: frame
     property Robots robotModel
     property Paths pathModel
+    property string msg: ""
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
@@ -146,7 +147,7 @@ Frame {
 
         color: "white"
         border.width: 1
-        border.color: Style.lightGreyBorder
+        border.color: Style.lightGreyBorder // up and down
         radius: 3
 
         Item {
@@ -213,6 +214,7 @@ Frame {
                 onClicked: robotModel.openPath(ip)
             }
 
+            // down line for 1st rectangle
             Rectangle {
                 id: borderBottom
                 height: 1
@@ -369,9 +371,18 @@ Frame {
                     leftMargin: 12
                 }
 
-                onClicked: playingPath ? robotModel.pausePathSignal(ip) : robotModel.playPathSignal(ip)
+                onClicked: {
+                    if (playingPath) {
+                        robotModel.pausePathSignal(ip);
+                        msg = "Button pause clicked";
+                        console.log("Test msg = " + msg);
+                    } else {
+                        robotModel.playPathSignal(ip)
+                        msg = "Button play clicked";
+                        console.log("Test msg = " + msg);
+                    }
+                }
             }
-
             SmallButton {
                 id: stopPathButton
                 // prevents the icon from occasionally disappearing for no apparent reason
@@ -465,6 +476,41 @@ Frame {
 
                 onClicked: dockClicked()
             }
+        }
+
+        Rectangle {
+            id: idConsole
+            visible: true
+            height: 140
+            anchors {
+                top: pathItem.bottom
+                topMargin: 5
+                left: parent.left
+                right: parent.right
+            }
+            color: "white"
+            border.width: 1
+            border.color: Style.lightGreyBorder // up and down
+            radius: 3
+
+//            Item {
+                CustomLabel {
+                    id: consoleMsg
+                    text: {
+                        console.log("Test in label msg = " + msg);
+                        qsTr(msg);
+                    }
+                    font.pixelSize: 14
+                    color: Style.midGrey2
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 5
+                }
+//            }
+
+
         }
     }
 

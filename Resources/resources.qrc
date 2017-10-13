@@ -38,9 +38,9 @@
 
         <file alias="pathPoint">icons/Point_Path_80.png</file>
         <file alias="pathPointStart">icons/Point_PathStart_80.png</file>
-        <file alias="pathPointStartRed">icons/Point_PathStart_80_red.png</file>
+        <file alias="pathPointStartRed">icons/Point_PathStart_80_green.png</file>
         <file alias="pathPointStartYellow">icons/Point_PathStart_80_yellow.png</file>
-        <file alias="pathPointEnd">icons/Point_Path_80_red.png</file>
+        <file alias="pathPointEnd">icons/Point_Path_80_green.png</file>
         <file alias="pathPointNext">icons/Point_Path_80_next.png</file>
 
         <file alias="settings_checked">icons/icSettings_normal.png</file>
