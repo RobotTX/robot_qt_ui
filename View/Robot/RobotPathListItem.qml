@@ -92,28 +92,33 @@ Frame {
                 source: {
                     switch(dockStatus){
                         case -4:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case -3:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case -2:
                             "qrc:/icons/noHome"
                         break;
                         case -1:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case 0:
                             "qrc:/icons/home"
                         break;
                         case 1:
-                            "qrc:/icons/home_green"
+//                            "qrc:/icons/home_green"
+                            "qrc:/icons/home_blue_fill"
                         break;
                         case 2:
                             "qrc:/icons/home_yellow"
                         break;
                         case 3:
-                            "qrc:/icons/home_blue"
+//                            "qrc:/icons/home_blue"
+                            "qrc:/icons/home_yellow_fill"
                         break;
                         default:
                             "qrc:/icons/notValid"
@@ -305,7 +310,6 @@ Frame {
                             CustomLabel {
                                 id: customLabelPathPointName
                                 text: qsTr(pathPointName)
-//                                text: qsTr(pathPointName + " - " + waitTime)
                                 font.pixelSize: 14
                                 color: Style.midGrey2
                                 anchors.verticalCenter: parent.verticalCenter
@@ -322,9 +326,7 @@ Frame {
                                 font.pixelSize: 14
                                 color: Style.midGrey2
                                 anchors.verticalCenter: parent.verticalCenter
-//                                anchors.left: customLabelPathPointName.right
                                 anchors.right: parent.right
-//                                anchors.leftMargin: 10
                                 anchors.rightMargin: 5
                             }
                         }
@@ -418,28 +420,33 @@ Frame {
                 imgSrc: {
                     switch(dockStatus){
                         case -4:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case -3:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case -2:
                             "qrc:/icons/noHome"
                         break;
                         case -1:
-                            "qrc:/icons/home_red1"
+//                            "qrc:/icons/home_red1"
+                            "qrc:/icons/home_red2_fill"
                         break;
                         case 0:
                             "qrc:/icons/home"
                         break;
                         case 1:
-                            "qrc:/icons/home_green"
+//                            "qrc:/icons/home_green"
+                            "qrc:/icons/home_blue_fill"
                         break;
                         case 2:
                             "qrc:/icons/home_yellow"
                         break;
                         case 3:
-                            "qrc:/icons/home_blue"
+//                            "qrc:/icons/home_blue"
+                            "qrc:/icons/home_yellow_fill"
                         break;
                         default:
                             "qrc:/icons/notValid"

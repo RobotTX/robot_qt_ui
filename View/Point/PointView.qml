@@ -96,8 +96,20 @@ Item {
             case Helper.PointViewType.PATHPOINT_START:
                 src = "qrc:/icons/pathPointStart";
             break;
+            case Helper.PointViewType.PATHPOINT_START_RED:
+                src = "qrc:/icons/pathPointStartRed";
+            break;
+            case Helper.PointViewType.PATHPOINT_START_YELLOW:
+                src = "qrc:/icons/pathPointStartYellow";
+            break;
             case Helper.PointViewType.HOME_TEMP:
                 src = "qrc:/icons/addHomeView";
+            break;
+            case Helper.PointViewType.PATHPOINT_END:
+                src = "qrc:/icons/pathPointEnd";
+            break;
+            case Helper.PointViewType.PATHPOINT_NEXT:
+                src = "qrc:/icons/pathPointNext";
             break;
             default:
                 console.log("The pointView \"" + _name + "\" in group \"" + _groupName + "\" is in an undefined status " + type);

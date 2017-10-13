@@ -5,7 +5,11 @@ var PointViewType = {
     HOME: 3,
     PATHPOINT: 4,
     PATHPOINT_START: 5,
-    HOME_TEMP: 6
+    HOME_TEMP: 6,
+    PATHPOINT_END: 7,
+    PATHPOINT_NEXT : 8,
+    PATHPOINT_START_RED : 9,
+    PATHPOINT_START_YELLOW : 10
 };
 
 var noGroup = "No Group";

@@ -253,8 +253,11 @@ Frame {
                             qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                         else
                             qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
-                    } else
+                    } else if (stage === pathPoints.count) {
+                        qsTr("Current path completed");
+                    } else {
                         qsTr("Stage not in the pathpoint list");
+                    }
                 } else {
                     if(Math.abs(stage + 1) < pathPoints.count){
                         if(stage == -1)

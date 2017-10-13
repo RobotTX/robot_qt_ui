@@ -396,7 +396,33 @@ Frame {
                                 _name: pathPointName
                                 _isVisible: useRobotPathModel ? pathIsVisible : false
                                 _groupName: pathName
-                                type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+                                type: //index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+//                                    if (index === 0) {
+//                                        Helper.PointViewType.PATHPOINT_START
+//                                    } else if (index === 1) {
+//                                        Helper.PointViewType.PATHPOINT
+//                                    } else {
+//                                        Helper.PointViewType.PATHPOINT_NEXT
+//                                    }
+                                    {
+                                        if (stage === 0) {
+                                            if (index === 0) {
+                                                Helper.PointViewType.PATHPOINT_START_YELLOW
+                                            } else {
+                                                Helper.PointViewType.PATHPOINT
+                                            }
+                                        } else if (stage > 0) {
+                                            if (index == 0) {
+                                                Helper.PointViewType.PATHPOINT_START_RED
+                                            } else if (stage == index) {
+                                                Helper.PointViewType.PATHPOINT_NEXT
+                                            } else if (stage > index) {
+                                                Helper.PointViewType.PATHPOINT_END
+                                            } else {
+                                                Helper.PointViewType.PATHPOINT
+                                            }
+                                        }
+                                }
                                 x: pathPointPosX
                                 y: pathPointPosY
                                 tooltipText: pathPointName

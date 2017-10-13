@@ -47,6 +47,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'd':
                     /// Paused the path of the robot
+//                    emit setMessageTop(2, "Mission on pause");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'e':
@@ -74,6 +75,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'j':
                     /// Played the path of the robot
+                    emit setMessageTop(2, "Robot \"" + robotName + "\" is starting its mission");
                     emit updatePlayingPath(ip, true);
                 break;
                 /*case 'k':
@@ -83,6 +85,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;*/
                 case 'l':
                     /// Stopped the path of the robot
+                    emit setMessageTop(2, "End of the robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'm':
@@ -101,6 +104,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'p':
                     /// Stopped the docking process
+                    emit setMessageTop(2, "Robot \"" + robotName + "\" is going to its charging station");
                     qDebug() << "CommandController::cmdAnswerSlot Stopped docking" << list;
                 break;
                 case 'q':
