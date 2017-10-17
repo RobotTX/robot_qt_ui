@@ -4,6 +4,7 @@ ListModel {
     property real batteryWarningThreshold
     property variant msgs: []
     property string msg: ""
+    property int statusColor: -1
 
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
@@ -32,7 +33,7 @@ ListModel {
             "orientation": 0,
             "playingPath": false,
             "pathIsOpen": false,
-            "pathIsVisible": false,
+            "pathIsVisible": true,
             "pathName": "",
             "pathPoints": [],
             "homeX": -1,

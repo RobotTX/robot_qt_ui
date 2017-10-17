@@ -346,7 +346,7 @@ Frame {
 
                     TextField {
                         id: nameId
-                        text: name
+                        text: "P"+(index+1)
                         selectByMouse: true
                         color: "#262626"
                         padding: 2
@@ -362,7 +362,6 @@ Frame {
                             border.color: nameId.activeFocus ? Style.lightBlue : Style.lightGreyBorder
                             border.width: nameId.activeFocus ? 3 : 1
                         }
-                        onFocusChanged: !focus && text === "" ? name = Math.round(posX) + ' ' + Math.round(posY) : undefined
                         onTextChanged: name = text
                     }
 

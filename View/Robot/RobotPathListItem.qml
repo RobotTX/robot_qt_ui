@@ -423,32 +423,27 @@ Frame {
                 imgSrc: {
                     switch(dockStatus){
                         case -4:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case -3:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case -2:
                             "qrc:/icons/noHome"
                         break;
                         case -1:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case 0:
                             "qrc:/icons/home"
                         break;
                         case 1:
-//                            "qrc:/icons/home_green"
                             "qrc:/icons/home_blue_fill"
                         break;
                         case 2:
                             "qrc:/icons/home_yellow"
                         break;
                         case 3:
-//                            "qrc:/icons/home_blue"
                             "qrc:/icons/home_yellow_fill"
                         break;
                         default:
@@ -485,7 +480,7 @@ Frame {
             }
             color: "white"
             border.width: 1
-            border.color: Style.lightGreyBorder // up and down
+            border.color: Style.lightGreyBorder
             radius: 3
 
             Flickable {
@@ -504,8 +499,20 @@ Frame {
                         fontSizeMode: Text.VerticalFit
                         wrapMode: Text.WordWrap
                         text: robotModel.msg
-                        font.pixelSize: 12
+                        font.pixelSize: 14
                         color: Style.midGrey2
+//                        {
+//                            if (robotModel.statusColor === -1)
+//                                Style.midGrey2
+//                            else if (robotModel.statusColor === 0)
+//                                Style.errorColor
+//                            else if (robotModel.statusColor === 1)
+//                                Style.warningColor
+//                            else if (robotModel.statusColor === 2)
+//                                Style.successColor
+//                            else if (robotModel.statusColor === 3)
+//                                Style.infoColor
+//                        }
                     }
                 }
 
