@@ -11,7 +11,7 @@ Frame {
     id: frame
     property Robots robotModel
     property Paths pathModel
-    property string msg: ""
+
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
@@ -93,32 +93,27 @@ Frame {
                 source: {
                     switch(dockStatus){
                         case -4:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case -3:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case -2:
                             "qrc:/icons/noHome"
                         break;
                         case -1:
-//                            "qrc:/icons/home_red1"
                             "qrc:/icons/home_red2_fill"
                         break;
                         case 0:
                             "qrc:/icons/home"
                         break;
                         case 1:
-//                            "qrc:/icons/home_green"
                             "qrc:/icons/home_blue_fill"
                         break;
                         case 2:
                             "qrc:/icons/home_yellow"
                         break;
                         case 3:
-//                            "qrc:/icons/home_blue"
                             "qrc:/icons/home_yellow_fill"
                         break;
                         default:
@@ -372,16 +367,9 @@ Frame {
                 }
 
                 onClicked: {
-                    if (playingPath) {
-                        robotModel.pausePathSignal(ip);
-                        msg = "Button pause clicked";
-                        console.log("Test msg = " + msg);
-                    } else {
-                        robotModel.playPathSignal(ip)
-                        msg = "Button play clicked";
-                        console.log("Test msg = " + msg);
-                    }
+                    playingPath ? robotModel.pausePathSignal(ip): robotModel.playPathSignal(ip);
                 }
+
             }
             SmallButton {
                 id: stopPathButton
@@ -398,7 +386,9 @@ Frame {
                     leftMargin: (bottomItem.width - playPausePathButton.anchors.leftMargin * 2 - playPausePathButton.width * 4) / 3
                 }
 
-                onClicked: robotModel.stopPathSignal(ip)
+                onClicked: {
+                    robotModel.stopPathSignal(ip)
+                }
             }
 
             SmallButton {
@@ -418,7 +408,9 @@ Frame {
                     rightMargin: (bottomItem.width - playPausePathButton.anchors.leftMargin * 2 - playPausePathButton.width * 4) / 3
                 }
 
-                onClicked: robotModel.setLoopingPathSignal(ip, !looping);
+                onClicked: {
+                    robotModel.setLoopingPathSignal(ip, !looping);
+                }
             }
 
             SmallButton {
@@ -474,10 +466,13 @@ Frame {
 
                 enabled: dockStatus != -2
 
-                onClicked: dockClicked()
+                onClicked: {
+                    dockClicked()
+                }
             }
         }
 
+        // console displaying actions
         Rectangle {
             id: idConsole
             visible: true
@@ -493,24 +488,28 @@ Frame {
             border.color: Style.lightGreyBorder // up and down
             radius: 3
 
-//            Item {
-                CustomLabel {
-                    id: consoleMsg
-                    text: {
-                        console.log("Test in label msg = " + msg);
-                        qsTr(msg);
-                    }
-                    font.pixelSize: 14
-                    color: Style.midGrey2
-                    anchors.verticalCenter: parent.verticalCenter
+            Flickable {
+                id: flickConsole
+                ScrollBar.vertical: ScrollBar { }
+                contentHeight: contentItem.childrenRect.height
+                anchors.fill: parent
+                clip: true
+
+                Column {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 5
+
+                    Text {
+                        id: consoleMessage
+                        fontSizeMode: Text.VerticalFit
+                        wrapMode: Text.WordWrap
+                        text: robotModel.msg
+                        font.pixelSize: 12
+                        color: Style.midGrey2
+                    }
                 }
-//            }
 
-
+            }
         }
     }
 

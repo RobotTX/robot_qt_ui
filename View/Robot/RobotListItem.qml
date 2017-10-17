@@ -243,32 +243,48 @@ Frame {
         }
     }
 
+    property variant msgFinal: []
+
     CustomLabel {
         id: pathLabel
         text: {
             if(pathName !== "" && pathPoints.count > 0){
                 if(stage >= 0){
                     if(stage < pathPoints.count){
-                        if(playingPath)
+                        if(playingPath) {
+                            robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
+                            robotModel.msg = robotModel.msgs.join('');
                             qsTr("Heading to " + pathPoints.get(stage).pathPointName);
-                        else
+                        } else {
+                            robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Waiting to go to " + pathPoints.get(stage).pathPointName + "\n");
+                            robotModel.msg = robotModel.msgs.join('');
                             qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
+                        }
                     } else if (stage === pathPoints.count) {
+                        robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current path completed" + "\n");
+                        robotModel.msg = robotModel.msgs.join('');
                         qsTr("Current path completed");
                     } else {
                         qsTr("Stage not in the pathpoint list");
                     }
                 } else {
                     if(Math.abs(stage + 1) < pathPoints.count){
-                        if(stage == -1)
+                        if(stage == -1) {
+                            robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
+                            robotModel.msg = robotModel.msgs.join('');
                             qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                        else
+                        } else {
+                            robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
+                            robotModel.msg = robotModel.msgs.join('');
                             qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                    } else
+                        }
+                    } else {
                         qsTr("Stage not in the pathpoint list");
+                    }
                 }
-            } else
+            } else {
                 qsTr("No Path Assigned");
+            }
         }
         font.pixelSize: 14
         color: {
@@ -330,14 +346,14 @@ Frame {
         running: processingCmd
         visible: processingCmd
         anchors.fill: parent
+    }
 
-//        Rectangle {
-//            color: "transparent"
-//            border.width: 2
-//            border.color: "red"
-//            anchors.fill: parent
-//        }
-
+    function inverseArray(arrayMsg, len) {
+        for (var i = 0; i < len; i++) {
+            var temp = arrayMsg[i];
+            arrayMsg[i] = arrayMsg[len - i - 1];
+            arrayMsg[len-i-1] = temp;
+        }
     }
 }
 

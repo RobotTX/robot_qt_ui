@@ -46,9 +46,10 @@ void Authentification::checkLoginSlot() {
         qFatal("Error: Your root item has to be a window.");
         Q_UNREACHABLE();
     } else {
+        qDebug("applicationWindow opened");
         mainController = new MainController(&mainEngine);
         connect(mainController,SIGNAL(deco()),this,SLOT(deconnexionAuth()));
-        window->hide();
+        window->close();
     }
 }
 
@@ -60,9 +61,7 @@ void Authentification::deconnexionAuth() {
         Q_UNREACHABLE();
     } else {
         applicationWindow->close();
-//        delete mainController;
         qDebug("applicationWindow closed");
-        window->show();
 
     }
 }

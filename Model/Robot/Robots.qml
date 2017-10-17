@@ -2,6 +2,8 @@ import QtQuick 2.0
 
 ListModel {
     property real batteryWarningThreshold
+    property variant msgs: []
+    property string msg: ""
 
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
