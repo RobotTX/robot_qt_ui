@@ -245,6 +245,18 @@ Frame {
 
     property variant msgFinal: []
 
+    function inverseArray(array1, array2, len) {
+        console.log("array2 \n")
+        for (var i = len - 1; i >= 0; i--) {
+            for (var j = 0; j < len; j++) {
+                array2[j] = array1[i];
+                console.log(array2[j] + "\n");
+            }
+        }
+    }
+
+    signal setMessageTop(int status, string msg)
+
     CustomLabel {
         id: pathLabel
         text: {
@@ -252,10 +264,16 @@ Frame {
                 if(stage >= 0){
                     if(stage < pathPoints.count){
                         if(playingPath) {
-                            robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
-                            robotModel.msg = robotModel.msgs.join('');
-                            qsTr("Heading to " + pathPoints.get(stage).pathPointName);
-//                            robotModel.statusColor = 3;
+                            if (stage == 0) {
+                                robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its mission" + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n")
+                                robotModel.msg = robotModel.msgs.join('');
+                            } else {
+                                robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
+                                robotModel.msg = robotModel.msgs.join('');
+                                var headString = "Heading to " + pathPoints.get(stage).pathPointName;
+                                qsTr(headString);
+    //                            robotModel.statusColor = 3;
+                            }
                         } else {
                             robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Waiting to go to " + pathPoints.get(stage).pathPointName + "\n");
                             robotModel.msg = robotModel.msgs.join('');
@@ -353,13 +371,7 @@ Frame {
         anchors.fill: parent
     }
 
-    function inverseArray(arrayMsg, len) {
-        for (var i = 0; i < len; i++) {
-            var temp = arrayMsg[i];
-            arrayMsg[i] = arrayMsg[len - i - 1];
-            arrayMsg[len-i-1] = temp;
-        }
-    }
+
 }
 
 
