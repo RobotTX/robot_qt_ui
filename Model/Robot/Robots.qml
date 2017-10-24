@@ -3,7 +3,10 @@ import QtQuick 2.0
 ListModel {
     property real batteryWarningThreshold
     property variant msgs: []
+    property variant inverseMsg: []
+    property variant tmp: []
     property string msg: ""
+    property string test: ""
     property int statusColor: -1
 
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)

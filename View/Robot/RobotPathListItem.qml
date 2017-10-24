@@ -499,6 +499,7 @@ Frame {
                         fontSizeMode: Text.VerticalFit
                         wrapMode: Text.WordWrap
                         text: robotModel.msg
+
                         font.pixelSize: 14
                         color: Style.midGrey2
 //                        {
