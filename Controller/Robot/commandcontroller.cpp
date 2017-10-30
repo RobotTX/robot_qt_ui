@@ -127,10 +127,10 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Stopped the current scan
                     emit stoppedScanning(ip);
                 break;
-                /*case 'v':
+                case 'v':
                     /// Started to recover the position of a robot
                 break;
-                case 'w':
+                /*case 'w':
                     /// Stopped to recover the position of a robot
                 break;*/
                 case ',':
