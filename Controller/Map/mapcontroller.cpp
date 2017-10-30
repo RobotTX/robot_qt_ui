@@ -385,7 +385,7 @@ QString MapController::getMetadataString(void) const {
     /// We send -150 as initial position so we know we don't use it in readnewmap.cpp on the robot
     /// so we'll use the robot home position instead
     return QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
-            ' ' + QString::number(map->getResolution()) + " -150 -150";
+            ' ' + QString::number(map->getResolution()) + QString::number(map->getOrigin().x()) + ' ' + QString::number(map->getOrigin().y());
 }
 
 void MapController::saveNewMap(const QString file_name){

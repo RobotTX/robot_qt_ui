@@ -550,8 +550,8 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     /// we send this information to the robot, init pos is used to determine the position of the robot directly after gobot move
     /// is relaunched
     QString infoRobot = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
-            ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(initPos.x()) +
-            ' ' + QString::number(initPos.y()) + ' ' + QString::number(robotOri);;
+            ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(mapController->getOrigin().x()) +
+            ' ' + QString::number(mapController->getOrigin().y()) + ' ' + QString::number(robotOri);;
 
     QImage img(cpp_file_name);
 
