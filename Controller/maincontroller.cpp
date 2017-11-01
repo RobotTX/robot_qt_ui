@@ -222,20 +222,26 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
-        qDebug() << "filename" << fileName;
+        qDebug() << "save map to:" << fileName;
         fileName = fileName.mid(0, fileName.length()-4);
         qDebug() << "fileName after" << fileName;
     }
 
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
     QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+    QString oldFilePath = mapController->getMapFile();
+    qDebug() << "save map from:" << oldFilePath;
 
     if(!new_config){
+        ///saves the image to the user given directory
+        mapController->saveMapToFile(fileName + ".pgm");
 
-        /// saves the image as a pgm file
+        /// saves the image as a pgm file to the software directory
         mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+        ///mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
 
@@ -250,8 +256,8 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
         /// saves the new configuration to the current configuration file
         PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
-
-    } else {
+    }
+    else {
 
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
@@ -263,12 +269,22 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 }
 
 void MainController::loadMapConfig(QString fileName) {
-    qDebug() << "MainController::loadMapConfig called with file" << fileName;
+    qDebug() << "MainController::loadMapConfig called with file" << fileName;\
 
     if(!fileName.isEmpty()){
         QString fileNameWithoutExtension;
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
+
+        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
+        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
+
+        ///save the current points and paths to the attached map before clearing it for new map
+        qDebug() << "MainController::loadMapConfig save current map paths to:"<<oldfilePaths;
+        PathXMLParser::save(pathController,oldfilePaths);
+        qDebug() << "MainController::loadMapConfig save current map points to:"<<oldfilePoints;
+        XMLParser::save(pointController,oldfilePoints);
+
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QString filePath(Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
@@ -412,7 +428,8 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
     qDebug() << "MainController::updateMapInfo Robot" << ip << "comparing ids" << mapId << "and" << mapController->getMapId();
     if(mapId.compare(mapController->getMapId().toString()) == 0){
         qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
-    } else {
+    }
+    else {
         qDebug() << "ids of app and robot " << mapController->getMapId().toString() << mapId;
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
 
@@ -422,6 +439,15 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         } else {
             qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and newer map";
         }
+
+        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
+        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
+
+        ///save the current points and paths to the attached map before clearing it for new map
+        qDebug() << "MainController::loadMapConfig save current map paths to:"<<oldfilePaths;
+        PathXMLParser::save(pathController,oldfilePaths);
+        qDebug() << "MainController::loadMapConfig save current map points to:"<<oldfilePoints;
+        XMLParser::save(pointController,oldfilePoints);
 
         int mapChoice = -1;
         QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
