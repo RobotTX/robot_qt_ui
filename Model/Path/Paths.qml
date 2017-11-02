@@ -12,6 +12,7 @@ ListModel {
     signal validPositionChanged()
     signal setMessageTop(int status, string msg)
     signal saveCurrentPath(string pathName, ListModel pathPoints)
+    signal robotConnection(string ip)
 
     function addGroup(name){
         console.log("paths adding group " + name)

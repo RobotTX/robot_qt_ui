@@ -63,6 +63,7 @@ Frame {
     }
 
     // to store the robots whose map has been imported for scanning (subset of the robotModel and only the name and ip attributes are used
+
     ListModel {
         id: scanningRobotsList
 
@@ -82,7 +83,6 @@ Frame {
             else
                 startAutomaticScan(ip)
         }
-
         function removeRobot(ip){
             for(var i = 0; i < count; i++)
                 if(get(i).ip === ip)

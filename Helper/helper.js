@@ -13,6 +13,7 @@ var PointViewType = {
 };
 
 var noGroup = "No Group";
+var noRobot = "No Robot";
 
 function dashLine(ctx, fromX, fromY, toX, toY, pattern) {
     // Our growth rate for our line can be one of the following:
