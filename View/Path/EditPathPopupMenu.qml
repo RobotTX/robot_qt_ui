@@ -4,7 +4,10 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../../Model/Robot"
+import "../../Model/Point"
 import "../Custom"
+import "../Robot"
 
 Menu {
     id: menu
@@ -12,11 +15,16 @@ Menu {
     width: 188
 
     property Paths pathModel
+    property Robots robotModel
+    property Points pointModel
     property string myGroup
+    property string myRobot
+    property int currentMenuIndex: -1
 
     signal editPath()
     signal deletePath()
     signal moveTo(string newGroup)
+    signal robotSelected(string robot)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -24,6 +32,7 @@ Menu {
         radius: 5
     }
 
+    // first item
     PopupMenuItem {
         labelText: "Edit Path"
         width: parent.width
@@ -39,6 +48,42 @@ Menu {
     }
 
     PopupMenuItem {
+         labelText: "Test"
+         width: parent.width
+         leftPadding: Style.menuItemLeftPadding
+         height: Style.menuItemHeight
+
+         Image {
+             asynchronous: true
+             source: "qrc:/icons/arrow"
+             fillMode: Image.Pad // for not streaching image
+             anchors.verticalCenter: parent.verticalCenter
+             anchors.right: parent.right
+             anchors.rightMargin: 12
+         }
+
+         onHoveredChanged: if(!robotListInPopup.visible) robotListInPopup.open()
+
+         RobotListInPopup {
+             id: robotListInPopup
+//             onVisibleChanged: robotListInPopup.close()
+             x: parent.width
+             robotModel: menu.robotModel
+             onRobotSelected: {
+                 console.log("Robot selected !");
+             }
+         }
+    }
+
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
+    // third item
+    PopupMenuItem {
         labelText: "Move to"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
@@ -52,12 +97,12 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-
+        onHoveredChanged: if(!moveToMenu.visible) moveToMenu.open()
 
         Menu {
             id: moveToMenu
             padding: 0
+//            onVisibleChanged: moveToMenu.close()
             width: 140
             x: parent.width
 
@@ -101,8 +146,10 @@ Menu {
                         leftPadding: Style.menuItemLeftPadding
                         /// Disable the group in which the path already is so we can't move it in
                         enabled: !(groupName === myGroup)
-                        labelText: groupName
-
+                        labelText: {
+                            console.log("number of robot = " + robotModel.count)
+                            groupName
+                        }
                         onTriggered: moveTo(groupName)
                     }
                 }

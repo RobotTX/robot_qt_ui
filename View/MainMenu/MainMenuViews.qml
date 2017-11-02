@@ -53,6 +53,7 @@ Frame {
     PathMenu {
         id: pathMenu
         visible: currentMenu == 1
+        robotModel: mainMenuViewsFrame.robotModel
         tmpPathModel: mainMenuViewsFrame.tmpPathModel
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel

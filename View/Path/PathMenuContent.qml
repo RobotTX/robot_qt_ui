@@ -4,6 +4,7 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../Custom"
 import "../../Model/Path"
+import "../../Model/Robot"
 
 Frame {
     id: pathMenuFrame
@@ -12,6 +13,7 @@ Frame {
     signal editPath(string name, string groupName)
 
     property Paths pathModel
+    property Robots robotModel
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -31,6 +33,7 @@ Frame {
             column: columnId
             width: pathMenuFrame.width
             pathModel: pathMenuFrame.pathModel
+            robotModel: pathMenuFrame.robotModel
             onRenameGroup: pathMenuFrame.renameGroup(name)
             onEditPath: pathMenuFrame.editPath(name, groupName)
         }

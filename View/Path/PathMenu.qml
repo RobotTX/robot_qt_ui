@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import "../Custom"
 import "../../Model/Path"
 import "../../Model/Point"
+import "../../Model/Robot"
 import "../../Helper/helper.js" as Helper
 
 Page {
@@ -11,6 +12,7 @@ Page {
     property Paths pathModel // Path file in qml model
     property Paths tmpPathModel
     property Points pointModel
+    property Robots robotModel
     property int menuIndex: 0
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
@@ -39,6 +41,7 @@ Page {
 
         PathMenuContent {
             pathModel: page.pathModel
+            robotModel: page.robotModel
             anchors {
                 left: parent.left
                 top: pathMenuHeader.bottom

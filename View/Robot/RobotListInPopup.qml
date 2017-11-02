@@ -33,7 +33,7 @@ Menu {
             model: robotModel
             delegate: PopupMenuItem {
                 labelText: name
-                enabled: !robotMapsList.contains(ip) && !processingCmd
+                enabled: true //!robotMapsList.contains(ip) && !processingCmd
                 Layout.preferredHeight: Style.menuItemHeight
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
@@ -44,7 +44,7 @@ Menu {
                 }
 
                 onTriggered: {
-                    console.log("Selected robot " + name)
+                    console.log("In robotlistinpopup Selected robot " + name)
                     robotMenu.robotSelected(name, ip)
                     close()
                 }

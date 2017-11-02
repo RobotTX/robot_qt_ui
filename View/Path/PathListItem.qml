@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../../Model/Robot"
 import "../Custom"
 
 Column {
@@ -11,6 +12,7 @@ Column {
 
     property Paths pathModel
     property Column column
+    property Robots robotModel
     signal renameGroup(string name)
     signal editPath(string name, string groupName)
 
@@ -185,6 +187,7 @@ Column {
                         id: editPathPopupMenu
                         x: rightButton.width
                         pathModel: groupListItem.pathModel
+                        robotModel: groupListItem.robotModel
                         myGroup: groupName
                         onDeletePath: pathModel.deletePath(groupName, pathName)
                         onMoveTo: pathModel.moveTo(pathName, groupName, newGroup)
