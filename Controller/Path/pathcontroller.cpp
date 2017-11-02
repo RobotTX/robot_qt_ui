@@ -76,6 +76,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
     }
 
     currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
+    qDebug() << "PathController::PathController" << currentPathsFile;
     loadPaths(currentPathsFile);
 }
 

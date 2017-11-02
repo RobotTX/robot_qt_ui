@@ -115,7 +115,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
     /// saves the current configuration into the current configuration file
     if(file){
         qDebug() << "Map::savePositionSlot called with following parameters";
-        qDebug() << "map file - height - width - centerX - centerY - zoom - originX - originY - resolution - date - id";
+        qDebug() << "map file - width - height - centerX - centerY - zoom - originX - originY - resolution - date - id";
         qDebug() << mapSrc << map->getWidth() << map->getHeight() << posX << posY
                  << zoom << mapRotation << map->getOrigin().x() << map->getOrigin().y() <<  map->getResolution()
                  << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
@@ -154,7 +154,7 @@ void MapController::loadPositionSlot(){
 }
 
 bool MapController::saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom, const int mapRotation) const {
-    qDebug() << "MainWindow::saveMapConfig saving map to " << fileName;
+    qDebug() << "MapController::saveMapConfig saving map to " << fileName;
     std::ofstream file(fileName.toStdString(), std::ios::out | std::ios::trunc);
     if(file){
         qDebug() << "saving map with file " << map->getMapFile();
@@ -254,9 +254,9 @@ void MapController::saveEditedImage(const QString location){
              << map->getResolution() << endl
              << map->getMapId().toString();
         file.close();
-        qDebug() << "saving dans config file " << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + map->getMapFile();
+        qDebug() << "saving dans config file " << map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config";
     }
-    saveMapConfig(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
+    saveMapConfig(map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
 
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
