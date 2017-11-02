@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+	 <!--dont forget to add node bluetooth send  -->
+	<node pkg="sonar" type="sonar_listener.py" name="data" output="screen">
+	<param name="serialPortL" value="/dev/ttyO2"/>
+	<param name="serialPortL" value="/dev/ttyO1"/>
+	</node>
+	<node pkg="sonar" type="distance_analyser.py" name="analyser" output="screen"/>
+</launch>

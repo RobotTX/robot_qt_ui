@@ -1,5 +1,22 @@
-# C++ objects and libs
+Gobot.pro.user*
+gobot-software.pro.*
+gobot-software.pro.user
+GobotSoftware.pro.*
+GobotSoftware.pro.user
+Build/*
+mapConfigs/*
+currentMap.txt
+settings/*
+robots_homes/*
+robots_paths/*
+Resources/qt-*
+Gobot.pro.*
+Gobot.pro.user
+RobotFiles/gobot_software/Robot_Infos/*.txt
+RobotFiles/gobot_software/Robot_Infos/IP/*.txt
+*.pgm
 
+# C++ objects and libs
 *.slo
 *.lo
 *.o

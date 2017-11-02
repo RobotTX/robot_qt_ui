@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="35px" viewBox="0 0 18 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Point_PathStart</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Point_PathStart" fill="#A9D1FC">
+            <path d="M8.99999859,23.749998 C6.92849892,23.749998 5.24999918,22.0707483 5.24999918,19.9999986 C5.24999918,17.9284989 6.92849892,16.2499992 8.99999859,16.2499992 C11.0714983,16.2499992 12.749998,17.9284989 12.749998,19.9999986 C12.749998,22.0707483 11.0714983,23.749998 8.99999859,23.749998 M8.99999859,34.9999963 C7.50299883,35.0074962 0,23.762748 0,19.9999986 C0,15.0297494 4.02899937,11 8.99999859,11 C13.9702478,11 17.9999972,15.0297494 17.9999972,19.9999986 C17.9999972,23.712498 10.4722484,35.0074962 8.99999859,34.9999963" id="Fill-78-Copy-2"></path>
+            <circle id="Oval-2" cx="9" cy="4" r="4"></circle>
+        </g>
+    </g>
+</svg>

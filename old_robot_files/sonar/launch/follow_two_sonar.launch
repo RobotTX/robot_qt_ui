@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+	 <!--dont forget to add node bluetooth send  -->
+	<node pkg="sonar" type="two_sonar_listener.py" name="data" output="screen">
+	<param name="serialPortL" value="/dev/ttyO4"/>
+	<param name="serialPortR" value="/dev/ttyO1"/>
+	</node>
+	<node pkg="bluetooth" type="ble_listener.py" name="ble" output="screen"/>
+        <node pkg="wheel" type="DMCC_controller" name="wheel" output="screen"/>
+	<node pkg="sonar" type="distance_analyser.py" name="analyser" output="screen"/>
+	<node pkg="movements" type="movement_node_twoSonar.py" name="movement" output="screen"/>
+</launch>

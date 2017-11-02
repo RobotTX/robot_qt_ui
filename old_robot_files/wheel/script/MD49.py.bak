@@ -1,0 +1,310 @@
+#!/usr/bin/env python
+
+import rospy
+import std_srvs
+import commands
+from std_srvs import srv
+import rospkg
+from std_msgs.msg import String,Empty
+import serial
+import time
+import struct
+from wheel.srv import *
+
+testEnd=True
+step = 10 
+timeSleep = 0.05
+currentRSpeed = 0
+currentLSpeed = 0
+tempRSpeed = 0
+tempLSpeed = 0
+tempRDirect = "F"
+tempLDirect = "F"
+currentRDirect = "F"
+currentLDirect ="F"
+
+def setSpeedAction(wheel,direction,percent):
+	global testEnd
+        #wheel= req.wheel
+        #direction = req.direction
+        #percent = req.velocity
+        if direction == 'F' :
+                speed = 128 - ((percent * 127) / 100)
+        else :
+                speed = 128 + ((percent * 128 ) / 100 )
+
+        if wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+
+def setSpeeds(req):
+	global testEnd
+	while not testEnd :
+        	continue
+	
+	directRFlag = True
+	directLFlag = True
+    	testEnd=False
+	wheel_serial.write(serial.to_bytes([0x00,0x21]))
+	res= wheel_serial.read()
+        res= ord(res)
+        if res < 128 :
+                res = (128 - res) * 100 / 128
+                res = 0 - res
+        else :
+                res = (res - 128) * 100 / 127
+	if (res>0) and (req.directionR=="B"):
+		tempRSpeed = req.velocityR
+		tempRDirect = "B"
+	elif (res<0) and (req.directionR=="F"):
+		tempRSpeed = req.velocityR
+		tempRDirect = "F"
+	else:
+		tempRSpeed = 0
+		directRFlag = False
+		if res>0:
+			tempRDirect = "B"
+		else:
+			tempRDirect = "F"
+	currentRSpeed = abs(res)
+	if (currentRSpeed == 100):
+		currentRSpeed = 95
+	wheel_serial.write(serial.to_bytes([0x00,0x22]))
+	res= wheel_serial.read()
+        res= ord(res)
+        if res < 128 :
+                res = (128 - res) * 100 / 128
+                res = 0 - res
+        else :
+                res = (res - 128) * 100 / 127
+	if (res>0) and (req.directionL=="B"):
+                tempLSpeed = req.velocityL
+		tempLDirect = "B"
+        elif (res<0) and (req.directionL=="F"):
+                tempLSpeed = req.velocityL
+		tempLDirect = "F"
+        else:
+                tempLSpeed = 0
+		directLFlag = False
+		if (res>0):
+			tempLDirect = "B"
+		else:
+			tempLDirect = "F"
+	currentLSpeed = abs(res)
+	if (currentLSpeed==100):
+		currentLSpeed = 95
+	flag1 = False
+	flag2 = False
+	if req.velocityR>=100:
+		req.velocityR = 99
+	if req.velocityL>=100:
+		req.velocityL = 99
+
+	while (not flag1) or (not flag2):
+		if ( directLFlag ):
+			if (currentLSpeed > req.velocityL):
+				currentLSpeed = max( currentLSpeed - step, req.velocityL)
+			elif (currentLSpeed < req.velocityL ):
+				currentLSpeed = min( currentLSpeed + step, req.velocityL)
+			else:
+				currentLSpeed = req.velocityL
+				flag1 = True
+			currentLDirect = req.directionL
+		else:
+			if (currentLSpeed > tempLSpeed):
+                                currentLSpeed = max( currentLSpeed - step, tempLSpeed)
+                        elif (currentLSpeed < tempLSpeed ):
+                                currentLSpeed = min( currentLSpeed + step, tempLSpeed)
+                        else:
+                                currentLSpeed = tempLSpeed
+				directLFlag = True
+			currentLDirect = tempLDirect
+		if (directRFlag):
+			if (currentRSpeed > req.velocityR):
+				currentRSpeed = max( currentRSpeed - step, req.velocityR)
+			elif (currentRSpeed < req.velocityR):
+				currentRSpeed = min( currentRSpeed + step, req.velocityR)
+			else:
+				currentRSpeed = req.velocityR
+				flag2 = True
+			currentRDirect = req.directionR
+		else:
+			if (currentRSpeed > tempRSpeed):
+                                currentRSpeed = max( currentRSpeed - step, tempRSpeed)
+                        elif (currentRSpeed < tempRSpeed ):
+                                currentRSpeed = min( currentRSpeed + step, tempRSpeed)
+                        else:
+                                currentRSpeed = tempRSpeed
+                                directRFlag = True
+			currentRDirect = tempRDirect
+		if currentLSpeed < 0 :
+			currentLSpeed = 0
+		if currentRSpeed < 0 :
+			currentRSpeed = 0
+
+		print "currentRSpeed is:", currentRSpeed, " directR:", currentRDirect , " currentLSpeed is :", currentLSpeed, "directL:",currentLDirect
+    		setSpeedAction(1,currentRDirect,currentRSpeed)
+        	setSpeedAction(2,currentLDirect,currentLSpeed)
+		time.sleep(timeSleep)
+    	testEnd=True
+        return SetSpeedsResponse()
+
+def setSpeedF(req):
+        global testEnd
+
+        while not testEnd :
+                continue
+        testEnd=False
+        speed = 128 + ((req.velocity * 127) / 100)
+        if req.wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+        testEnd=True
+        return SetSpeedDirectionResponse()
+
+def setSpeedB(req):
+        global testEnd
+
+        while not testEnd :
+                continue
+        testEnd=False
+
+        speed = 128 - ((req.velocity * 127) / 100)
+        if req.wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+        testEnd=True
+        return SetSpeedDirectionResponse()
+
+	# wheel : 1 = right ; 2 = left
+def setSpeed(req):
+        global testEnd
+
+        while not testEnd :
+                continue
+        testEnd=False
+	setSpeedAction(req.wheel,req.direction,req.velocity)
+        testEnd=True
+	return SetSpeedResponse()
+
+
+def getSpeed(req) :
+        global testEnd
+        while not testEnd :
+                continue
+        testEnd=False
+    	wheel = req.wheel
+        if wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x21]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x22]))
+        res= wheel_serial.read()
+        res= ord(res)
+        if res < 128 :
+                res = (128 - res) * 100 / 128
+                res = 0 - res
+        else :
+                res = (res - 128) * 100 / 127
+        testEnd=True
+        return GetSpeedResponse(-res)
+
+
+
+def calculate(bytes):
+        reverse = False
+        if str( bytes[0].encode('hex') ) == 'ff' :
+                reverse = True
+
+        hex = "0x"
+        for i in range(0,4) :
+                hex = hex + str( bytes[i].encode('hex') )
+        testEnd=True
+
+        if reverse :
+                max = 4294967295
+                return  int(hex, 16) - max
+        else:
+                return  int(hex,16)
+
+
+
+def getEncoder(req) :
+        global testEnd
+        while not testEnd :
+                continue
+        testEnd=False
+        wheel = req.wheel
+
+        if wheel == 1 :
+                wheel_serial.write( serial.to_bytes( [0x00,0x23] ) )
+        else :
+                wheel_serial.write( serial.to_bytes( [0x00,0x24] ) )
+        res= wheel_serial.read( 4 )
+        val = calculate(res)
+        testEnd=True
+        return GetEncoderResponse( val )
+
+def getEncoders(req) :
+        global testEnd
+        while not testEnd :
+                continue
+        testEnd=False
+        wheel_serial.write( serial.to_bytes( [0x00,0x25] ) )
+	res1=wheel_serial.read(4)
+	res2=wheel_serial.read(4)
+	list=[]
+        list.append(calculate(res1))
+        list.append(calculate(res2))
+        testEnd=True
+        return GetEncodersResponse(list)
+
+def resetEncoders(req) :
+        global testEnd
+
+        while not testEnd :
+                continue
+        testEnd=False
+    	wheel_serial.write(serial.to_bytes([0x00,0x35]))
+        testEnd=True
+    	return std_srvs.srv.EmptyResponse()
+
+def init():
+    	global wheel_serial,testEnd
+	deviceNode = "1-3.2:1.1"
+	(status, output) = commands.getstatusoutput("ls -l /sys/class/tty/ttyUSB*")
+	devPort = "/dev"+output[output.index(deviceNode)+9:output.index(deviceNode)+17]
+        wheel_serial = serial.Serial(port = devPort, baudrate=9600)
+        wheel_serial.close()
+        wheel_serial.open()
+
+    	#wheel mode 0
+        wheel_serial.write(serial.to_bytes([0x00,0x34,0x00]))
+        #disable 2sec timeout
+        wheel_serial.write(serial.to_bytes([0x00,0x38]))
+        #acceleration step 5
+        wheel_serial.write(serial.to_bytes([0x00,0x33,0x05]))
+
+
+
+
+if __name__ == "__main__":
+    rospy.init_node('MD49_listener')
+    init()
+    s = rospy.Service('setSpeed', SetSpeed, setSpeed)
+    s = rospy.Service('getSpeed', GetSpeed, getSpeed)
+    s = rospy.Service('getEncoder', GetEncoder, getEncoder)
+    s = rospy.Service('getEncoders', GetEncoders, getEncoders)
+    s = rospy.Service('resetEncoders', std_srvs.srv.Empty, resetEncoders)
+    s = rospy.Service('setSpeedF', SetSpeedDirection, setSpeedF)
+    s = rospy.Service('setSpeedB', SetSpeedDirection, setSpeedB)
+    s = rospy.Service('setSpeeds', SetSpeeds, setSpeeds)
+
+    rospy.spin()
+
+

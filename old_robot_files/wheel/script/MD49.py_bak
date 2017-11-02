@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+
+import rospy
+import std_srvs
+from std_srvs import srv
+import rospkg
+from std_msgs.msg import String,Empty
+import serial
+import time
+import struct
+from wheel.srv import *
+
+def setSpeedAction(wheel,direction,percent):
+        #wheel= req.wheel
+        #direction = req.direction
+        #percent = req.velocity
+        if direction == 'F' :
+                speed = 128 + ((percent * 127) / 100)
+        else :
+                speed = 128 - ((percent * 128 ) / 100 )
+
+        if wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+
+def setSpeeds(req):
+	setSpeedAction(1,req.directionR,req.velocityR)
+        setSpeedAction(2,req.directionL,req.velocityL)
+        return SetSpeedsResponse()
+
+def setSpeedF(req):
+        speed = 128 + ((req.velocity * 127) / 100)
+        if req.wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+        return SetSpeeDirectionResponse()
+
+def setSpeedB(req):
+        speed = 128 - ((req.velocity * 127) / 100)
+        if req.wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x31 ]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x32 ]))
+        wheel_serial.write(chr(speed))
+        return SetSpeedDirectionResponse()
+
+# wheel : 1 = right ; 2 = left
+def setSpeed(req):
+	setSpeedAction(req.wheel,req.direction,req.velocity)
+	return SetSpeedResponse()
+
+
+def getSpeed(req) :
+	wheel = req.wheel
+        if wheel == 1 :
+                wheel_serial.write(serial.to_bytes([0x00,0x21]))
+        else :
+                wheel_serial.write(serial.to_bytes([0x00,0x22]))
+        res= wheel_serial.read()
+        res= ord(res)
+        if res < 128 :
+                res = (128 - res) * 100 / 128
+                res = 0 - res
+        else :
+                res = (res - 128) * 100 / 127
+        return GetSpeedResponse(res)
+
+
+def getEncoder(req) :
+	wheel = req.wheel
+
+        if wheel == 1 :
+                wheel_serial.write( serial.to_bytes( [0x00,0x23] ) )
+        else :
+                wheel_serial.write( serial.to_bytes( [0x00,0x24] ) )
+        res= wheel_serial.read( 4 )
+
+        reverse = False
+        if str( res[0].encode('hex') ) == 'ff' :
+                reverse = True
+
+        hex = "0x"
+        for i in range(0,4) :
+                hex = hex + str( res[i].encode('hex') )
+        
+        if reverse :
+                max = 4294967295
+                return GetEncoderResponse( int(hex, 16) - max )
+        else:
+                return GetEncoderResponse( int(hex,16) )
+
+def getEncoders(req) :
+        wheel_serial.write( serial.to_bytes([0x00,0x25]) )
+        max = 4294967295
+        res = wheel_serial.read(8)
+        res1 = res
+       
+        list = []
+        hex = "0x"
+        for i in range(0,4) :
+                hex = hex + str( res[i].encode('hex') )
+      
+        res = int(hex,16)
+
+        if res >= 4026531840:
+                list.append( res - max )
+        else:
+                list.append( res )
+
+        hex = "0x"
+        for i in range(4,8) :
+                hex = hex + str( res1[i].encode('hex') )
+
+	res = int(hex,16)
+
+        if res >= 4026531840:
+                list.append( res - max )
+        else:
+                list.append( res )
+        return GetEncodersResponse(list)
+
+def resetEncoders(req) :
+	wheel_serial.write(serial.to_bytes([0x00,0x35]))
+	return std_srvs.srv.EmptyResponse()
+
+
+        
+
+def init():
+	global wheel_serial
+        wheel_serial = serial.Serial(port = "/dev/ttyUSB1", baudrate=9600)
+        wheel_serial.close()
+        wheel_serial.open()
+
+	#wheel mode 0
+        wheel_serial.write(serial.to_bytes([0x00,0x34,0x00]))
+        #disable 2sec timeout
+        wheel_serial.write(serial.to_bytes([0x00,0x38]))
+        #acceleration step 5
+        wheel_serial.write(serial.to_bytes([0x00,0x33,0x05]))
+
+
+
+
+if __name__ == "__main__":
+    rospy.init_node('MD49_listener')
+    init()
+    s = rospy.Service('setSpeed', SetSpeed, setSpeed)
+    s = rospy.Service('getSpeed', GetSpeed, getSpeed)
+    s = rospy.Service('getEncoder', GetEncoder, getEncoder)
+    s = rospy.Service('getEncoders', GetEncoders, getEncoders)
+    s = rospy.Service('resetEncoders', std_srvs.srv.Empty, resetEncoders)
+    s = rospy.Service('setSpeedF', SetSpeedDirection, setSpeedF)
+    s = rospy.Service('setSpeedB', SetSpeedDirection, setSpeedB)
+    s = rospy.Service('setSpeeds', SetSpeeds, setSpeeds)
+
+    rospy.spin()
+
+
+
+
+
+
+
