@@ -21,6 +21,7 @@ Menu {
     property string myRobot
     property int currentMenuIndex: -1
 
+    signal newPathSignal(string ip, string groupName, string pathName)
     signal editPath()
     signal deletePath()
     signal moveTo(string newGroup)
@@ -32,12 +33,50 @@ Menu {
         radius: 5
     }
 
+    PopupMenuItem {
+        id: assignPathBis
+        height: Style.menuItemHeight
+        width: parent.width
+        labelText: "Assign this path to"
+        leftPadding: Style.menuItemLeftPadding
+
+        Image {
+            asynchronous: true
+            source: "qrc:/icons/arrow"
+            fillMode: Image.Pad // For not stretching image
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+        }
+        onHoveredChanged: if(visible){ currentMenuIndex = 0 }
+
+        RobotListInPopup {
+            x: assignPathBis.width
+            visible: menu.currentMenuIndex === 0
+            onVisibleChanged: if(!visible) currentMenuIndex = -1
+            robotModel: menu.robotModel
+            onRobotSelected: {
+                robotModel.newPathSignal(ip, groupName, pathName)
+                currentMenuIndex = -1;
+                menu.currentMenuIndex = -1;
+                menu.close();
+            }
+        }
+    }
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
     // first item
     PopupMenuItem {
         labelText: "Edit Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) currentMenuIndex = 1
         onTriggered: editPath()
     }
 
@@ -47,43 +86,9 @@ Menu {
         height: 1
     }
 
-    PopupMenuItem {
-         labelText: "Test"
-         width: parent.width
-         leftPadding: Style.menuItemLeftPadding
-         height: Style.menuItemHeight
-
-         Image {
-             asynchronous: true
-             source: "qrc:/icons/arrow"
-             fillMode: Image.Pad // for not streaching image
-             anchors.verticalCenter: parent.verticalCenter
-             anchors.right: parent.right
-             anchors.rightMargin: 12
-         }
-
-         onHoveredChanged: if(!robotListInPopup.visible) robotListInPopup.open()
-
-         RobotListInPopup {
-             id: robotListInPopup
-//             onVisibleChanged: robotListInPopup.close()
-             x: parent.width
-             robotModel: menu.robotModel
-             onRobotSelected: {
-                 console.log("Robot selected !");
-             }
-         }
-    }
-
-
-    Rectangle {
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 1
-    }
-
     // third item
     PopupMenuItem {
+        id: moveToMenu
         labelText: "Move to"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
@@ -97,14 +102,15 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(!moveToMenu.visible) moveToMenu.open()
+
+        onHoveredChanged: if (visible) currentMenuIndex = 2
 
         Menu {
-            id: moveToMenu
-            padding: 0
-//            onVisibleChanged: moveToMenu.close()
-            width: 140
             x: parent.width
+            visible: menu.currentMenuIndex === 2
+            onVisibleChanged: menu.currentMenuIndex = -1
+            padding: 0
+            width: 140
 
             background: Rectangle {
                 color: Style.lightGreyBackground
@@ -168,6 +174,10 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) {
+
+                              currentMenuIndex = 3
+                          console.log("DELETE PATH SHOULD BE 3 : currentMenuIndex = " + currentMenuIndex + " visible = " + visible)}
         onTriggered: deletePath()
     }
 }

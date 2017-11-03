@@ -26,7 +26,8 @@ Image {
     Label {
         id: tooltip
 
-        visible: img.hover
+//        visible: img.hover
+        visible: img
         font.pointSize: 10
         text: _name
 
