@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
+import "../../Model/Robot"
 import "../Custom"
 
 Column {
@@ -11,6 +12,9 @@ Column {
 
     property Points pointModel
     property Column column
+    property Robots robotModel
+    property string langue
+
     signal renameGroup(string name)
     signal editPoint(string name, string groupName)
 
@@ -83,6 +87,7 @@ Column {
             EditPointGroupPopupMenu {
                 id: editGroupPopupMenu
                 x: rightButton.width
+                langue: groupListItem.langue
                 onDeleteGroup: pointModel.deleteGroup(groupName)
                 onRenameGroup: groupListItem.renameGroup(groupName)
             }
@@ -178,6 +183,8 @@ Column {
                     id: editPointPopupMenu
                     x: rightButton.width
                     pointModel: groupListItem.pointModel
+                    robotModel: groupListItem.robotModel
+                    langue: groupListItem.langue
                     myGroup: groupName
                     onDeletePoint: {
                         pointModel.deletePoint(myGroup, name);

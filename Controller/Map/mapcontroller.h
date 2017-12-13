@@ -134,13 +134,14 @@ private slots:
      * Display the clicked position in robot and map coordinates when we click on the map
      */
     void posClicked(const double x, const double y);
+
+public slots:
     /**
      * @brief centerMapSlot
      * Emits the adequate position for the qml side to recenter the map
      */
     void centerMapSlot();
 
-public slots:
     /**
      * @brief savePositionSlot
      * @param posX
@@ -151,7 +152,7 @@ public slots:
      * Saves the current configuration inside the currentMap.txt configuration file
      */
     void savePositionSlot(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc);
-
+    void savePositionSlot2(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc);
     /**
      * @brief saveEditedImage
      * @param location

@@ -266,6 +266,7 @@ signals:
 
 private:
     QString ip;
+    QString robotInfo_;
     bool sendingMap;
     QPointer<CommandController> commandController;
 

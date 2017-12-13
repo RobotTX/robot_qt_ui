@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Model/Point"
+import "../../Model/Robot"
 import "../Custom"
 
 Page {
@@ -8,6 +9,8 @@ Page {
     anchors.fill: parent
     property Points pointModel
     property PointView tmpPointView
+    property Robots robotModel
+    property string langue
 
     signal closeMenu()
     signal setMessageTop(int status, string msg)
@@ -26,6 +29,7 @@ Page {
         padding: 0
         PointMenuHeader {
             id: pointMenuHeader
+            langue: page.langue
             onOpenCreatePointMenu: menuIndex = 1;
             onOpenCreateGroupMenu: menuIndex = 2;
             onCloseMenu: page.closeMenu()
@@ -33,7 +37,9 @@ Page {
 
         PointMenuContent {
             id: pointMenuContent
-            pointModel: _pointModel
+            pointModel: page.pointModel
+            robotModel: page.robotModel
+            langue: page.langue
             anchors {
                 left: parent.left
                 top: pointMenuHeader.bottom
@@ -62,13 +68,15 @@ Page {
         CreateMenuHeader {
             id: createPointMenuHeader
             onBackToMenu: menuIndex = 0;
-            txt: "Point"
+            langue: page.langue
+            txt: langue == "English" ? "目标点" : "Point"
         }
 
         CreatePointMenuContent {
             id: createPointMenuContent
             pointModel: page.pointModel
             tmpPointView: page.tmpPointView
+            langue: page.langue
             anchors {
                 left: parent.left
                 top: createPointMenuHeader.bottom
@@ -88,12 +96,14 @@ Page {
 
         CreateGroupMenuHeader {
             id: createGroupMenuHeader
+            langue: page.langue
             onBackToMenu: menuIndex = 0;
         }
 
         CreateGroupMenuContent {
             id: createGroupMenuContent
             objectName: "createPointGroupMenu"
+            langue: page.langue
             anchors {
                 left: parent.left
                 top: createGroupMenuHeader.bottom
@@ -105,6 +115,21 @@ Page {
                 menuIndex = 0;
             }
             onSetMessageTop: page.setMessageTop(status, msg)
+        }
+    }
+
+    Connections {
+        target: pointModel
+        onSaveCurrentHome: {
+            console.log("We are in PointMenu - onSaveCurrentHome");
+//            console.log("home X = " + homeX + " home Y = " + homeY + " home Ori = " + homeOri);
+            createPointMenuContent.homeX = homeX;
+            createPointMenuContent.homeY = homeY;
+            createPointMenuContent.homeOri = homeOri;
+            createPointMenuContent.homeName = "CS";
+            page.menuIndex = 1;
+            console.log("menu = " + page.menuIndex);
+
         }
     }
 

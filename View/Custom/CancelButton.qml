@@ -5,8 +5,8 @@ import "../../Helper/style.js" as Style
 Button {
 
     id: btn
-
-    property string txt: "Cancel"
+    property string langue
+    property string txt: langue == "English" ? "取消" : "Cancel"
     height: 23
 
     CustomLabel {

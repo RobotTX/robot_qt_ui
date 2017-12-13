@@ -4,14 +4,15 @@ import "../../Helper/style.js" as Style
 
 Button {
     id: btn
-    property string txt: "Save"
+    property string langue
+    property string txt: langue == "English"  ? "保存" : "Save"
     property string tooltip
     property bool canSave: true
     property bool timerTriggered: false
     height: 23
 
     CustomLabel {
-        text: qsTr(txt)
+        text:  qsTr(txt)
         color: "white"
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

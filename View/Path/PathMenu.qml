@@ -13,6 +13,7 @@ Page {
     property Paths tmpPathModel
     property Points pointModel
     property Robots robotModel
+    property string langue
     property int menuIndex: 0
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
@@ -34,6 +35,7 @@ Page {
         padding: 0
         PathMenuHeader {
             id: pathMenuHeader
+            langue: page.langue
             onOpenCreatePathMenu: menuIndex = 1;
             onOpenCreateGroupMenu: menuIndex = 2;
             onCloseMenu: page.closeMenu()
@@ -42,6 +44,7 @@ Page {
         PathMenuContent {
             pathModel: page.pathModel
             robotModel: page.robotModel
+            langue: page.langue
             anchors {
                 left: parent.left
                 top: pathMenuHeader.bottom
@@ -49,10 +52,12 @@ Page {
                 bottom: parent.bottom
             }
             onRenameGroup: {
+                console.log("langue = " + langue)
                 createGroupMenuContent.oldName = name;
                 menuIndex = 2;
             }
             onEditPath: {
+                console.log("langue = " + langue)
                 createPathMenuContent.oldName = name;
                 createPathMenuContent.oldGroup = groupName;
                 menuIndex = 1;
@@ -67,6 +72,7 @@ Page {
 
         CreateMenuHeader {
             id: createPathMenuHeader
+            langue: page.langue
             onBackToMenu: menuIndex = 0;
             txt: "Path"
         }
@@ -76,6 +82,7 @@ Page {
             pathModel: page.pathModel
             tmpPathModel: page.tmpPathModel
             pointModel: page.pointModel
+            langue: page.langue
             onUseTmpPathModel: page.useTmpPathModel(use)
             anchors {
                 left: parent.left
@@ -96,12 +103,14 @@ Page {
 
         CreateGroupMenuHeader {
             id: createGroupMenuHeader
+            langue: page.langue
             onBackToMenu: menuIndex = 0;
         }
 
         CreateGroupMenuContent {
             id: createGroupMenuContent
             objectName: "createPathGroupMenu"
+            langue: page.langue
             anchors {
                 left: parent.left
                 top: createGroupMenuHeader.bottom
@@ -119,6 +128,7 @@ Page {
     Connections {
         target: pathModel
         onSaveCurrentPath: {
+            console.log("We are in PathMenu - onSaveCurrentPath");
             console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
             createPathMenuContent.robotPathName = pathName;
             createPathMenuContent.robotPathPoints = pathPoints;

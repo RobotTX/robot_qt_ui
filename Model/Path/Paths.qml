@@ -14,11 +14,13 @@ ListModel {
     signal saveCurrentPath(string pathName, ListModel pathPoints)
     signal robotConnection(string ip)
 
+    property string langue
+
     function addGroup(name){
         console.log("paths adding group " + name)
         append({
            "groupName": name,
-           "groupIsOpen": name === Helper.noGroup,
+           "groupIsOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
            "paths": []
         });
     }

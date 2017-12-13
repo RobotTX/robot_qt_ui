@@ -276,6 +276,10 @@ private slots:
 
     void deconnexionSlot();
 
+    void saveWifi(QString ip, QString wifi, QString pwd);
+
+    void sendCommandSavePlace(QString, QString, double, double, double, bool);
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);

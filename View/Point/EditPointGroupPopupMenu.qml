@@ -9,6 +9,8 @@ Menu {
     signal renameGroup()
     signal deleteGroup()
 
+    property string langue
+
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -16,7 +18,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: "Rename Group"
+        labelText: langue == "English" ? "重命名组" : "Rename Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -30,7 +32,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: "Delete Group"
+        labelText: langue == "English" ? "删除组" : "Delete Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

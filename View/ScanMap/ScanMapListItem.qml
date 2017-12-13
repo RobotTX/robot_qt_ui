@@ -8,7 +8,7 @@ Frame {
     id: scanMapListItemFrame
 
     property bool selected
-
+    property string langue
     signal stopScanning()
     signal playPauseScanning(bool scanning)
     signal playPauseExploring(bool exploring)
@@ -71,7 +71,12 @@ Frame {
 
             CustomToolTip {
                 visible: !mapReceived && hovered
-                text: mapReceived ? "" : "The map has not been received yet"
+                text: { if (mapReceived) {
+                            "";
+                      } else {
+                            langue == "English" ? "地图还未收到" : "The map has not been received yet"
+                    }
+                }
             }
 
             fillMode: Image.Pad
@@ -122,7 +127,12 @@ Frame {
 
         CancelButton {
             id: playScanBtn
-            txt: scanning ? "Pause" : "Start Scanning"
+            txt: { if (scanning) {
+                    langue == "English" ? "暂停扫描"  : "Pause"
+                } else {
+                    langue == "English" ? "开始扫描"  : "Start Scanning"
+                }
+            }
             enabled: connected
             anchors {
                 top: nameLabel.bottom
@@ -137,7 +147,12 @@ Frame {
 
         CancelButton {
             id: autoScanBtn
-            txt: onAutomatic ? "Stop Exploring" : "Start Exploring"
+            txt: { if (onAutomatic) {
+                    langue == "English" ? "停止探索" : "Stop Exploring"
+                } else {
+                    langue == "English" ? "开始自动扫描" : "Start Exploring"
+                }
+            }
             enabled: connected
             anchors {
                 top: playScanBtn.bottom

@@ -6,6 +6,7 @@ import "../Custom"
 Frame {
 
     id: menuHeader
+    property string langue
 
     padding: 0
     z: 2
@@ -39,7 +40,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("Manage " + txt)
+        text: langue == "English" ? qsTr("管理 " + txt) : qsTr("Manage " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

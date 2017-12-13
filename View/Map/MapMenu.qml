@@ -7,14 +7,16 @@ Page {
     id: page
     anchors.fill: parent
 
+    property string langue
     signal closeMenu()
     signal savePosition()
 
     signal saveMap(string file_name)
 
     MenuHeader {
+        langue: page.langue
         id: mapMenuHeader
-        txt: "Map"
+        txt: langue == "English" ? "地图" :  "Map"
         onCloseMenu: page.closeMenu()
     }
 
@@ -25,7 +27,7 @@ Page {
             right: parent.right
             bottom: parent.bottom    
         }
-
+        langue: page.langue
         onSavePosition: page.savePosition()
         // originally comes from saveButton being clicked
         onSaveMap: {

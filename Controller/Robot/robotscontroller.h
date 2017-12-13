@@ -116,7 +116,6 @@ private slots:
      * @param ip
      */
     void robotIsDeadSlot(const QString ip);
-
     void newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori);
     void sendCommandNewName(const QString ip, const QString name);
     void updateNameSlot(const QString ip, const QString name);
@@ -156,6 +155,8 @@ private slots:
     void backupSystemIsDownSlot(QString ip);
     void setCmdLoopingSlot(QString ip, bool loop);
 
+    void soundOn(QString ip);
+    void soundOff(QString ip);
     /**
      * @brief updateRobotInfoSlot
      * @param ip
@@ -207,6 +208,7 @@ signals:
     void pausedExploration(QVariant ip);
     void setLooping(QVariant ip, QVariant looping);
     void playingPathSlot(QVariant ip, QVariant playing);
+    void updateSound(QVariant ip, QVariant activate);
 
 private:
     QQmlApplicationEngine* engine_;

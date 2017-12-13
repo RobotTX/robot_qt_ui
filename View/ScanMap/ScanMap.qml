@@ -21,6 +21,7 @@ Window {
 
     property Robots robotModel
     property Tutorial tutorial
+    property string langue
     property bool closeOnSave: false
     property ScanMapLeftMenu _scanMapLeftMenu: scanMapLeftMenu
 
@@ -93,6 +94,7 @@ Window {
         visible: scanWindow.visible
         robotModel: scanWindow.robotModel
         tutorial: scanWindow.tutorial
+        langue: scanWindow.langue
         anchors {
             top: parent.top
             left: parent.left
@@ -162,12 +164,28 @@ Window {
     }
 
     function openRestartScanMessageDialog(ip){
+        var titleChange = "";
+        var messageChange = "";
+        var cancelChange = "";
+        var okChange = "";
+        if (langue == "English") {
+            titleChange = "是否要重启扫描 ?";
+            messageChange = "机器人已经重启，是否重启扫描（之前的扫描将被移除）?";
+            cancelChange = "取消";
+            okChange = "是";
+        } else {
+            titleChange = "Do you wish to restart the scan ?";
+            messageChange = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
+            cancelChange = "Cancel";
+            okChange = "Ok";
+        }
+
         if(!dualChoiceMessageDialog.visible){
-            dualChoiceMessageDialog.title = qsTr("Do you wish to restart the scan ?");
+            dualChoiceMessageDialog.title =  qsTr(titleChange);
             dualChoiceMessageDialog.ip = ip;
-            dualChoiceMessageDialog.message = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
-            dualChoiceMessageDialog.rejectMessage = "Cancel";
-            dualChoiceMessageDialog.acceptMessage = "Ok";
+            dualChoiceMessageDialog.message = qsTr(messageChange);
+            dualChoiceMessageDialog.rejectMessage = qsTr(cancelChange);
+            dualChoiceMessageDialog.acceptMessage = qsTr(okChange)
             dualChoiceMessageDialog.open();
         }
     }

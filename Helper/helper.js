@@ -13,6 +13,7 @@ var PointViewType = {
 };
 
 var noGroup = "No Group";
+var noGroupChinese = "默认组"
 var noRobot = "No Robot";
 
 function dashLine(ctx, fromX, fromY, toX, toY, pattern) {

@@ -108,20 +108,39 @@ void MapController::initializeMap(void){
 }
 
 void MapController::savePositionSlot(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc){
-
     QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-    std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
+    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
+    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    QString fileConfigPath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
+    std::ofstream configfile(fileConfigPath.toStdString(), std::ios::out | std::ios::trunc);
+    /// saves the current configuration into the directed configuration file
+    if(configfile){
+        qDebug() << "Map::savePositionSlot config file"<<fileConfigPath;
+
+        configfile << filePath.toStdString() << std::endl
+             << map->getWidth() << " " << map->getHeight() << std::endl
+             << posX << " " << posY << std::endl
+             << zoom << " " << mapRotation << std::endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getResolution() << std::endl
+             << map->getMapId().toString().toStdString();
+        configfile.close();
+    }
+    else
+        qDebug() << "Map::savePositionSlot could not find the directed config file at :" << fileConfigPath;
+
+    std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
     /// saves the current configuration into the current configuration file
     if(file){
         qDebug() << "Map::savePositionSlot called with following parameters";
         qDebug() << "map file - width - height - centerX - centerY - zoom - originX - originY - resolution - date - id";
-        qDebug() << mapSrc << map->getWidth() << map->getHeight() << posX << posY
+        qDebug() << filePath << map->getWidth() << map->getHeight() << posX << posY
                  << zoom << mapRotation << map->getOrigin().x() << map->getOrigin().y() <<  map->getResolution()
                  << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
                  << map->getMapId().toString();
 
-        file << mapSrc.toStdString() << std::endl
+        file << filePath.toStdString() << std::endl
              << map->getWidth() << " " << map->getHeight() << std::endl
              << posX << " " << posY << std::endl
              << zoom << " " << mapRotation << std::endl
@@ -129,11 +148,33 @@ void MapController::savePositionSlot(const double posX, const double posY, const
              << map->getResolution() << std::endl
              << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
              << map->getMapId().toString().toStdString();
-
         file.close();
-
-    } else
+    }
+    else
         qDebug() << "Map::savePositionSlot could not find the currentMap file at :" << currentPathFile;
+}
+
+void MapController::savePositionSlot2(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc){
+    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
+    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    QString fileConfigPath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+
+    std::ofstream configfile(fileConfigPath.toStdString(), std::ios::out | std::ios::trunc);
+    /// saves the current configuration into the directed configuration file
+    if(configfile){
+        qDebug() << "Map::savePositionSlot config file"<<fileConfigPath;
+
+        configfile << filePath.toStdString() << std::endl
+             << map->getWidth() << " " << map->getHeight() << std::endl
+             << posX << " " << posY << std::endl
+             << zoom << " " << mapRotation << std::endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getResolution() << std::endl
+             << map->getMapId().toString().toStdString();
+        configfile.close();
+    }
+    else
+        qDebug() << "Map::savePositionSlot could not find the directed config file at :" << fileConfigPath;
 }
 
 void MapController::loadPositionSlot(){
@@ -228,7 +269,7 @@ void MapController::centerMap(const double centerX, const double centerY, const 
 }
 
 void MapController::saveEditedImage(const QString location){
-    qDebug() << "saving edited image to" << location;
+    qDebug() << "saving edited image to" << map->getMapFile();
     /// modifies the map id so that when a robot reconnects you get asked which map to choose
     map->setMapId(QUuid::createUuid());
     double centerX = 0;
@@ -260,9 +301,11 @@ void MapController::saveEditedImage(const QString location){
 
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
+
+    setMapFile(location);
     /// and request the main map to be reload on the qml side
     emit requestReloadMap("file:/" + location);
-    emit sendMapToRobots(map->getMapId().toString(), map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), getMetadataString(), QImage(map->getMapFile()));
+    emit sendMapToRobots("EDIT"+map->getMapId().toString(), map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), getMetadataString(), QImage(map->getMapFile()));
 }
 
 /// helper function to print out the position where the map has been clicked
@@ -403,7 +446,7 @@ void MapController::updateMetadata(int width, int height, double resolution, dou
 }
 
 void MapController::centerMapSlot(){
-
+    qDebug() << "TTT";
     QImage image = map->getMapImage();
 
     int top = 0;

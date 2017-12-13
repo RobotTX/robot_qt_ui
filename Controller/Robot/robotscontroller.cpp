@@ -34,8 +34,10 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
         connect(this, SIGNAL(updateDockStatus(QVariant, QVariant)), robotModel, SLOT(setDockStatus(QVariant, QVariant)));
         connect(this, SIGNAL(setLooping(QVariant, QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
+        connect(this, SIGNAL(updateSound(QVariant, QVariant)), robotModel, SLOT(setSound(QVariant, QVariant)));
 
         /// Signals from qml to the controller
+        connect(robotModel, SIGNAL(savePlaceSignal(QString, QString, double, double, double, bool)), parent, SLOT(sendCommandSavePlace(QString, QString, double, double, double, bool)));
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
         connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
@@ -46,7 +48,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotModel, SIGNAL(stopScanning(QString, bool)), parent, SLOT(stopScanningSlot(QString, bool)));
         connect(robotModel, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
         connect(robotModel, SIGNAL(setLoopingPathSignal(QString, bool)), this, SLOT(setCmdLoopingSlot(QString, bool)));
-
+        connect(robotModel, SIGNAL(saveWifiConnection(QString, QString, QString)), parent, SLOT(saveWifi(QString,QString,QString)));
 
         /// MainController signals
         connect(parent, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
@@ -92,6 +94,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(startDockingRobot(QString)), this, SLOT(startDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(stopDockingRobot(QString)), this, SLOT(stopDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
+        connect(robotMenuFrame, SIGNAL(soundOn(QString)), this, SLOT(soundOn(QString)));
+        connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
     } else {
         qDebug() << "could not find robot menu frame";
         Q_UNREACHABLE();
@@ -134,6 +138,8 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         emit setStage(ip, stage);
         emit setBattery(ip, battery, charging);
         emit updateDockStatus(ip, dockStatus);
+        emit updateSound(ip, charging);
+//        qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus;
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
@@ -183,9 +189,11 @@ void RobotsController::shortcutDeleteRobot(void){
 }
 
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
-    if(robots.contains(ip))
+    qDebug() << "\nWE ARE IN RobotsController::sendCommand()";
+    if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
-    else {
+        qDebug() << "cmd in robotscontroller = " << cmd;
+    } else {
         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
         return false;
     }
@@ -381,6 +389,16 @@ void RobotsController::callForRebootRobot(QString ip){
     //backupControllers.value(ip)->callForReboot();
 }
 
+void RobotsController::soundOn(QString ip) {
+    qDebug() << "\nWE ARE IN RobotsController::soundOn()";
+    sendCommand(ip, QString("w"));
+}
+
+void RobotsController::soundOff(QString ip) {
+    qDebug() << "\nWE ARE IN RobotsController::soundOff()";
+    sendCommand(ip, QString("x"));
+}
+
 void RobotsController::backupSystemIsDownSlot(QString ip){
     qDebug() << "RobotController::backup System is down at ip" << ip;
     //backupControllers.remove(ip);
@@ -409,13 +427,15 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
         bool playing_path = static_cast<QString>(strList.takeFirst()).toInt();
         bool looping = static_cast<QString>(strList.takeFirst()).toInt();
+
         /// What remains in the list is the path
 
         if(!strList.empty())
             updatePathSlot(ip, strList);
 
-        if(homeX >= -100 && homeY >= -100)
+        if(homeX >= -100 && homeY >= -100){
             updateHomeSlot(ip, homeX, homeY, homeOri);
+        }
         qDebug() << "RobotsController::updateRobotInfoSlot" << ip << "home :" << homeX << homeY << homeOri;
 
         emit checkMapInfo(ip, mapId, mapDate);
@@ -435,7 +455,6 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         updateLaserSlot(ip, laser);
 
         setLoopingSlot(ip, looping);
-
 
         emit setPlayingPath(ip, playing_path);
 
@@ -465,3 +484,4 @@ void RobotsController::setLoopingSlot(QString ip, bool looping){
     qDebug() << "RobotController::setLoopingSlot" << ip << "looping :" << looping;
     emit setLooping(ip, looping);
 }
+

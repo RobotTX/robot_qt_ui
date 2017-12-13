@@ -27,6 +27,7 @@ Frame {
     property Robots robotModel
     property Tutorial tutorial
     property real batteryWarningThreshold
+    property string langue
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
     signal setMessageTop(int status, string msg)
@@ -46,6 +47,7 @@ Frame {
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
+        langue: mainMenuViewsFrame.langue
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
@@ -57,6 +59,7 @@ Frame {
         tmpPathModel: mainMenuViewsFrame.tmpPathModel
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
+        langue: mainMenuViewsFrame.langue
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
@@ -67,7 +70,9 @@ Frame {
         id: pointMenu
         visible: currentMenu == 2
         pointModel: mainMenuViewsFrame.pointModel
+        robotModel: mainMenuViewsFrame.robotModel
         tmpPointView: mainMenuViewsFrame.tmpPointView
+        langue: mainMenuViewsFrame.langue
         onCloseMenu: mainMenuViewsFrame.closeMenu()
         onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
     }
@@ -75,6 +80,7 @@ Frame {
     MapMenu {
         id: mapMenu
         visible: currentMenu == 3
+        langue: mainMenuViewsFrame.langue
         onCloseMenu: mainMenuViewsFrame.closeMenu()
         onSavePosition: mainMenuViewsFrame.savePosition()
         onSaveMap: mainMenuViewsFrame.saveMap(file_name)
@@ -85,6 +91,7 @@ Frame {
         tutorial: mainMenuViewsFrame.tutorial
         robotModel: mainMenuViewsFrame.robotModel
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
+        langue: mainMenuViewsFrame.langue
         visible: currentMenu == 4
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }

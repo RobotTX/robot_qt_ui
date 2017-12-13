@@ -78,6 +78,42 @@ void PointController::loadPoints(const QString fileName){
 }
 
 
+QVector<double> PointController::getHome() {
+    QVector<double> home;
+    QMapIterator<QString, QPointer<PointGroup>> i(points->getGroups());
+    /// For each group except "No Group"
+    while (i.hasNext()) {
+        i.next();
+        if(i.key().compare(NO_GROUP_NAME) != 0){
+            /// For each point of the group
+            for(int j = 0; j < i.value()->getPointVector().size(); j++){
+                if(i.value()->getPointVector().at(j)->isHome()){
+                    qDebug() << "group:" <<i.key();
+                    home.push_back(i.value()->getPointVector().at(j)->getPos().x());
+                    home.push_back(i.value()->getPointVector().at(j)->getPos().y());
+                    home.push_back(i.value()->getPointVector().at(j)->getOrientation());
+                    return home;
+                }
+            }
+        }
+    }
+    if(points->getGroups().contains(NO_GROUP_NAME)){
+        for(int j = 0; j < points->getGroups().value(NO_GROUP_NAME)->getPointVector().size(); j++){
+            if(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isHome()){
+                qDebug() << "group:" <<NO_GROUP_NAME;
+                home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x());
+                home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y());
+                home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getOrientation());
+                return home;
+            }
+        }
+    }
+    home.push_back(0.0);
+    home.push_back(0.0);
+    home.push_back(0.0);
+    return home;
+}
+
 void PointController::addGroup(QString groupName, bool saveXML){
     if(!points->getGroups().contains(groupName)){
         points->addGroup(groupName);

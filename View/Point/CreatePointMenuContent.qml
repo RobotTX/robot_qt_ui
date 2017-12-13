@@ -11,11 +11,16 @@ Frame {
     objectName: "createPointMenuFrame"
     property Points pointModel
     property PointView tmpPointView
+    property string langue
     property string oldName: ""
     property string oldGroup
     property bool nameError: true
     property bool wasDisplayed: false
     property string errorMsg
+    property string homeName // when creating a new charging station from robot
+    property string homeX // when creating a new charging station from robot
+    property string homeY // when creating a new charging station from robot
+    property string homeOri // when creating a new charging station from robot
 
     signal backToMenu()
     signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup, bool displayed, bool home, int orientation)
@@ -53,9 +58,12 @@ Frame {
 
             oldName = "";
             oldGroup = "";
+            var displayTextChange = "";
+            langue == "English" ? displayTextChange == Helper.noGroupChinese : displayTextChange == Helper.noGroup;
             groupComboBox.currentIndex = 0;
-            groupComboBox.displayText = Helper.noGroup;
+            groupComboBox.displayText = displayTextChange;
         } else {
+            // if editing
             if(oldName !== ""){
                 for(var i = 0; i < pointModel.count; i++)
                     if(pointModel.get(i).groupName === oldGroup)
@@ -73,6 +81,14 @@ Frame {
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
                             }
+                // if creating point from robot
+            } else if (homeName !== "") {
+                console.log("We are in createpointmenucontent homeX = " + homeX + "homeY = " + homeY + " homeOri = " + homeOri);
+                homeCheckBox.checked = true;
+                slider.value = homeOri;
+                tmpPointView.x = homeX;
+                tmpPointView.y = homeY;
+                tmpPointView.setOrientation(homeOri);
             }
         }
         pointTextField.text = oldName;
@@ -90,7 +106,7 @@ Frame {
 
     Label {
         id: pointLabel
-        text: qsTr("Point Name")
+        text: langue == "English" ? qsTr("目标点名称") : qsTr("Point Name")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -101,7 +117,7 @@ Frame {
     TextField {
         id: pointTextField
         selectByMouse: true
-        placeholderText: qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("路径名称") : qsTr("Enter name")
 
         text: oldName
         height: 28
@@ -130,7 +146,7 @@ Frame {
 
     Label {
         id: groupLabel
-        text: qsTr("Choose Group")
+        text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Group")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -154,7 +170,7 @@ Frame {
 
     Label {
         id: homeLabel
-        text: qsTr("Charging station")
+        text: langue == "English" ? qsTr("充电站") : qsTr("Charging station")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -172,14 +188,14 @@ Frame {
             right: parent.right
             topMargin: 10
         }
-        text: "This point is a charging station"
+        text: langue == "English" ? "设置当前目标点为充电站" : "This point is a charging station"
         onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
     }
 
     Label {
         id: oriLabel
 //        visible: homeCheckBox.checked
-        text: qsTr("Orientation")
+        text: langue == "English" ? qsTr("方向") : qsTr("Orientation")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -297,7 +313,7 @@ Frame {
 
     Label {
         id: pointLocationLabel
-        text: qsTr("Point Location")
+        text: langue == "English" ? qsTr("目标点位置") : qsTr("Point Location")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -355,7 +371,7 @@ Frame {
                         Math.round(slider.valueAt(slider.position)));
             backToMenu();
             setMessageTop(2, oldName === "" ? "Created the point \"" + newName + "\" in \"" + groupName + "\"" :
-                                            "Edited a point from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")
+                                            "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")
         }
     }
 

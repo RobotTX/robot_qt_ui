@@ -14,10 +14,13 @@ Frame {
     property Points pointModel
     property Paths pathModel
     property real batteryWarningThreshold
+    property string langue
 
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
     signal rebootRobot(string ip)
+    signal soundOn(string ip)
+    signal soundOff(string ip)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -28,7 +31,7 @@ Frame {
 
     EmptyMenu {
         visible: robotModel.count === 0
-        txt: "No robot connected. Make sure that the robot and your computer are connected to the same WIFI network."
+        txt: langue == "English" ? "未链接机器人，请确保机器人和电脑在同一个WIFI网络" : "No robot connected. Make sure that the robot and your computer are connected to the same WIFI network."
         imgSrc: "qrc:/icons/big_robot"
     }
 
@@ -48,10 +51,13 @@ Frame {
                     pointModel: robotMenuFrame.pointModel
                     pathModel: robotMenuFrame.pathModel
                     robotModel: robotMenuFrame.robotModel
+                    langue: robotMenuFrame.langue
                     width: flick.width
                     onStartDockingRobot: robotMenuFrame.startDockingRobot(ip)
                     onStopDockingRobot: robotMenuFrame.stopDockingRobot(ip)
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
+                    onSoundOn: robotMenuFrame.soundOn(ip)
+                    onSoundOff: robotMenuFrame.soundOff(ip)
                 }
             }
         }

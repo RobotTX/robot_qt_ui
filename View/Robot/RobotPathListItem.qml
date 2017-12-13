@@ -11,6 +11,7 @@ Frame {
     id: frame
     property Robots robotModel
     property Paths pathModel
+    property string langue
 
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
@@ -36,7 +37,7 @@ Frame {
 
         Button {
             id: assignPath
-            text: "Assign Path"
+            text: langue == "English" ? "设置路径" : "Assign Path"
             height: parent.height - 2
             padding: 0
 
@@ -162,7 +163,13 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                tooltip: pathIsVisible ? "Hide the path of the robot on the map" : "Show the path of the robot on the map"
+                tooltip: {
+                    if (pathIsVisible) {
+                        langue == "English" ? "隐藏地图上的机器人路径" : "Hide the path of the robot on the map"
+                    } else {
+                        langue == "English" ? "显示地图上的机器人路径" : "Show the path of the robot on the map"
+                    }
+                }
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -318,7 +325,13 @@ Frame {
 
                             CustomLabel {
                                 id: customLabelWaitTime
-                                text: waitTime === -1 ? qsTr("Human Action") : qsTr("Delay : " + waitTime + " s")
+                                text: {
+                                    if (waitTime === -1) {
+                                        langue == "English" ? "人为干预" : "Human Action"}
+                                    else {
+                                        langue == "English" ? "延迟 " + waitTime + " 秒" : "Delay : " + waitTime + " s"
+                                    }
+                                }
                                 horizontalAlignment: Text.AlignRight
                                 font.pixelSize: 14
                                 color: Style.midGrey2
@@ -357,7 +370,12 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
-                tooltip: playingPath ? "Pause the robot in its path" : "Play the path of the robot"
+                tooltip: { if(playingPath) {
+                            langue == "English" ? "暂停机器人的任务" : "Pause the robot in its path"
+                    } else {
+                        langue == "English" ? "继续机器人的任务" : "Play the path of the robot"
+                    }
+                }
 
 
                 anchors {
@@ -378,7 +396,7 @@ Frame {
                 height: parent.height - 2
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/stop"
-                tooltip: "Stop the robot in its path"
+                tooltip: langue == "English" ? "停止机器人的任务" : "Stop the robot in its path"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -398,7 +416,7 @@ Frame {
                 height: parent.height - 2
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
-                tooltip: "Loop the path"
+                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
                 checkable: true
                 checked: looping
 
@@ -451,7 +469,7 @@ Frame {
                         break;
                     }
                 }
-                tooltip: "Send the robot to its docking station"
+                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
 
                 anchors {
                     verticalCenter: parent.verticalCenter

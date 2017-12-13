@@ -1,4 +1,7 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
+import "../../View/Custom"
 
 ListModel {
     property real batteryWarningThreshold
@@ -8,7 +11,9 @@ ListModel {
     property string msg: ""
     property string test: ""
     property int statusColor: -1
+    property string langue
 
+    signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
     signal newNameSignal(string ip, string newName)
@@ -24,6 +29,7 @@ ListModel {
     signal setMessageTop(int status, string msg)
     signal activateLaser(string ip, bool activate)
     signal setLoopingPathSignal(string ip, bool loop)
+    signal saveWifiConnection(string ip, string wifi_name, string pwd_wifi)
 
     function addRobot(name, ip, stage, battery){
         append({
@@ -35,7 +41,7 @@ ListModel {
             "posY": -1,
             "orientation": 0,
             "playingPath": false,
-            "pathIsOpen": false,
+            "pathIsOpen": true,
             "pathIsVisible": true,
             "pathName": "",
             "pathPoints": [],
@@ -47,7 +53,7 @@ ListModel {
             "processingCmd": false,
             "dockStatus": -2,
             "charging": false,
-            "looping": false
+            "looping": false,
         });
         robotConnection(ip);
         setMessageTop(3, "The robot \"" + name + "\" just connected");
@@ -256,12 +262,15 @@ ListModel {
                 switch(dockStatus){
                     case -4:
                         setMessageTop(0, "Robot \"" + get(i).name + "\" could not reach the charging station");
+//                        warningDialog.open();
                     break;
                     case -3:
                         setMessageTop(0, "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station");
+//                        warningDialog.open();
                     break;
                     case -1:
                         setMessageTop(0, "Robot \"" + get(i).name + "\" lost the signal of the charging station and could not reach it");
+//                        warningDialog.open();
                     break;
                     case 1:
                         setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station");
@@ -274,5 +283,33 @@ ListModel {
                     break;
                 }
             }
+    }
+
+//    CustomDialog {
+//        id: warningDialog
+//        x: mapMenuFrame.x / 2
+//        y: mapMenuFrame.y / 2
+//        height: 60
+//        title: "Warning dialog"
+////        acceptMessage: "Docking failed"
+//    }
+
+//    Dialog {
+//        id:warningDialog
+//        title: "Warning dialog"
+//        x: 20
+//        y: 30
+//        height: 60
+//    }
+
+    function setSound(ip, mute) {
+        for (var i = 0; i < count; i++) {
+            if (get(i).ip === ip) {
+                setProperty(i,"charging", mute);
+//                console.log("mute = " + mute)
+            }
+        }
+
+//        console.log("we are in setSound in Robot.qml file mute = " + mute)
     }
 }

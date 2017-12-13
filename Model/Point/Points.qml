@@ -10,6 +10,10 @@ ListModel {
     signal deleteGroupSignal(string groupName)
     signal moveToSignal(string name, string oldGroup, string newGroup)
     signal setMessageTop(int status, string msg)
+    signal saveCurrentHome(string homeName, string homeX, string homeY, string homeOri)
+
+    property string namePoint: ""
+    property string langue
 
     function addGroup(name){
         //console.log("Add group " + name);
@@ -32,6 +36,7 @@ ListModel {
                      "home": home,
                      "orientation": orientation
                 });
+                namePoint = name
             }
         }
     }

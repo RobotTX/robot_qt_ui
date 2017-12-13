@@ -9,7 +9,7 @@ Frame {
     z: 2
 
     readonly property string txt: "Path"
-
+    property string langue
     signal closeMenu(string txt)
     signal openCreatePathMenu()
     signal openCreateGroupMenu()
@@ -39,7 +39,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("Manage " + txt)
+        text: langue === "English" ? "管理路径" : qsTr("Manage " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
@@ -78,6 +78,7 @@ Frame {
         CreatePathGroupPopupMenu {
             id: createMenu
             x: createButton.width
+            langue: menuHeader.langue
             onOpenCreatePathMenu: menuHeader.openCreatePathMenu()
             onOpenCreateGroupMenu: menuHeader.openCreateGroupMenu()
         }

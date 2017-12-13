@@ -10,6 +10,7 @@ Frame {
     padding: 0
 
     signal backToMenu()
+    property string langue
 
     height: Style.menuHeaderHeight
     anchors {
@@ -35,7 +36,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("New Group")
+        text: langue == "English" ? qsTr("创建组") : qsTr("New Group")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

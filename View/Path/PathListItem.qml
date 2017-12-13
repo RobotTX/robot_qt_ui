@@ -13,6 +13,7 @@ Column {
     property Paths pathModel
     property Column column
     property Robots robotModel
+    property string langue
     signal renameGroup(string name)
     signal editPath(string name, string groupName)
 
@@ -89,6 +90,7 @@ Column {
             EditPathGroupPopupMenu {
                 id: editGroupPopupMenu
                 x: rightButton.width
+                langue: groupListItem.langue
                 onDeleteGroup: pathModel.deleteGroup(groupName)
                 onRenameGroup: groupListItem.renameGroup(groupName)
             }
@@ -129,7 +131,12 @@ Column {
                 /// The left button in each element of the list
                 SmallButton {
                     id: leftButton2
-                    tooltip: pathIsVisible ? "Hide the path on the map" : "Show the path on the map"
+                    tooltip: { if (pathIsVisible) {
+                               langue == "English" ? "在地图上隐藏路径" : "Hide the path on the map"
+                                } else {
+                               langue == "English" ? "在地图上显示路径" : "Show the path on the map"
+                            }
+                    }
                     imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                     anchors {
                         top: parent.top
@@ -188,6 +195,7 @@ Column {
                         x: rightButton.width
                         pathModel: groupListItem.pathModel
                         robotModel: groupListItem.robotModel
+                        langue: groupListItem.langue
                         myGroup: groupName
                         onDeletePath: pathModel.deletePath(groupName, pathName)
                         onMoveTo: pathModel.moveTo(pathName, groupName, newGroup)
@@ -247,6 +255,17 @@ Column {
                         anchors.left: rect.right
                         anchors.right: parent.right
                         anchors.leftMargin: 10
+                        anchors.rightMargin: 5
+                    }
+
+                    CustomLabel {
+                        id: customLabelWaitTime
+                        text: waitTime === -1 ? qsTr("Human Action") : qsTr("Delay : " + waitTime + " s")
+                        horizontalAlignment: Text.AlignRight
+                        font.pixelSize: 14
+                        color: Style.midGrey2
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
                         anchors.rightMargin: 5
                     }
 

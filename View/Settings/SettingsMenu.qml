@@ -13,12 +13,14 @@ Page {
     property Robots robotModel
     property Tutorial tutorial
     property real batteryWarningThreshold
+    property string langue
 
     signal closeMenu()
 
     MenuHeader {
+        langue: page.langue
         id: settingsMenuHeader
-        txt: "Settings"
+        txt: langue == "English" ? "设置" : "Settings"
         onCloseMenu: page.closeMenu()
     }
 
@@ -28,6 +30,7 @@ Page {
 
         robotModel: page.robotModel
         tutorial: page.tutorial
+        langue: page.langue
 
         oriBatteryWarningThreshold: page.batteryWarningThreshold
 

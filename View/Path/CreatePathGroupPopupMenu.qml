@@ -9,6 +9,8 @@ Menu {
     signal openCreatePathMenu()
     signal openCreateGroupMenu()
 
+    property string langue
+
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -16,7 +18,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: "New Path"
+        labelText: langue == "English" ? "创建路径" : "New Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -30,7 +32,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: "New Group"
+        labelText: langue == "English" ? "创建组" : "New Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

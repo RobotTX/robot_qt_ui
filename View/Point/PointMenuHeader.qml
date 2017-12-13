@@ -7,9 +7,8 @@ Frame {
     id: menuHeader
     padding: 0
     z: 2
-
     readonly property string txt: "Point"
-
+    property string langue
     signal closeMenu(string txt)
     signal openCreatePointMenu()
     signal openCreateGroupMenu()
@@ -39,7 +38,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("Manage " + txt)
+        text: langue == "English" ? qsTr("管理目标点") : qsTr("Manage " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
@@ -78,6 +77,7 @@ Frame {
         CreatePointGroupPopupMenu {
             id: createMenu
             x: createButton.width
+            langue: menuHeader.langue
             onOpenCreatePointMenu: menuHeader.openCreatePointMenu()
             onOpenCreateGroupMenu: menuHeader.openCreateGroupMenu()
         }

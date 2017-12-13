@@ -13,6 +13,7 @@ Page {
     property Points pointModel
     property Paths pathModel
     property real batteryWarningThreshold
+    property string langue
     signal useRobotPathModel(bool use)
     signal closeMenu()
 
@@ -27,7 +28,8 @@ Page {
 
     MenuHeader {
         id: robotMenuHeader
-        txt: "Robot"
+        txt: langue == "English" ? "机器人" : "Robot"
+        langue: page.langue
         onCloseMenu: page.closeMenu()
     }
 
@@ -35,6 +37,7 @@ Page {
         robotModel: page.robotModel
         pointModel: page.pointModel
         pathModel: page.pathModel
+        langue: page.langue
         batteryWarningThreshold: page.batteryWarningThreshold
         anchors {
             left: parent.left

@@ -12,7 +12,7 @@ import "../Tutorial"
 Window {
 
     id: dialog
-    title: "Edit Map"
+    title: langue == "English" ? "修改地图" : "Edit Map"
     objectName: "editMapWindow"
 
     width: 1000
@@ -21,7 +21,7 @@ Window {
     minimumHeight: 600
 
     property Tutorial tutorial
-
+    property string langue
     property string imgSource
 
     property var imagesArray: ["qrc:/icons/line1", "qrc:/icons/line2", "qrc:/icons/line3", "qrc:/icons/line4",
@@ -79,7 +79,7 @@ Window {
 
             id: undo
 
-            CustomToolTip { text: "Undo" }
+            CustomToolTip { text: langue == "English" ? "撤销" : "Undo" }
 
             Shortcut {
                 sequence: StandardKey.Undo
@@ -101,7 +101,7 @@ Window {
 
             id: redo
 
-            CustomToolTip { text: "Redo" }
+            CustomToolTip { text: langue == "English" ? "恢复" :  "Redo" }
 
             Shortcut {
                 sequence: "Ctrl+Y"
@@ -123,7 +123,7 @@ Window {
 
             id: reset
 
-            CustomToolTip { text: "Cancel all modifications" }
+            CustomToolTip { text: langue == "English" ? "撤销所有修改" : "Cancel all modifications" }
 
             src: "qrc:/icons/reset"
 
@@ -140,7 +140,7 @@ Window {
 
             id: selectButton
 
-            CustomToolTip { text: "Drag the map" }
+            CustomToolTip { text: langue == "English" ? "拖动地图" : "Drag the map" }
 
             //checkable: true
             checked: shape == -1
@@ -171,7 +171,7 @@ Window {
             //checkable: true
             checked: color == "#ffffff" // white
 
-            CustomToolTip { text: "Add a known area to the map" }
+            CustomToolTip { text: langue == "English" ? "加入自由区域到地图" : "Add a known area to the map" }
 
             src: "qrc:/icons/white"
 
@@ -191,7 +191,7 @@ Window {
             //checkable: true
             checked: color == Style.mapGrey
 
-            CustomToolTip { text: "Add an unknown area to the map" }
+            CustomToolTip { text: langue == "English" ? "加入未知区域到地图" : "Add an unknown area to the map" }
 
             src: "qrc:/icons/grey"
 
@@ -211,7 +211,7 @@ Window {
             //checkable: true
             checked: color == "#000000" // black
 
-            CustomToolTip { text: "Add an obstacle to the map" }
+            CustomToolTip { text: langue == "English" ? "加入障碍物区域到地图" : "Add an obstacle to the map" }
 
             src: "qrc:/icons/black"
 
@@ -238,7 +238,7 @@ Window {
 
             id: dotButton
 
-            CustomToolTip { text: "Draw a point on the map" }
+            CustomToolTip { text: langue == "English" ? "画点到地图" : "Draw a point on the map" }
 
             //checkable: true
             checked: shape == 0
@@ -258,7 +258,7 @@ Window {
 
             id: lineButton
 
-            CustomToolTip { text: "Draw a line on the map" }
+            CustomToolTip { text: langue == "English" ? "画线到地图" : "Draw a line on the map" }
 
             //checkable: true
             checked: shape == 1
@@ -278,7 +278,7 @@ Window {
 
             id: outlineButton
 
-            CustomToolTip { text: "Draw an empty rectangle on the map" }
+            CustomToolTip { text: langue == "English" ? "画空心矩形到地图" : "Draw an empty rectangle on the map" }
 
             //checkable: true
             checked: shape == 2
@@ -298,7 +298,7 @@ Window {
 
             id: solidButton
 
-            CustomToolTip { text: "Draw an filled rectangle on the map" }
+            CustomToolTip { text: langue == "English" ? "画实心矩形到地图" : "Draw a filled rectangle on the map" }
 
             //checkable: true
             checked: shape == 3
@@ -327,7 +327,7 @@ Window {
 
             id: decrease
 
-            CustomToolTip { text: "Decrease the size of your brush" }
+            CustomToolTip { text: langue == "English" ? "减小画笔尺寸" : "Decrease the size of your brush" }
 
             src: "qrc:/icons/decrease"
 
@@ -360,7 +360,7 @@ Window {
 
             id: increaseButton
 
-            CustomToolTip { text: "Increase the size of your brush" }
+            CustomToolTip { text: langue == "English" ? "增大画笔尺寸" : "Increase the size of your brush" }
 
             src: "qrc:/icons/add"
 
@@ -418,9 +418,27 @@ Window {
 
         EditMapToolButton {
 
+            id: cancelButton
+
+            CustomToolTip { text: langue == "English" ? "取消修改" : "Cancel modifications" }
+
+            src: "qrc:/icons/closeBtn"
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: saveButton.left
+            }
+
+            onClicked: {
+                dialog.hide();
+            }
+        }
+
+        EditMapToolButton {
+
             id: saveButton
 
-            CustomToolTip { text: "Save your modifications to the current map and notify your robots" }
+            CustomToolTip { text: langue == "English" ? "保存修改到当前地图" : "Save your modifications to the current map and notify your robots" }
 
             src: "qrc:/icons/save"
 

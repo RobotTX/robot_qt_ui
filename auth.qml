@@ -19,7 +19,7 @@ ApplicationWindow {
     maximumHeight:  120
     minimumWidth: 350
     minimumHeight: 120
-    title: qsTr("Authentification GT Gobot application")
+    title: qsTr("Authentification Go Anywhere application")
     Component.onCompleted: {
         setX(Screen.width / 2 - width / 2);
         setY(Screen.height / 2 - height / 2);

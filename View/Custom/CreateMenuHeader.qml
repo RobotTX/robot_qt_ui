@@ -7,6 +7,8 @@ Frame {
 
     id: menuHeader
 
+    property string langue
+
     padding: 0
     z: 2
 
@@ -38,7 +40,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("New " + txt)
+        text: langue == "English" ? qsTr("创建 " + txt) : qsTr("New " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

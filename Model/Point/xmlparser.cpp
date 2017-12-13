@@ -73,7 +73,6 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
     }
 }
 
-
 QString XMLParser::readElement(QXmlStreamReader& xmlReader){
     QString element("");
     while(!xmlReader.atEnd()){

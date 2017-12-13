@@ -189,6 +189,10 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
     switch(who){
         case 1:
             emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
+
+            ///update robot infomation
+            qDebug() << "RobotController::mapReceivedSlot update robot info after receiving a new map";
+            emit updateRobotInfo(ip, robotInfo_);
         break;
         case 0:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
@@ -204,6 +208,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
 
 void RobotController::doneSendingMapSlot(bool deleteHomePath){
     qDebug() << "RobotController::doneSendingMapSlot called" << ip;
+
     if(deleteHomePath)
         emit resetHomePath(ip);
     sendingMap = false;
@@ -220,11 +225,14 @@ void RobotController::robotIsDeadSlot(void){
 }
 
 void RobotController::updateRobotInfoSlot(const QString robotInfo){
+    robotInfo_=robotInfo;
+    qDebug() << "RobotController::update Robot info called" << robotInfo_;
     emit updateRobotInfo(ip, robotInfo);
     ping();
 }
 
 void RobotController::sendCommand(const QString cmd){
+    qDebug() << "\nWE ARE IN RobotController::sendCommand()";
     qDebug() << "(RobotController) Send command called" << cmd;
     commandController->sendCommand(cmd);
 }

@@ -20,6 +20,7 @@ Frame {
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
+    property string langue
 
     signal backToMenu()
     signal createPath(string groupName, string name)
@@ -42,10 +43,17 @@ Frame {
             oldName = "";
             oldGroup = "";
             robotPathName = "";
+            var displayTextChange = "";
+            if (langue == "English") {
+                displayTextChange = Helper.noGroupChinese;
+            } else {
+                displayTextChange = Helper.noGroup;
+            }
+
 //            if (robotPathPoints)
 //                robotPathPoints.clear();
             groupComboBox.currentIndex = 0;
-            groupComboBox.displayText = Helper.noGroup;
+            groupComboBox.displayText = displayTextChange;
         } else {
             if(tmpPathModel && createPathMenuFrame){
                 tmpPathModel.clearTmpPath();
@@ -127,7 +135,7 @@ Frame {
 
         Label {
             id: pathLabel
-            text: qsTr("Path Name")
+            text: langue == "English" ? "路径名称" : qsTr("Path Name")
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -142,7 +150,7 @@ Frame {
         TextField {
             id: pathTextField
             selectByMouse: true
-            placeholderText: qsTr("Enter name")
+            placeholderText: langue == "English" ? "路径名称" : qsTr("Enter name")
             height: 28
             anchors {
                 left: parent.left
@@ -168,7 +176,7 @@ Frame {
 
         Label {
             id: groupLabel
-            text: qsTr("Choose Group")
+            text: langue == "English" ? "选择分组" : qsTr("Choose Group")
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -183,7 +191,15 @@ Frame {
         CustomComboBox {
             id: groupComboBox
             model: pathModel
-            displayText: oldName ? oldGroup : Helper.noGroup
+            displayText: {
+                if (oldname) {
+                    oldGroup
+                } else {
+                    langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                }
+
+//                oldName ? oldGroup : Helper.noGroup
+            }
             anchors {
                 left: parent.left
                 top: groupLabel.bottom
@@ -196,7 +212,7 @@ Frame {
 
         Label {
             id: pathPointsLabel
-            text: qsTr("Path Points")
+            text: langue == "English" ? qsTr("路径目标点") : qsTr("Path Points")
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -210,7 +226,7 @@ Frame {
 
         NormalButton {
             id: addSavedPoint
-            txt: "Add Saved Point"
+            txt: langue == "English" ? "加入已有目标点" : "Add Saved Point"
 
             imgSrc: "qrc:/icons/add"
             anchors {
@@ -381,7 +397,7 @@ Frame {
 
                     RoundCheckBox {
                         id: humanAction
-                        text: qsTr("Human Action")
+                        text: langue == "English" ? qsTr("人为干预") : qsTr("Human Action")
                         checked: waitTime < 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -396,7 +412,7 @@ Frame {
 
                     RoundCheckBox {
                         id: waitFor
-                        text: qsTr("Wait for")
+                        text: langue == "English" ? qsTr("等待") : qsTr("Wait for")
                         checked: waitTime >= 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -487,7 +503,7 @@ Frame {
 
                     Label {
                         id: minText
-                        text: "sec(s)"
+                        text: langue == "English" ? "秒" : "sec(s)"
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -501,7 +517,7 @@ Frame {
 
                     Label {
                         id: oriLabel
-                        text: qsTr("Orientation")
+                        text: langue == "English" ? qsTr("方向") : qsTr("Orientation")
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {

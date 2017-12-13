@@ -5,7 +5,6 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
 import "../../Model/Robot"
-import "../../Model/Point"
 import "../Custom"
 import "../Robot"
 
@@ -16,9 +15,9 @@ Menu {
 
     property Paths pathModel
     property Robots robotModel
-    property Points pointModel
     property string myGroup
     property string myRobot
+    property string langue
     property int currentMenuIndex: -1
 
     signal newPathSignal(string ip, string groupName, string pathName)
@@ -37,7 +36,7 @@ Menu {
         id: assignPathBis
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Assign this path to"
+        labelText: langue == "English" ? "设置当前路径给" :"Assign this path to"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -72,7 +71,7 @@ Menu {
 
     // first item
     PopupMenuItem {
-        labelText: "Edit Path"
+        labelText: langue == "English" ? "修改路径" : "Edit Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -89,7 +88,7 @@ Menu {
     // third item
     PopupMenuItem {
         id: moveToMenu
-        labelText: "Move to"
+        labelText: langue == "English" ? "移动到" : "Move to"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -120,7 +119,7 @@ Menu {
 
             PopupMenuItem {
                 height: Style.menuItemHeight
-                labelText: Helper.noGroup
+                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
                 /// Disable the group in which the path already is so we can't move it in
@@ -170,7 +169,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: "Delete Path"
+        labelText: langue == "English" ? "删除路径" : "Delete Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

@@ -18,6 +18,7 @@
 #include "Controller/Robot/robotscontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
 #include "Controller/Robot/robotcontroller.h"
+#include "Controller/Robot/cmdrobotworker.h"
 #include "Model/Point/xmlparser.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
@@ -81,6 +82,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         if(settings){
             connect(this, SIGNAL(emitSettings(QVariant)), settings, SLOT(setSettings(QVariant)));
             connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
+            connect(settings, SIGNAL(saveWifiSignal(QString, QString, QString)), this, SLOT(saveWifi(QString, QString, QString)));
         } else {
             /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the settings";
@@ -219,7 +221,7 @@ void MainController::checkTmpPosition(int index, double x, double y){
 }
 
 void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY, int mapRotation, bool new_config) const {
-    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY;
+    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY << new_config;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
         qDebug() << "save map to:" << fileName;
@@ -233,13 +235,15 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     qDebug() << "save map from:" << oldFilePath;
 
     if(!new_config){
-        ///saves the image to the user given directory
-        mapController->saveMapToFile(fileName + ".pgm");
+        if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
+            ///saves the image to the user given directory
+            mapController->saveMapToFile(fileName + ".pgm");
+        }
 
         /// saves the image as a pgm file to the software directory
         mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        ///mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+        mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
@@ -261,28 +265,27 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        mapController->saveMapConfig(filePath, 0, 0, 1.0, 0);
+        mapController->saveMapConfig(filePath, 0, 0, 1, 0);
 
     }
-
-    mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    mapController->saveNewMap(oldFilePath);
+    ///mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 }
 
 void MainController::loadMapConfig(QString fileName) {
-    qDebug() << "MainController::loadMapConfig called with file" << fileName;\
+    qDebug() << "MainController::loadMapConfig called with file" << fileName;
 
     if(!fileName.isEmpty()){
         QString fileNameWithoutExtension;
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
 
+        ///save the current points and paths to the attached map before clearing it for new map
         QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
         QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
-
-        ///save the current points and paths to the attached map before clearing it for new map
-        qDebug() << "MainController::loadMapConfig save current map paths to:"<<oldfilePaths;
+        qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
         PathXMLParser::save(pathController,oldfilePaths);
-        qDebug() << "MainController::loadMapConfig save current map points to:"<<oldfilePoints;
+        qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
         XMLParser::save(pointController,oldfilePoints);
 
 
@@ -292,14 +295,8 @@ void MainController::loadMapConfig(QString fileName) {
 
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath)){
-            robotsController->sendMapToAllRobots(mapController->getMapId().toString(),
-                                                 mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
-                                                 mapController->getMetadataString(),
-                                                 mapController->getMapImage());
-
             /// clears the map of all paths and points
             pointController->clearPoints();
-
             pathController->clearPaths();
 
             /// imports points associated to the map and save them in the current file
@@ -313,6 +310,21 @@ void MainController::loadMapConfig(QString fileName) {
 
             /// saves the imported paths in the current paths file
             PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+
+            QVector<double> new_home = pointController->getHome();
+            qDebug() << "?????????? New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+            QMap<QString, QPointer<RobotController>> robots =robotsController->getRobots();
+            QMapIterator<QString, QPointer<RobotController>> it(robots);
+            while(it.hasNext()){
+                it.next();
+                qDebug() << "connected robot:"<<it.key();
+                sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
+            }
+
+            robotsController->sendMapToAllRobots("IMPT"+mapController->getMapId().toString(),
+                                                 mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
+                                                 mapController->getMetadataString(),
+                                                 mapController->getMapImage());
 
             setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
         } else
@@ -332,6 +344,14 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
     setMessageTopSlot(2, "Settings saved");
 }
 
+void MainController::saveWifi(QString ip, QString wifi, QString pwd) {
+    qDebug() << "\nWE ARE IN MAINCONTROLLER::saveWifi()";
+    qDebug() << "saveWifi called" << ip << wifi << " " << pwd;
+    QString cmd = QString("y") + QChar(31) + QString(wifi) + QChar(31) + QString(pwd);// + QChar(31) + QChar(23) + QChar(31);
+    qDebug() << cmd;
+    robotsController->sendCommand(ip, cmd);
+}
+
 void MainController::newRobotPosSlot(QString ip, double posX, double posY, double ori){
 
     QPointF robotPos = Helper::Convert::robotCoordToPixelCoord(
@@ -349,6 +369,7 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
 
 void MainController::updatePathSlot(QString ip, QStringList strList){
     if(strList.size() > 0){
+        qDebug() << "RobotsController::updatePathSlot"<<strList.size();
         if(strList.size() % 5 == 1){
             qDebug() << "RobotsController::updatePathSlot" << ip << " updating the path";
             emit setPath(ip, strList.takeFirst());
@@ -362,7 +383,7 @@ void MainController::updatePathSlot(QString ip, QStringList strList){
                 emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt(), static_cast<QString>(strList.at(i+4)).toInt());
             }
         } else
-            qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";
+            qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 5";
     } else
         qDebug() << "RobotsController::updatePathSlot" << ip << "the path is empty";
 
@@ -376,22 +397,51 @@ void MainController::updateHomeSlot(QString ip, double homeX, double homeY, doub
                     mapController->getResolution(),
                     mapController->getHeight());
 
+    qDebug() << "\nMainController::set home" << homePos.x() << homePos.y() << homeOri;
     emit setHome(ip, homePos.x(), homePos.y(), homeOri);
 }
 
 void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, int homeOri){
-    QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
-                    QPointF(homeX, homeY),
-                    mapController->getOrigin().x(),
-                    mapController->getOrigin().y(),
-                    mapController->getResolution(),
-                    mapController->getHeight());
-    qDebug() << "MainController::sendCommandNewHome" << homeX << homeY << homePos;
-    QString cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
+    QString cmd;
+    if(homeX==0 && homeY==0 && homeOri==0){
+        cmd = QString("n") + QChar(31) + QString::number(homeX) + QChar(31) + QString::number(homeY) + QChar(31) + QString::number(homeOri);
+    }
+    else{
+        QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
+                        QPointF(homeX, homeY),
+                        mapController->getOrigin().x(),
+                        mapController->getOrigin().y(),
+                        mapController->getResolution(),
+                        mapController->getHeight());
+        qDebug() << "\nMainController::sendCommandNewHome" << homeX << homeY << homePos;
+        cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
+    }
     robotsController->sendCommand(ip, cmd);
 }
 
+void MainController::sendCommandSavePlace(QString ip, QString name, double posX, double posY, double orientation, bool home) {
+    int homeBool = 0;
+    QPointF pointReal = Helper::Convert::pixelCoordToRobotCoord(
+                QPointF(posX,posY),
+                mapController->getOrigin().x(),
+                mapController->getOrigin().y(),
+                mapController->getResolution(),
+                mapController->getHeight());
+    QString cmd;
+    if (home == true) {
+        homeBool = 1;
+    } else {
+        homeBool = 0;
+    }
+    cmd = QString("k") + QChar(31) + name + QChar(31) + QString::number(pointReal.x()) + QChar(31) + QString::number(pointReal.y()) + QChar(31) + QString::number(orientation) + QChar(31) + QString::number(homeBool);
+    qDebug() << cmd;
+    qDebug() << "\nMainController::sendCommandSavePlace" << name << posX << pointReal.x() << posY << pointReal.y() << orientation << homeBool;
+    robotsController->sendCommand(ip, cmd);
+
+}
+
 void MainController::sendCommandNewPath(QString ip, QString groupName, QString pathName){
+    qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
     QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
     QString pathStr("");
     for(int i = 0; i < pathPointVector.size(); i++){
@@ -412,11 +462,7 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
 }
 
 void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
-
-
     //emit openScanWindowForAutomaticScan(ip);
-
-
     /// Neither the application nor the robot has a map so we send a command to start scanning automatically
     if(mapController->getMapImage().size().width() == 0 && !mapId.compare("{00000000-0000-0000-0000-000000000000}")){
         /// opens the scan window and adds the robot with ip <ip> to the list
@@ -434,19 +480,22 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
 
         bool robotOlder = (mapDateTime <= mapController->getDateTime());
+        qDebug() << "Robot map date:" << mapDateTime << ". Console map date:"<< mapController->getDateTime();
+        qDebug() << robotOlder;
+
         if(robotOlder){
             qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and older map";
-        } else {
+        }
+        else {
             qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and newer map";
         }
 
+        ///save the current points and paths to the attached map before clearing it for new map
         QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
         QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
-
-        ///save the current points and paths to the attached map before clearing it for new map
-        qDebug() << "MainController::loadMapConfig save current map paths to:"<<oldfilePaths;
+        qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
         PathXMLParser::save(pathController,oldfilePaths);
-        qDebug() << "MainController::loadMapConfig save current map points to:"<<oldfilePoints;
+        qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
         XMLParser::save(pointController,oldfilePoints);
 
         int mapChoice = -1;
@@ -483,7 +532,8 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
                 if(mapController->getMapImage().size().width() != 0){
                     qDebug() << "MainController::checkMapInfoSlot There is a map on the application's side so the choice is offered to the user";
                     emit openMapChoiceMessageDialog(ip, robotOlder);
-                } else {
+                }
+                else {
                     qDebug() << "MainController::checkMapInfoSlot There is no map on the application side so we take the robot's one";
                     robotsController->requestMap(ip);
                 }
@@ -503,21 +553,25 @@ void MainController::sendNewMap(QString ip){
 
     QString mapMetadata = mapController->getMetadataString();
 
-    robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
+    QVector<double> new_home = pointController->getHome();
+    qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+    sendCommandNewHome(ip,new_home.at(0),new_home.at(1),new_home.at(2));
+
+
+    robotsController->sendNewMap(ip, "IMPT"+mapId, date, mapMetadata, mapController->getMapImage());
 }
 
 void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
     mapController->updateMetadata(map_width, map_height, resolution.toDouble(), originX.toDouble(), originY.toDouble());
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
-
     QString mapMetadata = mapController->getMetadataString();
-
+    ///Update center of map
+    mapController->centerMapSlot();
     /// When we receive a map from a robot, we send it to all the other robots
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
 
     pointController->clearPoints();
     XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
-
     pathController->clearPaths();
     PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 }
@@ -525,11 +579,22 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
 void MainController::requestOrSendMap(QString ip, bool request){
     if(request)
         robotsController->requestMap(ip);
-    else
-        robotsController->sendMapToAllRobots(mapController->getMapId().toString(),
+    else{
+        QVector<double> new_home = pointController->getHome();
+        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+        QMap<QString, QPointer<RobotController>> robots =robotsController->getRobots();
+        QMapIterator<QString, QPointer<RobotController>> it(robots);
+        while(it.hasNext()){
+            it.next();
+            qDebug() << "connected robot:"<<it.key();
+            sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
+        }
+
+        robotsController->sendMapToAllRobots("IMPT"+mapController->getMapId().toString(),
                                              mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
                                              mapController->getMetadataString(),
                                              mapController->getMapImage());
+    }
 }
 
 void MainController::getMapFromRobot(QString ip){
@@ -548,7 +613,6 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     mapController->setMapFile(cpp_file_name);
 
     if(scan){
-
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
         qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
 
@@ -559,7 +623,12 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
                                                                          mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
                                                                          mapController->getHeight());
         /// Reset the orientation to reset the initial pose of the robot
-        robotOri = map_reference->robotOrientation()-90;
+        robotOri = map_reference->robotOrientation()-180;
+        if (robotOri>180)
+            robotOri = robotOri-360;
+        else if (robotOri<-180)
+            robotOri = robotOri+360;
+        qDebug() << "MainController::resetMapConfiguration::Scan Initial pose in new map" << initPos.x()<<initPos.y()<<robotOri;
     }
     pointController->clearPoints();
     pathController->clearPaths();
@@ -571,7 +640,10 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
     /// in the files
-    saveMapConfig(cpp_file_name, 1.0, 0, 0, false);
+    saveMapConfig(cpp_file_name, 1, 0, 0, 0, false);
+    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    //change current map to new map
+    mapController->saveMapConfig(currentPathFile, 0, 0, 1, 0);
 
     /// we send this information to the robot, init pos is used to determine the position of the robot directly after gobot move
     /// is relaunched
@@ -583,7 +655,36 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     //qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
 
-    robotsController->sendMapToAllRobots(mapController->getMapId().toString(), mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), infoRobot, img);
+    QVector<double> new_home = pointController->getHome();
+    QString map_type = "IMPT";
+    QMap<QString, QPointer<RobotController>> robots =robotsController->getRobots();
+    QMapIterator<QString, QPointer<RobotController>> it(robots);
+
+    if (scan){
+        mapController->centerMapSlot();
+        new_home[0] = initPos.x();
+        new_home[1] = initPos.y();
+        new_home[2] = robotOri;
+        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+        map_type = "SCAN";
+        ///send home in scanned map to robot, SCAN+x
+        QString cmd = QString("n") + QChar(31) + "S"+QString::number(new_home.at(0)) + QChar(31) + QString::number(new_home.at(1)) + QChar(31) + QString::number(new_home.at(2));
+        while(it.hasNext()){
+            it.next();
+            qDebug() << "connected robot:"<<it.key();
+            robotsController->sendCommand(it.key(), cmd);
+        }
+    }
+    else{
+        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+        while(it.hasNext()){
+            it.next();
+            qDebug() << "connected robot:"<<it.key();
+            sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
+        }
+    }
+
+    robotsController->sendMapToAllRobots(map_type+mapController->getMapId().toString(), mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), infoRobot, img);
 }
 
 /************************* SCANNING *************************/
@@ -682,6 +783,14 @@ void MainController::updateTutoFile(int index, bool visible){
 }
 
 void MainController::clearPointsAndPathsAfterScan(){
+    ///save the current points and paths to the attached map before clearing it for new map
+    QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
+    QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
+    qDebug() << "MainController::resetMapConfiguration save current map paths to old path fild:"<<oldfilePaths;
+    PathXMLParser::save(pathController,oldfilePaths);
+    qDebug() << "MainController::resetMapConfiguration save current map points to old point fild:"<<oldfilePoints;
+    XMLParser::save(pointController,oldfilePoints);
+
     /// clears the map of all paths and points
     pointController->clearPoints();
     pathController->clearPaths();

@@ -48,7 +48,7 @@ Menu {
                 onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index
 
                 Menu {
-                    id: pointMenuz
+                    id: pointMenu
                     padding: 0
                     width: 140
                     x: parent.width

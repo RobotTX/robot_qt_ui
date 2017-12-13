@@ -11,6 +11,7 @@ Dialog {
     property Tutorial tutorial
     property string tutoMessage
     property string feature
+    property string langue
 
     // to reset the box that asks the user if he wants to hide the message
     onVisibleChanged: box.checked = true
@@ -75,7 +76,7 @@ Dialog {
                     right: button.left
                 }
 
-                text: "Do not show this message again"
+                text: langue == "English" ? "不在显示此条信息" : "Do not show this message again"
             }
 
             Button {
@@ -94,7 +95,7 @@ Dialog {
                 }
                 height: 23
                 width: 60
-                text: "Ok"
+                text: langue == "English" ? "是" : "Ok"
                 onClicked: {
                     box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
                     tutorialDialog.close()

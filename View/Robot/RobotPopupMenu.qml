@@ -17,6 +17,7 @@ Menu {
     width: 220
     property Points pointModel
     property Paths pathModel
+    property string langue
     property int currentMenuIndex: -1
     signal pointSelected(double _homeX, double _homeY, int orientation)
     signal pathSelected(string _pathName, string _groupName)
@@ -24,6 +25,7 @@ Menu {
     signal deletePath()
     signal laserPressed()
     signal saveCurrentPath()
+    signal saveCurrentHome()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -35,7 +37,7 @@ Menu {
         id: assignHome
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Assign a Charging Station"
+        labelText: langue == "English" ? "设置充电站" : "Assign a Charging Station"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -74,7 +76,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Assign a Path"
+        labelText: langue == "English" ? "设置路径" : "Assign a Path"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -120,11 +122,24 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Save current path"
+        labelText: langue == "English" ? "保存当前充电站" : "Save current home"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 2
-        onTriggered: robotMenu.saveCurrentPath()
+        onTriggered: robotMenu.saveCurrentHome()
+    }
+
+    PopupMenuItem {
+        height: Style.menuItemHeight
+        width: parent.width
+        labelText: langue == "English" ? "保存当前路径" : "Save current path"
+        leftPadding: Style.menuItemLeftPadding
+
+        onHoveredChanged: if(visible) currentMenuIndex = 3
+        onTriggered: {
+            console.log("We are in RobotPopupMenu.qml - robotMenu.saveCurrentPath()");
+            robotMenu.saveCurrentPath();
+        }
     }
 
     Rectangle {
@@ -136,10 +151,10 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Rename"
+        labelText: langue == "English" ? "重命名" : "Rename"
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 3
+        onHoveredChanged: if(visible) currentMenuIndex = 4
         onTriggered: robotMenu.renameRobot()
     }
 
@@ -152,10 +167,10 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: "Delete Path from Robot"
+        labelText: langue == "English" ? "从机器人上删除路径" : "Delete Path from Robot"
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 4
+        onHoveredChanged: if(visible) currentMenuIndex = 5
         onTriggered: robotMenu.deletePath()
     }
 

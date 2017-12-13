@@ -13,6 +13,7 @@ Frame {
     objectName: "scanLeftMenuFrame"
 
     property Robots robotModel
+    property string langue
     signal startScanning(string ip)
     signal startAutomaticScan(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
@@ -189,7 +190,7 @@ Frame {
         }
 
         CustomLabel {
-            text: qsTr("Add a scan")
+            text: langue == "English" ? qsTr("加入新的扫描") : qsTr("Add a scan")
             color: "#262626"
             anchors{
                 verticalCenter: parent.verticalCenter
@@ -241,6 +242,7 @@ Frame {
             x: 1
             width: flick.width - 2
             selected: scanLeftMenuFrame.selectedIp === ip
+            langue: scanLeftMenuFrame.langue
             onStopScanning: {
                 if(robotModel.isConnected(ip)){
                     robotModel.stopScanning(ip, true);
@@ -290,7 +292,7 @@ Frame {
     SaveButton {
         id: saveButton
         canSave: scanningRobotsList.count > 0
-        tooltip: "You need at least 1 map to save"
+        tooltip: langue == "English" ? "保存时需要至少一个地图" : "You need at least 1 map to save"
         anchors {
             bottom: cancelButton.top
             bottomMargin: 10
@@ -321,11 +323,26 @@ Frame {
         nameFilters: "*.pgm"
         // won't let you choose a file name if selectExisting is true
         selectExisting: false
-        title: "Please choose a location for your map"
+        title: langue == "English" ? "请选择一个路径" : "Please choose a location for your map"
 
         onAccepted: {
-            scanLeftMenuFrame.saveScan(fileUrl.toString())
+            var fileStr = fileUrl.toString();
+            if (fileStr.indexOf(" ") >= 0) {
+                console.log("space in the name not authorized");
+                warningDialog.open()
+            } else {
+                scanLeftMenuFrame.saveScan(fileStr)
+            }
         }
+    }
+
+    CustomDialog {
+        id: warningDialog
+        x: scanLeftMenuFrame.x / 2
+        y: scanLeftMenuFrame.y / 2
+        height: 60
+        title: langue == "English" ? "警告窗口" : "Warning dialog"
+        acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"
     }
 
     TutorialDialog {
@@ -334,6 +351,7 @@ Frame {
         y: scanWindowHeight / 2 - height / 2
         feature: "scan_map"
         tutorial: scanLeftMenuFrame.tutorial
+        langue: scanLeftMenuFrame.langue
         Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map")
     }
 

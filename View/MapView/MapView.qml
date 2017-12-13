@@ -24,6 +24,7 @@ Frame {
     property double zoom: zoomScale.xScale
 
     property string mapSrc
+    property string langue
 
     property Points pointModel
     property Paths pathModel
@@ -61,7 +62,7 @@ Frame {
         _name: "tmpPointView"
         _groupName: "tmpGroup"
         _isVisible: false
-        tooltipText: "Drag me or click the map to modify my position"
+        tooltipText: langue == "English" ? "拖拽或点击地图来改变位置" : "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
         mapOrientation: -topViewId.mapRotation
@@ -96,6 +97,7 @@ Frame {
             id: topViewId
             objectName: "topView"
             // qml got a path of this format : file://path_understood_by_Qt for linux or file:C:/path_understood_by_Qt
+            langue: mapViewFrame.langue
             onSavePosition: emitPosition()
             onLoadPosition: mapViewFrame.loadPosition()
             /// If we have a map, the mapImage is visible
@@ -128,6 +130,7 @@ Frame {
             clip: true
             EmptyMap {
                 id: emptyMap
+                langue: mapViewFrame.langue
                 anchors.fill: parent
             }
 
@@ -383,7 +386,7 @@ Frame {
                             type: Helper.PointViewType.HOME
                             x: homeX
                             y: homeY
-                            tooltipText: "Charging station of " + name
+                            tooltipText: langue == "English" ? "充电桩 " + name : "Charging station of " + name
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: homeOri
                         }
@@ -405,6 +408,7 @@ Frame {
 //                                        Helper.PointViewType.PATHPOINT_NEXT
 //                                    }
                                     {
+                                        console.log("stage checking = " + stage);
                                         if (stage === 0) {
                                             if (index === 0) {
                                                 Helper.PointViewType.PATHPOINT_START_YELLOW
@@ -421,7 +425,11 @@ Frame {
                                             } else {
                                                 Helper.PointViewType.PATHPOINT
                                             }
-                                        }
+                                        } else if (stage < 0) {
+                                            Helper.PointViewType.PATHPOINT_START_YELLOW
+                                        } /*else if (stage === -100) {
+                                            Helper.PointViewType.PATHPOINT_END
+                                        }*/
                                 }
                                 x: pathPointPosX
                                 y: pathPointPosY
@@ -477,9 +485,11 @@ Frame {
 
     // puts the point <posX, posY> at the center of the frame
     function centerMap(posX, posY){
+        topViewId.setMapRotation(0);
         // position of the center of the item in which we display the map in map coordinates
         var pos_finale = item.mapToItem(mapImage, item.width/2, item.height/2);
         mapImage.x += (pos_finale.x - posX) * zoomScale.xScale;
         mapImage.y += (pos_finale.y - posY) * zoomScale.xScale;
+        emitPosition();
     }
 }

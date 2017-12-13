@@ -35,6 +35,8 @@ public:
      */
     bool checkPointName(const QString name);
 
+    QVector<double> getHome(void);
+
     /**
      * @brief clearPoints
      * Delete all the points on the c++ and qml side

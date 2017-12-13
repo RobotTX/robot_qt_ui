@@ -14,6 +14,7 @@ Frame {
 
     property Paths pathModel
     property Robots robotModel
+    property string langue
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -23,7 +24,7 @@ Frame {
     /// This frame is displayed when there is no path
     EmptyMenu {
         visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
-        txt: "You don't have any paths yet, click the '+' button to create a path."
+        txt: langue == "English" ? "您没有任何路径，请点击‘+’按钮创建一个路径" : "You don't have any paths yet, click the '+' button to create a path."
         imgSrc: "qrc:/icons/big_path"
     }
 
@@ -34,6 +35,7 @@ Frame {
             width: pathMenuFrame.width
             pathModel: pathMenuFrame.pathModel
             robotModel: pathMenuFrame.robotModel
+            langue: pathMenuFrame.langue
             onRenameGroup: pathMenuFrame.renameGroup(name)
             onEditPath: pathMenuFrame.editPath(name, groupName)
         }
