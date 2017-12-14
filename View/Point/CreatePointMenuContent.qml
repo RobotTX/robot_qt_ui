@@ -159,7 +159,13 @@ Frame {
     CustomComboBox {
         id: groupComboBox
         model: pointModel
-        displayText: oldName ? oldGroup : Helper.noGroup
+        displayText: {
+            if (oldname) {
+                oldGroup
+            } else {
+                langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+            }
+        }
         anchors {
             left: parent.left
             top: groupLabel.bottom

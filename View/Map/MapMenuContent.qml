@@ -169,8 +169,8 @@ Frame {
         yesMessage: langue == "English" ? "保存&读取" : "Save & Load"
         height: 170
 
-        x: mapMenuFrame.width / 2 - width / 2 - Style.mainMenuWidth
-        y: mapMenuFrame.height / 2 - height / 2 - Style.menuHeaderHeight
+        x: mapMenuFrame.width
+        y: mapMenuFrame.height / 2 - height / 2;// - Style.menuHeaderHeight
 
         onRejected: console.log("You canceled the import of a map");
         onAccepted: {

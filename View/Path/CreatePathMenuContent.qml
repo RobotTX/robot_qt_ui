@@ -729,10 +729,18 @@ Frame {
             canSave: false
             onReleased: if(saveButton.canSave) {
                 var newName = Helper.formatName(pathTextField.text);
+                if (groupComboBox.displayText === Helper.noGroupChinese) {
+                    groupComboBox.displayText = Helper.noGroup;
+                }
                 console.log("create " + groupComboBox.displayText + " : " + newName);
-                if(oldName !== "")
+
+
+                if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
+                    console.log("oldname != '' ", oldName)
+                }
                 createPath(groupComboBox.displayText, newName);
+                console.log("createPath + groupComboBox.displayText + newName = " + groupComboBox.displayText + " " + newName)
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
                     createPathPoint(groupComboBox.displayText,
                                     newName,

@@ -39,7 +39,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: langue === "English" ? "管理路径" : qsTr("Manage " + txt)
+        text: langue === "English" ? "管理 路径" : qsTr("Manage " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
