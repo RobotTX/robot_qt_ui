@@ -13,8 +13,7 @@ var PointViewType = {
 };
 
 var noGroup = "No Group";
-//var noGroup = "认组";
-var noGroupChinese = "认组"
+var noGroupChinese = "默认组"
 //var noGroupChinese = "No Group"
 var noRobot = "No Robot";
 

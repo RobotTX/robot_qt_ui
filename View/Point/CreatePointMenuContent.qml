@@ -59,7 +59,11 @@ Frame {
             oldName = "";
             oldGroup = "";
             var displayTextChange = "";
-            langue == "English" ? displayTextChange == Helper.noGroupChinese : displayTextChange == Helper.noGroup;
+            if (langue == "English") {
+                displayTextChange = Helper.noGroupChinese;
+            } else {
+                displayTextChange = Helper.noGroup;
+            }
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = displayTextChange;
         } else {
@@ -398,3 +402,4 @@ Frame {
         setMessageTop(1, errorMsg);
     }
 }
+
