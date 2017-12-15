@@ -534,11 +534,11 @@ Frame {
 
     CustomDialog {
         id: wifiDialog
-        x: settingsPage.x / 2
-        y: settingsPage.x / 2
+        x: settingsPage.width
+        y: settingsPage.height / 2 - height
         height: 60
         title: langue == "English" ? "警告"  : "Warning"
-        acceptMessage: "Please select a robot or fill the WiFi name"
+        acceptMessage: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"
     }
 
     SaveButton {

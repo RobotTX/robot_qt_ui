@@ -32,6 +32,7 @@ ListModel {
     signal saveWifiConnection(string ip, string wifi_name, string pwd_wifi)
 
     function addRobot(name, ip, stage, battery){
+        var message = ''
         append({
             "name": name,
             "ip": ip,
@@ -56,13 +57,26 @@ ListModel {
             "looping": false,
         });
         robotConnection(ip);
-        setMessageTop(3, "The robot \"" + name + "\" just connected");
+        if (langue == "English") {
+            message = "机器人 \"" + name + "\"已连接"
+        } else {
+            message = "The robot \"" + name + "\" just connected"
+        }
+
+        setMessageTop(3, message);
     }
 
     function removeRobot(ip){
+        var message = ''
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
-                setMessageTop(0, "The robot \"" + get(i).name + "\" just disconnected");
+                if (langue == "English") {
+                    message = "机器人 \"" + get(i).name + "\" 失去连接"
+                } else {
+                    message = "The robot \"" + get(i).name + "\" just disconnected"
+                }
+
+                setMessageTop(0, message);
                 remove(i);
             }
         visiblePathChanged();
@@ -111,16 +125,31 @@ ListModel {
     }
 
     function setStage(ip, stage){
+        var message = ''
+
+
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 if(Math.abs(get(i).stage) < 10000 && stage >= 9999){
-                    setMessageTop(2, "The robot \"" + get(i).name + "\" just completed its path");
+                    if (langue == "English") {
+                        message ="The robot \"" + get(i).name + "\" just completed its path"
+                    } else {
+                        message = "机器人 " + get(i).name + " 完成路径"
+                    }
+                    setMessageTop(2, message);
                     stage = 0;
                     setProperty(i, "playingPath", false);
                     if(get(i).dockStatus !== 3)
                         stopPathSignal(ip);
                 } else if(get(i).stage >= 0 && stage < 0)
-                    setMessageTop(0, "The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"");
+                if (langue == "English") {
+                    message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
+                } else {
+                    message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
+                } else {
+                }
+
+                    setMessageTop(0, message);
                 setProperty(i, "stage", stage);
             }
     }
@@ -254,32 +283,55 @@ ListModel {
      */
     function setDockStatus(ip, dockStatus){
         /// TODO set message top according to new status
+        var message1 = ''
+        var message2 = ''
+        var message3 = ''
+        var message4 = ''
+        var message5 = ''
+        var message6 = ''
+
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip && get(i).dockStatus !== dockStatus){
                 setProperty(i, "dockStatus", dockStatus);
+                if (langue == "English") {
+                    message1 = "机器人 " + get(i).name + " 不能到达充电桩"
+                    message2 = "有障碍阻挡机器人 " + get(i).name + " 到达充电桩"
+                    message3 = "机器人 " + get(i).name + " 失去充电桩的信号因此不能到达充电桩"
+                    message4 = "机器人 " + get(i).name + " 到达充电桩"
+                    message5 = "机器人 " + get(i).name + " 到达充电桩，但可能没有完全对准充电桩"
+                    message6 = "机器人 " + get(i).name +" 正在前往充电桩"
+                } else {
+                    message1 = "Robot \"" + get(i).name + "\" could not reach the charging station"
+                    message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station"
+                    message3 = "Robot \"" + get(i).name + "\" lost the signal of the charging station and could not reach it"
+                    message4 = "Robot \"" + get(i).name + "\" successfully reached its charging station"
+                    message5 = "Robot \"" + get(i).name + "\" successfully reached its charging station but might not be properly aligned"
+                    message6 = "Robot \"" + get(i).name + "\" is going to its charging station"
+                }
+
 
                 /// we are only interested by a change of status
                 switch(dockStatus){
                     case -4:
-                        setMessageTop(0, "Robot \"" + get(i).name + "\" could not reach the charging station");
+                        setMessageTop(0, message1);
 //                        warningDialog.open();
                     break;
                     case -3:
-                        setMessageTop(0, "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station");
+                        setMessageTop(0, message2);
 //                        warningDialog.open();
                     break;
                     case -1:
-                        setMessageTop(0, "Robot \"" + get(i).name + "\" lost the signal of the charging station and could not reach it");
+                        setMessageTop(0, message3);
 //                        warningDialog.open();
                     break;
                     case 1:
-                        setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station");
+                        setMessageTop(2, message4);
                     break;
                     case 2:
-                        setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station but might not be properly aligned");
+                        setMessageTop(2, message5);
                     break;
                     case 3:
-                        setMessageTop(3, "Robot \"" + get(i).name + "\" is going to its charging station");
+                        setMessageTop(3, message6);
                     break;
                 }
             }

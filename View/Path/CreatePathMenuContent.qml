@@ -704,6 +704,7 @@ Frame {
         }
 
         CancelButton {
+            langue: createPathMenuFrame.langue
             anchors {
                 left: parent.left
                 right: parent.horizontalCenter
@@ -717,6 +718,7 @@ Frame {
 
         SaveButton {
             id: saveButton
+            langue: createPathMenuFrame.langue
             anchors {
                 left: parent.horizontalCenter
                 right: parent.right
@@ -741,6 +743,16 @@ Frame {
                 }
                 createPath(groupComboBox.displayText, newName);
                 console.log("createPath + groupComboBox.displayText + newName = " + groupComboBox.displayText + " " + newName)
+                var mess1 = ''
+                var mess2 = ''
+                if (langue == "English") {
+                    mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupComboBox.displayText + "\""
+                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupComboBox.displayText + "\""
+                } else {
+                    mess1 = "Created the path \"" + newName + "\" in \"" + groupComboBox.displayText + "\""
+                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupComboBox.displayText + "\""
+                }
+
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
                     createPathPoint(groupComboBox.displayText,
                                     newName,
@@ -751,8 +763,7 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).orientation);
 
 
-                setMessageTop(2, oldName === "" ? "Created the path \"" + newName + "\" in \"" + groupComboBox.displayText + "\"" :
-                                                "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupComboBox.displayText + "\"")
+                setMessageTop(2, oldName === "" ? mess1 : mess2)
                 backToMenu();
             }
         }
@@ -764,28 +775,56 @@ Frame {
         errorMsg = "";
 
         var error = (newName === "");
+        var mess1 = ''
+        if (langue == "English") {
+            mess1 = "路径名不能为空"
+        } else {
+            mess1 = "The path name cannot be empty"
+        }
+
         if(error)
-            errorMsg = "The path name cannot be empty";
+            errorMsg = mess1
 
         if(newName !== "" && newName !== oldName)
+            var mess2 = ''
+            if (langue == "English") {
+                mess2 = "路径名" + newName + "已经被使用"
+            } else {
+                mess2  ="The path name \"" + newName + "\" is already taken"
+            }
+
+        // This is available in all editors.
             for(var i = 0; i < pathModel.count; i++)
                 for(var j = 0; j < pathModel.get(i).paths.count; j++){
                     if(pathModel.get(i).paths.get(j).pathName === newName){
-                        errorMsg += (errorMsg !== "" ? "\n" : "") + "The path name \"" + newName + "\" is already taken";
+                        errorMsg += (errorMsg !== "" ? "\n" : "") + mess2;
                         error = true;
                     }
                 }
 
         nameError = error;
 
+        var mess3 = ''
+        if (langue == "English") {
+            mess3 = "至少需要一个目标点来创建路径"
+        } else {
+            mess3 = "You need at least 1 point to create a path"
+        }
+
         if(tmpPathModel.get(0).paths.get(0).pathPoints.count < 1){
-            errorMsg += (errorMsg !== "" ? "\n" : "") + "You need at least 1 point to create a path";
+            errorMsg += (errorMsg !== "" ? "\n" : "") + mess3;
             error = true;
         }
 
+        var mess4 = ''
         for(var k = 0; k < tmpPathModel.get(0).paths.get(0).pathPoints.count; k++){
             if(!tmpPathModel.get(0).paths.get(0).pathPoints.get(k).validPos){
-                errorMsg += (errorMsg !== "" ? "\n" : "") + "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there";
+                if (langue == "English") {
+                    mess3 =  "目标点 " + (k+1) + " 在错误的位置，机器人无法去到那里"
+                } else {
+                    mess3 =  "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there"
+                }
+                errorMsg += (errorMsg !== "" ? "\n" : "") + mess3;
                 error = true;
             }
         }

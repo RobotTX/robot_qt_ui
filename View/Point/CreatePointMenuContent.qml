@@ -354,6 +354,7 @@ Frame {
     }
 
     CancelButton {
+        langue: createPointMenuFrame.langue
         anchors {
             left: parent.left
             right: parent.horizontalCenter
@@ -365,6 +366,7 @@ Frame {
 
     SaveButton {
         id: saveButton
+        langue: createPointMenuFrame.langue
         anchors {
             left: parent.horizontalCenter
             right: parent.right
@@ -380,8 +382,17 @@ Frame {
                         oldName, oldGroup, true, homeCheckBox.checked,
                         Math.round(slider.valueAt(slider.position)));
             backToMenu();
-            setMessageTop(2, oldName === "" ? "Created the point \"" + newName + "\" in \"" + groupName + "\"" :
-                                            "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")
+            var mess1 = ''
+            var mess2 = ''
+            if (langue == "English") {
+                mess1 = "已创建目标点 \"" + newName + "\" 在 \"" + groupName + "\""
+                mess2 = "编辑目标点 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
+            } else {
+                mess1 = "Created the point \"" + newName + "\" in \"" + groupName + "\""
+                mess2 = "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+            }
+
+            setMessageTop(2, oldName === "" ? mess1 : mess2)
         }
     }
 
@@ -390,14 +401,27 @@ Frame {
         saveButton.canSave = !posError && !nameError;
 
         errorMsg = "";
+        var mess1 = ''
+        var mess2 = ''
+        var mess3 = ''
+        if (langue == "English") {
+            mess1 = "无法保存目标点，因为机器人无法去到那里"
+            mess2 = "目标点名称不能为空"
+            mess3 = "目标点名 \"" + Helper.formatName(pointTextField.text) + "\" 已经被使用"
+        } else {
+            mess1 = "You cannot save this point because your robot(s) would not be able to go there"
+            mess2 = "The point name cannot be empty"
+            mess3 = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken"
+        }
+
         if(!saveButton.canSave){
             if(Helper.formatName(pointTextField.text) === "")
-                errorMsg = "The point name cannot be empty";
+                errorMsg = mess2;
             else if(nameError)
-                errorMsg = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken";
+                errorMsg = mess3;
 
             if(posError)
-                errorMsg += (nameError ? "\n" : "") + "You cannot save this point because your robot(s) would not be able to go there";
+                errorMsg += (nameError ? "\n" : "") + mess1;
         }
         setMessageTop(1, errorMsg);
     }

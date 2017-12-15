@@ -254,18 +254,35 @@ ApplicationWindow {
 
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
+        var title_ = ''
+        var message1 = ''
+        var message2 = ''
+        var rejectMessage_ = ''
+        var acceptMessage_ = ''
         if(dialog.visible){
             /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot), MORE ROBOTS NEEDED
             console.log("We are already choosing a map for the robot, try again later");
         } else {
+            if (langue == "English") {
+                title_ = "选择使用哪一个地图"
+                message1 = "机器人 " + _robotModel.getName(ip) +  " 有一个旧地图"
+                message2 = "机器人 " + _robotModel.getName(ip) + " 有一个新地图"
+                rejectMessage_ = "机器人"
+                acceptMessage_ = "应用"
+            } else {
+                title_ = "Choose which map to use"
+                message1 = "The robot " +  _robotModel.getName(ip) + " has an old map"
+                message2 = "The robot " +  _robotModel.getName(ip) + " has a new map.\n\n\tWhich map do you want to use ?"
+                rejectMessage_ = "Robot"
+                acceptMessage_ = "Application"
+            }
 
 
-
-            dialog.title = qsTr("Choose which map to use");
+            dialog.title = title_;
             dialog.ip = ip;
-            dialog.message = robotIsOlder ? "The robot " +  _robotModel.getName(ip) + " has an old map" : "The robot " +  _robotModel.getName(ip) + " has a new map.\n\n\tWhich map do you want to use ?";
-            dialog.rejectMessage = "Robot";
-            dialog.acceptMessage = "Application";
+            dialog.message = robotIsOlder ? message1 : message2;
+            dialog.rejectMessage = rejectMessage_;
+            dialog.acceptMessage = acceptMessage_;
             dialog.open();
         }
     }
@@ -278,10 +295,17 @@ ApplicationWindow {
     }
 
     function emitMapConfig(file_name){
+        var message = ''
+        if (langue == "English") {
+            message = "保存地图到 \"" + file_name + "\""
+        } else {
+            message = "Saved the map to \"" + file_name + "\""
+        }
+
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY, mapView.getMapRotation());
-        mapView.setMessageTop(2, "Saved the map to \"" + file_name + "\"");
+        mapView.setMessageTop(2, message);
     }
 
     function setBatteryThreshold(threshold){

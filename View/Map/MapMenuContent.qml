@@ -138,8 +138,8 @@ Frame {
 
     CustomDialog {
         id: warningDialog
-        x: mapMenuFrame.x / 2
-        y: mapMenuFrame.y / 2
+        x: mapMenuFrame.width
+        y: mapMenuFrame.height / 2 - height / 2
         height: 60
         title: langue == "English" ? "警告窗口" : "Warning dialog"
         acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"
@@ -149,7 +149,7 @@ Frame {
         id: loadFileDialog
         // allow only pgm files to be selected
         nameFilters: "*.pgm"
-        title: "Import a map"
+        title: langue == "English" ? "导入地图" : "Import a map"
         selectMultiple: false
         onRejected: {
             console.log("Canceled the save of a map")

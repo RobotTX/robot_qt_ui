@@ -7,6 +7,7 @@ import "../Custom"
 
 Frame {
     // used to create a group (points or paths)
+    id: createGroupMenuContentFrame
 
     property string oldName
     property string errorMsg
@@ -76,6 +77,7 @@ Frame {
     }
 
     CancelButton {
+        langue: createGroupMenuContentFrame.langue
         anchors {
             left: parent.left
             right: parent.horizontalCenter
@@ -87,6 +89,7 @@ Frame {
 
     SaveButton {
         id: saveButton
+        langue: createGroupMenuContentFrame.langue
         anchors {
             left: parent.horizontalCenter
             right: parent.right

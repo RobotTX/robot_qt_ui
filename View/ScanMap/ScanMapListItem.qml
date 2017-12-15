@@ -134,6 +134,7 @@ Frame {
                 }
             }
             enabled: connected
+            langue: scanMapListItemFrame.langue
             anchors {
                 top: nameLabel.bottom
                 left: parent.left
@@ -153,6 +154,7 @@ Frame {
                     langue == "English" ? "开始自动扫描" : "Start Exploring"
                 }
             }
+            langue: scanMapListItemFrame.langue
             enabled: connected
             anchors {
                 top: playScanBtn.bottom

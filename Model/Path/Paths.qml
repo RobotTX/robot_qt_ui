@@ -71,22 +71,35 @@ ListModel {
     }
 
     function deleteGroup(groupName){
+        var message = ''
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName){
                 remove(i);
-                setMessageTop(2, "Deleted the group \"" + groupName + "\"");
+                if (langue == 'English') {
+                    message = "删除群组 \"" + groupName + "\""
+                } else {
+                    message = "Deleted the group \"" + groupName + "\""
+                }
+                setMessageTop(2, message);
             }
         deleteGroupSignal(groupName);
         visiblePathChanged();
     }
 
     function deletePath(groupName, name){
+        var message = '';
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 for(var j = 0; j < get(i).paths.count; j++)
                     if(get(i).paths.get(j).pathName === name){
                         get(i).paths.remove(j);
-                        setMessageTop(2, "Deleted the path \"" + name + "\" in \"" + groupName + "\"");
+                        if (langue == 'English') {
+                            message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
+                        } else {
+                            message = "Deleted the path \"" + name + "\" in \"" + groupName + "\""
+                        }
+
+                        setMessageTop(2, message);
                     }
 
         deletePathSignal(groupName, name);
@@ -156,11 +169,17 @@ ListModel {
             }
         }
 
+        var message = ''
         for(i = 0; i < count; i++)
             if(get(i).groupName === newGroup)
                 get(i).paths.append(path);
+                 if (langue == 'English') {
+                    message = "移动路径 \"" + name + "\" 从 \"" + oldGroup + "\" 到 \"" + newGroup + "\""
+                } else {
+                    message = "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
+                }
 
-        setMessageTop(2, "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\"");
+        setMessageTop(2, message);
         moveToSignal(name, oldGroup, newGroup)
     }
 

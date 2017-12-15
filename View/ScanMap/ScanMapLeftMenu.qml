@@ -41,8 +41,14 @@ Frame {
             tutorialD.close();
         else
             // when the scan window is opened, if the scan map message should be displayed then the dialog window is opened
-            if(tutorial.isDisplayed("scan_map"))
-                tutorialD.open();
+//            if(tutorial.isDisplayed("scan_map")) {
+//                tutorialD.open();
+//                console.log("scanmapleftmenu = " + tutorial.isDisplayed())
+//            } else if (tutorial.isDisplayed("scan_map_chinese")) {
+//                tutorialDChinese.open();
+//                console.log("scanmapleftmenu = " + tutorial.isDisplayed())
+//            }
+            langue == "English" ? tutorialDChinese.open() : tutorialD.open()
     }
 
     background: Rectangle {
@@ -208,7 +214,8 @@ Frame {
                 rightMargin: 15
             }
 
-            onClicked: tutorialD.open()
+            onClicked: langue == "English" ? tutorialDChinese.open() : tutorialD.open()
+//                tutorialD.open()
         }
 
         onClicked: robotListInPopup.open()
@@ -293,6 +300,7 @@ Frame {
         id: saveButton
         canSave: scanningRobotsList.count > 0
         tooltip: langue == "English" ? "保存时需要至少一个地图" : "You need at least 1 map to save"
+        langue: scanLeftMenuFrame.langue
         anchors {
             bottom: cancelButton.top
             bottomMargin: 10
@@ -306,6 +314,7 @@ Frame {
 
     CancelButton {
         id: cancelButton
+        langue: scanLeftMenuFrame.langue
         anchors {
             bottom: parent.bottom
             bottomMargin: 15
@@ -353,6 +362,16 @@ Frame {
         tutorial: scanLeftMenuFrame.tutorial
         langue: scanLeftMenuFrame.langue
         Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map")
+    }
+
+    TutorialDialog {
+        id: tutorialDChinese
+        x: scanWindowWidth / 2 - width / 2
+        y: scanWindowHeight / 2 - height / 2
+        feature: "scan_map_chinese"
+        tutorial: scanLeftMenuFrame.tutorial
+        langue: scanLeftMenuFrame.langue
+        Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map_chinese")
     }
 
     function startedScanning(ip){

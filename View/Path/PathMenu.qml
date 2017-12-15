@@ -74,7 +74,7 @@ Page {
             id: createPathMenuHeader
             langue: page.langue
             onBackToMenu: menuIndex = 0;
-            txt: "Path"
+            txt: langue == "English" ? "路径" : "Path"
         }
 
         CreatePathMenuContent {

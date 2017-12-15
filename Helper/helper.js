@@ -14,8 +14,8 @@ var PointViewType = {
 
 var noGroup = "No Group";
 var noGroupChinese = "默认组"
-//var noGroupChinese = "No Group"
 var noRobot = "No Robot";
+var noRobotChinese = "没有机器人"
 
 function dashLine(ctx, fromX, fromY, toX, toY, pattern) {
     // Our growth rate for our line can be one of the following:

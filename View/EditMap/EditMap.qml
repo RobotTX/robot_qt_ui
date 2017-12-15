@@ -50,8 +50,9 @@ Window {
         if(!visible)
             tutorialD.close();
         else
-            if(tutorial.isDisplayed("edit_map"))
-                tutorialD.open();
+//            if(tutorial.isDisplayed("edit_map"))
+//                tutorialD.open();
+            langue == "English" ? tutorialDChinese.open() : tutorialD.open()
     }
 
     Frame {
@@ -517,6 +518,18 @@ Window {
         y: dialog.height / 2 - height / 2
         feature: "edit_map"
         tutorial: dialog.tutorial
+        langue: dialog.langue
         Component.onCompleted: tutoMessage = tutorial.getMessage("edit_map")
+    }
+
+    TutorialDialog {
+        id: tutorialDChinese
+        height: 500
+        x: dialog.width / 2 - width / 2
+        y: dialog.height / 2 - height / 2
+        feature: "edit_map_chinese"
+        tutorial: dialog.tutorial
+        langue: dialog.langue
+        Component.onCompleted: tutoMessage = tutorial.getMessage("edit_map_chinese")
     }
 }

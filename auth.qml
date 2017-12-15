@@ -138,4 +138,8 @@ ApplicationWindow {
             console.log("error authentification")
         }
     }
+
+    function loadLanguage() {
+
+    }
 }

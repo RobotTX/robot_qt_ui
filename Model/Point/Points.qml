@@ -59,20 +59,32 @@ ListModel {
     }
 
     function deletePoint(groupName, name){
+        var message = ''
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 for(var j = 0; j < get(i).points.count; j++)
                     if(get(i).points.get(j).name === name){
+                       if (langue == 'English') {
+                           message = "删除目标点 \"" + name + "\" 在 \"" + groupName + "\""
+                       } else {
+                           message = "Deleted the point \"" + name + "\" in \"" + groupName + "\""
+                       }
                         get(i).points.remove(j);
-                        setMessageTop(2, "Deleted the point \"" + name + "\" in \"" + groupName + "\"");
+                        setMessageTop(2, message);
                     }
     }
 
     function deleteGroup(groupName){
+        var message = ''
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName){
                 remove(i);
-                setMessageTop(2, "Deleted the group \"" + groupName + "\"");
+                if (langue == 'English') {
+                    message = "删除群组 \"" + groupName + "\""
+                } else {
+                    message = "Deleted the group \"" + groupName + "\""
+                }
+                setMessageTop(2, message);
             }
         deleteGroupSignal(groupName);
     }
@@ -117,12 +129,16 @@ ListModel {
                         }
                         get(i).points.remove(j);
                     }
-
+        var message = ''
         for(i = 0; i < count; i++)
             if(get(i).groupName === newGroup)
                 get(i).points.append(point);
-
-        setMessageTop(2, "Moved the point \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\"");
+                if (langue == 'English') {
+                    message = "移动目标点 \"" + name + "\" 从 \"" + oldGroup + "\" 到 \"" + newGroup + "\""
+                } else {
+                    message = "Moved the point \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
+                }
+        setMessageTop(2, message);
         moveToSignal(name, oldGroup, newGroup)
     }
 

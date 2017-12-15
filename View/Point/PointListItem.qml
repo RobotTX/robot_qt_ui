@@ -140,7 +140,13 @@ Column {
             /// The left button in each element of the list
             SmallButton {
                 id: leftButton2
-                tooltip: isVisible ? "Hide the point on the map" : "Show the point on the map"
+                tooltip: {
+                    if (isVisible) {
+                        langue == "English" ? "隐藏地图上的目标点" : "Hide the point on the map"
+                    } else {
+                        langue == "English" ? "显示地图上的目标点" : "Show the point on the map"
+                    }
+                }
                 imgSrc: isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                 anchors {
                     top: parent.top
