@@ -197,8 +197,6 @@ Frame {
                 } else {
                     langue == "English" ? Helper.noGroupChinese : Helper.noGroup
                 }
-
-//                oldName ? oldGroup : Helper.noGroup
             }
             anchors {
                 left: parent.left
