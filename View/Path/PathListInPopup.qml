@@ -46,7 +46,8 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-                onHoveredChanged: if(visible && !pathMenu.visible) currentMenuIndex = index
+//                onHoveredChanged: if(visible && !pathMenu.visible) currentMenuIndex = index
+                onClicked: if(visible && !pathMenu.visible) currentMenuIndex = index
 
                 Menu {
                     id: pathMenu

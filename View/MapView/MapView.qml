@@ -22,6 +22,7 @@ Frame {
     property double centerX: mapImage.x
     property double centerY: mapImage.y
     property double zoom: zoomScale.xScale
+    property var currentFrame: undefined
 
     property string mapSrc
     property string langue
@@ -106,7 +107,7 @@ Frame {
             robotModel: mapViewFrame.robotModel
         }
 
-        Rectangle {
+        Flickable {
 
             id: item
 
@@ -134,29 +135,69 @@ Frame {
                 anchors.fill: parent
             }
 
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
+            PinchArea {
+                    anchors.fill: parent
+                    pinch.target: mapImage
+                    pinch.minimumRotation: -360
+                    pinch.maximumRotation: 360
+                    pinch.minimumScale: 0.1
+                    pinch.maximumScale: 10
+                    pinch.dragAxis: Pinch.XAndYAxis
+//                    onPinchStarted: setFrameColor();
+                    property real zRestore: 0
+                    onSmartZoom: {
+                        if (pinch.scale > 0) {
+                            mapImage.rotation = 0;
+                            mapImage.scale = Math.min(root.width, root.height) / Math.max(image.sourceSize.width, image.sourceSize.height) * 0.85
+                            mapImage.x = flick.contentX + (flick.width - photoFrame.width) / 2
+                            mapImage.y = flick.contentY + (flick.height - photoFrame.height) / 2
+                            zRestore = photoFrame.z
+                            mapImage.z = ++mapViewFrame.highestZ;
+                        } else {
+                            mapImage.rotation = pinch.previousAngle
+                            mapImage.scale = pinch.previousScale
+                            mapImage.x = pinch.previousCenter.x - photoFrame.width / 2
+                            mapImage.y = pinch.previousCenter.y - photoFrame.height / 2
+                            mapImage.z = zRestore
+                            --mapViewFrame.highestZ
+                        }
+                    }
 
-                onWheel: {
+//                    function setFrameColor() {
+//                                            if (currentFrame)
+//                                                currentFrame.border.color = "black";
+//                                            currentFrame = photoFrame;
+//                                            currentFrame.border.color = "red";
+//                                        }
 
-                    var oldPos = mapToItem(mapImage, width / 2, height / 2);
-                    var factor = 1 + wheel.angleDelta.y / 120 / 10;
-                    var newScale = zoomScale.xScale * factor;
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    drag.target: mapImage
+                    scrollGestureEnabled: false
 
-                    /// Zoom into the image
-                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
-                        zoomScale.xScale = newScale;
 
-                    var newPos = mapToItem(mapImage, width / 2, height / 2);
+                    onWheel: {
 
-                    /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
-                    var diff = Qt.point(newPos.x - oldPos.x, newPos.y - oldPos.y);
-                    var res = Qt.point(diff.x* Math.cos(topViewId.mapRotation * (Math.PI / 180)) - diff.y * Math.sin(topViewId.mapRotation * (Math.PI / 180)),
-                                     diff.x* Math.sin(topViewId.mapRotation * (Math.PI / 180)) + diff.y * Math.cos(topViewId.mapRotation * (Math.PI / 180)));
+                        var oldPos = mapToItem(mapImage, width / 2, height / 2);
+                        var factor = 1 + wheel.angleDelta.y / 120 / 10;
+                        var newScale = zoomScale.xScale * factor;
 
-                    mapImage.x = mapImage.x + res.x * zoomScale.xScale;
-                    mapImage.y = mapImage.y + res.y * zoomScale.xScale;
+                        /// Zoom into the image
+                        if(newScale > Style.minZoom && newScale < Style.maxZoom)
+                            zoomScale.xScale = newScale;
+
+                        var newPos = mapToItem(mapImage, width / 2, height / 2);
+
+                        /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
+                        var diff = Qt.point(newPos.x - oldPos.x, newPos.y - oldPos.y);
+                        var res = Qt.point(diff.x* Math.cos(topViewId.mapRotation * (Math.PI / 180)) - diff.y * Math.sin(topViewId.mapRotation * (Math.PI / 180)),
+                                         diff.x* Math.sin(topViewId.mapRotation * (Math.PI / 180)) + diff.y * Math.cos(topViewId.mapRotation * (Math.PI / 180)));
+
+                        mapImage.x = mapImage.x + res.x * zoomScale.xScale;
+                        mapImage.y = mapImage.y + res.y * zoomScale.xScale;
+                    }
                 }
             }
 
@@ -229,7 +270,6 @@ Frame {
                         ctx.stroke();
                     }
                 }
-
 
                 MouseArea {
                     anchors.fill: parent
@@ -453,6 +493,10 @@ Frame {
             _mapSrc = "file://" + _mapSrc;
         if(Qt.platform.os === "windows" && _mapSrc.indexOf("file:") !== 0)
             _mapSrc = "file:/C" + _mapSrc;
+        if(Qt.platform.os === "osx" && _mapSrc.indexOf("file://") !== 0)
+            _mapSrc = "file://" + _mapSrc;
+        if(Qt.platform.os === "android" && _mapSrc.indexOf("file://") !== 0)
+            _mapSrc = "file://" + _mapSrc;
 
         console.log("setMap source : " + _mapSrc);
         mapSrc = _mapSrc;

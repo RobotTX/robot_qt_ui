@@ -50,7 +50,7 @@ Frame {
         anchors {
             left: parent.left
             top: parent.top
-            topMargin: 5
+//            topMargin: 5
         }
 
         color: "#8F8E94"
@@ -73,7 +73,7 @@ Frame {
 //        leftPadding: Style.menuItemLeftPadding
         anchors.left: parent.left
         anchors.top: wifiLabel.bottom
-        anchors.topMargin: 10
+//        anchors.topMargin: 10
 
         Image {
             asynchronous: true
@@ -83,7 +83,8 @@ Frame {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ currentMenuIndex = 0 }
+//        onHoveredChanged: if(visible){ currentMenuIndex = 0 }
+        onClicked: if(visible){ currentMenuIndex = 0 }
 
         RobotListInPopup {
             x: robotList.width
@@ -181,7 +182,7 @@ Frame {
             top: userInputWifiPwd.bottom
             left: parent.left
             right: parent.right
-            topMargin: 20
+//            topMargin: 20
         }
     }
 
@@ -191,7 +192,7 @@ Frame {
         anchors {
             left: parent.left
             top: horizontalSeparation7.bottom
-            topMargin: 20
+//            topMargin: 20
         }
 
         color: "#8F8E94"
@@ -219,7 +220,7 @@ Frame {
 
         anchors {
             top: choiceMapLabel.bottom
-            topMargin: 20
+//            topMargin: 20
             left: parent.left
             leftMargin: 20
         }
@@ -301,7 +302,7 @@ Frame {
             top: mapChoices.bottom
             left: parent.left
             right: parent.right
-            topMargin: 20
+//            topMargin: 20
         }
     }
 
@@ -313,7 +314,7 @@ Frame {
 
         anchors {
             top: horizontalSeparation2.bottom
-            topMargin: 20
+//            topMargin: 10
         }
 
         Label {
@@ -347,7 +348,7 @@ Frame {
         id: batterySlider
         anchors {
             top: batteryLabel.bottom
-            topMargin: 16
+            topMargin: 10
             left: parent.left
             right: parent.right
         }
@@ -357,7 +358,7 @@ Frame {
         id: lineMeasurement1
         anchors {
             top: batterySlider.bottom
-            topMargin: batterySlider.cursor_height-10
+//            topMargin: batterySlider.cursor_height-10
             left: parent.left
             leftMargin: batterySlider.width/10-batterySlider.cursor_width/2
         }
@@ -368,7 +369,7 @@ Frame {
         id: lineMeasurement2
         anchors {
             top: batterySlider.bottom
-            topMargin: batterySlider.cursor_height-10
+//            topMargin: batterySlider.cursor_height-10
             left: lineMeasurement1.right
             leftMargin: (batterySlider.width/2 - lineMeasurement1.x) / 2 - lineMeasurement1.width - 4
         }
@@ -379,7 +380,7 @@ Frame {
         id: lineMeasurement3
         anchors {
             top: batterySlider.bottom
-            topMargin: batterySlider.cursor_height-10
+//            topMargin: batterySlider.cursor_height-10
             left: lineMeasurement2.right
             horizontalCenter: batterySlider.horizontalCenter
         }
@@ -390,7 +391,7 @@ Frame {
         id: lineMeasurement4
         anchors {
             top: batterySlider.bottom
-            topMargin: batterySlider.cursor_height-10
+//            topMargin: batterySlider.cursor_height-10
             left: lineMeasurement3.right
             leftMargin: 4
         }
@@ -401,7 +402,7 @@ Frame {
         id: lineMeasurement5
         anchors {
             top: batterySlider.bottom
-            topMargin: batterySlider.cursor_height-10
+//            topMargin: batterySlider.cursor_height-10
             right: parent.right
             rightMargin: batterySlider.width/10-batterySlider.cursor_width/2
         }
@@ -415,7 +416,7 @@ Frame {
             top: lineMeasurement1.bottom
             left: parent.left
             right: parent.right
-            topMargin: 20
+            topMargin: 5
         }
     }
 
@@ -462,7 +463,7 @@ Frame {
             top: changeLanguageBtn.bottom
             left: parent.left
             right: parent.right
-            topMargin: 10
+//            topMargin: 10
         }
     }
 

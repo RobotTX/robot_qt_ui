@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QImage>
+#include <QStandardPaths>
 #include "Controller/maincontroller.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
@@ -75,7 +76,13 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         Q_UNREACHABLE();
     }
 
-    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+    /// desktop
+//    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
+
+    /// android
+    currentPathsFile = location + QDir::separator() + "currentPaths.xml";
     qDebug() << "PathController::PathController" << currentPathsFile;
     loadPaths(currentPathsFile);
 }

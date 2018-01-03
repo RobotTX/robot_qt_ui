@@ -47,10 +47,11 @@ Menu {
             anchors.rightMargin: 12
             visible: myGroup == "Gobot"
         }
-        onHoveredChanged: if (visible) {
-                              console.log("onhovered")
-                              currentMenuIndex = 0
-                          }
+//        onHoveredChanged: if (visible) {
+//                              console.log("onhovered")
+//                              currentMenuIndex = 0
+//                          }
+        onClicked: if (visible) { currentMenuIndex = 0}
 
         RobotListInPopup {
             id: robotListInPopup
@@ -103,7 +104,8 @@ Menu {
             anchors.rightMargin: 12
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-        onHoveredChanged: if (visible) { currentMenuIndex = 1}
+//        onHoveredChanged: if (visible) { currentMenuIndex = 1}
+        onClicked: if (visible) { currentMenuIndex = 1}
 
 
         Menu {

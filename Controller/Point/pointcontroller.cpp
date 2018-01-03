@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QImage>
 #include <QDir>
+#include <QStandardPaths>
 #include "Controller/maincontroller.h"
 #include "Model/Point/point.h"
 #include "Model/Point/pointgroup.h"
@@ -68,7 +69,13 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+    /// desktop
+//    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
+
+    /// android
+    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 }

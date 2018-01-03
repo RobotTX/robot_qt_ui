@@ -75,7 +75,8 @@ Item {
         hoverEnabled: true
         anchors.fill: img
 
-        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible
+//        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible
+        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible
     }
 
     /// To change the source file of the pointView according to its type

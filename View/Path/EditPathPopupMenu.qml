@@ -47,7 +47,8 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ currentMenuIndex = 0 }
+//        onHoveredChanged: if(visible){ currentMenuIndex = 0 }
+        onClicked: if(visible){ currentMenuIndex = 0 }
 
         RobotListInPopup {
             x: assignPathBis.width
@@ -75,7 +76,8 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onHoveredChanged: if (visible) currentMenuIndex = 1
+//        onHoveredChanged: if (visible) currentMenuIndex = 1
+        onClicked: if(visible){ currentMenuIndex = 1 }
         onTriggered: editPath()
     }
 
@@ -102,7 +104,8 @@ Menu {
             anchors.rightMargin: 12
         }
 
-        onHoveredChanged: if (visible) currentMenuIndex = 2
+//        onHoveredChanged: if (visible) currentMenuIndex = 2
+        onClicked: if(visible){ currentMenuIndex = 2 }
 
         Menu {
             x: parent.width
@@ -173,10 +176,11 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onHoveredChanged: if (visible) {
+//        onHoveredChanged: if (visible) {
 
-                              currentMenuIndex = 3
-                          console.log("DELETE PATH SHOULD BE 3 : currentMenuIndex = " + currentMenuIndex + " visible = " + visible)}
+//                              currentMenuIndex = 3
+//                          console.log("DELETE PATH SHOULD BE 3 : currentMenuIndex = " + currentMenuIndex + " visible = " + visible)}
+        onClicked: if(visible){ currentMenuIndex = 3 }
         onTriggered: deletePath()
     }
 }

@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QRgb>
+#include <QStandardPaths>
 
 namespace Helper {
 
@@ -103,7 +104,14 @@ namespace Helper {
         QPair<QPair<QString, QString>, QStringList> getPathFromFile(const QString robotName){
             /// QPair<QPair<groupName, pathName>, date>
             QPair<QPair<QString, QString>, QStringList> pathInfo;
-            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
+            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+
+            /// desktop
+//            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
+
+            /// android
+            QFile fileInfo(location + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
             if(fileInfo.open(QIODevice::ReadWrite)){
                 QRegExp regex("[-\n%]");
                 QString content = fileInfo.readAll();
@@ -122,7 +130,11 @@ namespace Helper {
 
         void updateHomeFile(const QString robotName, const QPointF& robot_home_position, const QStringList date){
             qDebug() << "updatehomefile" << robotName << date.size();
-            QFile fileWriteHome(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            /// desktop
+//            QFile fileWriteHome(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            /// android
+            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+            QFile fileWriteHome(location + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             if(fileWriteHome.open(QIODevice::ReadWrite)){
                 QTextStream out(&fileWriteHome);
                 out << robot_home_position.x() << " " << robot_home_position.y() << "\n";
@@ -136,7 +148,11 @@ namespace Helper {
 
         QPair<QPointF, QStringList> getHomeFromFile(const QString robotName){
             /// retrieves the home point of the robot if the robot has one
-            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            /// desktop
+//            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            /// android
+            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+            QFile fileInfo(location + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             QPointF p;
             QStringList dateLastModification;
             if(fileInfo.open(QIODevice::ReadWrite)){
