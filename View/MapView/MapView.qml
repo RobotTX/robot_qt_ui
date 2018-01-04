@@ -497,6 +497,8 @@ Frame {
             _mapSrc = "file://" + _mapSrc;
         if(Qt.platform.os === "android" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
+        if(Qt.platform.os === "ios" && _mapSrc.indexOf("file://") !== 0)
+            _mapSrc = "file://" + _mapSrc;
 
         console.log("setMap source : " + _mapSrc);
         mapSrc = _mapSrc;
