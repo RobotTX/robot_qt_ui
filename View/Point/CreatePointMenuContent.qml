@@ -378,7 +378,10 @@ Frame {
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(pointTextField.text);
             var groupName = groupComboBox.displayText;
-            createPoint(newName, groupName, tmpPointView.x, tmpPointView.y,
+            if (groupComboBox.displayText === Helper.noGroupChinese) {
+                groupComboBox.displayText = Helper.noGroup;
+            }
+            createPoint(newName, groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         Math.round(slider.valueAt(slider.position)));
             backToMenu();

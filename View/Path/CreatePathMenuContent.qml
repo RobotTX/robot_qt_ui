@@ -729,6 +729,7 @@ Frame {
             canSave: false
             onReleased: if(saveButton.canSave) {
                 var newName = Helper.formatName(pathTextField.text);
+                var groupName = groupComboBox.displayText
                 if (groupComboBox.displayText === Helper.noGroupChinese) {
                     groupComboBox.displayText = Helper.noGroup;
                 }
@@ -744,11 +745,11 @@ Frame {
                 var mess1 = ''
                 var mess2 = ''
                 if (langue == "English") {
-                    mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupComboBox.displayText + "\""
-                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupComboBox.displayText + "\""
+                    mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\""
+                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
                 } else {
-                    mess1 = "Created the path \"" + newName + "\" in \"" + groupComboBox.displayText + "\""
-                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupComboBox.displayText + "\""
+                    mess1 = "Created the path \"" + newName + "\" in \"" + groupName + "\""
+                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
