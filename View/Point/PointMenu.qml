@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Model/Point"
 import "../../Model/Robot"
+import "../../Model/Path"
 import "../Custom"
 
 Page {
@@ -10,6 +11,7 @@ Page {
     property Points pointModel
     property PointView tmpPointView
     property Robots robotModel
+    property Paths pathModel
     property string langue
 
     signal closeMenu()
@@ -37,8 +39,10 @@ Page {
 
         PointMenuContent {
             id: pointMenuContent
+            objectName: "pointMenuContent"
             pointModel: page.pointModel
             robotModel: page.robotModel
+            pathModel: page.pathModel
             langue: page.langue
             anchors {
                 left: parent.left
@@ -76,6 +80,8 @@ Page {
             id: createPointMenuContent
             pointModel: page.pointModel
             tmpPointView: page.tmpPointView
+            robotModel: page.robotModel
+            pathModel: page.pathModel
             langue: page.langue
             anchors {
                 left: parent.left

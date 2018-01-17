@@ -4,13 +4,17 @@ import QtQuick.Controls.Styles 1.4
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
+import "../../Model/Robot"
+import "../../Model/Path"
 import "../Custom"
+import "../Robot"
 
 Frame {
     id: createPointMenuFrame
     objectName: "createPointMenuFrame"
     property Points pointModel
     property PointView tmpPointView
+    property Paths pathModel
     property string langue
     property string oldName: ""
     property string oldGroup
@@ -21,6 +25,7 @@ Frame {
     property string homeX // when creating a new charging station from robot
     property string homeY // when creating a new charging station from robot
     property string homeOri // when creating a new charging station from robot
+    property Robots robotModel
 
     signal backToMenu()
     signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup, bool displayed, bool home, int orientation)
@@ -162,7 +167,7 @@ Frame {
 
     CustomComboBox {
         id: groupComboBox
-//        model: pointModel
+        model: pointModel
 //        displayText: {
 //            if (oldname) {
 //                oldGroup
@@ -170,6 +175,7 @@ Frame {
 //                langue == "English" ? Helper.noGroupChinese : Helper.noGroup
 //            }
 //        }
+        langue: createPointMenuFrame.langue
         anchors {
             left: parent.left
             top: groupLabel.bottom
@@ -179,12 +185,36 @@ Frame {
     }
 
     Label {
+            id: groupRobotLabel
+            text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Robot")
+            color: Style.midGrey2
+            anchors {
+                left: parent.left
+                top: groupComboBox.bottom
+                right: parent.right
+                topMargin: 20
+            }
+        }
+
+        CustomComboBoxRobot {
+            id: groupRobotComboBox
+            model: robotModel
+            displayText: langue == "English" ? Helper.noRobotChinese : Helper.noRobot
+            anchors {
+                left: parent.left
+                top: groupRobotLabel.bottom
+                right: parent.right
+                topMargin: 8
+            }
+        }
+
+    Label {
         id: homeLabel
         text: langue == "English" ? qsTr("充电站") : qsTr("Charging station")
         color: Style.midGrey2
         anchors {
             left: parent.left
-            top: groupComboBox.bottom
+            top: groupRobotComboBox.bottom
             right: parent.right
             topMargin: 20
         }
@@ -381,9 +411,24 @@ Frame {
             if (groupComboBox.displayText === Helper.noGroupChinese) {
                 groupComboBox.displayText = Helper.noGroup;
             }
-            createPoint(newName, groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
+            var action = 1; // feature with robotGroup
+
+            var groupRobotName = groupRobotComboBox.displayText;
+            var finalGroupName = ""
+
+            if (groupRobotName !== Helper.noRobot && groupRobotName !== Helper.noRobotChinese) {
+                finalGroupName = groupRobotName;
+            } else {
+                finalGroupName = groupComboBox.displayText;
+            }
+
+            createPoint(newName,  finalGroupName, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         Math.round(slider.valueAt(slider.position)));
+
+//            createPoint(newName, groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
+//                        oldName, oldGroup, true, homeCheckBox.checked,
+//                        Math.round(slider.valueAt(slider.position)));
             backToMenu();
             var mess1 = ''
             var mess2 = ''

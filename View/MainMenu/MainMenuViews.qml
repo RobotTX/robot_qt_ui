@@ -71,6 +71,7 @@ Frame {
         visible: currentMenu == 2
         pointModel: mainMenuViewsFrame.pointModel
         robotModel: mainMenuViewsFrame.robotModel
+        pathModel: mainMenuViewsFrame.pathModel
         tmpPointView: mainMenuViewsFrame.tmpPointView
         langue: mainMenuViewsFrame.langue
         onCloseMenu: mainMenuViewsFrame.closeMenu()
@@ -91,6 +92,7 @@ Frame {
         tutorial: mainMenuViewsFrame.tutorial
         robotModel: mainMenuViewsFrame.robotModel
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
+        pathModel: mainMenuViewsFrame.pathModel
         langue: mainMenuViewsFrame.langue
         visible: currentMenu == 4
         onCloseMenu: mainMenuViewsFrame.closeMenu()

@@ -85,7 +85,7 @@ Frame {
 
     NormalButton {
         id: recenterButton
-        txt: langue == "English" ? "重置当前地图位置" : "Center map"
+        txt: langue == "English" ? "地图中心" : "Center map"
         imgSrc: "qrc:/icons/centerMap"
         anchors.top: loadPositionButton.bottom
         // if the map has become unreachable for the user because of a false manipulation

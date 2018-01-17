@@ -4,7 +4,9 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Robot"
+import "../../Model/Path"
 import "../Custom"
+import "../Robot"
 
 Frame {
     id: pointMenuFrame
@@ -12,6 +14,7 @@ Frame {
     property Points pointModel
     property Robots robotModel
     property string langue
+    property Paths pathModel
 
     signal deletePoint(string name, string groupName)
     signal deleteGroup(string name)
@@ -47,8 +50,20 @@ Frame {
         }
     }
 
+    Component {
+            id: robotGroup
+            RobotPointListItem {
+                objectName: "pointMenuContent"
+                width: pointMenuFrame.width
+                pointModel: pointMenuFrame.pointModel
+                robotModel: pointMenuFrame.robotModel
+                langue: pointMenuFrame.langue
+            }
+        }
+
 
     Flickable {
+        id: flickPoint
         ScrollBar.vertical: ScrollBar { }
         contentHeight: contentItem.childrenRect.height
         anchors.fill: parent
@@ -62,6 +77,23 @@ Frame {
             Repeater {
                 model: pointModel
                 delegate: delegate
+            }
+
+            Label {
+                id: groupRobotLabel
+                text: "Robot group"
+                color: Style.midGrey2
+//                font.pixelSize: 20
+                font.bold: true
+                visible: robotGroup
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+            }
+
+            /// repeater for robot point
+            Repeater {
+                model: robotModel
+                delegate: robotGroup
             }
         }
     }

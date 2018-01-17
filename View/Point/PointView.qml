@@ -39,7 +39,7 @@ Item {
     Label {
         id: tooltip
 
-        visible: false
+        visible: img
         font.pointSize: 10
         text: tooltipText
 

@@ -94,7 +94,12 @@ ListModel {
                     if(get(i).paths.get(j).pathName === name){
                         get(i).paths.remove(j);
                         if (langue == 'English') {
-                            message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
+//                            message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
+                            if (groupName === Helper.noGroup) {
+                                message = "在 \"" + name + "\" 删除路径 \"" + Helper.noGroupChinese + "\""
+                            } else {
+                                message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
+                            }
                         } else {
                             message = "Deleted the path \"" + name + "\" in \"" + groupName + "\""
                         }

@@ -130,7 +130,12 @@ ListModel {
 
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
-                if(Math.abs(get(i).stage) < 10000 && stage >= 9999){
+                //to change the playing icon after completing path
+                if (stage == get(i).pathPoints.count){
+                    setProperty(i, "playingPath", false);
+                }
+
+                else if(Math.abs(get(i).stage) < 10000 && stage >= 9999){
                     if (langue == "English") {
                         message ="The robot \"" + get(i).name + "\" just completed its path"
                     } else {
@@ -158,7 +163,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
 //                setProperty(i, "battery", battery);
-                setProperty(i, "battery", 23000);
+                setProperty(i, "battery", battery);
                 setProperty(i, "charging", charging);
             }
     }

@@ -191,6 +191,7 @@ Frame {
         CustomComboBox {
             id: groupComboBox
             model: pathModel
+            langue: createPathMenuFrame.langue
             displayText: {
                 if (oldname) {
                     oldGroup

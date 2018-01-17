@@ -19,7 +19,7 @@ ListModel {
         //console.log("Add group " + name);
         append({
            "groupName": name,
-           "isOpen": (name === Helper.noGroup) ? true : false,
+           "isOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
            "points": []
         });
     }

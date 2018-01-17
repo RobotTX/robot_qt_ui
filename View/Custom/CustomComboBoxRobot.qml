@@ -2,15 +2,11 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Styles 1.4
 import "../../Helper/style.js" as Style
-import "../../Helper/helper.js" as Helper
 
 ComboBox {
     id: groupComboBox
     height: 25
     currentIndex: 0
-
-    property string langue
-    property string txt: langue == "English" ? "English" : "中文"
 
     /// Customisation of the indicator on the right of the combo box
     indicator: Rectangle {
@@ -41,23 +37,11 @@ ComboBox {
     delegate: ItemDelegate {
         width: groupComboBox.width
         contentItem: CustomLabel {
-            text: {
-                if (txt == "English" && groupName === Helper.noGroup) {
-                    Helper.noGroupChinese
-                } else {
-                    groupName
-                }
-            }
-         verticalAlignment: Text.AlignVCenter
+            text: name
+            verticalAlignment: Text.AlignVCenter
         }
         highlighted: groupComboBox.highlightedIndex == index
-        onClicked: {
-            if (txt == "English" && groupName === Helper.noGroup) {
-                displayText = Helper.noGroupChinese
-            } else {
-                displayText = groupName
-            }
-        }
+        onClicked: displayText = name
     }
 
     background: Rectangle {

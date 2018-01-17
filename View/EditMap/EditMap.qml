@@ -516,10 +516,10 @@ Window {
         height: 500
         x: dialog.width / 2 - width / 2
         y: dialog.height / 2 - height / 2
-        feature: "edit_map"
+        feature: "EDIT MAP"
         tutorial: dialog.tutorial
         langue: dialog.langue
-        Component.onCompleted: tutoMessage = tutorial.getMessage("edit_map")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("EDIT MAP")
     }
 
     TutorialDialog {
@@ -527,9 +527,9 @@ Window {
         height: 500
         x: dialog.width / 2 - width / 2
         y: dialog.height / 2 - height / 2
-        feature: "edit_map_chinese"
+        feature: "修改地图"
         tutorial: dialog.tutorial
         langue: dialog.langue
-        Component.onCompleted: tutoMessage = tutorial.getMessage("edit_map_chinese")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("修改地图")
     }
 }

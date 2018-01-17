@@ -255,7 +255,7 @@ Frame {
         }
 
         background: Rectangle {
-            implicitWidth: parent.width
+            implicitWidth: parent.width - 10
             implicitHeight: 4
 
             color: Style.lightGreyBorder
@@ -267,10 +267,25 @@ Frame {
             implicitHeight: 4
 
             Rectangle {
+                id: highlight
                 width: batteryLevel.visualPosition * parent.width
                 height: parent.height
                 radius: 2
                 color: battery < 50 * batteryWarningThreshold ? Style.errorColor2 : Style.darkSkyBlue
+            }
+
+            Text {
+               anchors {
+                    right: highlight.right;
+                    rightMargin: 6;
+                    top: highlight.bottom
+                    topMargin: 2
+                    verticalCenter: parent.verticalCenter
+               }
+               color: Style.darkSkyBlue
+               text: battery + '%'
+               font.pixelSize: 10
+
             }
         }
     }

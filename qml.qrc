@@ -79,5 +79,8 @@
         <file>View/Custom/HelpButton.qml</file>
         <file>View/Custom/ScanMergeMenuButton.qml</file>
         <file>auth.qml</file>
+        <file>View/Custom/CustomComboBoxRobot.qml</file>
+        <file>View/Robot/RobotListPoint.qml</file>
+        <file>View/Robot/RobotPointListItem.qml</file>
     </qresource>
 </RCC>

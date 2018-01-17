@@ -358,20 +358,20 @@ Frame {
         id: tutorialD
         x: scanWindowWidth / 2 - width / 2
         y: scanWindowHeight / 2 - height / 2
-        feature: "scan_map"
+        feature: "SCAN MAP"
         tutorial: scanLeftMenuFrame.tutorial
         langue: scanLeftMenuFrame.langue
-        Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("SCAN MAP")
     }
 
     TutorialDialog {
         id: tutorialDChinese
         x: scanWindowWidth / 2 - width / 2
         y: scanWindowHeight / 2 - height / 2
-        feature: "scan_map_chinese"
+        feature: "扫描地图"
         tutorial: scanLeftMenuFrame.tutorial
         langue: scanLeftMenuFrame.langue
-        Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map_chinese")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("扫描地图")
     }
 
     function startedScanning(ip){

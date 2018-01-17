@@ -7,7 +7,7 @@ ListModel {
     property string langue
 
     ListElement {
-        feature: "edit_map"
+        feature: "EDIT MAP"
         message:
                 "You are about to edit a map, here is how to proceed...\n\n\t
                 * Select a color\n\n\t
@@ -21,7 +21,7 @@ ListModel {
     }
 
     ListElement {
-        feature: "edit_map_chinese"
+        feature: "修改地图"
         message: " 请阅读以下信息以便修改地图:\n\n\t
                                        * 选择颜色 \n\n\t
                                        * 选择形状 \n\n\t
@@ -51,7 +51,7 @@ ListModel {
     }
 
     ListElement {
-        feature: "scan_map"
+        feature: "SCAN MAP"
         message: "You are about to scan the map. This is how to proceed...\n\n\t
         * Use the teleop buttons or your keyboard (see touches below) to make the robot move\n\t
         \tu i o \n\t
@@ -62,7 +62,7 @@ ListModel {
     }
 
     ListElement {
-        feature: "scan_map_chinese"
+        feature: "扫描地图"
         message: "请阅读以下信息以便扫描地图: \n\n\t
         * 使用相应键盘按键(请看以下提示)来移动机器人 \n\t
         \tu i o \n\t

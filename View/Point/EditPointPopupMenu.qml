@@ -37,7 +37,9 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
 //        visible: myGroup == "Gobot"
-        enabled: myGroup == "Gobot"
+//        enabled: myGroup == "Gobot"
+        visible: true
+        enabled: true
         Image {
             asynchronous: true
             source: "qrc:/icons/arrow"
@@ -45,7 +47,8 @@ Menu {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 12
-            visible: myGroup == "Gobot"
+//            visible: myGroup == "Gobot"
+            visible: true
         }
 //        onHoveredChanged: if (visible) {
 //                              console.log("onhovered")

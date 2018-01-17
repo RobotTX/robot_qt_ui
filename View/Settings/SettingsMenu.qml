@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../Custom"
 import "../../Model/Robot"
+import "../../Model/Path"
 import "../../Model/Tutorial/"
 
 Page {
@@ -12,10 +13,12 @@ Page {
 
     property Robots robotModel
     property Tutorial tutorial
+    property Paths pathModel
     property real batteryWarningThreshold
     property string langue
 
     signal closeMenu()
+    signal openCreatePointMenu()
 
     MenuHeader {
         langue: page.langue
@@ -27,7 +30,7 @@ Page {
     SettingsMenuContent {
 
         id: settings
-
+        pathModel: page.pathModel
         robotModel: page.robotModel
         tutorial: page.tutorial
         langue: page.langue
@@ -40,7 +43,7 @@ Page {
             right: parent.right
             bottom: parent.bottom
         }
-
+        onOpenCreatePointMenu: page.openCreatePointMenu()
         onClose: page.closeMenu()
     }
 }
