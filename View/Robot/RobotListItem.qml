@@ -188,6 +188,7 @@ Frame {
         id: muteButton
         objectName: "muteBtn"
         imgSrc: if (charging == true) { "qrc:/icons/muteOn" } else  { "qrc:/icons/muteOff" }
+        tooltip: if (charging == true) { "Unmute sound" } else {"Mute sound"}
         anchors {
             verticalCenter: nameLabel.verticalCenter
             right: rightButton.left
@@ -279,12 +280,12 @@ Frame {
                     right: highlight.right;
                     rightMargin: 6;
                     top: highlight.bottom
-                    topMargin: 2
+                    topMargin: 1
                     verticalCenter: parent.verticalCenter
                }
                color: Style.darkSkyBlue
                text: battery + '%'
-               font.pixelSize: 10
+               font.pixelSize: 11
 
             }
         }

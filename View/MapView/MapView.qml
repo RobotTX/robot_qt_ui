@@ -421,12 +421,12 @@ Frame {
                         /// The robot's home on the map
                         PointView {
                             id: homeView
-                            _name: "Charging station of " + name
+                            _name: "Home of " + name
                             _isVisible: useRobotPathModel && dockStatus != -2
                             type: Helper.PointViewType.HOME
                             x: homeX
                             y: homeY
-                            tooltipText: langue == "English" ? "充电桩 " + name : "Charging station of " + name
+                            tooltipText: langue == "English" ? "充电桩 " + name : "Home of " + name
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: homeOri
                         }
