@@ -34,15 +34,12 @@ Slider {
     // have a custom image to drag instead of the native big sphere
     handle: Image {
         id: img
-//        x: Math.max(0.1, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
-        x: Math.max(0, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
+        x: Math.max(0.1, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
         y: slider.topPadding + slider.availableHeight / 2 - height / 2
         source: "qrc:/icons/cursor"
     }
 
-    function initializeBatteryThreshold(_value){
-        console.log("ini value to " + _value)
-        slider.value = _value
-    }
+    function initializeVelocity(_value){
+           slider.value = _value
+       }
 }
-

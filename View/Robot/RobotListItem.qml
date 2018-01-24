@@ -23,7 +23,7 @@ Frame {
     signal soundOn(string ip)
     signal soundOff(string ip)
 
-    height: 245 + robotPathListItem.height//105 + robotPathListItem.height
+    height: 295 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
 
     background: Rectangle {
@@ -184,6 +184,17 @@ Frame {
         }
     }
 
+//    SmallButton {
+//        id: batteryDisplay
+//        objectName: "battery"
+//        imgSrc:  "qrc:/icons/battery"
+//        anchors {
+//            verticalCenter: nameLabel.verticalCenter
+//            right: rightButton.left
+//            leftMargin: 5
+//        }
+//    }
+
     SmallButton {
         id: muteButton
         objectName: "muteBtn"
@@ -246,6 +257,7 @@ Frame {
     ProgressBar {
         id: batteryLevel
         value: battery / 100
+
         anchors {
             top: nameLabel.bottom
             left: parent.left
@@ -275,18 +287,120 @@ Frame {
                 color: battery < 50 * batteryWarningThreshold ? Style.errorColor2 : Style.darkSkyBlue
             }
 
-            Text {
-               anchors {
-                    right: highlight.right;
-                    rightMargin: 6;
-                    top: highlight.bottom
-                    topMargin: 1
-                    verticalCenter: parent.verticalCenter
-               }
-               color: Style.darkSkyBlue
-               text: battery + '%'
-               font.pixelSize: 11
+            Rectangle {
+                id: circle
+                height: 8
+                width: height
+                radius: height
+                color: Style.orangeColor
+                anchors {
+                    bottom: highlight.bottom
+                    bottomMargin: -2
+                    left: highlight.left
+                    leftMargin: 2 * robotModel.getBatteryWarning(ip)
+                }
+            }
 
+            Text {
+                id: levelWarning
+                anchors {
+                    bottom: circle.top
+                    left: circle.left
+                    leftMargin: -2
+                }
+                color: Style.orangeColor
+                text: Math.round(robotModel.getBatteryWarning(ip)) + "%"
+                font.pixelSize: 11
+            }
+
+            Text {
+                id: batteryValue
+                anchors {
+                     right: highlight.right;
+                     top: highlight.bottom
+                     topMargin: 1
+                     verticalCenter: parent.verticalCenter
+                }
+                color: Style.darkSkyBlue
+                text: battery + '%'
+                font.pixelSize: 11
+            }
+        }
+    }
+
+    Rectangle {
+        id: rectSpeed
+        anchors {
+            left: parent.left
+            leftMargin: 20
+            right: parent.right
+            rightMargin: 20
+            top : batteryLevel.bottom
+            topMargin: 15
+        }
+        height: 35
+        width: 100
+        border.color: Style.lightGreyBorder
+        border.width: 1
+        radius: 3
+        color: "white"
+
+        RowLayout {
+            id: rowSpeed
+                width: 150
+                height: 20
+
+            Label {
+                id: linearSpeedLabel
+                text: "Linear Speed"
+                anchors {
+                    left: parent.left
+                    leftMargin: 20
+                }
+                color: Style.midGrey2
+                font.pointSize: 9
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+
+            Label {
+                id: linearSpeed
+                text: Math.round(linearVelocity * 100) / 100 + " m/s"
+                color: Style.darkSkyBlue
+                horizontalAlignment: Text.Center
+                verticalAlignment: Text.Center
+                font.pointSize: 9
+                anchors {
+                    top: linearSpeedLabel.bottom
+                    left: linearSpeedLabel.left
+                    leftMargin: 10
+                }
+            }
+
+            Label {
+                id: angularSpeedLabel
+                text: qsTr("Angular Speed")
+                anchors {
+                    left: linearSpeedLabel.right
+                    leftMargin: 40
+                }
+                font.pointSize: 9
+                color: Style.midGrey2
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Label {
+                id: angularSpeed
+                text: Math.round(angularVelocity) + " deg/s"
+                color: Style.darkSkyBlue
+                horizontalAlignment: Text.Center
+                verticalAlignment: Text.Center
+                font.pointSize: 9
+                anchors {
+                    top: linearSpeed.top
+                    left:angularSpeedLabel.left
+                    leftMargin: 15
+                }
             }
         }
     }
@@ -342,6 +456,7 @@ Frame {
                         reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                         robotModel.msg = robotModel.inverseMsg.join('');
                         langue == "English" ? qsTr("已完成当前路径") : qsTr("Current path completed");
+
                     } else {
                         langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
                     }
@@ -381,10 +496,10 @@ Frame {
                 Style.midGrey2
         }
         anchors {
-            top: batteryLevel.bottom
+            top: rectSpeed.bottom
             left: parent.left
             right: parent.right
-            topMargin: 11
+            topMargin: 10
             leftMargin: 20
             rightMargin: 20
         }
@@ -444,5 +559,3 @@ Frame {
 
 
 }
-
-

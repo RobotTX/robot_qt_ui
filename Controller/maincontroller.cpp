@@ -84,6 +84,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(this, SIGNAL(emitSettings(QVariant)), settings, SLOT(setSettings(QVariant)));
             connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
             connect(settings, SIGNAL(saveWifiSignal(QString, QString, QString)), this, SLOT(saveWifi(QString, QString, QString)));
+            connect(settings, SIGNAL(saveVelocitySignal(QString, double, double)), this, SLOT(saveVelocity(QString, double, double)));
+            connect(settings, SIGNAL(saveBatterySignal(QString, double)), this, SLOT(saveBattery(QString, double)));
         } else {
             /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the settings";
@@ -884,6 +886,24 @@ void MainController::clearPointsAndPathsAfterScan(){
 
 void MainController::sendMapToAllRobots(QString id, QString date, QString metadata, QImage img){
     robotsController->sendMapToAllRobots(id, date, metadata, img);
+}
+
+void MainController::saveVelocity(QString ip, double linearVelocity, double angularVelocity) {
+    qDebug() << "MainController::saveVelocitySignal : " << ip << linearVelocity << angularVelocity;
+    QString cmd = QString("1") + QChar(31) + QString::number(linearVelocity) + QChar(31) + QString::number(angularVelocity);
+    robotsController->sendCommand(ip,cmd);
+}
+
+void MainController::saveBattery(QString ip, double battery) {
+    qDebug() << "MainController::saveBattery : " << ip << battery;
+    QString cmd = QString("2") + QChar(31) + QString::number(battery);
+    robotsController->sendCommand(ip,cmd);
+}
+
+void MainController::updateLinearVelocitySlot(QString ip, double linear){
+    qDebug() << "MainController::updateLinearVelocitySlot";
+    emit setLinearVelocity(ip, linear);
+    qDebug() << "linearVelocity = " << ip << linear;
 }
 
 

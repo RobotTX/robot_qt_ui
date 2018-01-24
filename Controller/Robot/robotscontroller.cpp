@@ -20,6 +20,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(setPos(QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(setLinearVelocity(QVariant,QVariant)),
+                        robotModel, SLOT(setLinearVelocity(QVariant, QVariant)));
         connect(this, SIGNAL(resetHome(QVariant)), robotModel, SLOT(resetHome(QVariant)));
         connect(this, SIGNAL(setName(QVariant, QVariant)),
                 robotModel, SLOT(setName(QVariant, QVariant)));
@@ -29,12 +31,15 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(setLinearVelocity(QVariant, QVariant)), robotModel, SLOT(setLinearVelocity(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
         connect(this, SIGNAL(updateDockStatus(QVariant, QVariant)), robotModel, SLOT(setDockStatus(QVariant, QVariant)));
         connect(this, SIGNAL(setLooping(QVariant, QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
+        connect(this, SIGNAL(setVelocity(QVariant, QVariant, QVariant)), robotModel, SLOT(setVelocity(QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(updateSound(QVariant, QVariant)), robotModel, SLOT(setSound(QVariant, QVariant)));
+        connect(this, SIGNAL(setBatteryWarning(QVariant,QVariant)), robotModel, SLOT(setBatteryWarning(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(savePlaceSignal(QString, QString, double, double, double, bool)), parent, SLOT(sendCommandSavePlace(QString, QString, double, double, double, bool)));
@@ -56,6 +61,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+        connect(parent, SIGNAL(setLinearVelocity(QVariant, QVariant)),
+                        robotModel, SLOT(setLinearVelocity(QVariant, QVariant)));
 
         connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
                 parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
@@ -81,6 +88,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     connect(this, SIGNAL(newRobotPos(QString, double, double, double)), parent, SLOT(newRobotPosSlot(QString, double, double, double)));
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
+    connect(this, SIGNAL(updateLinearVelocity(QString,double)), parent, SLOT(updateLinearVelocitySlot(QString,double)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
             parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
@@ -427,6 +435,15 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
         bool playing_path = static_cast<QString>(strList.takeFirst()).toInt();
         bool looping = static_cast<QString>(strList.takeFirst()).toInt();
+        double linearVelocity = static_cast<QString>(strList.takeFirst()).toDouble();
+        double angularVelocity = static_cast<QString>(strList.takeFirst()).toDouble();
+        double batteryValue = static_cast<QString>(strList.takeFirst()).toDouble();
+
+        qDebug() << "playing_path = " << playing_path;
+        qDebug() << "looping = " << looping;
+        qDebug() << "linear velocity = " << linearVelocity;
+        qDebug() << "angular velocity = " << angularVelocity;
+        qDebug() << "battery value = " << batteryValue;
 
         /// What remains in the list is the path
 
@@ -458,6 +475,16 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
 
         emit setPlayingPath(ip, playing_path);
 
+        /// update velocity and battery values
+       updateLinearVelocitySlot(ip, linearVelocity);
+       qDebug() <<"in robotsController.cpp before setVelocity";
+       setVelocitySlot(ip, linearVelocity, angularVelocity);
+       qDebug() << "in robotscontroller.cpp setVelocitySlot " << ip << linearVelocity;
+
+       qDebug() << "in robotsController.cpp before setBatteryWarningSlot";
+       setBatteryWarningSlot(ip, batteryValue);
+       qDebug() << "in robotsController.cpp after setBatteryWarningSlot" << ip << batteryValue;
+
     } else {
         /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
         qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
@@ -473,6 +500,11 @@ void RobotsController::updateHomeSlot(const QString ip, const double homeX, cons
     emit updateHome(ip, homeX, homeY, homeOri);
 }
 
+void RobotsController::updateLinearVelocitySlot(QString ip, double linear) {
+    qDebug() << "RobotsController::updateLinearVelocitySlot";
+    emit updateLinearVelocity(ip, linear);
+}
+
 void RobotsController::updateLaserSlot(QString ip, bool activated){
     if(robots.contains(ip))
         robots.value(ip)->clearObstacles(activated);
@@ -485,3 +517,14 @@ void RobotsController::setLoopingSlot(QString ip, bool looping){
     emit setLooping(ip, looping);
 }
 
+void RobotsController::setVelocitySlot(QString ip, double linear, double angular) {
+    qDebug() << "RobotsController::setLinearSlot" << ip << "linear :" << linear << "angular :" << angular;
+    emit setVelocity(ip, linear, angular);
+    qDebug() << "RobotsController::setVelocitySlot after emit setVelocity";
+}
+
+void RobotsController::setBatteryWarningSlot(QString ip, double batteryLevel) {
+    qDebug() << "before RobotsController::setBatteryWarningSlot" << ip << "battery :" << batteryLevel;
+    emit setBatteryWarning(ip, batteryLevel);
+    qDebug() << "after RobotsController::setBatteryWarningSlot";
+}

@@ -102,6 +102,9 @@ private slots:
      * @param homeY
      * sends a new home to the robot at ip <ip>
      */
+
+    void updateLinearVelocitySlot(QString ip, double linear);
+
     void sendCommandNewHome(QString ip, double homeX, double homeY, int homeOri);
     /**
      * @brief sendCommandNewPath
@@ -280,9 +283,14 @@ private slots:
 
     void sendCommandSavePlace(QString, QString, double, double, double, bool);
 
+    void saveVelocity(QString ip, double linearVelocity, double angularVelocity);
+
+    void saveBattery(QString ip, double battery);
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
+    void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
     void emitSettings(QVariant mapChoice);

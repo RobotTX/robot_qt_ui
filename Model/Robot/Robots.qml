@@ -38,6 +38,8 @@ ListModel {
             "ip": ip,
             "stage": stage,
             "battery": battery,
+           "linearVelocity": 0.4,
+            "angularVelocity": 40,
             "posX": -1,
             "posY": -1,
             "orientation": 0,
@@ -55,6 +57,7 @@ ListModel {
             "dockStatus": -2,
             "charging": false,
             "looping": false,
+            "batteryLevel": 0,
         });
         robotConnection(ip);
         if (langue == "English") {
@@ -114,6 +117,66 @@ ListModel {
                 setProperty(i, "dockStatus", -2);
             }
     }
+
+    function setLinearVelocity(ip, linear) {
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip){
+                setProperty(i, "linearVelocity = ", linear);
+            }
+    }
+
+    function setAngularVelocity(ip, angular) {
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip){
+                setProperty(i, "angularVelocity", angular);
+            }
+    }
+
+    function setVelocity(ip, linear, angular) {
+           for(var i = 0; i < count; i++)
+               if(get(i).ip === ip){
+                   setProperty(i, "linearVelocity", linear);
+                   setProperty(i, "angularVelocity", angular)
+               }
+       }
+
+   function getLinearVelocity(ip) {
+       for (var i = 0; i < count; i++) {
+           if (get(i).ip === ip) {
+               return get(i).linearVelocity;
+           }
+       }
+       return false;
+   }
+
+   function getAngularVelocity(ip) {
+       for (var i = 0; i < count; i++) {
+           if (get(i).ip === ip) {
+               return get(i).angularVelocity;
+           }
+       }
+       return false;
+   }
+
+   function setBatteryWarning(ip, batteryLevel) {
+           console.log("Robots.qml = setBAtteryWarning");
+           for (var i = 0; i < count; i++) {
+               if (get(i).ip === ip) {
+                   setProperty(i, "batteryLevel", batteryLevel);
+                   console.log("batteryLevel = ", batteryLevel);
+               }
+           }
+       }
+
+   function getBatteryWarning(ip) {
+       for (var i = 0; i < count; i++) {
+           if (get(i).ip === ip) {
+               return get(i).batteryLevel;
+           }
+       }
+       return false;
+   }
+
 
     function setPath(ip, name){
         for(var i = 0; i < count; i++)

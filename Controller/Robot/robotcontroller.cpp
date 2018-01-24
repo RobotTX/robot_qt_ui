@@ -25,6 +25,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Signals from the command controller when we have executed a command
     connect(commandController, SIGNAL(updateName(QString, QString)), parent, SLOT(updateNameSlot(QString, QString)));
     connect(commandController, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
+    connect(commandController, SIGNAL(updateLinearVelocity(QString, double)), parent, SLOT(updateLinearVelocitySlot(QString, double)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
@@ -38,6 +39,8 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 //    connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
     connect(commandController, SIGNAL(setLooping(QString, bool)), parent, SLOT(setLoopingSlot(QString, bool)));
+    connect(commandController, SIGNAL(setVelocity(QString, double, double)), parent, SLOT(setVelocitySlot(QString, double, double)));
+     connect(commandController, SIGNAL(setBatteryWarning(QString, double)), parent, SLOT(setBatteryWarningSlot(QString, double)));
 
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));

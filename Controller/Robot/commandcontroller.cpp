@@ -177,6 +177,17 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Pause exploration
                     emit setLooping(ip, list.at(2).toInt());
                 break;
+                case '1':
+                   /// set velocity
+                   qDebug("before setVelocity from commandController.cpp");
+                   emit setVelocity(ip, list.at(2).toDouble(), list.at(3).toDouble());
+                   qDebug("after setVelocity from commandController.cpp");
+                   emit setMessageTop(2, "Velocity" + list.at(2)); /// linear velocity
+               break;
+               case '2':
+                   /// set battery
+                   emit setBatteryWarning(ip, list.at(2).toDouble());
+               break;
                 default:
                     /// Unknown/unused command
                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;

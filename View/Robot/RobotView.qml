@@ -53,8 +53,8 @@ Image {
             width: tooltip.paintedWidth + 8
             height: tooltip.paintedHeight + 8
             radius: 8
-            border.color: Style.darkSkyBlue
-            color: "white"
+            border.color: Style.orangeColor //Style.darkSkyBlue
+            color: Style.orangeColor
         }
     }
 

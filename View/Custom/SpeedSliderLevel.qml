@@ -13,36 +13,29 @@ Slider {
 
     background: Rectangle {
         id: background
-        x: slider.leftPadding
+        x: slider.leftPadding + 20
         y: slider.topPadding + slider.availableHeight / 2 - height / 2
         implicitWidth: 200
-        implicitHeight: 6
-        width: slider.availableWidth
+        implicitHeight: 4
+        width: 230//slider.availableWidth
         height: implicitHeight
         radius: 2
         color: "#bdbebf"
 
 
-        Rectangle {
-            width: img.x
-            height: parent.height
-            color: Style.darkSkyBlue
-            radius: 2
-        }
+//        Rectangle {
+//            width: img.x
+//            height: parent.height
+//            color: Style.darkSkyBlue
+//            radius: 2
+//        }
     }
 
     // have a custom image to drag instead of the native big sphere
     handle: Image {
         id: img
-//        x: Math.max(0.1, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
-        x: Math.max(0, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
+        x: Math.max(0.1, Math.min(0.9, slider.visualPosition)) * (slider.availableWidth) - width/2
         y: slider.topPadding + slider.availableHeight / 2 - height / 2
         source: "qrc:/icons/cursor"
     }
-
-    function initializeBatteryThreshold(_value){
-        console.log("ini value to " + _value)
-        slider.value = _value
-    }
 }
-

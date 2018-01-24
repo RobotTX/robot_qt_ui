@@ -169,9 +169,15 @@ private slots:
 
     void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
 
+     void updateLinearVelocitySlot(QString ip, double linear);
+
     void updateLaserSlot(QString ip, bool activated);
 
     void setLoopingSlot(QString ip, bool looping);
+
+    void setVelocitySlot(QString ip, double linear, double angular);
+
+    void setBatteryWarningSlot(QString ip, double batteryLevel);
 
 signals:
     void stopRobotServerWorker(void);
@@ -179,6 +185,7 @@ signals:
     void removeRobot(QVariant ip);
     void setPos(QVariant ip, QVariant posX, QVariant posY, QVariant orientation);
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
+    void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
     void setPlayingPath(QVariant ip, QVariant playingPath);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
@@ -188,6 +195,7 @@ signals:
     void newRobotPos(QString ip, double posX, double posY, double ori);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, double homeX, double homeY, double homeOri);
+    void updateLinearVelocity(QString ip, double linear);
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
@@ -207,8 +215,10 @@ signals:
     void playedExploration(QVariant ip);
     void pausedExploration(QVariant ip);
     void setLooping(QVariant ip, QVariant looping);
+    void setVelocity(QVariant ip, QVariant linear, QVariant angular);
     void playingPathSlot(QVariant ip, QVariant playing);
     void updateSound(QVariant ip, QVariant activate);
+    void setBatteryWarning(QVariant ip, QVariant batteryLevelWarning);
 
 private:
     QQmlApplicationEngine* engine_;

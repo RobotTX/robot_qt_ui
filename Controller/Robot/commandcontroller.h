@@ -55,6 +55,8 @@ signals:
      */
     void updateHome(QString ip, double homeX, double homeY, double homeOri);
 
+    void updateLinearVelocity(QString ip, double linear);
+
     /**
      * @brief updatePath
      * @param ip
@@ -162,6 +164,10 @@ signals:
      * Tell the robot model that the robot is looping its path
      */
     void setLooping(QString ip, bool looping);
+
+    void setVelocity(QString ip, double linear, double angular);
+
+    void setBatteryWarning(QString ip, double batteryLevel);
 
 private:
     QString ip;
