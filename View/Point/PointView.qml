@@ -91,6 +91,9 @@ Item {
             case Helper.PointViewType.HOME:
                 src = "qrc:/icons/homeView";
             break;
+            case Helper.PointViewType.HOME_ORANGE:
+                src = "qrc:/icons/homeView_orange";
+            break;
             case Helper.PointViewType.PATHPOINT:
                 src = "qrc:/icons/pathPoint";
             break;

@@ -500,10 +500,10 @@ Frame {
                 }
 
                 function getLinearVelocity(lv) {
-                    if (lv ===0) {
-                        lv.value = 0.2;
+                    if (lv === 0) {
+                        lv = 0.2;
                     } else if (lv === 1) {
-                        lv.value = 1;
+                        lv = 1;
                     } else {
                         lv = lv + 0.1;
                     }

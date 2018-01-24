@@ -30,7 +30,7 @@ Image {
         visible: img
         font.pointSize: 10
         text: _name
-
+        color: "White"
         anchors {
             horizontalCenter: img.horizontalCenter
             bottom: img.top

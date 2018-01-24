@@ -423,7 +423,7 @@ Frame {
                             id: homeView
                             _name: "Home of " + name
                             _isVisible: useRobotPathModel && dockStatus != -2
-                            type: Helper.PointViewType.HOME
+                            type: Helper.PointViewType.HOME_ORANGE
                             x: homeX
                             y: homeY
                             tooltipText: langue == "English" ? "充电桩 " + name : "Home of " + name

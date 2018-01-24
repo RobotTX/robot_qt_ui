@@ -8,8 +8,9 @@
         <file alias="robot_checked">icons/icRobot_checked.png</file>
         <file alias="robot">icons/icRobot_normal.png</file>
         <file alias="big_robot">icons/Img_Robot.png</file>
-        <file alias="robotView">icons/Robot_s_80.png</file>
+        <file alias="robotView">icons/Robot_s_80_red.png</file>
         <file alias="homeView">icons/charging_station4.png</file>
+        <file alias="homeView_orange">icons/charging_station4_orange.png</file>
         <file alias="addHomeView">icons/charging_station4_add.png</file>
         <file alias="home">icons/Btn_GoHome_n.png</file>
         <file alias="noHome">icons/Btn_GoHome_d.png</file>

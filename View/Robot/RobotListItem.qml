@@ -23,7 +23,7 @@ Frame {
     signal soundOn(string ip)
     signal soundOff(string ip)
 
-    height: 295 + robotPathListItem.height//105 + robotPathListItem.height
+    height: 225 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
 
     background: Rectangle {
@@ -288,6 +288,20 @@ Frame {
             }
 
             Rectangle {
+                id: circleBluePoint
+                height: 8
+                width: height
+                radius: height
+                color: Style.darkSkyBlue
+                anchors {
+                    bottom: highlight.bottom
+                    bottomMargin: -2
+                    left: highlight.left
+                    leftMargin: batteryLevel.visualPosition * parent.width - 3
+                }
+            }
+
+            Rectangle {
                 id: circle
                 height: 8
                 width: height
@@ -317,6 +331,7 @@ Frame {
                 id: batteryValue
                 anchors {
                      right: highlight.right;
+                     rightMargin: - 15
                      top: highlight.bottom
                      topMargin: 1
                      verticalCenter: parent.verticalCenter
@@ -374,6 +389,7 @@ Frame {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
                     leftMargin: 10
+                    topMargin: 3
                 }
             }
 

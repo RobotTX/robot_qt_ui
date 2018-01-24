@@ -489,7 +489,7 @@ Frame {
         Rectangle {
             id: idConsole
             visible: true
-            height: 140
+            height: 70
             anchors {
                 top: pathItem.bottom
                 topMargin: 5
