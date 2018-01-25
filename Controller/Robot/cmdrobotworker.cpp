@@ -48,10 +48,10 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-    qDebug() << "\nWE ARE OM CmdRobotWorker::sendCommand()";
+//    qDebug() << "\nWE ARE OM CmdRobotWorker::sendCommand()";
     qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;
     int nbDataSend = socket->write(QString(cmd + QChar(31) + QChar(23) + QChar(31)).toUtf8());
-    qDebug() << "in cmdRobotWorker::sendCommand = " << QString(cmd + QChar(31) + QChar(23) + QChar(31));
+//    qDebug() << "in cmdRobotWorker::sendCommand = " << QString(cmd + QChar(31) + QChar(23) + QChar(31));
 
     socket->waitForBytesWritten(100);
 
@@ -63,7 +63,7 @@ void CmdRobotWorker::sendCommand(const QString cmd){
 
 void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
-    qDebug() << "\nWe are in CmdRobotWorker::readTcpDataSlot()";
+//    qDebug() << "\nWe are in CmdRobotWorker::readTcpDataSlot()";
     qDebug() << "(Robot" << ipAddress << ") readTcpDataSlot :" << commandAnswer;
     /// if the command contains "Connected" it means the robot has just connected in which case
     /// we proceed a little differently (need to exchange home and path, modify settings page)

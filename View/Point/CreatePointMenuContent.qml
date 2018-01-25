@@ -92,7 +92,7 @@ Frame {
                             }
                 // if creating point from robot
             } else if (homeName !== "") {
-                console.log("We are in createpointmenucontent homeX = " + homeX + "homeY = " + homeY + " homeOri = " + homeOri);
+//                console.log("We are in createpointmenucontent homeX = " + homeX + "homeY = " + homeY + " homeOri = " + homeOri);
                 homeCheckBox.checked = true;
                 slider.value = homeOri;
                 tmpPointView.x = homeX;

@@ -49,7 +49,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
     if(!paintedItems.contains(ip)){
 
-        emit updateSize(map.width(), map.height());
+//        emit updateSize(map.width(), map.height());
+        qDebug() << "map.width = " << map.width() << " map.height = " << map.height();
 
         QQmlComponent component(engine, QUrl("qrc:/View/ScanMap/ScanMapsPaintedItem.qml"));
         ScanMapPaintedItem* paintedItem = qobject_cast<ScanMapPaintedItem*>(component.create());
@@ -123,11 +124,14 @@ void ScanMapController::saveScanSlot(QString file_name){
     /// before grab
     emit discardMap(true);
 
+    qDebug() << "paintedItems.size = " << paintedItems.size();
+
     if(paintedItems.size() > 0){
         QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
         while(it.hasNext()){
             it.next();
             QImage& image = it.value()->getImage();
+            qDebug() << "image.width = " << image.width() << "image.height = " << image.height();
             for(int i = 0; i < image.width(); i++){
                 for(int j = 0; j < image.height(); j++){
                     QColor color = image.pixelColor(i, j);

@@ -127,7 +127,23 @@ Frame {
                     batterySlider.value = getBattery(batteryLevel);
 
                     function getBattery(bat) {
-                        return (bat * 0.5 / 30)
+                        if (bat === 50) {
+                            bat = 1
+                        } else if (bat >= 40 && bat < 50) {
+                            bat = 0.7 + (bat - 40)*0.02;
+                        } else if (bat >= 30 && bat < 40) {
+                            bat = 0.5 + (bat - 30)*0.02;
+                        } else if (bat >= 20 && bat < 30) {
+                            bat = 0.3 + (bat - 20)*0.02;
+                        } else if (bat >= 10 && bat < 20) {
+                            bat = 0.1 + (bat - 10)*0.02;
+                        } else if (bat === 0) {
+                            bat = 0;
+                        } else {
+                            bat = bat * 0.007;
+                        }
+
+                        return (bat)
                     }
 
                     function getLinearVelocityReverse(lv) {
@@ -649,7 +665,7 @@ Frame {
 
                 onReleased: {
                     batteryWarningThreshold = batterySlider.value;
-                    console.log("batterySlider.value = ",batterySlider.value);
+                    console.log("***batterySlider.value*** = ",batterySlider.value);
                     if ((ipRobotWifi !== "")) {
                         saveBatterySignal(ipRobotWifi, getBattery(batterySlider.value))
                         console.log("value battery = ", getBattery((batterySlider.value)))
@@ -659,7 +675,13 @@ Frame {
                 }
 
                 function getBattery(bat) {
-                    return bat === 0 ? bat = 0 : bat = 100*bat - 50*bat + 5
+                    bat = 100*bat - 50*bat + 5
+                    if (bat === 5) {
+                        bat = 0;
+                    } else if (bat >= 50) {
+                        bat = 50;
+                    }
+                    return bat
                 }
 
         }

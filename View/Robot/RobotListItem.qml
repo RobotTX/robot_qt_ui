@@ -242,13 +242,13 @@ Frame {
             onDeletePath: robotModel.deletePathSignal(ip)
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
             onSaveCurrentPath: {
-                console.log("in RobotListItem - onSaveCurrentPath pathName = " + pathName + " pathPoints = " + pathPoints)
+//                console.log("in RobotListItem - onSaveCurrentPath pathName = " + pathName + " pathPoints = " + pathPoints)
                 pathModel.saveCurrentPath(pathName,pathPoints)
                 console.log("pos x = " + posX)
             }
             onSaveCurrentHome: {
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
-                console.log("\n we are in onSaveCurrentHome - RobotListItem.qml");
+//                console.log("\n we are in onSaveCurrentHome - RobotListItem.qml");
                 console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
             }
         }
@@ -311,7 +311,7 @@ Frame {
                     bottom: highlight.bottom
                     bottomMargin: -2
                     left: highlight.left
-                    leftMargin: 2 * robotModel.getBatteryWarning(ip)
+                    leftMargin: 2.2 * robotModel.getBatteryWarning(ip)
                 }
             }
 

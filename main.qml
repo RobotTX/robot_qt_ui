@@ -66,8 +66,8 @@ ApplicationWindow {
             langue: applicationWindow.langue
             onSetMessageTop: mapView.setMessageTop(status, msg)
             onSaveCurrentHome: {
-                console.log("we are in main.qml - onSaveCurrentHome")
-                console.log("language = " + langue)
+//                console.log("we are in main.qml - onSaveCurrentHome")
+//                console.log("language = " + langue)
                 mainFrame.currentMenu = 2
             }
 
@@ -79,8 +79,8 @@ ApplicationWindow {
             langue: applicationWindow.langue
             onSetMessageTop: mapView.setMessageTop(status, msg)
             onSaveCurrentPath: {
-                console.log("We are in main.qml - onSaveCurrentPath");
-                console.log("language = " + langue)
+//                console.log("We are in main.qml - onSaveCurrentPath");
+//                console.log("language = " + langue)
                 mainFrame.currentMenu = 1
             }
         }

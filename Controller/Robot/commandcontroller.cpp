@@ -10,7 +10,7 @@ CommandController::CommandController(QObject* parent, QString _ip, QString _robo
 }
 
 void CommandController::sendCommand(const QString cmd){
-    qDebug() << "WE ARE IN CommandController::sendCommand()";
+//    qDebug() << "WE ARE IN CommandController::sendCommand()";
     if(!waitingForAnswer){
         waitingForAnswer = true;
         emit sendCommandSignal(cmd);
@@ -79,7 +79,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'i':
                     /// Sent a new path to the robot
                     qDebug() << "\ni";
-                    qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
+//                    qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
                     list.removeFirst();
                     list.removeFirst();
                     emit setMessageTop(2, "Updated the path of robot \"" + robotName + "\"");
@@ -162,7 +162,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
             case 'y':
                 qDebug() << "\ny";
-                qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'y'";
+//                qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'y'";
 
             break;
                 case ',':

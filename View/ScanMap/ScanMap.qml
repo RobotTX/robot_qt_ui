@@ -15,9 +15,9 @@ Window {
     objectName: "scanWindow"
 
     width: 1000
-    minimumWidth: 800
+//    minimumWidth: 800
     height: 700
-    minimumHeight: 600
+//    minimumHeight: 600
 
     property Robots robotModel
     property Tutorial tutorial
@@ -133,6 +133,7 @@ Window {
                 /// Change the position of scanMap so that we see the received map in the middle of the screen
                 x = -_width/2 + scanFrame.width/2
                 y = -_height/2 + scanFrame.height/2
+                console.log("x = " + x + " y = " + y)
             }
 
             color: "#cdcdcd"

@@ -52,10 +52,8 @@ namespace Helper {
         QPair<QImage, QPoint> crop(const QImage& image, const int n) {
 
             int top = 0;
-//            int bottom = image.height();
-//            int left = image.width();
-            int bottom = 672;//image.height();
-            int left = 672;//image.width();
+            int bottom = image.height();
+            int left = image.width();
             int right = 0;
 
             /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
@@ -83,8 +81,8 @@ namespace Helper {
 
             /// Create a new image filled with invisible grey
             QImage new_image = QImage(copy.size(), QImage::Format_ARGB32);
-//            new_image.fill(qRgba(205, 205, 205, 0));
-            new_image.fill(qRgba(0,0,0,0));
+            new_image.fill(qRgba(205, 205, 205, 0));
+//            new_image.fill(qRgba(0,0,0,0));
 
             /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
             QRgb wallColor = (n % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);

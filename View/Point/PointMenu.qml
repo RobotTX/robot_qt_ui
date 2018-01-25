@@ -127,7 +127,7 @@ Page {
     Connections {
         target: pointModel
         onSaveCurrentHome: {
-            console.log("We are in PointMenu - onSaveCurrentHome");
+//            console.log("We are in PointMenu - onSaveCurrentHome");
 //            console.log("home X = " + homeX + " home Y = " + homeY + " home Ori = " + homeOri);
             createPointMenuContent.homeX = homeX;
             createPointMenuContent.homeY = homeY;

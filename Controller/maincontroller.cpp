@@ -421,7 +421,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
 }
 
 void MainController::saveWifi(QString ip, QString wifi, QString pwd) {
-    qDebug() << "\nWE ARE IN MAINCONTROLLER::saveWifi()";
+//    qDebug() << "\nWE ARE IN MAINCONTROLLER::saveWifi()";
     qDebug() << "saveWifi called" << ip << wifi << " " << pwd;
     QString cmd = QString("y") + QChar(31) + QString(wifi) + QChar(31) + QString(pwd);// + QChar(31) + QChar(23) + QChar(31);
     qDebug() << cmd;
@@ -517,7 +517,7 @@ void MainController::sendCommandSavePlace(QString ip, QString name, double posX,
 }
 
 void MainController::sendCommandNewPath(QString ip, QString groupName, QString pathName){
-    qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
+//    qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
     QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
     QString pathStr("");
     for(int i = 0; i < pathPointVector.size(); i++){

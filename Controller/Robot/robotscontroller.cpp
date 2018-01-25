@@ -197,7 +197,7 @@ void RobotsController::shortcutDeleteRobot(void){
 }
 
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
-    qDebug() << "\nWE ARE IN RobotsController::sendCommand()";
+//    qDebug() << "\nWE ARE IN RobotsController::sendCommand()";
     if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
         qDebug() << "cmd in robotscontroller = " << cmd;
@@ -398,12 +398,12 @@ void RobotsController::callForRebootRobot(QString ip){
 }
 
 void RobotsController::soundOn(QString ip) {
-    qDebug() << "\nWE ARE IN RobotsController::soundOn()";
+//    qDebug() << "\nWE ARE IN RobotsController::soundOn()";
     sendCommand(ip, QString("w"));
 }
 
 void RobotsController::soundOff(QString ip) {
-    qDebug() << "\nWE ARE IN RobotsController::soundOff()";
+//    qDebug() << "\nWE ARE IN RobotsController::soundOff()";
     sendCommand(ip, QString("x"));
 }
 
