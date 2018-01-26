@@ -39,6 +39,7 @@ Frame {
     signal savePosition(double posX, double posY, double zoom, int mapRotations, string mapSrc)
     signal loadPosition()
     signal doubleClickedOnMap(double mouseX, double mouseY)
+    signal editPoint(string name, string groupName)
 
     onUseRobotPathModelChanged: canvas.requestPaint()
 
@@ -329,6 +330,7 @@ Frame {
                                 y: -parent.image.height
                                 width: parent.image.width
                                 height: parent.image.height
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: {
                                     console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
@@ -336,11 +338,39 @@ Frame {
                                         tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                                         canvas.requestPaint();
                                     }
+
+                                    if (mouse.button === Qt.RightButton) {
+                                        editPointPopupMenu.open();
+                                        console.log("mouse.button = right click on point || posX = " + posX + " posY = " + posY);
+
+                                    } else if (mouse.button === Qt.LeftButton) {
+                                        console.log("clicked on left button on the point");
+                                    }
+                                }
+
+                                EditPointPopupMenu {
+                                    id: editPointPopupMenu
+                                    x: 25
+                                    pointModel: mapViewFrame.pointModel
+                                    robotModel: mapViewFrame.robotModel
+                                    langue: mapViewFrame.langue
+                                    myGroup: groupName
+                                    onDeletePoint: {
+                                        pointModel.deletePoint(myGroup, name);
+                                        pointModel.deletePointSignal(myGroup, name);
+                                    }
+                                    onMoveTo: pointModel.moveTo(name, groupName, newGroup)
+                                    onEditPoint: {
+                                        console.log("onEditPoint clicked before pointModel.editPointB");
+                                        pointModel.editPointB(name, groupName);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+
 
 
                 /// Repeater to display the paths points on the map

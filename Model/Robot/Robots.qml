@@ -209,15 +209,17 @@ ListModel {
                     setProperty(i, "playingPath", false);
                     if(get(i).dockStatus !== 3)
                         stopPathSignal(ip);
-                } else if(get(i).stage >= 0 && stage < 0)
-                if (langue == "English") {
+                } else if(get(i).stage >= 0 && stage < 0) {
+                    if (langue == "English") {
                     message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
-                } else {
+                    } else {
                     message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
+                    }
                 } else {
+
                 }
 
-                    setMessageTop(0, message);
+                setMessageTop(0, message);
                 setProperty(i, "stage", stage);
             }
     }

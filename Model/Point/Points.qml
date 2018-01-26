@@ -11,6 +11,7 @@ ListModel {
     signal moveToSignal(string name, string oldGroup, string newGroup)
     signal setMessageTop(int status, string msg)
     signal saveCurrentHome(string homeName, string homeX, string homeY, string homeOri)
+    signal editPointB(string name, string groupName)
 
     property string namePoint: ""
     property string langue

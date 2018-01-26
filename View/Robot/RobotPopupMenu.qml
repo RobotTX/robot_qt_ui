@@ -141,7 +141,6 @@ Menu {
 //        onHoveredChanged: if(visible) currentMenuIndex = 3
         onClicked: if(visible) currentMenuIndex = 3
         onTriggered: {
-//            console.log("We are in RobotPopupMenu.qml - robotMenu.saveCurrentPath()");
             robotMenu.saveCurrentPath();
         }
     }

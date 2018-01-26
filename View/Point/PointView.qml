@@ -75,7 +75,8 @@ Item {
         hoverEnabled: true
         anchors.fill: img
 
-        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
+//        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
+        onHoveredChanged: tooltip.visible
 //        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
     }
 

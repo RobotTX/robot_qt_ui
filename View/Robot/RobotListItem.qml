@@ -242,9 +242,7 @@ Frame {
             onDeletePath: robotModel.deletePathSignal(ip)
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
             onSaveCurrentPath: {
-//                console.log("in RobotListItem - onSaveCurrentPath pathName = " + pathName + " pathPoints = " + pathPoints)
                 pathModel.saveCurrentPath(pathName,pathPoints)
-                console.log("pos x = " + posX)
             }
             onSaveCurrentHome: {
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);

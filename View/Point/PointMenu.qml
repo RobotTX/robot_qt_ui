@@ -16,6 +16,7 @@ Page {
 
     signal closeMenu()
     signal setMessageTop(int status, string msg)
+    signal editPoint(string name, string groupName)
 
     property int menuIndex: 0
 
@@ -139,6 +140,19 @@ Page {
         }
     }
 
+    Connections {
+        target: pointModel
+        onEditPointB: {
+            console.log("we are in pointMenu.qml connections");
+            createPointMenuContent.oldName = name;
+            createPointMenuContent.oldGroup = groupName;
+            page.menuIndex = 1;
+            console.log("createPointMenuContent.oldName = " + createPointMenuContent.oldName);
+            console.log("createPointMenuContent.oldGroup = " + createPointMenuContent.oldGroup)
+
+        }
+    }
+
     function doubleClickedOnMap(mouseX, mouseY){
         if(!createPointMenuFrame.visible){
             menuIndex = 1;
@@ -146,6 +160,9 @@ Page {
             tmpPointView.y = mouseY;
         }
     }
+
+
+
 }
 
 
