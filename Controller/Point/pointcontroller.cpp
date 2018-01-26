@@ -69,7 +69,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// desktop
 //    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";

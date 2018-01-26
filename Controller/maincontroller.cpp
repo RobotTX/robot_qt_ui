@@ -124,7 +124,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 //        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
 
         /// android
-        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
         QFile file(location + QDir::separator() + "settings.txt");
 //        qDebug() << "App path :" << Helper::getAppPath();
         if(file.open(QFile::ReadWrite)){
@@ -171,7 +171,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
     }
 
 //    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
     QFile tutoFile(location + QDir::separator() + "tutorial.txt");
     if(tutoFile.exists() && tutoFile.open(QIODevice::ReadOnly)){
         QTextStream in(&tutoFile);
@@ -245,7 +245,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 //    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
     /// android
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
     QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
     QString oldFilePath = mapController->getMapFile();
     qDebug() << "save map from:" << oldFilePath;
@@ -313,6 +313,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
         /// saves the new configuration to the current configuration file
         PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
+        qDebug() << "currentpaths.xml file saved in " << location + QDir::separator();
     }
     else {
 
@@ -384,6 +385,7 @@ void MainController::loadMapConfig(QString fileName) {
 
             /// saves the imported paths in the current paths file
             PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
+            qDebug() << "currentPaths.xml file save in " << location + QDir::separator();
 
             QVector<double> new_home = pointController->getHome();
             qDebug() << "?????????? New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
@@ -658,6 +660,7 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
     XMLParser::save(pointController, location + QDir::separator() + "currentPoints.xml");
     pathController->clearPaths();
     PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
+    qDebug() << "currentPaths.xml saved in " << location + QDir::separator();
 }
 
 void MainController::requestOrSendMap(QString ip, bool request){

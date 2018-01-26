@@ -76,7 +76,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         Q_UNREACHABLE();
     }
 
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// desktop
 //    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
