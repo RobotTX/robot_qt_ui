@@ -93,6 +93,20 @@ Menu {
     }
 
     PopupMenuItem {
+        labelText: langue == "English" ? "Hide point" : "Hide point"
+        width: parent.width
+        leftPadding: Style.menuItemLeftPadding
+        height: Style.menuItemHeight
+        onTriggered: pointModel.hideShowPoint(groupName, name)
+    }
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
+    PopupMenuItem {
         labelText: langue == "English" ? "移动到" : "Move to"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding

@@ -332,7 +332,7 @@ Frame {
                                 height: parent.image.height
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: {
-                                    console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                    console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
                                         tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
                                         tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -341,14 +341,13 @@ Frame {
 
                                     if (mouse.button === Qt.RightButton) {
                                         editPointPopupMenu.open();
-                                        console.log("mouse.button = right click on point || posX = " + posX + " posY = " + posY);
 
                                     } else if (mouse.button === Qt.LeftButton) {
                                         console.log("clicked on left button on the point");
                                     }
                                 }
 
-                                EditPointPopupMenu {
+                                EditPointPopupMapView {
                                     id: editPointPopupMenu
                                     x: 25
                                     pointModel: mapViewFrame.pointModel
@@ -398,7 +397,7 @@ Frame {
                                     width: parent.image.width
                                     height: parent.image.height
                                     onClicked: {
-                                        console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                        console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                         if(useTmpPathModel){
                                             tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
                                             tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -446,6 +445,10 @@ Frame {
                             x: posX - width / 2
                             y: posY - height / 2
                             mapOrientation: -topViewId.mapRotation
+                            robotModel: mapViewFrame.robotModel
+                            pathModel: mapViewFrame.pathModel
+                            pointModel: mapViewFrame.pointModel
+                            langue: mapViewFrame.langue
                         }
 
                         /// The robot's home on the map

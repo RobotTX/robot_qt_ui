@@ -2,6 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/helper.js" as Helper
 import "../../Helper/style.js" as Style
+import "../../Model/Robot"
+import "../../Model/Path"
+import "../../Model/Point"
 
 Image {
     id: img
@@ -10,6 +13,10 @@ Image {
     property string _ip
     property bool hover: false
     property int mapOrientation: 0
+    property Robots robotModel
+    property Paths pathModel
+    property Points pointModel
+    property string langue
 
     transform: Rotation {
         origin.x: width / 2
@@ -62,14 +69,40 @@ Image {
 
         anchors.fill: parent
         hoverEnabled: true
-
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-           console.log("Clicked on " + _name + " at ip " + _ip + " with an orientation of "
-                       + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
+//           console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
+//                       + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
+            if (mouse.button === Qt.RightButton) {
+                console.log("right button on robot");
+                robotPopupMenu.open();
+            } else if (mouse.button === Qt.LeftButton) {
+                console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
+                            + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
+            }
         }
 
         onHoveredChanged: {
             hover = !hover
+        }
+
+        RobotPopupMapView {
+            id: robotPopupMenu
+            pointModel: img.pointModel
+            pathModel: img.pathModel
+            langue: img.langue
+            onPointSelected: {
+                console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
+            }
+            onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
+            onDeletePath: robotModel.deletePathSignal(ip)
+            onSaveCurrentPath: {
+                pathModel.saveCurrentPath(pathName,pathPoints)
+            }
+            onSaveCurrentHome: {
+                pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
+                console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
+            }
         }
     }
 }

@@ -84,5 +84,7 @@
         <file>View/Custom/SliderLineMeasurement.qml</file>
         <file>View/Custom/SpeedSliderLevel.qml</file>
         <file>View/Settings/VelocityLevelSlider.qml</file>
+        <file>View/Point/EditPointPopupMapView.qml</file>
+        <file>View/Robot/RobotPopupMapView.qml</file>
     </qresource>
 </RCC>
