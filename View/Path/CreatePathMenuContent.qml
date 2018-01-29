@@ -785,7 +785,7 @@ Frame {
         if(error)
             errorMsg = mess1
 
-        if(newName !== "" && newName !== oldName)
+        if(newName !== "" && newName !== oldName) {
             var mess2 = ''
             if (langue == "English") {
                 mess2 = "路径名" + newName + "已经被使用"
@@ -801,7 +801,7 @@ Frame {
                         error = true;
                     }
                 }
-
+        }
         nameError = error;
 
         var mess3 = ''
