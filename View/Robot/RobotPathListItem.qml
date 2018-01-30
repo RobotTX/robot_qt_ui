@@ -16,6 +16,7 @@ Frame {
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
+    signal interruptDelay(string ip)
 
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
@@ -323,7 +324,7 @@ Frame {
                                 anchors.rightMargin: 5
                             }
 
-                            CustomLabel {
+                            Button {
                                 id: customLabelWaitTime
                                 text: {
                                     if (waitTime === -1) {
@@ -332,13 +333,39 @@ Frame {
                                         langue == "English" ? "延迟 " + waitTime + " 秒" : "Delay : " + waitTime + " s"
                                     }
                                 }
-                                horizontalAlignment: Text.AlignRight
+                                background: Rectangle {
+
+                                    color: Style.lightGreyBackground
+                                }
+                                height: 20
                                 font.pixelSize: 14
-                                color: Style.midGrey2
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.right: parent.right
                                 anchors.rightMargin: 5
+                                onClicked: if (waitTime !== -1 && stage === index) {
+                                               console.log("delay");
+                                               interruptDelay(ip);
+                                           } else {
+                                               console.log("other");
+                                           }
                             }
+
+//                            CustomLabel {
+//                                id: customLabelWaitTime
+//                                text: {
+//                                    if (waitTime === -1) {
+//                                        langue == "English" ? "人为干预" : "Human Action"}
+//                                    else {
+//                                        langue == "English" ? "延迟 " + waitTime + " 秒" : "Delay : " + waitTime + " s " + stage + " " + index
+//                                    }
+//                                }
+//                                horizontalAlignment: Text.AlignRight
+//                                font.pixelSize: 14
+//                                color: Style.midGrey2
+//                                anchors.verticalCenter: parent.verticalCenter
+//                                anchors.right: parent.right
+//                                anchors.rightMargin: 5
+//                            }
                         }
                     }
                 }

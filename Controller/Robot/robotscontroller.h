@@ -6,6 +6,7 @@ class Robots;
 class MainController;
 class RobotServerWorker;
 class QQmlApplicationEngine;
+class Points;
 
 #include <QObject>
 #include <QPointer>
@@ -178,6 +179,8 @@ private slots:
     void setVelocitySlot(QString ip, double linear, double angular);
 
     void setBatteryWarningSlot(QString ip, double batteryLevel);
+
+    void interruptDelay(QString ip);
 
 signals:
     void stopRobotServerWorker(void);

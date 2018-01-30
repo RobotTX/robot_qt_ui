@@ -21,6 +21,7 @@ Frame {
     signal rebootRobot(string ip)
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal interruptDelay(string ip)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -58,6 +59,7 @@ Frame {
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                     onSoundOn: robotMenuFrame.soundOn(ip)
                     onSoundOff: robotMenuFrame.soundOff(ip)
+                    onInterruptDelay: robotMenuFrame.interruptDelay(ip)
                 }
             }
         }

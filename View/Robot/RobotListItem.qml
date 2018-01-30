@@ -19,6 +19,7 @@ Frame {
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
     signal rebootRobot(string ip)
+    signal interruptDelay(string ip)
 
     signal soundOn(string ip)
     signal soundOff(string ip)
@@ -544,6 +545,7 @@ Frame {
         onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
         onStartDockingRobot: frame.startDockingRobot(ip)
         onStopDockingRobot: frame.stopDockingRobot(ip)
+        onInterruptDelay: frame.interruptDelay(ip)
     }
 
     ToolSeparator {

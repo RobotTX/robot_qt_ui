@@ -104,6 +104,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
         connect(robotMenuFrame, SIGNAL(soundOn(QString)), this, SLOT(soundOn(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
+        connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
     } else {
         qDebug() << "could not find robot menu frame";
         Q_UNREACHABLE();
@@ -527,4 +528,9 @@ void RobotsController::setBatteryWarningSlot(QString ip, double batteryLevel) {
     qDebug() << "before RobotsController::setBatteryWarningSlot" << ip << "battery :" << batteryLevel;
     emit setBatteryWarning(ip, batteryLevel);
     qDebug() << "after RobotsController::setBatteryWarningSlot";
+}
+
+void RobotsController::interruptDelay(QString ip){
+    sendCommand(ip, QString("3") + QChar(31) + QString("1"));
+    qDebug() << "interruptDelay" << ip;
 }
