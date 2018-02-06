@@ -69,21 +69,27 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QObject* test = applicationWindow->findChild<QObject*>("pointRobotListItem");
+    if (test) {
+        connect(test, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
+    }
+
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// desktop
-//    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
+    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
 
     /// android
-    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
+//    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
+
+//    robotPointsFile = location + QDir::separator() + "robotPointsFile.xml";
 }
 
 void PointController::loadPoints(const QString fileName){
     XMLParser::readPoints(this, fileName);
 }
-
 
 QVector<double> PointController::getHome() {
     QVector<double> home;
@@ -122,6 +128,7 @@ QVector<double> PointController::getHome() {
 }
 
 void PointController::addGroup(QString groupName, bool saveXML){
+    qDebug() << "*** *** PointController::addGroup(" << groupName << ", " << saveXML << ")";
     if(!points->getGroups().contains(groupName)){
         points->addGroup(groupName);
         emit addGroupQml(groupName);

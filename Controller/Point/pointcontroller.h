@@ -183,6 +183,7 @@ signals:
 private:
     QPointer<Points> points;
     QString currentPointsFile;
+    QString robotPointsFile;
 };
 
 #endif /// POINTCONTROLLER_H

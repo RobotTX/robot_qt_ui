@@ -64,4 +64,10 @@ Frame {
             }
         }
     }
+
+    Connections {
+        target: robotModel
+        onSoundOn: robotMenuFrame.soundOn(ip)
+        onSoundOff: robotMenuFrame.soundOff(ip)
+    }
 }

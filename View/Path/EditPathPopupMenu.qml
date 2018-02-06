@@ -48,7 +48,7 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// destkop
-//        onClicked: if(visible){ currentMenuIndex = 0 } /// android
+        onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
         RobotListInPopup {
             x: assignPathBis.width
@@ -105,7 +105,7 @@ Menu {
         }
 
         onHoveredChanged: if (visible) currentMenuIndex = 2 /// desktop
-//        onClicked: if(visible){ currentMenuIndex = 2 } /// android
+        onClicked: if(visible){ currentMenuIndex = 2 } /// android
 
         Menu {
             x: parent.width

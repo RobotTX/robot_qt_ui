@@ -481,7 +481,7 @@ Frame {
 //                                        Helper.PointViewType.PATHPOINT_NEXT
 //                                    }
                                     {
-                                        console.log("stage checking = " + stage);
+                                        console.log("stage checking = " + stage + " index checking = " + index);
                                         if (stage === 0) {
                                             if (index === 0) {
                                                 Helper.PointViewType.PATHPOINT_START_YELLOW

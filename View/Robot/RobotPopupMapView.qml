@@ -7,6 +7,7 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
+import "../../Model/Robot"
 import "../Point"
 import "../Path"
 import "../Custom"
@@ -17,6 +18,7 @@ Menu {
     width: 220
     property Points pointModel
     property Paths pathModel
+    property Robots robotModel
     property string langue
     property int currentMenuIndex: -1
     signal pointSelected(double _homeX, double _homeY, int orientation)
@@ -51,7 +53,7 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible) currentMenuIndex = 0 /// desktop
-//        onClicked: if(visible) currentMenuIndex = 0 /// android
+        onClicked: if(visible) currentMenuIndex = 0 /// android
 
         PointListInPopup {
             x: assignHome.width
@@ -91,7 +93,7 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
-//        onClicked: if(visible) currentMenuIndex = 1 /// android
+        onClicked: if(visible) currentMenuIndex = 1 /// android
 
         PathListInPopup {
             x: assignPath.width
@@ -185,11 +187,11 @@ Menu {
         onTriggered: {
             charging = !charging;
             if (charging !== true) {
-                robotMenu.soundOn(ip);
+                robotModel.soundOn(ip)
                 console.log("sound on");
             } else {
                 // if mute is true then the corresponding command is x
-                robotMenu.soundOff(ip);
+                robotModel.soundOff(ip);
                 console.log("sound off");
             }
         }

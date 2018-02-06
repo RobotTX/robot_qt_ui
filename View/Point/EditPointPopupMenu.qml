@@ -12,6 +12,7 @@ Menu {
     id: menu
     padding: 0
     width: 188
+    property bool _isVisible
 
     property Points pointModel
     property Robots robotModel
@@ -23,6 +24,8 @@ Menu {
     signal editPoint()
     signal deletePoint(string name)
     signal moveTo(string newGroup)
+
+    visible: _isVisible
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -54,7 +57,7 @@ Menu {
                               console.log("onhovered")
                               currentMenuIndex = 0
                           } /// desktop
-//        onClicked: if (visible) { currentMenuIndex = 0} /// android
+        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
             id: robotListInPopup
@@ -63,8 +66,9 @@ Menu {
             onVisibleChanged: if (!visible) currentMenuIndex = -1
             robotModel: menu.robotModel
             onRobotSelected: {
-                robotModel.savePlaceSignal(ip, pointModel.namePoint, posX, posY, orientation, home)
-                console.log("name = " + pointModel.namePoint + " posX = " + posX + " posY = " + posY + " home = " + home + " orientation = " + orientation)
+                robotModel.savePlaceSignal(ip, pointModel.namePoint, posX, posY, orientation, home);
+                pointModel.hideShowPoint(groupName, pointModel.namePoint);
+
                 currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
@@ -108,7 +112,7 @@ Menu {
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
         onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
-//        onClicked: if (visible) { currentMenuIndex = 1} /// android
+        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
         Menu {

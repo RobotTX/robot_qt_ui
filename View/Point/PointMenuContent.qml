@@ -10,6 +10,7 @@ import "../Robot"
 
 Frame {
     id: pointMenuFrame
+    objectName: "pointMenuContent"
     padding: 0
     property Points pointModel
     property Robots robotModel
@@ -21,6 +22,7 @@ Frame {
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
     signal editPoint(string name, string groupName)
+//    signal createGroup(string name)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -51,15 +53,22 @@ Frame {
     }
 
     Component {
-            id: robotGroup
-            RobotPointListItem {
-                objectName: "pointMenuContent"
-                width: pointMenuFrame.width
-                pointModel: pointMenuFrame.pointModel
-                robotModel: pointMenuFrame.robotModel
-                langue: pointMenuFrame.langue
-            }
+        id: robotGroup
+        PointRobotListItem {
+            width: pointMenuFrame.width
+            pointModel: pointMenuFrame.pointModel
+            robotModel: pointMenuFrame.robotModel
+            langue: pointMenuFrame.langue
         }
+    }
+
+//    Component {
+//        id: test
+
+//        CustomLabel {
+//            text: qsTr(pathPointName)
+//        }
+//    }
 
 
     Flickable {
@@ -79,22 +88,31 @@ Frame {
                 delegate: delegate
             }
 
-            Label {
-                id: groupRobotLabel
-                text: "Robot group"
-                color: Style.midGrey2
-//                font.pixelSize: 20
-                font.bold: true
-                visible: robotGroup
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-            }
+//            Label {
+//                id: groupRobotLabel
+//                text: "Robot group"
+//                color: Style.midGrey2
+//                font.bold: true
+//                visible: robotGroup
+//                anchors.left: parent.left
+//                anchors.leftMargin: 20
+//            }
 
             /// repeater for robot point
             Repeater {
                 model: robotModel
                 delegate: robotGroup
             }
+
+//            Repeater {
+//                model: robotModel
+//                delegate: Repeater {
+//                    model: pathPoints
+//                    delegate: test
+//                }
+//            }
+
+
         }
     }
 }

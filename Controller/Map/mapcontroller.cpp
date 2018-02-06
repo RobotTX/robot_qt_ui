@@ -18,20 +18,20 @@
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent) {
 
     /// Create the mapConfig folder if it does not exist desktop
-//    if(!QDir(Helper::getAppPath() + QDir::separator() + "mapConfigs").exists())
-//        QDir().mkdir(Helper::getAppPath() + QDir::separator() + "mapConfigs");
+    if(!QDir(Helper::getAppPath() + QDir::separator() + "mapConfigs").exists())
+        QDir().mkdir(Helper::getAppPath() + QDir::separator() + "mapConfigs");
 
     /// Create Gobot folder, then mapConfigs folder if they do not exist android version
-    /// Files will be located in Document location
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    /// Files will be located in Document location android
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
-    if(!QDir(location + QDir::separator() + "Gobot").exists())
-        QDir().mkdir(location + QDir::separator() + "Gobot");
+//    if(!QDir(location + QDir::separator() + "Gobot").exists())
+//        QDir().mkdir(location + QDir::separator() + "Gobot");
 
-    QString gobotLocation = location + "/Gobot";
+//    QString gobotLocation = location + "/Gobot";
 
-    if(!QDir(gobotLocation+ QDir::separator() + "mapConfigs").exists())
-        QDir().mkdir(gobotLocation + QDir::separator() + "mapConfigs");
+//    if(!QDir(gobotLocation+ QDir::separator() + "mapConfigs").exists())
+//        QDir().mkdir(gobotLocation + QDir::separator() + "mapConfigs");
 
     map = QPointer<Map>(new Map(this));
 
@@ -72,14 +72,14 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 void MapController::initializeMap(void){
 
     /// for desktop version
-//    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-//    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
+    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// for android version
-    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
-    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
+//    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
+//    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){
         /// We get the path of the map to use so that we can deduce the path of its config file
@@ -100,10 +100,10 @@ void MapController::initializeMap(void){
             fileName.remove(fileName.length() - 4, 4);
 
             /// desktop
-//            QString configPath = Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+            QString configPath = Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
 
             /// android
-            QString configPath = location + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+//            QString configPath = location + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
 
             qDebug() << "Map::initializeMap config path :" << configPath;
             /// We get the map informations from the map config file
@@ -135,17 +135,17 @@ void MapController::initializeMap(void){
 void MapController::savePositionSlot(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc){
 
     /// desktop
-//    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-//    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
-//    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-//    QString fileConfigPath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
+    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    QString fileConfigPath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
     /// android
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
-    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
-    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-    QString fileConfigPath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
+//    QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
+//    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+//    QString fileConfigPath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
 
     std::ofstream configfile(fileConfigPath.toStdString(), std::ios::out | std::ios::trunc);
@@ -224,13 +224,13 @@ void MapController::loadPositionSlot(){
     qDebug() << "Map::loadStateSlot called";
 
     /// desktop
-//    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-//    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
+    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     /// android
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
-    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
+//    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){
         /// to store the values we don't need
@@ -307,11 +307,11 @@ bool MapController::loadMapConfig(const QString fileName) {
             /// centers on (centerX, centerY) with the proper zoom coefficient
             centerMap(centerX, centerY, zoom, mapRotation);
             /// saves the configuration contained in the file <fileName> as the current configuration desktop
-//            saveMapConfig(Helper::getAppPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom, mapRotation);
+            saveMapConfig(Helper::getAppPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom, mapRotation);
 
             /// android
-            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-            saveMapConfig(location + QDir::separator() + "currentMap.txt", centerX, centerY, zoom, mapRotation);
+//            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//            saveMapConfig(location + QDir::separator() + "currentMap.txt", centerX, centerY, zoom, mapRotation);
 
             file.close();
             return true;
@@ -334,11 +334,11 @@ void MapController::saveEditedImage(const QString locationD){
     int mapRotation = 0;
 
     /// desktop
-//    QFile file(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
+    QFile file(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
 
     /// android
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    QFile file(location + QDir::separator() + "currentMap.txt");
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QFile file(location + QDir::separator() + "currentMap.txt");
 
     if(file.open(QFile::ReadWrite)){
         QTextStream stream(&file);
@@ -348,8 +348,8 @@ void MapController::saveEditedImage(const QString locationD){
     }
 
     /// desktop
-//    QFile file2(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
-    QFile file2(location + QDir::separator() + "currentMap.txt");
+    QFile file2(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
+//    QFile file2(location + QDir::separator() + "currentMap.txt");
     if(file2.open(QFile::WriteOnly|QFile::Truncate)){
         QTextStream stream(&file2);
         stream << map->getMapFile() << endl
@@ -445,23 +445,23 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
 
     /// desktop
-//    qDebug() << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm";
-//    map->getMapImage().save(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
+    qDebug() << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm";
+    map->getMapImage().save(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
 
     /// android
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    map->getMapImage().save(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    map->getMapImage().save(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
 
-//    if(setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){ /// desktop
-    if(setMapFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){ /// android
+    if(setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){ /// desktop
+//    if(setMapFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){ /// android
         double centerX = 0;
         double centerY = 0;
         double zoom = 0;
         int mapRotation = 0;
 
         /// Save in currentMap.txt
-//        QFile file(Helper::getAppPath() + QDir::separator() + "currentMap.txt"); /// desktop
-        QFile file(location + QDir::separator() + "currentMap.txt");
+        QFile file(Helper::getAppPath() + QDir::separator() + "currentMap.txt"); /// desktop
+//        QFile file(location + QDir::separator() + "currentMap.txt");
         if(file.open(QFile::ReadWrite)){
             QTextStream stream(&file);
             QString osef;
@@ -469,8 +469,8 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
             file.close();
         }
 
-//        QFile file2(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
-        QFile file2(location + QDir::separator() + "currentMap.txt");
+        QFile file2(Helper::getAppPath() + QDir::separator() + "currentMap.txt"); /// desktop
+//        QFile file2(location + QDir::separator() + "currentMap.txt");
         if(file2.open(QFile::WriteOnly|QFile::Truncate)){
             QTextStream stream(&file2);
             stream << map->getMapFile() << endl
@@ -481,8 +481,8 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
                  << map->getResolution() << endl
                  << map->getMapId().toString();
             file.close();
-//            saveMapConfig(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom, mapRotation);
-             saveMapConfig(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom, mapRotation);
+            saveMapConfig(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom, mapRotation); /// desktop
+//             saveMapConfig(location + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom, mapRotation);
         }
     }
 }

@@ -30,6 +30,8 @@ ListModel {
     signal activateLaser(string ip, bool activate)
     signal setLoopingPathSignal(string ip, bool loop)
     signal saveWifiConnection(string ip, string wifi_name, string pwd_wifi)
+    signal soundOn(string ip)
+    signal soundOff(string ip)
 
     function addRobot(name, ip, stage, battery){
         var message = ''
@@ -38,7 +40,7 @@ ListModel {
             "ip": ip,
             "stage": stage,
             "battery": battery,
-           "linearVelocity": 0.4,
+            "linearVelocity": 0.4,
             "angularVelocity": 40,
             "posX": -1,
             "posY": -1,

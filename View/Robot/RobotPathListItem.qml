@@ -12,6 +12,12 @@ Frame {
     property Robots robotModel
     property Paths pathModel
     property string langue
+    property double startTime: 0
+    property int secondsElapsed: 0
+    property int elapsedTime: 0
+    property int elapsedTime2: 0
+    property bool click: false
+    property string delayString: ""
 
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
@@ -244,6 +250,7 @@ Frame {
                 clip: true
 
 
+
                 Rectangle {
                     anchors.fill: parent
                     color: Style.lightGreyBackground
@@ -324,52 +331,102 @@ Frame {
                                 anchors.rightMargin: 5
                             }
 
+                            Timer  {
+                                    id: elapsedTimer
+                                    triggeredOnStart: false
+                                    interval: 1000;
+//                                    repeat: true;
+                                    property int elapsed: 0
+                                    onTriggered: {
+                                        elapsed += interval;
+                                    }
+                                }
+                            property bool finalStage: false
+
                             Button {
                                 id: customLabelWaitTime
                                 text: {
                                     if (waitTime === -1) {
-                                        langue == "English" ? "人为干预" : "Human Action"}
-                                    else {
-                                        langue == "English" ? "延迟 " + waitTime + " 秒" : "Delay : " + waitTime + " s"
+                                        qsTr("Human Action");
+                                    } else {
+                                        if ((stage === pathPoints.count - 1) && (looping === true)) {
+                                            finalStage = true;
+                                            qsTr("Delay : " + waitTime + " s");
+                                        }
+                                        if (stage === 0) { /// robot is heading to first point
+                                            if ((finalStage === true) && (index === pathPoints.count - 1)) {
+                                                elapsedTimer.restart();
+                                                elapsedTime2 = waitTime - elapsedTimer.elapsed/1000;
+                                                if (elapsedTime2 <= 0) {
+                                                    qsTr("Delay : 0 s");
+                                                } else {
+                                                    qsTr("Delay : " + elapsedTime2 + " s");
+                                                }
+
+
+                                            } else {
+                                                elapsedTimer.elapsed = 0; /// reset timer
+                                                qsTr("Delay : " + waitTime + " s");
+                                            }
+                                        } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
+                                            elapsedTimer.restart();
+                                            elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                            if (elapsedTime <= 0) {
+                                                qsTr("Delay : " + 0 + " s");
+                                            } else {
+                                                qsTr("Delay : " + elapsedTime + " s");
+                                            }
+                                        }
                                     }
                                 }
                                 background: Rectangle {
-
-                                    color: Style.lightGreyBackground
+                                    color: if ((stage === (index + 1) && elapsedTime >= 0)) {
+                                               Style.darkSkyBlue;
+                                           } else if ((stage === 0) && (finalStage === true) && (index === pathPoints.count - 1) && (elapsedTimer.elapsed/1000 < waitTime)) {
+                                               Style.darkSkyBlue;
+                                           } else {
+                                               Style.lightGreyBackground
+                                           }
                                 }
                                 height: 20
                                 font.pixelSize: 14
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.right: parent.right
                                 anchors.rightMargin: 5
-                                onClicked: if (waitTime !== -1 && stage === index) {
-                                               console.log("delay");
-                                               interruptDelay(ip);
-                                           } else {
-                                               console.log("other");
-                                           }
+                                onClicked: {
+                                    if (waitTime === -1) { /// if human action
+                                        console.log("Human Action");
+                                    } else {
+                                        if (stage === 0) { /// robot is heading to first point
+                                            if ((finalStage === true) && (index === pathPoints.count - 1)) {
+                                                if (elapsedTimer.elapsed/1000 < waitTime) {
+                                                    interruptDelay(ip);
+                                                    elapsedTimer.elapsed = 1000000;
+                                                    console.log("we are in special case");
+                                                } else {
+                                                    console.log("do nothing");
+                                                }
+                                            } else {
+                                                console.log("do nothing");
+                                            }
+                                        } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
+                                            if (elapsedTimer.elapsed/1000 < waitTime) { /// if robot is waiting the delay
+                                                interruptDelay(ip);
+                                                elapsedTimer.elapsed = 10000000;
+                                                console.log("elapsedTime = " + elapsedTime);
+                                            } else {
+                                                console.log("delay is passed ; do nothing");
+                                            }
+                                            elapsedTimer.stop();
+                                        }
+                                    }
+                                }
                             }
-
-//                            CustomLabel {
-//                                id: customLabelWaitTime
-//                                text: {
-//                                    if (waitTime === -1) {
-//                                        langue == "English" ? "人为干预" : "Human Action"}
-//                                    else {
-//                                        langue == "English" ? "延迟 " + waitTime + " 秒" : "Delay : " + waitTime + " s " + stage + " " + index
-//                                    }
-//                                }
-//                                horizontalAlignment: Text.AlignRight
-//                                font.pixelSize: 14
-//                                color: Style.midGrey2
-//                                anchors.verticalCenter: parent.verticalCenter
-//                                anchors.right: parent.right
-//                                anchors.rightMargin: 5
-//                            }
                         }
                     }
                 }
             }
+
 
             Rectangle {
                 height: 1

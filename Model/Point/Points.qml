@@ -12,12 +12,13 @@ ListModel {
     signal setMessageTop(int status, string msg)
     signal saveCurrentHome(string homeName, string homeX, string homeY, string homeOri)
     signal editPointB(string name, string groupName)
+    signal createGroup(string name)
 
     property string namePoint: ""
     property string langue
 
     function addGroup(name){
-        //console.log("Add group " + name);
+        console.log("****** ****** ****** Add group in points : " + name);
         append({
            "groupName": name,
            "isOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
@@ -102,7 +103,7 @@ ListModel {
                 for(var j = 0; j < get(i).points.count; j++)
                     if(get(i).points.get(j).name === name)
                         get(i).points.setProperty(j, "isVisible", !get(i).points.get(j).isVisible);
-
+                        console.log("hideShowPoint : totorototo");
         hideShow(groupName, name);
     }
 

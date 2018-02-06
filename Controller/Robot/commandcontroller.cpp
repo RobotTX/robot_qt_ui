@@ -84,6 +84,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     list.removeFirst();
                     emit setMessageTop(2, "Updated the path of robot \"" + robotName + "\"");
                     emit updatePath(ip, QStringList(list));
+                    emit updatePlayingPath(ip, false);
                 break;
                 case 'j':
                     /// Played the path of the robot
@@ -188,6 +189,9 @@ void CommandController::cmdAnswerSlot(QString answer){
                    /// set battery
                    emit setBatteryWarning(ip, list.at(2).toDouble());
                break;
+            case '3':
+                /// interruptDelay
+            break;
                 default:
                     /// Unknown/unused command
                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;

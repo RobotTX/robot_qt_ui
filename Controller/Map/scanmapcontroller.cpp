@@ -49,7 +49,7 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
     if(!paintedItems.contains(ip)){
 
-        emit updateSize(map.width(), map.height());
+//        emit updateSize(map.width(), map.height());
         qDebug() << "map.width = " << map.width() << " map.height = " << map.height();
 
         QQmlComponent component(engine, QUrl("qrc:/View/ScanMap/ScanMapsPaintedItem.qml"));

@@ -46,7 +46,7 @@ Menu {
                     anchors.rightMargin: 12
                 }
                 onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index /// desktop
-//                onClicked: if(visible && !pointMenu.visible) currentMenuIndex = index /// android
+                onClicked: if(visible && !pointMenu.visible) currentMenuIndex = index /// android
 
 
                 Menu {

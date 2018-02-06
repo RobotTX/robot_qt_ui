@@ -51,10 +51,9 @@ Menu {
             visible: true
         }
         onHoveredChanged: if (visible) {
-                              console.log("onhovered")
                               currentMenuIndex = 0
                           } /// desktop
-//        onClicked: if (visible) { currentMenuIndex = 0} /// android
+        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
             id: robotListInPopup
@@ -64,7 +63,6 @@ Menu {
             robotModel: menu.robotModel
             onRobotSelected: {
                 robotModel.savePlaceSignal(ip, pointModel.namePoint, posX, posY, orientation, home)
-                console.log("name = " + pointModel.namePoint + " posX = " + posX + " posY = " + posY + " home = " + home + " orientation = " + orientation)
                 currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
@@ -98,88 +96,6 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onTriggered: pointModel.hideShowPoint(groupName, name)
-    }
-
-    Rectangle {
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 1
-    }
-
-    PopupMenuItem {
-        labelText: langue == "English" ? "移动到" : "Move to"
-        width: parent.width
-        leftPadding: Style.menuItemLeftPadding
-        height: Style.menuItemHeight
-
-        Image {
-            asynchronous: true
-            source: "qrc:/icons/arrow"
-            fillMode: Image.Pad // For not stretching image
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 12
-        }
-//        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-        onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
-//        onClicked: if (visible) { currentMenuIndex = 1} /// android
-
-
-        Menu {
-            id: moveToMenu
-            padding: 0
-            width: 140
-            x: parent.width
-            visible: menu.currentMenuIndex === 1
-            onVisibleChanged: menu.currentMenuIndex = -1
-
-            background: Rectangle {
-                color: Style.lightGreyBackground
-                border.color: Style.lightGreyBorder
-                radius: 5
-            }
-
-            PopupMenuItem {
-                height: Style.menuItemHeight
-                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
-                width: parent.width
-                leftPadding: Style.menuItemLeftPadding
-                /// Disable the group in which the point already is so we can't move it in
-                enabled: !(Helper.noGroup === myGroup)
-                onTriggered: moveTo(Helper.noGroup)
-            }
-
-            Rectangle {
-                color: Style.lightGreyBorder
-                width: moveToMenu.width
-                height: 1
-            }
-
-            ColumnLayout {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-
-                Repeater {
-                    model: pointModel
-                    delegate: PopupMenuItem {
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                        }
-                        visible: groupName !== Helper.noGroup
-                        Layout.preferredHeight: visible ? Style.menuItemHeight : 0
-                        leftPadding: Style.menuItemLeftPadding
-                        /// Disable the group in which the point already is so we can't move it in
-                        enabled: !(groupName === myGroup)
-                        labelText: groupName
-
-                        onTriggered: moveTo(groupName)
-                    }
-                }
-            }
-        }
     }
 
     Rectangle {

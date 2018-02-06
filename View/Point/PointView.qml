@@ -75,9 +75,9 @@ Item {
         hoverEnabled: true
         anchors.fill: img
 
-//        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
-        onHoveredChanged: tooltip.visible
-//        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
+        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
+//        onHoveredChanged: tooltip.visible
+        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
     }
 
     /// To change the source file of the pointView according to its type

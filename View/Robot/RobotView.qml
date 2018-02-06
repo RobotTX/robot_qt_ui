@@ -8,7 +8,7 @@ import "../../Model/Point"
 
 Image {
     id: img
-
+    objectName: "robotView"
     property string _name
     property string _ip
     property bool hover: false
@@ -17,6 +17,9 @@ Image {
     property Paths pathModel
     property Points pointModel
     property string langue
+
+    signal soundOn(string ip)
+    signal soundOff(string ip)
 
     transform: Rotation {
         origin.x: width / 2
@@ -90,6 +93,7 @@ Image {
             id: robotPopupMenu
             pointModel: img.pointModel
             pathModel: img.pathModel
+            robotModel: img.robotModel
             langue: img.langue
             onPointSelected: {
                 console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
@@ -103,6 +107,8 @@ Image {
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
                 console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
             }
+            onSoundOn: img.soundOn(ip)
+            onSoundOff: img.soundOff(ip)
         }
     }
 }

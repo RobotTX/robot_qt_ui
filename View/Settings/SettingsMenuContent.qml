@@ -103,7 +103,7 @@ Frame {
                 anchors.rightMargin: 12
             }
             onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// desktop
-//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+            onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
             RobotListInPopup {
                 x: robotList.width
