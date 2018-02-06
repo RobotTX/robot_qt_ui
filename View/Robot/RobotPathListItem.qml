@@ -16,8 +16,9 @@ Frame {
     property int secondsElapsed: 0
     property int elapsedTime: 0
     property int elapsedTime2: 0
-    property bool click: false
     property string delayString: ""
+    property bool finalStage: false
+    property bool clickHumanAction: false
 
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
@@ -341,63 +342,89 @@ Frame {
                                         elapsed += interval;
                                     }
                                 }
-                            property bool finalStage: false
 
                             Button {
                                 id: customLabelWaitTime
-                                text: {
-                                    if (waitTime === -1) {
-                                        qsTr("Human Action");
-                                    } else {
-                                        if ((stage === pathPoints.count - 1) && (looping === true)) {
-                                            finalStage = true;
-                                            qsTr("Delay : " + waitTime + " s");
-                                        }
-                                        if (stage === 0) { /// robot is heading to first point
-                                            if ((finalStage === true) && (index === pathPoints.count - 1)) {
-                                                elapsedTimer.restart();
-                                                elapsedTime2 = waitTime - elapsedTimer.elapsed/1000;
-                                                if (elapsedTime2 <= 0) {
-                                                    qsTr("Delay : 0 s");
-                                                } else {
-                                                    qsTr("Delay : " + elapsedTime2 + " s");
-                                                }
-
-
-                                            } else {
-                                                elapsedTimer.elapsed = 0; /// reset timer
-                                                qsTr("Delay : " + waitTime + " s");
+                                text: textButton.text
+                                contentItem: Text {
+                                    id: textButton
+                                    text: {
+                                        var textDefault = "Delay : " + waitTime + " s";
+                                        if (waitTime === -1) {
+                                            qsTr("Human Action");
+                                        } else {
+                                            if ((stage === pathPoints.count - 1) && (looping === true)) {
+                                                finalStage = true;
+//                                                qsTr("Delay : " + waitTime + " s");
+                                                textDefault;
                                             }
-                                        } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
-                                            elapsedTimer.restart();
-                                            elapsedTime = waitTime - elapsedTimer.elapsed/1000;
-                                            if (elapsedTime <= 0) {
-                                                qsTr("Delay : " + 0 + " s");
-                                            } else {
-                                                qsTr("Delay : " + elapsedTime + " s");
+                                            if (stage === 0) { /// robot is heading to first point
+                                                if ((finalStage === true) && (index === pathPoints.count - 1)) {
+                                                    elapsedTimer.restart();
+                                                    elapsedTime2 = waitTime - elapsedTimer.elapsed/1000;
+                                                    if (elapsedTime2 <= 0) {
+//                                                        qsTr("Delay : " + 0 + " s");
+                                                        textDefault;
+                                                    } else {
+                                                        qsTr("Delay : " + elapsedTime2 + " s");
+                                                    }
+
+
+                                                } else {
+                                                    elapsedTimer.elapsed = 0; /// reset timer
+//                                                    qsTr("Delay : " + waitTime + " s");
+                                                    textDefault;
+                                                }
+                                            } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
+                                                elapsedTimer.restart();
+                                                elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                                if (elapsedTime <= 0) {
+//                                                    qsTr("Delay : " + 0 + " s");
+                                                    textDefault;
+                                                } else {
+                                                    qsTr("Delay : " + elapsedTime + " s");
+                                                }
                                             }
                                         }
                                     }
+                                    color: Style.midGrey2
+                                    font.pointSize: 10
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
                                 }
+
                                 background: Rectangle {
-                                    color: if ((stage === (index + 1) && elapsedTime >= 0)) {
-                                               Style.darkSkyBlue;
-                                           } else if ((stage === 0) && (finalStage === true) && (index === pathPoints.count - 1) && (elapsedTimer.elapsed/1000 < waitTime)) {
-                                               Style.darkSkyBlue;
+                                    color: {
+                                            if ((stage === (index + 1) && elapsedTime >= 0)) {
+                                               Style.lightPurple;
+                                           } else if ((stage === index + 1) && (waitTime === -1)) {
+                                                if (customLabelWaitTime.toto === true) {
+                                                    Style.lightGreyBackground
+                                                } else {
+                                                    Style.lightPurple;
+                                                }
+
+
+                                           } else if ((stage === 0) && (finalStage === true) && (index === pathPoints.count - 1) && (elapsedTimer.elapsed/1000 < waitTime) && (playingPath === false)) {
+                                               Style.lightPurple;
                                            } else {
                                                Style.lightGreyBackground
                                            }
+                                    }
                                 }
+                                property bool toto: false
                                 height: 20
                                 font.pixelSize: 14
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.right: parent.right
                                 anchors.rightMargin: 5
                                 onClicked: {
-                                    if (waitTime === -1) { /// if human action
-                                        console.log("Human Action");
+                                    if ((waitTime === -1) && (stage === index + 1)) { /// if human action 1
+                                        interruptDelay(ip);
+                                        toto = true;
                                     } else {
                                         if (stage === 0) { /// robot is heading to first point
+                                            toto = false;
                                             if ((finalStage === true) && (index === pathPoints.count - 1)) {
                                                 if (elapsedTimer.elapsed/1000 < waitTime) {
                                                     interruptDelay(ip);
@@ -565,6 +592,7 @@ Frame {
 
                 onClicked: {
                     dockClicked()
+                    playingPath = false;
                 }
             }
         }
