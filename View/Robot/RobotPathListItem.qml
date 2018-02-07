@@ -12,13 +12,6 @@ Frame {
     property Robots robotModel
     property Paths pathModel
     property string langue
-    property double startTime: 0
-    property int secondsElapsed: 0
-    property int elapsedTime: 0
-    property int elapsedTime2: 0
-    property string delayString: ""
-    property bool finalStage: false
-    property bool clickHumanAction: false
 
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
@@ -336,7 +329,16 @@ Frame {
                                     id: elapsedTimer
                                     triggeredOnStart: false
                                     interval: 1000;
-//                                    repeat: true;
+                                    property int elapsed: 0
+                                    onTriggered: {
+                                        elapsed += interval;
+                                    }
+                                }
+
+                            Timer  {
+                                    id: elapsedTimer2
+                                    triggeredOnStart: false
+                                    interval: 1000;
                                     property int elapsed: 0
                                     onTriggered: {
                                         elapsed += interval;
@@ -348,45 +350,7 @@ Frame {
                                 text: textButton.text
                                 contentItem: Text {
                                     id: textButton
-                                    text: {
-                                        var textDefault = "Delay : " + waitTime + " s";
-                                        if (waitTime === -1) {
-                                            qsTr("Human Action");
-                                        } else {
-                                            if ((stage === pathPoints.count - 1) && (looping === true)) {
-                                                finalStage = true;
-//                                                qsTr("Delay : " + waitTime + " s");
-                                                textDefault;
-                                            }
-                                            if (stage === 0) { /// robot is heading to first point
-                                                if ((finalStage === true) && (index === pathPoints.count - 1)) {
-                                                    elapsedTimer.restart();
-                                                    elapsedTime2 = waitTime - elapsedTimer.elapsed/1000;
-                                                    if (elapsedTime2 <= 0) {
-//                                                        qsTr("Delay : " + 0 + " s");
-                                                        textDefault;
-                                                    } else {
-                                                        qsTr("Delay : " + elapsedTime2 + " s");
-                                                    }
-
-
-                                                } else {
-                                                    elapsedTimer.elapsed = 0; /// reset timer
-//                                                    qsTr("Delay : " + waitTime + " s");
-                                                    textDefault;
-                                                }
-                                            } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
-                                                elapsedTimer.restart();
-                                                elapsedTime = waitTime - elapsedTimer.elapsed/1000;
-                                                if (elapsedTime <= 0) {
-//                                                    qsTr("Delay : " + 0 + " s");
-                                                    textDefault;
-                                                } else {
-                                                    qsTr("Delay : " + elapsedTime + " s");
-                                                }
-                                            }
-                                        }
-                                    }
+                                    text: customLabelWaitTime.setWaitTimeText()
                                     color: Style.midGrey2
                                     font.pointSize: 10
                                     horizontalAlignment: Text.AlignHCenter
@@ -394,57 +358,185 @@ Frame {
                                 }
 
                                 background: Rectangle {
-                                    color: {
-                                            if ((stage === (index + 1) && elapsedTime >= 0)) {
-                                               Style.lightPurple;
-                                           } else if ((stage === index + 1) && (waitTime === -1)) {
-                                                if (customLabelWaitTime.toto === true) {
-                                                    Style.lightGreyBackground
-                                                } else {
-                                                    Style.lightPurple;
-                                                }
-
-
-                                           } else if ((stage === 0) && (finalStage === true) && (index === pathPoints.count - 1) && (elapsedTimer.elapsed/1000 < waitTime) && (playingPath === false)) {
-                                               Style.lightPurple;
-                                           } else {
-                                               Style.lightGreyBackground
-                                           }
-                                    }
+                                    color: customLabelWaitTime.setColor()
                                 }
-                                property bool toto: false
+
                                 height: 20
                                 font.pixelSize: 14
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.right: parent.right
                                 anchors.rightMargin: 5
-                                onClicked: {
-                                    if ((waitTime === -1) && (stage === index + 1)) { /// if human action 1
-                                        interruptDelay(ip);
-                                        toto = true;
+                                onClicked: customLabelWaitTime.setInterruptionDelay()
+
+                                property bool humanActionClicked: false
+                                property int previousStage: 0
+
+
+                                function setWaitTimeText() {
+                                    var waitTimeText = "";
+                                    var elapsedTime = "";
+                                    var elapsedTime2 = "";
+                                    if (playingPath === false) { // if robot not playingPath
+                                        elapsedTimer.elapsed = 0;
+                                        elapsedTimer2.elapsed = 0;
+                                        customLabelWaitTime.humanActionClicked = false;
+                                        customLabelWaitTime.previousStage = 0;
+                                        if (waitTime === -1) {
+                                            waitTimeText = "Human Action";
+                                        } else {
+                                            waitTimeText = "Delay : " + waitTime + " s";
+                                        }
                                     } else {
-                                        if (stage === 0) { /// robot is heading to first point
-                                            toto = false;
-                                            if ((finalStage === true) && (index === pathPoints.count - 1)) {
-                                                if (elapsedTimer.elapsed/1000 < waitTime) {
-                                                    interruptDelay(ip);
-                                                    elapsedTimer.elapsed = 1000000;
-                                                    console.log("we are in special case");
-                                                } else {
-                                                    console.log("do nothing");
+                                        /// reset timer
+                                        if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
+                                            elapsedTimer.elapsed = 0;
+                                            customLabelWaitTime.humanActionClicked = false;
+                                        }
+
+                                        if ((stage === 1) && (looping === true)) { /// reset timer2
+                                            elapsedTimer2.elapsed = 0;
+                                        }
+
+                                        /// stock previous stage of before last point while looping in a variable
+                                        if ((stage === pathPoints.count - 1) && (looping === true)) {
+                                            customLabelWaitTime.previousStage = pathPoints.count - 1;
+                                        } else {
+
+                                        }
+
+                                        if (stage === index + 1) { /// if robot has reached point[index]
+                                            if (waitTime === -1) { /// if human action case
+                                                waitTimeText = "Human Action";
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer.restart();
+                                                elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                                if (elapsedTime <= 0) { /// if delay time is finished
+                                                    waitTimeText = "Delay : " + waitTime + " s";
+
+                                                } else { /// if delay time is still running
+                                                    waitTimeText = "Delay : " + elapsedTime + " s";
                                                 }
-                                            } else {
-                                                console.log("do nothing");
                                             }
-                                        } else if (stage === index + 1) { /// robot has reached a point, and either it is waiting the delay, either it is processing to another point
-                                            if (elapsedTimer.elapsed/1000 < waitTime) { /// if robot is waiting the delay
-                                                interruptDelay(ip);
-                                                elapsedTimer.elapsed = 10000000;
-                                                console.log("elapsedTime = " + elapsedTime);
-                                            } else {
-                                                console.log("delay is passed ; do nothing");
+                                        } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) { /// if last point
+                                            if (waitTime === -1) { /// if human action case
+                                                waitTimeText = "Human Action";
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer2.restart();
+                                                elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
+                                                if (elapsedTime2 <= 0) { /// if delay time is finished
+                                                    waitTimeText = "Delay : " + waitTime + " s";
+
+                                                } else { /// if delay time is still running
+                                                    waitTimeText = "Delay : " + elapsedTime2 + " s";
+                                                }
                                             }
-                                            elapsedTimer.stop();
+                                        } else { /// for point where robot is not
+                                            if (waitTime === -1) {
+                                                waitTimeText = "Human Action";
+                                            } else {
+                                                waitTimeText = "Delay : " + waitTime + " s";
+                                            }
+                                        }
+                                    }
+                                    return waitTimeText;
+                                }
+
+                                function setColor() {
+                                    var color = "";
+                                    var elapsedTime = "";
+                                    var elapsedTime2 = "";
+                                    if (playingPath === false) { // if robot not playingPath
+                                        color = Style.lightGreyBackground;
+                                    } else {
+                                        if (stage === index + 1) { /// if robot has reached point[index]
+                                            if (waitTime === -1) { /// if human action case
+                                                if (customLabelWaitTime.humanActionClicked === false) {
+                                                    color = Style.lightPurple;
+                                                } else {
+                                                    color = Style.lightGreyBackground;
+                                                }
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer.restart();
+                                                elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                                if (elapsedTime <= 0) { /// if delay time is finished
+                                                    color = Style.lightGreyBackground;
+                                                } else { /// if delay time is still running
+                                                    color = Style.lightPurple;
+                                                }
+                                            }
+                                        } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) {
+                                            if (waitTime === -1) { /// if human action case
+                                                if (customLabelWaitTime.humanActionClicked === false) {
+                                                    color = Style.lightPurple;
+                                                } else {
+                                                    color = Style.lightGreyBackground;
+                                                }
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer2.restart();
+                                                elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
+                                                if (elapsedTime2 <= 0) { /// if delay time is finished
+                                                    color = Style.lightGreyBackground;
+                                                } else { /// if delay time is still running
+                                                    color = Style.lightPurple;
+                                                }
+                                            }
+                                        } else { /// for point where robot is not
+                                            color = Style.lightGreyBackground;
+                                        }
+                                    }
+                                    return color;
+                                }
+
+                                function setInterruptionDelay() {
+                                    var elapsedTime = "";
+                                    var elapsedTime2 = "";
+                                    if (playingPath === false) { // if robot not playingPath
+                                        console.log("Path is not playing, so do nothing");
+                                    } else {
+                                        if (stage === index + 1) { /// if robot has reached point[index]
+                                            if (waitTime === -1) {
+                                                if (humanActionClicked === false) { /// if human action case
+                                                    console.log("Case looping = false : Human Action clicked");
+                                                    interruptDelay(ip);
+                                                    /// now we need to make the button non clickable
+                                                    customLabelWaitTime.humanActionClicked = true;
+                                                } else {
+                                                    console.log("Human Action clicked already; do nothing");
+                                                }
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer.restart();
+                                                elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                                if (elapsedTime <= 0) { /// if delay time is finished
+                                                    console.log("Case looping = false : time elapsed finished, do nothing");
+                                                } else { /// if delay time is still running
+                                                    interruptDelay(ip);
+                                                    /// now we need to interrupt the time running / make the button non clickable
+                                                    elapsedTimer.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
+                                                }
+                                            }
+                                        } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) {
+                                            if (waitTime === -1) {
+                                                if (humanActionClicked === false) { /// if human action case
+                                                    console.log("Case looping = false : Human Action clicked");
+                                                    interruptDelay(ip);
+                                                    /// now we need to make the button non clickable
+                                                    customLabelWaitTime.humanActionClicked = true;
+                                                } else {
+                                                    console.log("Human Action clicked already; do nothing");
+                                                }
+                                            } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                elapsedTimer2.restart();
+                                                elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
+                                                if (elapsedTime2 <= 0) { /// if delay time is finished
+                                                    console.log("Case looping = false : time elapsed finished, do nothing");
+                                                } else { /// if delay time is still running
+                                                    interruptDelay(ip);
+                                                    /// now we need to interrupt the time running / make the button non clickable
+                                                    elapsedTimer2.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
+                                                }
+                                            }
+                                        } else { /// for point where robot is not
+                                            console.log("Robot is not here, do nothing");
                                         }
                                     }
                                 }
@@ -453,7 +545,6 @@ Frame {
                     }
                 }
             }
-
 
             Rectangle {
                 height: 1
@@ -516,7 +607,7 @@ Frame {
                 }
 
                 onClicked: {
-                    robotModel.stopPathSignal(ip)
+                    robotModel.stopPathSignal(ip);
                 }
             }
 
