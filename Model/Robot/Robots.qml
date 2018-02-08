@@ -196,7 +196,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 //to change the playing icon after completing path
-                if (stage == get(i).pathPoints.count){
+                if (stage === get(i).pathPoints.count){
                     setProperty(i, "playingPath", false);
                 }
 
