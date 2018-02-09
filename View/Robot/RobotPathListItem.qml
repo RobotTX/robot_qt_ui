@@ -13,6 +13,9 @@ Frame {
     property Paths pathModel
     property string langue
 
+    property bool clickPausePlay
+    property bool lastPointLoop
+
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
@@ -450,22 +453,46 @@ Frame {
                                     } else {
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
+                                                if (frame.clickPausePlay === true) { /// case if we pressed the button pause
+                                                    if (lastPointLoop === true) {
+                                                        customLabelWaitTime.humanActionClicked = false;
+                                                        lastPointLoop = false;
+                                                    } else {
+                                                        customLabelWaitTime.humanActionClicked = true;
+                                                        frame.clickPausePlay = false;
+                                                    }
+                                                }
+
                                                 if (customLabelWaitTime.humanActionClicked === false) {
                                                     color = Style.lightPurple;
                                                 } else {
                                                     color = Style.lightGreyBackground;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                if (frame.clickPausePlay === true) { /// case if we pressed the button pause
+                                                    if (lastPointLoop === true) {
+//                                                        elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+                                                        elapsedTimer.elapsed = 0;
+                                                    } else {
+                                                        elapsedTimer.elapsed = 1000000;
+                                                    }
+                                                    lastPointLoop = false;
+                                                    frame.clickPausePlay = false;
+                                                }
+
                                                 elapsedTimer.restart();
                                                 elapsedTime = waitTime - elapsedTimer.elapsed/1000;
                                                 if (elapsedTime <= 0) { /// if delay time is finished
                                                     color = Style.lightGreyBackground;
+                                                    lastPointLoop = false;
                                                 } else { /// if delay time is still running
                                                     color = Style.lightPurple;
                                                 }
                                             }
-                                        } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) {
+                                        } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) { /// if last point
+                                            lastPointLoop = true;
                                             if (waitTime === -1) { /// if human action case
+
                                                 if (customLabelWaitTime.humanActionClicked === false) {
                                                     color = Style.lightPurple;
                                                 } else {
@@ -565,6 +592,8 @@ Frame {
                 right: parent.right
             }
 
+            property bool firstClick: false
+
             SmallButton {
                 id: playPausePathButton
                 // prevents the icon from occasionally disappearing for no apparent reason
@@ -587,7 +616,17 @@ Frame {
                 }
 
                 onClicked: {
-                    playingPath ? robotModel.pausePathSignal(ip): robotModel.playPathSignal(ip);
+                    if (playingPath === true) {
+                        robotModel.pausePathSignal(ip);
+                    } else {
+                        if (bottomItem.firstClick === false) {
+                            robotModel.playPathSignal(ip);
+                            bottomItem.firstClick = true;
+                        } else {
+                            clickPausePlay = true; /// to interrupt delay feature
+                            robotModel.playPathSignal(ip);
+                        }
+                    }
                 }
 
             }
@@ -608,6 +647,7 @@ Frame {
 
                 onClicked: {
                     robotModel.stopPathSignal(ip);
+                    bottomItem.firstClick = false;
                 }
             }
 

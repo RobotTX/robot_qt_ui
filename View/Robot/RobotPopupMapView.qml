@@ -37,40 +37,6 @@ Menu {
         radius: 5
     }
 
-    PopupMenuItem {
-        id: assignHome
-        height: Style.menuItemHeight
-        width: parent.width
-        labelText: langue == "English" ? "设置充电站" : "Assign a Charging Station"
-        leftPadding: Style.menuItemLeftPadding
-
-        Image {
-            asynchronous: true
-            source: "qrc:/icons/arrow"
-            fillMode: Image.Pad // For not stretching image
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 12
-        }
-        onHoveredChanged: if(visible) currentMenuIndex = 0 /// desktop
-        onClicked: if(visible) currentMenuIndex = 0 /// android
-
-        PointListInPopup {
-            x: assignHome.width
-            visible: robotMenu.currentMenuIndex === 0
-            onVisibleChanged: if(!visible) currentMenuIndex = -1
-            pointModel: robotMenu.pointModel
-            homeOnly: true
-            onPointSelected: {
-                console.log("robotMenu.pointSelected");
-                robotMenu.pointSelected(posX, posY, orientation)
-                currentMenuIndex = -1;
-                robotMenu.currentMenuIndex = -1;
-                robotMenu.close();
-            }
-        }
-    }
-
     Rectangle {
         color: Style.lightGreyBorder
         width: parent.width
@@ -124,23 +90,6 @@ Menu {
 //        onHoveredChanged: if(visible) currentMenuIndex = 2
 //        onTriggered: robotMenu.laserPressed()
 //    }
-
-    PopupMenuItem {
-        height: Style.menuItemHeight
-        width: parent.width
-        labelText: langue == "English" ? "保存当前充电站" : "Save current home"
-        leftPadding: Style.menuItemLeftPadding
-
-//        onHoveredChanged: if(visible) currentMenuIndex = 2
-        onClicked: if(visible) currentMenuIndex = 2
-        onTriggered: robotMenu.saveCurrentHome()
-    }
-
-    Rectangle {
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 1
-    }
 
     PopupMenuItem {
         height: Style.menuItemHeight
