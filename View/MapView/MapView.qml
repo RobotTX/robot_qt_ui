@@ -525,7 +525,7 @@ Frame {
         if(Qt.platform.os === "linux" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
         if(Qt.platform.os === "windows" && _mapSrc.indexOf("file:") !== 0)
-            _mapSrc = "file:/C" + _mapSrc;
+            _mapSrc = "file:" + _mapSrc;
         if(Qt.platform.os === "osx" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
         if(Qt.platform.os === "android" && _mapSrc.indexOf("file://") !== 0)
