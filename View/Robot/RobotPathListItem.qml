@@ -648,6 +648,8 @@ Frame {
                 onClicked: {
                     robotModel.stopPathSignal(ip);
                     bottomItem.firstClick = false;
+                    clickPausePlay = false;
+                    lastPointLoop = false;
                 }
             }
 
