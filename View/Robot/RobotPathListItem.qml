@@ -440,6 +440,7 @@ Frame {
                                                 waitTimeText = "Delay : " + waitTime + " s";
                                             }
                                         }
+
                                     }
                                     return waitTimeText;
                                 }
@@ -453,30 +454,49 @@ Frame {
                                     } else {
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
+                                                if (robotModel.sendPointToRobot === true) {
+                                                    customLabelWaitTime.humanActionClicked = true; /// block the button human action
+                                                    if (stage === 1) {
+                                                        robotModel.sendPointToRobot = true;
+                                                    } else {
+                                                        robotModel.sendPointToRobot = false;
+                                                    }
+                                                }
+
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
                                                         customLabelWaitTime.humanActionClicked = false;
                                                         lastPointLoop = false;
                                                     } else {
                                                         customLabelWaitTime.humanActionClicked = true;
-                                                        frame.clickPausePlay = false;
+//                                                        frame.clickPausePlay = false;
                                                     }
+                                                    frame.clickPausePlay = false;
                                                 }
 
                                                 if (customLabelWaitTime.humanActionClicked === false) {
                                                     color = Style.lightPurple;
                                                 } else {
                                                     color = Style.lightGreyBackground;
+                                                    lastPointLoop = false;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                if (robotModel.sendPointToRobot === true) {
+                                                    elapsedTimer.elapsed = 1000000;
+                                                    if (stage === 1) {
+                                                        robotModel.sendPointToRobot = true;
+                                                    } else {
+                                                        robotModel.sendPointToRobot = false;
+                                                    }
+                                                }
+
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
-//                                                        elapsedTime = waitTime - elapsedTimer.elapsed/1000;
                                                         elapsedTimer.elapsed = 0;
+                                                        lastPointLoop = false;
                                                     } else {
                                                         elapsedTimer.elapsed = 1000000;
                                                     }
-                                                    lastPointLoop = false;
                                                     frame.clickPausePlay = false;
                                                 }
 
@@ -492,6 +512,9 @@ Frame {
                                         } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) { /// if last point
                                             lastPointLoop = true;
                                             if (waitTime === -1) { /// if human action case
+                                                if (robotModel.sendPointToRobot === true) {
+                                                    customLabelWaitTime.humanActionClicked = true;
+                                                }
 
                                                 if (customLabelWaitTime.humanActionClicked === false) {
                                                     color = Style.lightPurple;
@@ -499,6 +522,11 @@ Frame {
                                                     color = Style.lightGreyBackground;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+                                                if (robotModel.sendPointToRobot === true) {
+                                                    elapsedTimer2.elapsed = 100000;
+                                                    elapsedTimer2.stop();
+                                                }
+
                                                 elapsedTimer2.restart();
                                                 elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
                                                 if (elapsedTime2 <= 0) { /// if delay time is finished
@@ -618,12 +646,19 @@ Frame {
                 onClicked: {
                     if (playingPath === true) {
                         robotModel.pausePathSignal(ip);
+                        console.log("pause button clicked button");
                     } else {
+                        console.log("play button clicked button");
                         if (bottomItem.firstClick === false) {
                             robotModel.playPathSignal(ip);
                             bottomItem.firstClick = true;
                         } else {
-                            clickPausePlay = true; /// to interrupt delay feature
+                            if (robotModel.sendPointToRobot === true && stage === 0) {
+                                clickPausePlay = false;
+                                robotModel.sendPointToRobot = false;
+                            } else {
+                                clickPausePlay = true; /// to interrupt delay feature
+                            }
                             robotModel.playPathSignal(ip);
                         }
                     }
@@ -646,10 +681,18 @@ Frame {
                 }
 
                 onClicked: {
-                    robotModel.stopPathSignal(ip);
-                    bottomItem.firstClick = false;
-                    clickPausePlay = false;
-                    lastPointLoop = false;
+                    if (goHomeButton.dockButtonClicked === true) {
+                        robotModel.stopPathSignal(ip);
+                        clickPausePlay = true;
+                        goHomeButton.dockButtonClicked = false;
+                    } else {
+                        robotModel.stopPathSignal(ip);
+                        bottomItem.firstClick = false;
+                        clickPausePlay = false;
+                        lastPointLoop = false;
+                    }
+
+
                 }
             }
 
@@ -674,6 +717,8 @@ Frame {
                     robotModel.setLoopingPathSignal(ip, !looping);
                 }
             }
+
+            property bool homeButtonClicked: false
 
             SmallButton {
                 id: goHomeButton
@@ -722,10 +767,10 @@ Frame {
                 }
 
                 enabled: dockStatus != -2
-
+                property bool dockButtonClicked: false
                 onClicked: {
                     dockClicked()
-                    playingPath = false;
+                    dockButtonClicked = true;
                 }
             }
         }
@@ -765,18 +810,6 @@ Frame {
 
                         font.pixelSize: 14
                         color: Style.midGrey2
-//                        {
-//                            if (robotModel.statusColor === -1)
-//                                Style.midGrey2
-//                            else if (robotModel.statusColor === 0)
-//                                Style.errorColor
-//                            else if (robotModel.statusColor === 1)
-//                                Style.warningColor
-//                            else if (robotModel.statusColor === 2)
-//                                Style.successColor
-//                            else if (robotModel.statusColor === 3)
-//                                Style.infoColor
-//                        }
                     }
                 }
 
@@ -793,6 +826,8 @@ Frame {
                 frame.startDockingRobot(ip);
                 console.log("Start docking");
             }
+            playingPath = false;
+            clickPausePlay = true;
         }
     }
 }

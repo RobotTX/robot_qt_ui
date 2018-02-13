@@ -44,9 +44,9 @@ Menu {
                 }
 
                 onTriggered: {
-                    console.log("In robotlistinpopup Selected robot " + name)
-                    robotMenu.robotSelected(name, ip)
-                    close()
+                    robotMenu.robotSelected(name, ip);
+                    robotModel.sendPointToRobot = true;
+                    close();
                 }
 
                 CustomBusyIndicator {

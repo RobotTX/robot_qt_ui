@@ -12,6 +12,7 @@ ListModel {
     property string test: ""
     property int statusColor: -1
     property string langue
+    property bool sendPointToRobot
 
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
