@@ -15,6 +15,7 @@ Frame {
 
     property bool clickPausePlay
     property bool lastPointLoop
+    property bool firstClick: false
 
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
@@ -390,6 +391,10 @@ Frame {
                                             waitTimeText = "Delay : " + waitTime + " s";
                                         }
                                     } else {
+                                        if ((stage === 0) && (looping === false)) {
+                                            clickPausePlay = false;
+                                        }
+
                                         /// reset timer
                                         if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
                                             elapsedTimer.elapsed = 0;
@@ -451,18 +456,12 @@ Frame {
                                     var elapsedTime2 = "";
                                     if (playingPath === false) { // if robot not playingPath
                                         color = Style.lightGreyBackground;
+                                        if(stage === pathPoints.count) {
+                                            frame.clickPausePlay = false;
+                                        }
                                     } else {
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
-//                                                if (robotModel.sendPointToRobot === true) {
-//                                                    customLabelWaitTime.humanActionClicked = true; /// block the button human action
-//                                                    if (stage === 1) {
-//                                                        robotModel.sendPointToRobot = true;
-//                                                    } else {
-//                                                        robotModel.sendPointToRobot = false;
-//                                                    }
-//                                                }
-
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
                                                         customLabelWaitTime.humanActionClicked = false;
@@ -480,14 +479,6 @@ Frame {
                                                     lastPointLoop = false;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
-//                                                if (robotModel.sendPointToRobot === true) {
-//                                                    elapsedTimer.elapsed = 1000000;
-//                                                    if (stage === 1) {
-//                                                        robotModel.sendPointToRobot = true;
-//                                                    } else {
-//                                                        robotModel.sendPointToRobot = false;
-//                                                    }
-//                                                }
 
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
@@ -511,9 +502,6 @@ Frame {
                                         } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) { /// if last point
                                             lastPointLoop = true;
                                             if (waitTime === -1) { /// if human action case
-//                                                if (robotModel.sendPointToRobot === true) {
-//                                                    customLabelWaitTime.humanActionClicked = true;
-//                                                }
 
                                                 if (customLabelWaitTime.humanActionClicked === false) {
                                                     color = Style.lightPurple;
@@ -619,8 +607,6 @@ Frame {
                 right: parent.right
             }
 
-            property bool firstClick: false
-
             SmallButton {
                 id: playPausePathButton
                 // prevents the icon from occasionally disappearing for no apparent reason
@@ -646,9 +632,9 @@ Frame {
                     if (playingPath === true) {
                         robotModel.pausePathSignal(ip);
                     } else {
-                        if (bottomItem.firstClick === false) {
+                        if (firstClick === false) {
                             robotModel.playPathSignal(ip);
-                            bottomItem.firstClick = true;
+                            firstClick = true;
                         } else {
                             clickPausePlay = true;
                             robotModel.playPathSignal(ip);
@@ -679,7 +665,7 @@ Frame {
                         goHomeButton.dockButtonClicked = false;
                     } else {
                         robotModel.stopPathSignal(ip);
-                        bottomItem.firstClick = false;
+                        firstClick = false;
                         clickPausePlay = false;
                         lastPointLoop = false;
                     }
