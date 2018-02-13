@@ -96,13 +96,13 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Played the assigned point
                     qDebug() << "\nk";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" is starting go to assigned point");
-                    emit updatePlayingPath(ip, true);
+                    emit updatePlayingPath(ip, false);
                 break;
                 case 'l':
                     /// Stopped the path of the robot
                     qDebug() << "\nl";
                     emit setMessageTop(2, "Stopped robot \"" + robotName + "\" mission");
-                    emit updatePlayingPath(ip, false);
+                    emit updatePlayingPath(ip, false); // reset play path
                 break;
                 case 'm':
                     /// Stopped and deleted the path of the robot
@@ -120,12 +120,14 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Started the docking process
                     qDebug() << "\no";
                     qDebug() << "CommandController::cmdAnswerSlot Started docking" << list;
+                    emit updatePlayingPath(ip, false);
                 break;
                 case 'p':
                     /// Stopped the docking process
                     qDebug() << "\np";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" is going to its charging station");
                     qDebug() << "CommandController::cmdAnswerSlot Stopped docking" << list;
+                    emit updatePlayingPath(ip, false);
                 break;
                 case 'q':
                     /// Started the laser of the robot
