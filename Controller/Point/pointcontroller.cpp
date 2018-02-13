@@ -128,7 +128,6 @@ QVector<double> PointController::getHome() {
 }
 
 void PointController::addGroup(QString groupName, bool saveXML){
-    qDebug() << "*** *** PointController::addGroup(" << groupName << ", " << saveXML << ")";
     if(!points->getGroups().contains(groupName)){
         points->addGroup(groupName);
         emit addGroupQml(groupName);

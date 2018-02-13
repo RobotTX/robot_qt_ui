@@ -62,7 +62,7 @@ Menu {
             onVisibleChanged: if (!visible) currentMenuIndex = -1
             robotModel: menu.robotModel
             onRobotSelected: {
-                robotModel.savePlaceSignal(ip, pointModel.namePoint, posX, posY, orientation, home)
+                robotModel.savePlaceSignal(ip, namePoint, posX, posY, orientation, home)
                 currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
@@ -76,12 +76,18 @@ Menu {
         height: 1
     }
 
+    property string namePoint: ""
+
     PopupMenuItem {
-        labelText: langue == "English" ? "修改目标点" : "Edit Point"
+        labelText: { namePoint = name
+            langue == "English" ? "修改目标点" : "Edit Point"
+        }
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: editPoint()
+        onTriggered: {
+            editPoint()
+        }
     }
 
     Rectangle {

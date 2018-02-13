@@ -54,7 +54,6 @@ Menu {
             visible: true
         }
         onHoveredChanged: if (visible) {
-                              console.log("onhovered")
                               currentMenuIndex = 0
                           } /// desktop
         onClicked: if (visible) { currentMenuIndex = 0} /// android

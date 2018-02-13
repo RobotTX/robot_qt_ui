@@ -14,11 +14,10 @@ ListModel {
     signal editPointB(string name, string groupName)
     signal createGroup(string name)
 
-    property string namePoint: ""
+//    property string namePoint: ""
     property string langue
 
     function addGroup(name){
-        console.log("****** ****** ****** Add group in points : " + name);
         append({
            "groupName": name,
            "isOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
@@ -38,7 +37,6 @@ ListModel {
                      "home": home,
                      "orientation": orientation
                 });
-                namePoint = name
             }
         }
     }
@@ -103,7 +101,6 @@ ListModel {
                 for(var j = 0; j < get(i).points.count; j++)
                     if(get(i).points.get(j).name === name)
                         get(i).points.setProperty(j, "isVisible", !get(i).points.get(j).isVisible);
-                        console.log("hideShowPoint : totorototo");
         hideShow(groupName, name);
     }
 
