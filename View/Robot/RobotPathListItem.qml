@@ -391,27 +391,6 @@ Frame {
                                             waitTimeText = "Delay : " + waitTime + " s";
                                         }
                                     } else {
-                                        if ((stage === 0) && (looping === false)) {
-                                            clickPausePlay = false;
-                                        }
-
-                                        /// reset timer
-                                        if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
-                                            elapsedTimer.elapsed = 0;
-                                            customLabelWaitTime.humanActionClicked = false;
-                                        }
-
-                                        if ((stage === 1) && (looping === true)) { /// reset timer2
-                                            elapsedTimer2.elapsed = 0;
-                                        }
-
-                                        /// stock previous stage of before last point while looping in a variable
-                                        if ((stage === pathPoints.count - 1) && (looping === true)) {
-                                            customLabelWaitTime.previousStage = pathPoints.count - 1;
-                                        } else {
-
-                                        }
-
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
                                                 waitTimeText = "Human Action";
@@ -420,7 +399,6 @@ Frame {
                                                 elapsedTime = waitTime - elapsedTimer.elapsed/1000;
                                                 if (elapsedTime <= 0) { /// if delay time is finished
                                                     waitTimeText = "Delay : " + waitTime + " s";
-
                                                 } else { /// if delay time is still running
                                                     waitTimeText = "Delay : " + elapsedTime + " s";
                                                 }
@@ -456,10 +434,33 @@ Frame {
                                     var elapsedTime2 = "";
                                     if (playingPath === false) { // if robot not playingPath
                                         color = Style.lightGreyBackground;
-                                        if(stage === pathPoints.count) {
-                                            frame.clickPausePlay = false;
+                                        if (stage === pathPoints.count) { //&& looping === true) {
+                                            if (looping === true) {
+                                                lastPointLoop = true;
+                                            }
                                         }
                                     } else {
+                                        if ((stage === 0) && (looping === false)) {
+                                            clickPausePlay = false;
+                                        }
+
+                                        if ((stage === 1) && (looping === true)) { /// reset timer2
+                                            elapsedTimer2.elapsed = 0;
+                                        }
+
+                                        /// stock previous stage of before last point while looping in a variable
+                                        if ((stage === pathPoints.count - 1) && (looping === true)) {
+                                            customLabelWaitTime.previousStage = pathPoints.count - 1;
+                                        } /*else {
+
+                                        }*/
+
+                                        /// reset timer
+                                        if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
+                                            elapsedTimer.elapsed = 0;
+                                            customLabelWaitTime.humanActionClicked = false;
+                                        }
+
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
@@ -479,7 +480,6 @@ Frame {
                                                     lastPointLoop = false;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
-
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
                                                         elapsedTimer.elapsed = 0;
@@ -510,8 +510,15 @@ Frame {
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 if (robotModel.sendPointToRobot === true) {
-                                                    elapsedTimer2.elapsed = 100000;
-                                                    elapsedTimer2.stop();
+                                                    if (lastPointLoop === true) {
+
+                                                    } else {
+                                                        elapsedTimer2.elapsed = 100000;
+                                                        console.log("hohohohohohohohohohohohohoho");
+                                                    }
+
+
+//                                                    elapsedTimer2.stop();
                                                 }
 
                                                 elapsedTimer2.restart();
