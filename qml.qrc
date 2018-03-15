@@ -87,5 +87,22 @@
         <file>View/Point/EditPointPopupMapView.qml</file>
         <file>View/Robot/RobotPopupMapView.qml</file>
         <file>View/Point/PointRobotListItem.qml</file>
+        <file>View/Guide/GuideMenu.qml</file>
+        <file>View/Guide/GuideMenuHeader.qml</file>
+        <file>View/Guide/GuideMenuContent.qml</file>
+        <file>View/Guide/GuideListItem.qml</file>
+        <file>View/Guide/GuidePointListInPopup.qml</file>
+        <file>View/Custom/SquareButton.qml</file>
+        <file>View/Custom/RoundButton.qml</file>
+        <file>View/Speech/SpeechMenu.qml</file>
+        <file>View/Speech/CreateSpeechGroupPopupMenu.qml</file>
+        <file>View/Speech/CreateSpeechMenuContent.qml</file>
+        <file>View/Speech/EditSpeechGroupPopupMenu.qml</file>
+        <file>View/Speech/EditSpeechPopupMenu.qml</file>
+        <file>View/Speech/SpeechListInPopup.qml</file>
+        <file>View/Speech/SpeechListItem.qml</file>
+        <file>View/Speech/SpeechMenuContent.qml</file>
+        <file>View/Speech/SpeechMenuHeader.qml</file>
+        <file>Model/Speech/Speechs.qml</file>
     </qresource>
 </RCC>

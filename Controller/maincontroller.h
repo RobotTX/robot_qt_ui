@@ -5,6 +5,7 @@ class QQmlApplicationEngine;
 class MainMenuController;
 class MapController;
 class PointController;
+class SpeechController;
 class PathController;
 class RobotsController;
 
@@ -43,6 +44,14 @@ private slots:
      * To check if the point <name> located at (x, y) is within the known area of the map
      */
      void checkPoint(QString name, QString oldName, double x, double y);
+
+     /**
+      * @brief checkSpeech
+      * @param name
+      * To check if the speech <name> is okay
+      */
+
+     void checkSpeech(QString name, QString oldName);
 
     /**
      * @brief saveMapConfig
@@ -283,6 +292,8 @@ private slots:
 
     void sendCommandSavePlace(QString, QString, double, double, double, bool);
 
+    void sendCommandTtsToRobot(QString ip, QString tts);
+
     void saveVelocity(QString ip, double linearVelocity, double angularVelocity);
 
     void saveBattery(QString ip, double battery);
@@ -320,6 +331,7 @@ private:
     QPointer<MainMenuController> mainMenuController;
     QPointer<MapController> mapController;
     QPointer<PointController> pointController;
+    QPointer<SpeechController> speechController;
     QPointer<PathController> pathController;
     QPointer<RobotsController> robotsController;
 

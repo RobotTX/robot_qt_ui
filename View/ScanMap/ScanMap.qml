@@ -128,11 +128,13 @@ Window {
             // when new metadata arrive the width and the height or adjusted
             function adjustSize(_width, _height){
                 console.log("adjusting scan size to " + _width + " " + _height);
-                width = _width;
-                height = _height;
+//                width = _width;
+//                height = _height;
                 /// Change the position of scanMap so that we see the received map in the middle of the screen
-                x = -_width/2 + scanFrame.width/2
-                y = -_height/2 + scanFrame.height/2
+//                x = -_width/2 + scanFrame.width/2
+//                y = -_height/2 + scanFrame.height/2
+                x = -width/2 + scanFrame.width/2
+                y = -height/2 + scanFrame.height/2
                 console.log("x = " + x + " y = " + y)
             }
 

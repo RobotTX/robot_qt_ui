@@ -6,7 +6,7 @@ import QtQuick.Window 2.0
 import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
-import "Model/Point"
+import "Model/Speech"
 import "Model/Tutorial/"
 import "View/Custom"
 import "View/MainMenu"
@@ -14,6 +14,7 @@ import "View/MapView"
 import "View/Map"
 import "View/EditMap"
 import "View/Point"
+import "View/Speech"
 import "View/Robot"
 import "View/ScanMap"
 import "View/Tutorial/"
@@ -71,7 +72,13 @@ ApplicationWindow {
             onEditPointB: {
                 mainFrame.currentMenu = 2
             }
+        }
 
+        Speechs {
+            id: _speechModel
+            objectName: "speechModel"
+            langue: applicationWindow.langue
+            onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         Paths {
@@ -158,6 +165,7 @@ ApplicationWindow {
             id: mainMenuViews
             z: 1
             pointModel: _pointModel
+            speechModel: _speechModel
             tmpPointView: mapView.tmpPointView
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel

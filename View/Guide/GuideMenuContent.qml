@@ -5,6 +5,7 @@ import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Robot"
 import "../../Model/Path"
+import "../Point"
 import "../Custom"
 import "../Robot"
 
@@ -22,6 +23,7 @@ Frame {
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
     signal editPoint(string name, string groupName)
+//    signal createGroup(string name)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -40,35 +42,16 @@ Frame {
 
     Component {
         id: delegate
-        PointListItem {
-            column: columnId
-            width: pointMenuFrame.width
+        GuideListItem {
+//            column: columnId
+            width: (pointMenuFrame.width)/(7/2)
             pointModel: pointMenuFrame.pointModel
             robotModel: pointMenuFrame.robotModel
             langue: pointMenuFrame.langue
-            onRenameGroup: pointMenuFrame.renameGroup(name)
-            onEditPoint: pointMenuFrame.editPoint(name, groupName)
+//            onRenameGroup: pointMenuFrame.renameGroup(name)
+//            onEditPoint: pointMenuFrame.editPoint(name, groupName)
         }
     }
-
-    Component {
-        id: robotGroup
-        PointRobotListItem {
-            width: pointMenuFrame.width
-            pointModel: pointMenuFrame.pointModel
-            robotModel: pointMenuFrame.robotModel
-            langue: pointMenuFrame.langue
-        }
-    }
-
-//    Component {
-//        id: test
-
-//        CustomLabel {
-//            text: qsTr(pathPointName)
-//        }
-//    }
-
 
     Flickable {
         id: flickPoint
@@ -77,43 +60,28 @@ Frame {
         anchors.fill: parent
         anchors.topMargin: 10
 
-        Column {
-            id: columnId
+//        Column {
+        Grid {
             property string selectedGroup: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
             property string selectedPoint: (pointModel.count > 0) ? pointModel.get(0).points.count > 0 ? pointModel.get(0).points.get(0).name : "" : ""
+
+            id: columnId
+            columns: 3
+            spacing: 20
+
             /// The list containing both the graphical and model of the points in the menu
+
             Repeater {
-                model: {
-                    pointModel
-                }
+                model: pointModel
                 delegate: delegate
             }
+        }
+    }
 
-//            Label {
-//                id: groupRobotLabel
-//                text: "Robot group"
-//                color: Style.midGrey2
-//                font.bold: true
-//                visible: robotGroup
-//                anchors.left: parent.left
-//                anchors.leftMargin: 20
-//            }
-
-            /// repeater for robot point
-//            Repeater {
-//                model: robotModel
-//                delegate: robotGroup
-//            }
-
-//            Repeater {
-//                model: robotModel
-//                delegate: Repeater {
-//                    model: pathPoints
-//                    delegate: test
-//                }
-//            }
-
-
+    GuidePointListInPopup {
+        width: parent.width
+        anchors {
+            left: flickPoint.right
         }
     }
 }

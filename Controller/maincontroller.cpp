@@ -15,6 +15,7 @@
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
+#include "Controller/Speech/speechcontroller.h"
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
@@ -22,6 +23,8 @@
 #include "Controller/Robot/cmdrobotworker.h"
 #include "Model/Point/xmlparser.h"
 #include "Model/Point/point.h"
+#include "Model/Speech/speechxmlparser.h"
+#include "Model/Speech/speech.h"
 #include "Model/Path/pathxmlparser.h"
 #include "Model/Path/paths.h"
 #include "Model/Path/path.h"
@@ -43,6 +46,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other
         pointController = QPointer<PointController>(new PointController(applicationWindow, this));
+
+        speechController = QPointer<SpeechController>(new SpeechController(applicationWindow, this));
 
         pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
@@ -121,11 +126,11 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// get settings from file
         /// desktop
-        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
+//        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
 
         /// android
-//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//        QFile file(location + QDir::separator() + "settings.txt");
+        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+        QFile file(location + QDir::separator() + "settings.txt");
 //        qDebug() << "App path :" << Helper::getAppPath();
         if(file.open(QFile::ReadWrite)){
             QTextStream in(&file);
@@ -170,9 +175,9 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         Q_UNREACHABLE();
     }
 
-    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt"); /// desktop
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
+//    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt"); /// desktop
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
     if(tutoFile.exists() && tutoFile.open(QIODevice::ReadOnly)){
         QTextStream in(&tutoFile);
         int counter(0);
@@ -225,6 +230,10 @@ void MainController::checkPoint(QString name, QString oldName, double x, double 
     pointController->checkErrorPoint(mapController->getMapImage(), name, oldName, x, y);
 }
 
+void MainController::checkSpeech(QString name, QString oldName) {
+    speechController->checkErrorSpeech(name, oldName);
+}
+
 void MainController::checkTmpPosition(int index, double x, double y){
     /// When creating/editing a path we need the map to check if the path point is on a wall or unknown place
     pathController->checkPosition(mapController->getMapImage(), index, x, y);
@@ -242,86 +251,92 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
 
     /// desktop
-    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+//    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
     /// android
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
     QString oldFilePath = mapController->getMapFile();
     qDebug() << "save map from:" << oldFilePath;
 
     /// desktop
-    if(!new_config){
-        if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
-            ///saves the image to the user given directory
-            mapController->saveMapToFile(fileName + ".pgm");
-        }
-
-        /// saves the image as a pgm file to the software directory
-        mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
-        mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
-        mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
-        mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
-
-        /// saves the current points to the points file associated with the new configuration
-        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
-
-        /// saves the new configuration to the current configuration file
-        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
-
-        /// saves the current points to the points file associated with the new configuration
-        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
-
-        /// saves the new configuration to the current configuration file
-        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
-    }
-    else {
-
-        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
-        mapController->saveMapConfig(filePath, 0, 0, 1, 0);
-
-    }
-
-    /// android
 //    if(!new_config){
-//        if(fileName != (location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
+//        if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
 //            ///saves the image to the user given directory
 //            mapController->saveMapToFile(fileName + ".pgm");
 //        }
 
 //        /// saves the image as a pgm file to the software directory
-//        mapController->saveMapToFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+//        mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-//        mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+//        mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-//        mapController->setMapFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+//        mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
 //        mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
 
 //        /// saves the current points to the points file associated with the new configuration
-//        XMLParser::save(pointController, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
+//        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
 //        /// saves the new configuration to the current configuration file
-//        XMLParser::save(pointController, location + QDir::separator() + "currentPoints.xml");
+//        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
 
 //        /// saves the current points to the points file associated with the new configuration
-//        PathXMLParser::save(pathController, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+//        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
 //        /// saves the new configuration to the current configuration file
-//        PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
-//        qDebug() << "currentpaths.xml file saved in " << location + QDir::separator();
+//        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 //    }
 //    else {
 
-//        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+//        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
 //        mapController->saveMapConfig(filePath, 0, 0, 1, 0);
 
 //    }
+
+    /// android
+    if(!new_config){
+        if(fileName != (location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
+            ///saves the image to the user given directory
+            mapController->saveMapToFile(fileName + ".pgm");
+        }
+
+        /// saves the image as a pgm file to the software directory
+        mapController->saveMapToFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->setMapFile(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
+
+        /// saves the current points to the points file associated with the new configuration
+        XMLParser::save(pointController, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
+
+        /// saves the new configuration to the current configuration file
+        XMLParser::save(pointController, location + QDir::separator() + "currentPoints.xml");
+
+        /// saves the current speechs to the speechs file associated with the new configuration
+        SpeechXMLParser::save(speechController, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_speechs.xml");
+
+        /// saves the new configuration to the current configuration file
+        SpeechXMLParser::save(speechController, location + QDir::separator() + "currentSpeechs.xml");
+
+        /// saves the current paths to the paths file associated with the new configuration
+        PathXMLParser::save(pathController, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+
+        /// saves the new configuration to the current configuration file
+        PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
+        qDebug() << "currentpaths.xml file saved in " << location + QDir::separator();
+    }
+    else {
+
+        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->saveMapConfig(filePath, 0, 0, 1, 0);
+
+    }
 
     mapController->saveNewMap(oldFilePath);
     ///mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
@@ -347,13 +362,13 @@ void MainController::loadMapConfig(QString fileName) {
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
 
         /// desktop
-        QString filePath(Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
-        qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
+//        QString filePath(Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+//        qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
 
         /// android
-//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
-//        QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+        QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
         setMessageTopSlot(1,  "GobotLocation path = " + filePath); /// no debugging mode so use topmessage to show output
 
         /// if we are able to find the configuration then we load the map
@@ -410,9 +425,9 @@ void MainController::loadMapConfig(QString fileName) {
 
 void MainController::saveSettings(int mapChoice, double batteryThreshold){
     qDebug() << "save settings called" << mapChoice << batteryThreshold;
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
-//    QFile file(location + QDir::separator() + "settings.txt"); /// android
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
+    QFile file(location + QDir::separator() + "settings.txt"); /// android
     if(file.open(QFile::WriteOnly)){
         QTextStream stream(&file);
         stream << mapChoice << " " << batteryThreshold ;
@@ -522,6 +537,11 @@ void MainController::sendCommandSavePlace(QString ip, QString name, double posX,
 //    XMLParser::save(pointController, location + "/point_command_sent.xml");
 }
 
+void MainController::sendCommandTtsToRobot(QString ip, QString tts) {
+    QString cmd = QString("4") + QChar(31) + tts;
+    robotsController->sendCommand(ip, cmd);
+}
+
 void MainController::sendCommandNewPath(QString ip, QString groupName, QString pathName){
 //    qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
     QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
@@ -581,9 +601,9 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         XMLParser::save(pointController,oldfilePoints);
 
         int mapChoice = -1;
-//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
-//        QFile file(location + QDir::separator() + "settings.txt");
+        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
+        QFile file(location + QDir::separator() + "settings.txt");
         if(file.open(QFile::ReadOnly)){
             QTextStream stream(&file);
             stream >> mapChoice;
@@ -655,18 +675,18 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
 
     /// desktop
-    pointController->clearPoints();
-    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
-    pathController->clearPaths();
-    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+//    pointController->clearPoints();
+//    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
+//    pathController->clearPaths();
+//    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 
     /// android
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//    pointController->clearPoints();
-//    XMLParser::save(pointController, location + QDir::separator() + "currentPoints.xml");
-//    pathController->clearPaths();
-//    PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
-//    qDebug() << "currentPaths.xml saved in " << location + QDir::separator();
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    pointController->clearPoints();
+    XMLParser::save(pointController, location + QDir::separator() + "currentPoints.xml");
+    pathController->clearPaths();
+    PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
+    qDebug() << "currentPaths.xml saved in " << location + QDir::separator();
 }
 
 void MainController::requestOrSendMap(QString ip, bool request){
@@ -734,9 +754,9 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
     /// in the files
     saveMapConfig(cpp_file_name, 1, 0, 0, 0, false);
-    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
+//    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
     //change current map to new map
     mapController->saveMapConfig(currentPathFile, 0, 0, 1, 0);
 
@@ -851,9 +871,9 @@ void MainController::setMessageTopSlot(int status, QString msg){
 }
 
 void MainController::updateTutoFile(int index, bool visible){
-    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-//    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
+//    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
     tutoFile.open(QIODevice::ReadWrite);
     int counter(0);
     QStringList list;

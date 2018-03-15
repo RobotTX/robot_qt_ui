@@ -11,6 +11,7 @@ var menuItemHeight = 26
 var menuItemLeftPadding = 21
 var smallBtnWidth = 20
 var smallBtnHeight = 20
+var widthGuideMenu = 600
 
 /// Colors
 var darkSkyBlue = "#6788e0"

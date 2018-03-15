@@ -57,12 +57,30 @@ Frame {
     }
 
     MenuButton {
-        id: mapButton
-        txt: langue == "English" ? "地图" : "Map"
-        imgSrc: "qrc:/icons/map"
+        id: speechButton
+        txt: langue == "English" ? "目标点" : "Speech"
+        imgSrc: "qrc:/icons/point"
         anchors.top: pointButton.bottom
         onClicked: checked ? selectMenu(3) : selectMenu(-1)
         checked: currentMenu == 3
+    }
+
+    MenuButton {
+        id: mapButton
+        txt: langue == "English" ? "地图" : "Map"
+        imgSrc: "qrc:/icons/map"
+        anchors.top: speechButton.bottom
+        onClicked: checked ? selectMenu(4) : selectMenu(-1)
+        checked: currentMenu == 4
+    }
+
+    MenuButton {
+        id: guideButton
+        txt: langue == "English" ? "地图" : "Guide"
+        imgSrc: "qrc:/icons/robot"
+        anchors.top: mapButton.bottom
+        onClicked: checked ? selectMenu(5) : selectMenu(-1)
+        checked: currentMenu == 5
     }
 
     MenuButton {
@@ -70,7 +88,7 @@ Frame {
         txt: langue == "English" ? "设置" : "Settings"
         imgSrc: "qrc:/icons/settings"
         anchors.bottom: parent.bottom
-        onClicked: checked ? selectMenu(4) : selectMenu(-1)
-        checked: currentMenu == 4
+        onClicked: checked ? selectMenu(6) : selectMenu(-1)
+        checked: currentMenu == 6
     }
 }

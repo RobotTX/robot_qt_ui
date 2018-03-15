@@ -95,7 +95,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'k':
                     /// Played the assigned point
                     qDebug() << "\nk";
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" is starting go to assigned point");
+                    emit setMessageTop(2, "Robot \"" + robotName + "\" is starting to go to assigned point");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'l':
@@ -193,6 +193,9 @@ void CommandController::cmdAnswerSlot(QString answer){
                break;
             case '3':
                 /// interruptDelay
+            break;
+            case '4':
+                /// send tts to robot
             break;
                 default:
                     /// Unknown/unused command

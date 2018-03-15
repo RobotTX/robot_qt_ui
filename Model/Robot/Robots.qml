@@ -13,7 +13,9 @@ ListModel {
     property int statusColor: -1
     property string langue
     property bool sendPointToRobot
+    property string ipRobot: ""
 
+    signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
@@ -95,6 +97,14 @@ ListModel {
                 setProperty(i, "posX", posX);
                 setProperty(i, "posY", posY);
                 setProperty(i, "orientation", orientation);
+            }
+        }
+    }
+
+    function setTts(ip, tts) {
+        for (var i = 0; i < count; i++) {
+            if (get(i).ip === ip) {
+                setProperty(i, "tts", tts);
             }
         }
     }
@@ -248,7 +258,7 @@ ListModel {
                                           "orientation": orientation
                                       });
             }
-            console.log("pos x = " + posX + " pos Y = " + posY + " waitTime = " + waitTime);
+            console.log("name = " + name + "pos x = " + posX + " pos Y = " + posY + " waitTime = " + waitTime);
         visiblePathChanged();
     }
 
@@ -340,6 +350,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "looping", loop);
+                ipRobot = ip;
                 console.log(ip + " looping : " + loop);
             }
     }

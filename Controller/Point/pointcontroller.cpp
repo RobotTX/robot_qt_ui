@@ -74,13 +74,13 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(test, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
     }
 
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// desktop
-    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
+//    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
 
     /// android
-//    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
+    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 
@@ -151,6 +151,8 @@ void PointController::addPoint(const QString name, const QString groupName, cons
     }
     if(saveXML)
         XMLParser::save(this, currentPointsFile);
+
+    qDebug() << "we are creating a point";
 }
 
 void PointController::deletePoint(QString groupName, QString name){

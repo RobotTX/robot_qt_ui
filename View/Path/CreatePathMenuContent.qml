@@ -360,8 +360,9 @@ Frame {
                     }
 
                     TextField {
+                        property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
-                        text: "P"+(index+1)
+                        text: name === nameCoordinates ? "P"+(index+1) : name
                         selectByMouse: true
                         color: "#262626"
                         padding: 2

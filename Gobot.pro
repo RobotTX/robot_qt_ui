@@ -36,7 +36,12 @@ SOURCES += main.cpp \
     Controller/Robot/backuprobotworker.cpp \
     Controller/Robot/backupcontroller.cpp \
     Controller/Map/laserworker.cpp \
-    Controller/authentification.cpp
+    Controller/authentification.cpp \
+    Controller/Speech/speechcontroller.cpp \
+    Model/Speech/speech.cpp \
+    Model/Speech/speechgroup.cpp \
+    Model/Speech/speechs.cpp \
+    Model/Speech/speechxmlparser.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -96,7 +101,12 @@ HEADERS += \
     Controller/Robot/backuprobotworker.h \
     Controller/Robot/backupcontroller.h \
     Controller/Map/laserworker.h \
-    Controller/authentification.h
+    Controller/authentification.h \
+    Controller/Speech/speechcontroller.h \
+    Model/Speech/speech.h \
+    Model/Speech/speechgroup.h \
+    Model/Speech/speechs.h \
+    Model/Speech/speechxmlparser.h
 
 DISTFILES += \
     android/AndroidManifest.xml \
@@ -106,6 +116,7 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    View/Settings/SliderLineMeasurement
+    View/Settings/SliderLineMeasurement \
+    View/Custom/RoundButton
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

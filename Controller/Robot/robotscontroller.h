@@ -187,6 +187,7 @@ signals:
     void addRobot(QVariant name, QVariant ip, QVariant stage, QVariant battery);
     void removeRobot(QVariant ip);
     void setPos(QVariant ip, QVariant posX, QVariant posY, QVariant orientation);
+//    void setTts(QVariant ip, QVariant tts);
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);

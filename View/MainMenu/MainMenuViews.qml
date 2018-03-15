@@ -3,11 +3,14 @@ import QtQuick.Controls 2.1
 import "../Robot"
 import "../Path"
 import "../Point"
+import "../Speech"
 import "../Map"
+import "../Guide"
 import "../../Model/"
 import "../Settings"
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
+import "../../Model/Speech"
 import "../../Model/Path"
 import "../../Model/Robot"
 import "../../Model/Tutorial/"
@@ -18,9 +21,10 @@ import "../../Model/Tutorial/"
 Frame {
     id: mainMenuViewsFrame
     visible: !(currentMenu == -1)
-    width: Style.menuWidth
+    width: currentMenu === 5 ? Style.widthGuideMenu : Style.menuWidth
     padding: 0
     property Points pointModel
+    property Speechs speechModel
     property PointView tmpPointView
     property Paths pathModel
     property Paths tmpPathModel
@@ -78,13 +82,34 @@ Frame {
         onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
     }
 
+    SpeechMenu {
+        id: speechMenu
+        visible: currentMenu == 3
+        speechModel: mainMenuViewsFrame.speechModel
+        robotModel: mainMenuViewsFrame.robotModel
+        langue: mainMenuViewsFrame.langue
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
+        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
+    }
     MapMenu {
         id: mapMenu
-        visible: currentMenu == 3
+        visible: currentMenu == 4
         langue: mainMenuViewsFrame.langue
         onCloseMenu: mainMenuViewsFrame.closeMenu()
         onSavePosition: mainMenuViewsFrame.savePosition()
         onSaveMap: mainMenuViewsFrame.saveMap(file_name)
+    }
+
+    GuideMenu {
+        id: pointMenuBis
+        visible: currentMenu == 5
+        pointModel: mainMenuViewsFrame.pointModel
+        robotModel: mainMenuViewsFrame.robotModel
+        pathModel: mainMenuViewsFrame.pathModel
+        tmpPointView: mainMenuViewsFrame.tmpPointView
+        langue: mainMenuViewsFrame.langue
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
+        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
     }
 
     SettingsMenu {
@@ -94,7 +119,7 @@ Frame {
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         pathModel: mainMenuViewsFrame.pathModel
         langue: mainMenuViewsFrame.langue
-        visible: currentMenu == 4
+        visible: currentMenu == 6
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 

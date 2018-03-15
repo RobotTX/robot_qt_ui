@@ -16,6 +16,7 @@ ListModel {
 
 //    property string namePoint: ""
     property string langue
+    property bool openGroup
 
     function addGroup(name){
         append({
@@ -90,9 +91,13 @@ ListModel {
     }
 
     function hideShowGroup(groupName){
-        for(var i = 0; i < count; i++)
-            if(get(i).groupName === groupName)
+        for(var i = 0; i < count; i++) {
+            if(get(i).groupName === groupName) {
                 setProperty(i, "isOpen", !get(i).isOpen);
+                openGroup = get(i).isOpen;
+            }
+        }
+
     }
 
     function hideShowPoint(groupName, name){
@@ -109,6 +114,17 @@ ListModel {
             if(get(i).groupName === oldName)
                 setProperty(i, "groupName", newName);
         }
+    }
+
+    function getGroupPoints(groupName) {
+        for (var i = 0; i < count; i++) {
+            if (get(i).groupName === groupName) {
+                for (var j = 0; j < get(i).points.count; j++) {
+                    console.log("point point point = " + get(i).points.get(j).name);
+                }
+            }
+        }
+        console.log("---------------------------------------------------------------getting the points")
     }
 
     // moves the point <name> from <oldGroup> to <newGroup>

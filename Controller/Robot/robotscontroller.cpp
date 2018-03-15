@@ -18,6 +18,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(removeRobot(QVariant)));
         connect(this, SIGNAL(setPos(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setPos(QVariant, QVariant, QVariant, QVariant)));
+//        connect(this, SIGNAL(setTts(QVariant, QVariant)), robotModel, SLOT(setTts(QVariant, QVariant)));
         connect(this, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setLinearVelocity(QVariant,QVariant)),
@@ -43,6 +44,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(savePlaceSignal(QString, QString, double, double, double, bool)), parent, SLOT(sendCommandSavePlace(QString, QString, double, double, double, bool)));
+        connect(robotModel, SIGNAL(sendTtsToRobot(QString, QString)), parent, SLOT(sendCommandTtsToRobot(QString, QString)));
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
         connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
