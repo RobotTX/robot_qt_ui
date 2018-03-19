@@ -153,13 +153,14 @@ Frame {
         }
     }
 
-    TextField {
+    TextArea {
         id: ttsTextField
-        selectByMouse: true
+        selectByMouse: ttsTextField
         placeholderText: langue == "English" ? qsTr("Enter text") : qsTr("Enter text")
+        wrapMode: "WrapAtWordBoundaryOrAnywhere"
 
         text: tts
-        height: 28
+//        height: parent.height
         anchors {
             left: parent.left
             top: ttsLabel.bottom

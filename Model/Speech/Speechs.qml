@@ -32,11 +32,24 @@ ListModel {
             if(get(i).groupName === groupName){
                 get(i).speechs.append({
                      "name": name,
-                     "tts": tts
+                     "tts": tts,
+                     "descriptionIsOpen": false
                 });
             }
         }
         console.log(name + " " + groupName + " " + tts );
+    }
+
+    function hideShowDescription(groupName, name) {
+        for (var i = 0; i < count; i++) {
+            if (get(i).groupName === groupName) {
+                for(var j = 0; j < get(i).speechs.count; j++) {
+                    if (get(i).speechs.get(j).name === name) {
+                        get(i).speechs.setProperty(j,"descriptionIsOpen", !get(i).speechs.get(j).descriptionIsOpen);
+                    }
+                }
+            }
+        }
     }
 
     function editSpeech(oldName, oldGroup, name, groupName, tts){
