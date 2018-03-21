@@ -18,13 +18,17 @@ Column {
     signal renameGroup(string name)
     signal editSpeech(string name, string groupName)
 
-    Rectangle {
+    Frame {
         id: groupItem
         visible: !(groupName === Helper.noGroup)
         height: visible ? 37 :0
         anchors.left: parent.left
         anchors.right: parent.right
-        color: "transparent"
+//        color: "transparent"
+        background: Rectangle {
+            anchors.fill: parent
+            color: "transparent"
+        }
 
         /// The blue rectangle on the selected item
         Rectangle {
@@ -108,6 +112,9 @@ Column {
         anchors.topMargin: 14
     }
 
+    property string description
+    property bool isOpenDesc
+    property string nameSpeech
 
     Component {
 
@@ -115,8 +122,8 @@ Column {
 
         Rectangle {
             visible: isOpen
-            height: isOpen ? 37 : 0
-            anchors.left: parent.left
+            height: visible ? 37 : 0
+            anchors.left: groupListItem.left
             anchors.right: parent.right
             color: "transparent"
 
@@ -145,9 +152,30 @@ Column {
                 color: Style.blackMenuTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
+                anchors.right: rightOpenSpeech.left
 //                anchors.right: rightMenuButton.left
                 anchors.leftMargin: 50
                 anchors.rightMargin: 5
+            }
+
+            SmallButton {
+                id: rightOpenSpeech
+                imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    right: rightMenuButton.left
+                    rightMargin: 5
+                }
+
+                onClicked: {
+                    column.selectedGroup = groupName
+                    column.selectedSpeech = name
+                    nameSpeech = name
+                    speechModel.hideShowDescription(groupName, name);
+                    isOpenDesc = descriptionIsOpen
+                    description = tts
+                }
             }
 
             SmallButton {
@@ -184,6 +212,44 @@ Column {
                     }
                 }
             }
+
         }
+
+
+    }
+
+    Frame {
+        visible: isOpenDesc
+        height: visible ? 25 : 0
+        anchors {
+            top: delegate.bottom
+            topMargin: 5
+            left: parent.left
+            right: parent.right
+            rightMargin: 35
+        }
+        padding: 0
+        background: Rectangle {
+            anchors.fill: parent
+            color: "transparent"
+        }
+
+        CustomLabel {
+            text: qsTr(description)
+            color: Style.midGrey2
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.right: parent.right
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                column.selectedGroup = groupName;
+                column.selectedSpeech = nameSpeech;
+            }
+        }
+
     }
 }
