@@ -49,7 +49,7 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible) currentMenuIndex = 0 /// desktop
-        onClicked: if(visible) currentMenuIndex = 0 /// android
+//        onClicked: if(visible) currentMenuIndex = 0 /// android
 
         PointListInPopup {
             x: assignHome.width
@@ -89,7 +89,7 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
-        onClicked: if(visible) currentMenuIndex = 1 /// android
+//        onClicked: if(visible) currentMenuIndex = 1 /// android
 
         PathListInPopup {
             x: assignPath.width

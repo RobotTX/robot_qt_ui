@@ -50,10 +50,8 @@ Menu {
 //            visible: myGroup == "Gobot"
             visible: true
         }
-        onHoveredChanged: if (visible) {
-                              currentMenuIndex = 0
-                          } /// desktop
-        onClicked: if (visible) { currentMenuIndex = 0} /// android
+        onHoveredChanged: if (visible) { currentMenuIndex = 0 } /// desktop
+//        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
             id: robotListInPopup
@@ -115,6 +113,9 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: deletePoint(name)
+        onTriggered: {
+            console.log("deleting the point in editpointpopupmapview.qml");
+            deletePoint(name)
+        }
     }
 }

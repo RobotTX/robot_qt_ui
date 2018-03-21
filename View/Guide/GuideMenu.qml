@@ -17,7 +17,6 @@ Page {
 
     signal closeMenu()
     signal setMessageTop(int status, string msg)
-    signal editPoint(string name, string groupName)
 
     property int menuIndex: 0
 
@@ -65,16 +64,6 @@ Page {
             createPointMenuContent.homeOri = homeOri;
             createPointMenuContent.homeName = "CS";
             page.menuIndex = 1;
-        }
-    }
-
-    Connections {
-        target: pointModel
-        onEditPointB: {
-            createPointMenuContent.oldName = name;
-            createPointMenuContent.oldGroup = groupName;
-            page.menuIndex = 1;
-
         }
     }
 

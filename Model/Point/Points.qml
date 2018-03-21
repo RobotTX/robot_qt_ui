@@ -75,6 +75,7 @@ ListModel {
                     }
     }
 
+
     function deleteGroup(groupName){
         var message = ''
         for(var i = 0; i < count; i++)

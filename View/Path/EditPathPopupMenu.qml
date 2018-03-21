@@ -105,7 +105,7 @@ Menu {
         }
 
         onHoveredChanged: if (visible) currentMenuIndex = 2 /// desktop
-        onClicked: if(visible){ currentMenuIndex = 2 } /// android
+//        onClicked: if(visible){ currentMenuIndex = 2 } /// android
 
         Menu {
             x: parent.width

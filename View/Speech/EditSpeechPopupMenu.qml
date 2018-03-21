@@ -55,9 +55,9 @@ Menu {
         onHoveredChanged: if (visible) {
                               currentMenuIndex = 0
                           } /// desktop
-        onClicked: if (visible) {
-                       currentMenuIndex = 0
-                   } /// android
+//        onClicked: if (visible) {
+//                       currentMenuIndex = 0
+//                   } /// android
 
         property string nameSpeech: name
         property string ttsSpeech: tts
@@ -117,7 +117,7 @@ Menu {
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
         onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
-        onClicked: if (visible) { currentMenuIndex = 1} /// android
+//        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
         Menu {

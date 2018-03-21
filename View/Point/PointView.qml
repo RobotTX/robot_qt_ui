@@ -77,7 +77,7 @@ Item {
 
         onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
 //        onHoveredChanged: tooltip.visible
-        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
+//        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
     }
 
     /// To change the source file of the pointView according to its type

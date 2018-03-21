@@ -8,7 +8,6 @@ class QXmlStreamReader;
 #include <QSharedPointer>
 #include <QFile>
 
-
 /**
  * @brief The XMLParser class
  * This class provides functions to import robots and points to the model

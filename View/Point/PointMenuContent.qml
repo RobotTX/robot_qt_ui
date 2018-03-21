@@ -17,7 +17,7 @@ Frame {
     property string langue
     property Paths pathModel
 
-    signal deletePoint(string name, string groupName)
+//    signal deletePoint(string name, string groupName)
     signal deleteGroup(string name)
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)

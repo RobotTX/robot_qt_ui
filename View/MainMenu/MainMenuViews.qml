@@ -32,6 +32,7 @@ Frame {
     property Tutorial tutorial
     property real batteryWarningThreshold
     property string langue
+    property string inputNameWifi
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
     signal setMessageTop(int status, string msg)
@@ -121,6 +122,7 @@ Frame {
         langue: mainMenuViewsFrame.langue
         visible: currentMenu == 6
         onCloseMenu: mainMenuViewsFrame.closeMenu()
+        inputNameWifi: mainMenuViewsFrame.inputNameWifi
     }
 
     function doubleClickedOnMap(mouseX, mouseY){

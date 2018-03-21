@@ -305,6 +305,8 @@ signals:
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
     void emitSettings(QVariant mapChoice);
+    void emitWifiList(QVariant wifiList, QVariant count);
+    void emitSizeWifiList(QVariant sizeWifiList);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
     void openRestartScanMessageDialog(QVariant ip);
     void emitBatteryThreshold(QVariant batteryThreshold);

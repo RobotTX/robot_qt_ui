@@ -16,6 +16,7 @@ Page {
     property Paths pathModel
     property real batteryWarningThreshold
     property string langue
+    property string inputNameWifi
 
     signal closeMenu()
     signal openCreatePointMenu()
@@ -34,6 +35,7 @@ Page {
         robotModel: page.robotModel
         tutorial: page.tutorial
         langue: page.langue
+        inputNameWifi: page.inputNameWifi
 
         oriBatteryWarningThreshold: page.batteryWarningThreshold
 

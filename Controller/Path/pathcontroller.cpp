@@ -76,13 +76,13 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         Q_UNREACHABLE();
     }
 
-    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 
     /// desktop
-//    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
+    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
 
     /// android
-    currentPathsFile = location + QDir::separator() + "currentPaths.xml";
+//    currentPathsFile = location + QDir::separator() + "currentPaths.xml";
     qDebug() << "PathController::PathController" << currentPathsFile;
     loadPaths(currentPathsFile);
 }

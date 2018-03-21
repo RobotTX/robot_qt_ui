@@ -117,6 +117,7 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
     View/Settings/SliderLineMeasurement \
-    View/Custom/RoundButton
+    View/Custom/RoundButton \
+    wifiScript.sh
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

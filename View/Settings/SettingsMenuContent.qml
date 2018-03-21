@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQml 2.2
 import "../../Helper/style.js" as Style
 import "../Custom"
 import "../../Model/Robot"
@@ -25,6 +26,7 @@ Frame {
     property string inputPwdWifi: ""
     property string ipRobotWifi: ""
     property int currentMenuIndex: -1
+    property variant ssidWifi: []
 
     property real batteryWarningThreshold
     property int mapChoice
@@ -103,7 +105,7 @@ Frame {
                 anchors.rightMargin: 12
             }
             onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// desktop
-            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
             RobotListInPopup {
                 x: robotList.width
@@ -193,25 +195,99 @@ Frame {
             anchors.topMargin: 20
         }
 
-        TextField {
+//        TextField {
+//            id: userInputWifiName
+//            objectName: "wifiName"
+//            selectByMouse: true
+//            placeholderText: langue === "English" ? qsTr("请输入无线网名称") : qsTr("Enter the name of the WiFi")
+//            background: Rectangle {
+//                    implicitWidth: 100
+//                    implicitHeight: 15
+//                    border.color: Style.midGrey
+//            }
+//            font.pointSize: 10
+//            text: inputNameWifi
+//            anchors {
+//                left: nameWifi.right
+//                bottom: nameWifi.bottom
+//            }
+//            anchors.leftMargin: -170
+//            onTextChanged: {
+//                inputNameWifi = userInputWifiName.text
+//            }
+//        }
+
+        PopupMenuItem {
+//        Button {
             id: userInputWifiName
-            objectName: "wifiName"
-            selectByMouse: true
-            placeholderText: langue === "English" ? qsTr("请输入无线网名称") : qsTr("Enter the name of the WiFi")
-            background: Rectangle {
-                    implicitWidth: 100
-                    implicitHeight: 15
-                    border.color: Style.midGrey
+            height: Style.menuItemHeight
+            width: parent.width
+            labelText: {
+                if (inputNameWifi === "") {
+                    langue === "English" ? "选择机器人" : "Select a WiFi"
+                } else {
+                    langue === "English" ?  inputNameWifi :  inputNameWifi
+                }
             }
-            font.pointSize: 10
-            text: inputNameWifi
-            anchors {
-                left: nameWifi.right
-                bottom: nameWifi.bottom
+
+            anchors.left: parent.left
+            anchors.top: nameWifi.bottom
+            anchors.topMargin: 10
+
+            Image {
+                asynchronous: true
+                source: "qrc:/icons/arrow"
+                fillMode: Image.Pad // For not stretching image
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
             }
-            anchors.leftMargin: -170
-            onTextChanged: {
-                inputNameWifi = userInputWifiName.text
+            onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
+
+//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+
+            Menu {
+                id: wifiMenu
+                x: userInputWifiName.width
+                visible: settingsPage.currentMenuIndex === 1
+                onVisibleChanged: if (!visible) currentMenuIndex = -1
+                padding: 0
+                width: 300
+
+                background: Rectangle {
+                    color: Style.lightGreyBackground
+                    border.color: Style.lightGreyBorder
+                    radius: 5
+                }
+
+                Column {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    Repeater {
+                        model: toto
+                        delegate: PopupMenuItem {
+                            width: parent.width
+                            height: Style.menuItemHeight
+                            labelText: modelData
+                            enabled: true
+                            leftPadding: Style.menuItemLeftPadding
+
+//                            anchors {
+//                                left: parent.left
+//                                right: parent.right
+//                            }
+
+                            onTriggered: {
+                                console.log("clicked on " + modelData);
+                                inputNameWifi = modelData;
+                                wifiMenu.close();
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -222,7 +298,7 @@ Frame {
             font.pointSize: 10
             anchors {
                 left: nameWifi.left
-                top: nameWifi.bottom
+                top: userInputWifiName.bottom
                 right: parent.right
             }
             anchors.topMargin: 15
@@ -939,8 +1015,24 @@ Frame {
         }
     }
 
+
+
     function setSettings(mapChoice){
         oriMapChoice = mapChoice;
         settingsPage.mapChoice = mapChoice;
     }
+
+    function getWifiList(wifiList, count) {
+        ssidWifi.push(wifiList);
+    }
+
+    property int sizeWifiList
+
+    property variant toto
+
+    function getSizeWifiList(sizeListWifi) {
+        sizeWifiList = ssidWifi.length
+        toto = ssidWifi
+    }
+
 }

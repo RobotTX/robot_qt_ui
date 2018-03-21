@@ -21,7 +21,6 @@ Column {
     property bool clickedButton
 
     signal renameGroup(string name)
-    signal editPoint(string name, string groupName)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
     signal stopPathSignal(string ip)
 

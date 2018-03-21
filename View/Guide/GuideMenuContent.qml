@@ -22,7 +22,6 @@ Frame {
     signal deleteGroup(string name)
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
-    signal editPoint(string name, string groupName)
 //    signal createGroup(string name)
 
     background: Rectangle {
@@ -48,8 +47,6 @@ Frame {
             pointModel: pointMenuFrame.pointModel
             robotModel: pointMenuFrame.robotModel
             langue: pointMenuFrame.langue
-//            onRenameGroup: pointMenuFrame.renameGroup(name)
-//            onEditPoint: pointMenuFrame.editPoint(name, groupName)
         }
     }
 
