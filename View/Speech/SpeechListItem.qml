@@ -11,20 +11,19 @@ Column {
     id: groupListItem
 
     property Speechs speechModel
-    property Robots robotModel
     property Column column
+    property Robots robotModel
     property string langue
-
     signal renameGroup(string name)
     signal editSpeech(string name, string groupName)
 
     Frame {
         id: groupItem
         visible: !(groupName === Helper.noGroup)
-        height: visible ? 37 :0
+        height: visible ? 37 : 0
+        padding: 0
         anchors.left: parent.left
         anchors.right: parent.right
-//        color: "transparent"
         background: Rectangle {
             anchors.fill: parent
             color: "transparent"
@@ -83,9 +82,9 @@ Column {
             anchors.rightMargin: 20
 
             onClicked: {
-                column.selectedGroup = groupName
-                column.selectedSpeech = ""
-                editGroupPopupMenu.open()
+                column.selectedGroup = groupName;
+                column.selectedSpeech = "";
+                editGroupPopupMenu.open();
             }
 
             EditSpeechGroupPopupMenu {
@@ -99,157 +98,133 @@ Column {
     }
 
     Repeater {
-        id: speechList
-        anchors {
-            left: parent.left
-            top: groupItem.bottom
-            right: parent.right
-        }
-
         model: speechs
-        delegate: delegate
-        focus: true
-        anchors.topMargin: 14
+        delegate: delegateSpeechs
     }
-
-    property string description
-    property bool isOpenDesc
-    property string nameSpeech
 
     Component {
+        id: delegateSpeechs
+        Column {
+            Frame {
+                visible: isOpen
+                height: visible ? 37 : 0
+                width : groupListItem.width
+                padding: 0
 
-        id: delegate
-
-        Rectangle {
-            visible: isOpen
-            height: visible ? 37 : 0
-            anchors.left: groupListItem.left
-            anchors.right: parent.right
-            color: "transparent"
-
-            /// The blue rectangle on the selected item
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                height: parent.height - 10
-                anchors.left: parent.left
-                anchors.right: parent.right
-                color: (column.selectedGroup === groupName && column.selectedSpeech === name) ? Style.selectedItemColor : "transparent"
-            }
-
-            MouseArea {
-                onClicked: {
-                    column.selectedGroup = groupName;
-                    column.selectedSpeech = name;
+                /// The blue rectangle on the selected item
+                background: Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: parent.height - 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    color: (column.selectedGroup === groupName && column.selectedSpeech === name) ? Style.selectedItemColor : "transparent"
                 }
-                anchors.fill: parent
-            }
 
-            /// The item displaying the name of the speech/group
-            CustomLabel {
-                text: {
-                    qsTr(name)
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        column.selectedGroup = groupName;
+                        column.selectedSpeech = name;
+                    }
                 }
-                color: Style.blackMenuTextColor
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.right: rightOpenSpeech.left
-//                anchors.right: rightMenuButton.left
-                anchors.leftMargin: 50
-                anchors.rightMargin: 5
+
+                /// The item displaying the name of the speech/group
+                CustomLabel {
+                    text: qsTr(name)
+                    color: Style.blackMenuTextColor
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                        right: rightOpenSpeech.left
+                        leftMargin: 45
+                        rightMargin: 5
+                    }
+                }
+
+                SmallButton {
+                    id: rightOpenSpeech
+                    imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                        right: rightMenuButton.left
+                        rightMargin: 5
+                    }
+
+                    onClicked: {
+                        column.selectedGroup = groupName
+                        column.selectedSpeech = name
+                        speechModel.hideShowDescription(groupName, name);
+                    }
+                }
+
+                SmallButton {
+                    id: rightMenuButton
+                    imgSrc: "qrc:/icons/more"
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                        right: parent.right
+                        rightMargin: 20
+                    }
+
+                    onClicked: {
+                        column.selectedGroup = groupName;
+                        column.selectedSpeech = name;
+                        editSpeechPopupMenu.open();
+                    }
+
+                    EditSpeechPopupMenu {
+                        id: editSpeechPopupMenu
+                        x: rightButton.width
+                        speechModel: groupListItem.speechModel
+                        robotModel: groupListItem.robotModel
+                        langue: groupListItem.langue
+                        myGroup: groupName
+                        onDeleteSpeech: {
+                            speechModel.deleteSpeech(myGroup, name);
+                            speechModel.deleteSpeechSignal(myGroup, name);
+                        }
+                        onMoveTo: speechModel.moveTo(name, groupName, newGroup)
+                        onEditSpeech: groupListItem.editSpeech(name, groupName)
+
+                    }
+                }
             }
 
-            SmallButton {
-                id: rightOpenSpeech
-                imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+            Frame {
+                visible: descriptionIsOpen
+                height: visible ? 25 : 0
                 anchors {
-                    top: parent.top
-                    bottom: parent.bottom
-                    right: rightMenuButton.left
-                    rightMargin: 5
-                }
-
-                onClicked: {
-                    column.selectedGroup = groupName
-                    column.selectedSpeech = name
-                    nameSpeech = name
-                    speechModel.hideShowDescription(groupName, name);
-                    isOpenDesc = descriptionIsOpen
-                    description = tts
-                }
-            }
-
-            SmallButton {
-                id: rightMenuButton
-                imgSrc: "qrc:/icons/more"
-                anchors {
-                    top: parent.top
-                    bottom: parent.bottom
+                    left: parent.left
                     right: parent.right
+                    rightMargin: 35
                 }
-                anchors.rightMargin: 20
-
-                onClicked: {
-                    column.selectedGroup = groupName
-                    column.selectedSpeech = name
-                    editSpeechPopupMenu.open();
+                padding: 0
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
                 }
 
-                EditSpeechPopupMenu {
-                    id: editSpeechPopupMenu
-                    x: rightButton.width
-                    speechModel: groupListItem.speechModel
-                    robotModel: groupListItem.robotModel
-                    langue: groupListItem.langue
-                    myGroup: groupName
-                    onDeleteSpeech: {
-                        speechModel.deleteSpeech(myGroup, name);
-                        speechModel.deleteSpeechSignal(myGroup, name);
-                    }
-                    onMoveTo: speechModel.moveTo(name, groupName, newGroup)
-                    onEditSpeech: {
-                        console.log("we are in speechlistitem editspeech");
-                        groupListItem.editSpeech(name, groupName)
+                CustomLabel {
+                    text: "text: " + tts
+                    height: 15
+                    font.pixelSize: 14
+                    color: Style.midGrey2
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: groupName === Helper.noGroup ? 25 : 50
+                    visible: descriptionIsOpen && isOpen
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        column.selectedGroup = groupName;
+                        column.selectedSpeech = speechName;
                     }
                 }
             }
-
         }
-
-
-    }
-
-    Frame {
-        visible: isOpenDesc
-        height: visible ? 25 : 0
-        anchors {
-            top: delegate.bottom
-            topMargin: 5
-            left: parent.left
-            right: parent.right
-            rightMargin: 35
-        }
-        padding: 0
-        background: Rectangle {
-            anchors.fill: parent
-            color: "transparent"
-        }
-
-        CustomLabel {
-            text: qsTr(description)
-            color: Style.midGrey2
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 30
-            anchors.right: parent.right
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                column.selectedGroup = groupName;
-                column.selectedSpeech = nameSpeech;
-            }
-        }
-
     }
 }

@@ -25,7 +25,8 @@ Frame {
     signal checkSpeech(string name, string oldname)
 
     onVisibleChanged: {
-        ttsTextField.text = ""; /// initialized value of textfield when creating new speech
+//        ttsTextField.text = ""; /// initialized value of textfield when creating new speech
+        textfield.text = "";
         if(!visible){
             /// When you finish or cancel an edition, we show the speech you were editing
             if(oldName !== ""){
@@ -57,7 +58,8 @@ Frame {
                                     speechModel.get(i).speechs.setProperty(j, "isVisible", false);
     //                                homeCheckBox.checked = pointModel.get(i).points.get(j).home;
     //                                slider.value = pointModel.get(i).points.get(j).orientation;
-                                ttsTextField.text = speechModel.get(i).speechs.get(j).tts;
+//                                ttsTextField.text = speechModel.get(i).speechs.get(j).tts;
+                                textfield.text = speechModel.get(i).speechs.get(j).tts;
     //                                tmpPointView.setOrientation(pointModel.get(i).points.get(j).orientation);
     //                                groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
@@ -153,14 +155,36 @@ Frame {
         }
     }
 
-    TextArea {
-        id: ttsTextField
-        selectByMouse: ttsTextField
-        placeholderText: langue == "English" ? qsTr("Enter text") : qsTr("Enter text")
-        wrapMode: "WrapAtWordBoundaryOrAnywhere"
+//    TextField {
+//        id: ttsTextField
+//        selectByMouse: ttsTextField
+//        placeholderText: langue == "English" ? qsTr("Enter text") : qsTr("Enter text")
+//        wrapMode: "WrapAtWordBoundaryOrAnywhere"
+//        text: tts
+////        height: parent.height
+//        anchors {
+//            left: parent.left
+//            top: ttsLabel.bottom
+//            right: parent.right
+//            topMargin: 8
+//        }
 
-        text: tts
-//        height: parent.height
+//        background: Rectangle {
+//            radius: 2
+//            border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+//            border.width: ttsTextField.activeFocus || nameError ? 3 : 1
+//            height: 200
+//        }
+//    }
+
+    Rectangle {
+        id: ttsTextField
+        width: parent.width
+        radius: 2
+        border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+        border.width: ttsTextField.activeFocus || nameError ? 3 : 1
+        height: 200
+
         anchors {
             left: parent.left
             top: ttsLabel.bottom
@@ -168,11 +192,23 @@ Frame {
             topMargin: 8
         }
 
-        background: Rectangle {
-            radius: 2
-            border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-            border.width: ttsTextField.activeFocus || nameError ? 3 : 1
-            height: 200
+        TextField {
+            id: textfield
+            anchors.fill: parent
+            placeholderText: "Enter text"
+            wrapMode: "WrapAtWordBoundaryOrAnywhere"
+            text: tts
+            selectByMouse: true
+
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onClicked: {
+                mouse.accepted = true
+                textfield.focus = true
+            }
         }
     }
 
@@ -204,7 +240,8 @@ Frame {
             if (groupComboBox.displayText === Helper.noGroupChinese) {
                 groupComboBox.displayText = Helper.noGroup;
             }
-            var tts = Helper.formatName(ttsTextField.text);
+//            var tts = Helper.formatName(ttsTextField.text);
+            var tts = Helper.formatName(textfield.text);
 
             /// where we create the speech
             createSpeech(newName, groupComboBox.displayText, tts, oldName, oldGroup); /// get speech case
