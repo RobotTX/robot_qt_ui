@@ -159,6 +159,8 @@ ApplicationWindow {
             langue: applicationWindow.langue
             currentMenu: mainFrame.currentMenu
             onSelectMenu: mainFrame.currentMenu = index
+//            visible: mainFrame.currentMenu === 5 ? false : true
+            visible: true
         }
 
         MainMenuViews {

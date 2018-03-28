@@ -195,30 +195,7 @@ Frame {
             anchors.topMargin: 20
         }
 
-//        TextField {
-//            id: userInputWifiName
-//            objectName: "wifiName"
-//            selectByMouse: true
-//            placeholderText: langue === "English" ? qsTr("请输入无线网名称") : qsTr("Enter the name of the WiFi")
-//            background: Rectangle {
-//                    implicitWidth: 100
-//                    implicitHeight: 15
-//                    border.color: Style.midGrey
-//            }
-//            font.pointSize: 10
-//            text: inputNameWifi
-//            anchors {
-//                left: nameWifi.right
-//                bottom: nameWifi.bottom
-//            }
-//            anchors.leftMargin: -170
-//            onTextChanged: {
-//                inputNameWifi = userInputWifiName.text
-//            }
-//        }
-
         PopupMenuItem {
-//        Button {
             id: userInputWifiName
             height: Style.menuItemHeight
             width: parent.width
@@ -244,7 +221,7 @@ Frame {
             }
             onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
 
-//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+//            onClicked: if(visible){ currentMenuIndex = 1} /// android
 
             Menu {
                 id: wifiMenu
@@ -274,11 +251,6 @@ Frame {
                             labelText: modelData
                             enabled: true
                             leftPadding: Style.menuItemLeftPadding
-
-//                            anchors {
-//                                left: parent.left
-//                                right: parent.right
-//                            }
 
                             onTriggered: {
                                 console.log("clicked on " + modelData);
@@ -1024,6 +996,7 @@ Frame {
 
     function getWifiList(wifiList, count) {
         ssidWifi.push(wifiList);
+        console.log("wifiList = " + wifiList);
     }
 
     property int sizeWifiList

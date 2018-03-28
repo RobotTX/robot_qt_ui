@@ -53,10 +53,8 @@ Menu {
 //            visible: myGroup == "Gobot"
             visible: true
         }
-        onHoveredChanged: if (visible) {
-                              currentMenuIndex = 0
-                          } /// desktop
-        onClicked: if (visible) { currentMenuIndex = 0} /// android
+        onHoveredChanged: if (visible) { currentMenuIndex = 0} /// desktop
+//        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
             id: robotListInPopup
@@ -111,7 +109,7 @@ Menu {
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
         onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
-        onClicked: if (visible) { currentMenuIndex = 1} /// android
+//        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
         Menu {

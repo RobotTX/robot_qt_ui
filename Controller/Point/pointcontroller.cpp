@@ -74,13 +74,15 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(test, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
     }
 
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+
 
     /// desktop
     currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
 
     /// android
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
+
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 

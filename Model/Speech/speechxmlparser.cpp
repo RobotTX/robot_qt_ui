@@ -130,7 +130,7 @@ void SpeechXMLParser::readSpeechs(SpeechController* speechController, const QStr
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                speechController->addSpeech(name, groupName, tts, false);
+                                speechController->addSpeech(name, groupName, tts, 0);
                             }
                             xmlReader.readNext();
                         } else {

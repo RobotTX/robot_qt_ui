@@ -67,14 +67,13 @@ SpeechController::SpeechController(QObject *applicationWindow, MainController *p
         Q_UNREACHABLE();
     }
 
-//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-
     /// desktop
     currentSpeechsFile = Helper::getAppPath() + QDir::separator() + "currentSpeechs.xml";
 
     /// android
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    currentSpeechsFile = location + QDir::separator() + "currentSpeechs.xml";
-    qDebug() << "SpeechController::SpeechController" << currentSpeechsFile;
+//    qDebug() << "SpeechController::SpeechController" << currentSpeechsFile;
     loadSpeechs(currentSpeechsFile);
 }
 

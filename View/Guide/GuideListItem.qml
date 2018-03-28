@@ -42,7 +42,7 @@ Column {
             anchors.leftMargin: 20
             anchors.right: parent.right
             anchors.rightMargin: 20
-            color: (column.selectedGroup === groupName && column.selectedPoint === "") ? Style.selectedItemColor : "transparent"
+//            color: (column.selectedGroup === groupName && column.selectedPoint === "") ? Style.selectedItemColor : "transparent"
         }
 
         MouseArea {
@@ -78,11 +78,10 @@ Column {
         }
 
         Menu {
-//        Frame {
             id: pointMenu
             padding: 0
             width: 273
-            height: contentItem.childrenRect.height + 150
+//            height: contentItem.childrenRect.height + 150
             x: Style.widthGuideMenu + 10
             y: 0
 
@@ -96,7 +95,6 @@ Column {
 
             property string colorC: "transparent"
 
-//            ColumnLayout {
             GridLayout {
                 id: idColumn
                 columns: 2

@@ -131,24 +131,14 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             Q_UNREACHABLE();
         }
 
-        /// get wifi ssid
-        QFile script(Helper::getAppPath() + QDir::separator() + "wifiScript.sh");
-        if (script.open(QFile::ReadWrite)) {
-            QTextStream scriptIn(&script);
-            scriptIn << "#!bin/bash\n" << endl;
-            scriptIn << "> wifi.txt" << endl;
-            scriptIn << "nmcli -t -f ssid dev wifi >> wifi.txt" << endl;
-        }
-        script.close();
-
+        /// script shell script
+        /// desktop
+        QString cmd = QString(" > " + Helper::getAppPath() + "/wifi.txt && nmcli -t -f ssid dev wifi >> " + Helper::getAppPath() + "/wifi.txt");
         QProcess process;
-        QString path = qApp->applicationDirPath()  + QDir::separator() + "wifiScript.sh";
-        process.startDetached("/bin/sh", QStringList()<< path);
-        qDebug() << path;
-
+        process.startDetached("sh", QStringList() << "-c" << cmd);
+        process.waitForFinished();
         QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
         int line_count = 0;
-//        QString toto = "";
         if (ssid.open(QFile::ReadWrite)) {
             QTextStream ssidIn(&ssid);
             while (!ssidIn.atEnd()) {
@@ -156,10 +146,63 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                 line_count++;
                 emitWifiList(line, line_count);
             }
+            qDebug() << "count wifi = " << line_count;
             emitSizeWifiList(line_count);
         }
 
         ssid.close();
+
+        /// get wifi android
+//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+//        QFile ssid(location + QDir::separator() + "wifi.txt");
+//        QString cmd1 = QString("service call wifi 11 > " + location + "/wifi.txt ");
+//        QString cmd = QString("> " + location + "/wifi.txt service call wifi 13 >>" + location +"/wifi.txt");
+
+        /// get wifi Windows
+//        QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt netsh wlan show network >> " + Helper::getAppPath() + QDir::separator() + "wifi.txt");
+//        QProcess process;
+//        process.startDetached("cmd", QStringList() << "/c" << cmd);
+//        QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+//        int line_count = 0;
+//        if (ssid.open(QFile::ReadWrite)) {
+//            QTextStream ssidIn(&ssid);
+//            while (!ssidIn.atEnd()) {
+//                QString line = ssidIn.readLine();
+//                if (line.startsWith("SSID")) {
+//                    QStringList parse = line.split(": ");
+//                    QString wifiName = parse.last();
+//                    line_count++;
+//                    emitWifiList(wifiName, line_count);
+//                } else {
+//                }
+//            }
+//            emitSizeWifiList(line_count);
+//        }
+//        ssid.close();
+
+        /// get wifi MacOs
+//        QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt && /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s | awk '{print $1}' >>" + Helper::getAppPath() + "/wifi.txt");
+//        qDebug() << cmd;
+//        QProcess process;
+//        process.startDetached("sh", QStringList() << "-c" << cmd);
+//        process.waitForFinished();
+//        QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+//        int line_count = 0;
+//        if (ssid.open(QFile::ReadWrite)) {
+//            QTextStream ssidIn(&ssid);
+//            while (!ssidIn.atEnd()) {
+//                QString line = ssidIn.readLine();
+//                if (line.contains("SSID")) {
+//                } else {
+//                    qDebug() << "line = " << line;
+//                    line_count++;
+//                    emitWifiList(line, line_count);
+//                }
+//            }
+//            qDebug() << "count = " << line_count;
+//            emitSizeWifiList(line_count);
+//        }
+//        ssid.close();
 
         /// get settings from file
         /// desktop
@@ -293,6 +336,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+
     QString oldFilePath = mapController->getMapFile();
     qDebug() << "save map from:" << oldFilePath;
 
@@ -404,8 +448,8 @@ void MainController::loadMapConfig(QString fileName) {
 
         /// android
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-
 //        QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+
         setMessageTopSlot(1,  "GobotLocation path = " + filePath); /// no debugging mode so use topmessage to show output
 
         /// if we are able to find the configuration then we load the map
@@ -437,7 +481,6 @@ void MainController::loadMapConfig(QString fileName) {
 
 //            /// saves the imported paths in the current paths file
 //            PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
-//            qDebug() << "currentPaths.xml file save in " << location + QDir::separator();
 
             QVector<double> new_home = pointController->getHome();
             qDebug() << "?????????? New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
@@ -462,9 +505,14 @@ void MainController::loadMapConfig(QString fileName) {
 
 void MainController::saveSettings(int mapChoice, double batteryThreshold){
     qDebug() << "save settings called" << mapChoice << batteryThreshold;
+
+    /// desktop
+    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
+
+    /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
-    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
-//    QFile file(location + QDir::separator() + "settings.txt"); /// android
+//    QFile file(location + QDir::separator() + "settings.txt");
+
     if(file.open(QFile::WriteOnly)){
         QTextStream stream(&file);
         stream << mapChoice << " " << batteryThreshold ;
@@ -638,9 +686,13 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         XMLParser::save(pointController,oldfilePoints);
 
         int mapChoice = -1;
-//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+
         QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
+
+        /// android
+//        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //        QFile file(location + QDir::separator() + "settings.txt");
+
         if(file.open(QFile::ReadOnly)){
             QTextStream stream(&file);
             stream >> mapChoice;
@@ -791,9 +843,14 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
     /// in the files
     saveMapConfig(cpp_file_name, 1, 0, 0, 0, false);
+
+    /// desktop
     QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+
+    /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
+
     //change current map to new map
     mapController->saveMapConfig(currentPathFile, 0, 0, 1, 0);
 
@@ -908,9 +965,14 @@ void MainController::setMessageTopSlot(int status, QString msg){
 }
 
 void MainController::updateTutoFile(int index, bool visible){
+
+    /// desktop
     QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
+
+    /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
+
     tutoFile.open(QIODevice::ReadWrite);
     int counter(0);
     QStringList list;

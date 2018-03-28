@@ -21,7 +21,8 @@ import "../../Model/Tutorial/"
 Frame {
     id: mainMenuViewsFrame
     visible: !(currentMenu == -1)
-    width: currentMenu === 5 ? Style.widthGuideMenu : Style.menuWidth
+//    width: currentMenu === 5 ? parent.width : Style.menuWidth
+    width: Style.menuWidth
     padding: 0
     property Points pointModel
     property Speechs speechModel
@@ -101,17 +102,17 @@ Frame {
         onSaveMap: mainMenuViewsFrame.saveMap(file_name)
     }
 
-    GuideMenu {
-        id: pointMenuBis
-        visible: currentMenu == 5
-        pointModel: mainMenuViewsFrame.pointModel
-        robotModel: mainMenuViewsFrame.robotModel
-        pathModel: mainMenuViewsFrame.pathModel
-        tmpPointView: mainMenuViewsFrame.tmpPointView
-        langue: mainMenuViewsFrame.langue
-        onCloseMenu: mainMenuViewsFrame.closeMenu()
-        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
-    }
+//    GuideMenu {
+//        id: pointMenuBis
+//        visible: currentMenu == 5
+//        pointModel: mainMenuViewsFrame.pointModel
+//        robotModel: mainMenuViewsFrame.robotModel
+//        pathModel: mainMenuViewsFrame.pathModel
+//        tmpPointView: mainMenuViewsFrame.tmpPointView
+//        langue: mainMenuViewsFrame.langue
+//        onCloseMenu: mainMenuViewsFrame.closeMenu()
+//        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
+//    }
 
     SettingsMenu {
         id: settingsMenu
@@ -120,7 +121,7 @@ Frame {
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         pathModel: mainMenuViewsFrame.pathModel
         langue: mainMenuViewsFrame.langue
-        visible: currentMenu == 6
+        visible: currentMenu == 5
         onCloseMenu: mainMenuViewsFrame.closeMenu()
         inputNameWifi: mainMenuViewsFrame.inputNameWifi
     }

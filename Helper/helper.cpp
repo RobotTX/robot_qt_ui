@@ -105,13 +105,12 @@ namespace Helper {
         QPair<QPair<QString, QString>, QStringList> getPathFromFile(const QString robotName){
             /// QPair<QPair<groupName, pathName>, date>
             QPair<QPair<QString, QString>, QStringList> pathInfo;
-//            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
 
             /// desktop
             QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
 
             /// android
+//            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 //            QFile fileInfo(location + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
             if(fileInfo.open(QIODevice::ReadWrite)){
                 QRegExp regex("[-\n%]");
