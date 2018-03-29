@@ -25,8 +25,8 @@ Frame {
     signal checkSpeech(string name, string oldname)
 
     onVisibleChanged: {
-//        ttsTextField.text = ""; /// initialized value of textfield when creating new speech
-        textfield.text = "";
+        ttsTextField.text = ""; /// initialized value of textfield when creating new speech
+//        textfield.text = "";
         if(!visible){
             /// When you finish or cancel an edition, we show the speech you were editing
             if(oldName !== ""){
@@ -54,14 +54,9 @@ Frame {
                     if(speechModel.get(i).groupName === oldGroup)
                         for(var j = 0; j < speechModel.get(i).speechs.count; j++)
                             if(speechModel.get(i).speechs.get(j).name === oldName){
-    //                                wasDisplayed = speechModel.get(i).speechs.get(j).isVisible;
                                     speechModel.get(i).speechs.setProperty(j, "isVisible", false);
-    //                                homeCheckBox.checked = pointModel.get(i).points.get(j).home;
-    //                                slider.value = pointModel.get(i).points.get(j).orientation;
-//                                ttsTextField.text = speechModel.get(i).speechs.get(j).tts;
-                                textfield.text = speechModel.get(i).speechs.get(j).tts;
-    //                                tmpPointView.setOrientation(pointModel.get(i).points.get(j).orientation);
-    //                                groupComboBox.currentIndex = i;
+                                ttsTextField.text = speechModel.get(i).speechs.get(j).tts;
+//                                textfield.text = speechModel.get(i).speechs.get(j).tts;
                                 groupComboBox.displayText = oldGroup;
                             }
             }
@@ -95,7 +90,7 @@ Frame {
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("Enter label") : qsTr("Enter label")
 
-        text: oldname
+        text: oldName
         height: 28
         anchors {
             left: parent.left
@@ -155,13 +150,14 @@ Frame {
         }
     }
 
-//    TextField {
+//    Rectangle {
 //        id: ttsTextField
-//        selectByMouse: ttsTextField
-//        placeholderText: langue == "English" ? qsTr("Enter text") : qsTr("Enter text")
-//        wrapMode: "WrapAtWordBoundaryOrAnywhere"
-//        text: tts
-////        height: parent.height
+//        width: parent.width
+//        radius: 2
+//        border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+//        border.width: ttsTextField.activeFocus || nameError ? 3 : 1
+//        height: 200
+
 //        anchors {
 //            left: parent.left
 //            top: ttsLabel.bottom
@@ -169,20 +165,34 @@ Frame {
 //            topMargin: 8
 //        }
 
-//        background: Rectangle {
-//            radius: 2
-//            border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-//            border.width: ttsTextField.activeFocus || nameError ? 3 : 1
-//            height: 200
+//        TextField {
+//            id: textfield
+//            anchors.fill: parent
+//            placeholderText: "Enter text"
+//            wrapMode: "WrapAtWordBoundaryOrAnywhere"
+//            text: tts
+//            selectByMouse: true
+
+//        }
+
+//        MouseArea {
+//            anchors.fill: parent
+////            propagateComposedEvents: true
+//            onClicked: {
+//                mouse.accepted = false
+//                textfield.focus = true
+//            }
 //        }
 //    }
 
-    Rectangle {
+    TextField {
         id: ttsTextField
+//        anchors.fill: parent
+        placeholderText: "Enter text"
+        wrapMode: "WrapAtWordBoundaryOrAnywhere"
+        text: tts
+        selectByMouse: true
         width: parent.width
-        radius: 2
-        border.color: nameError ? Style.errorColor : ttsTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-        border.width: ttsTextField.activeFocus || nameError ? 3 : 1
         height: 200
 
         anchors {
@@ -192,23 +202,10 @@ Frame {
             topMargin: 8
         }
 
-        TextField {
-            id: textfield
-            anchors.fill: parent
-            placeholderText: "Enter text"
-            wrapMode: "WrapAtWordBoundaryOrAnywhere"
-            text: tts
-            selectByMouse: true
-
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            propagateComposedEvents: true
-            onClicked: {
-                mouse.accepted = true
-                textfield.focus = true
-            }
+        background: Rectangle {
+            radius: 2
+            border.width: ttsTextField.activeFocus || nameError ? 3 : 1
+            border.color: nameError ? Style.errorColor : ttsTextField.activeFocusOnPress ? Style.lightBlue : Style.lightGreyBorder
         }
     }
 
@@ -240,11 +237,11 @@ Frame {
             if (groupComboBox.displayText === Helper.noGroupChinese) {
                 groupComboBox.displayText = Helper.noGroup;
             }
-//            var tts = Helper.formatName(ttsTextField.text);
-            var tts = Helper.formatName(textfield.text);
+            var ttsText = Helper.formatName(ttsTextField.text);
+//            var tts = Helper.formatName(textfield.text);
 
             /// where we create the speech
-            createSpeech(newName, groupComboBox.displayText, tts, oldName, oldGroup); /// get speech case
+            createSpeech(newName, groupComboBox.displayText, ttsText, oldName, oldGroup); /// get speech case
 
             backToMenu();
             var mess1 = ''

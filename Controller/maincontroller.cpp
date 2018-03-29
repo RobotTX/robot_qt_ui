@@ -133,24 +133,27 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// script shell script
         /// desktop
-        QString cmd = QString(" > " + Helper::getAppPath() + "/wifi.txt && nmcli -t -f ssid dev wifi >> " + Helper::getAppPath() + "/wifi.txt");
-        QProcess process;
-        process.startDetached("sh", QStringList() << "-c" << cmd);
-        process.waitForFinished();
-        QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
-        int line_count = 0;
-        if (ssid.open(QFile::ReadWrite)) {
-            QTextStream ssidIn(&ssid);
-            while (!ssidIn.atEnd()) {
-                QString line = ssidIn.readLine();
-                line_count++;
-                emitWifiList(line, line_count);
-            }
-            qDebug() << "count wifi = " << line_count;
-            emitSizeWifiList(line_count);
-        }
+        #if defined(Q_OS_LINUX)
 
-        ssid.close();
+            QString cmd = QString(" > " + Helper::getAppPath() + "/wifi.txt && nmcli -t -f ssid dev wifi >> " + Helper::getAppPath() + "/wifi.txt");
+            QProcess process;
+            process.startDetached("sh", QStringList() << "-c" << cmd);
+            process.waitForFinished();
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            int line_count = 0;
+            if (ssid.open(QFile::ReadWrite)) {
+                QTextStream ssidIn(&ssid);
+                while (!ssidIn.atEnd()) {
+                    QString line = ssidIn.readLine();
+                    line_count++;
+                    emitWifiList(line, line_count);
+                }
+                qDebug() << "count wifi = " << line_count;
+                emitSizeWifiList(line_count);
+            }
+
+            ssid.close();
+        #endif
 
         /// get wifi android
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -159,50 +162,54 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 //        QString cmd = QString("> " + location + "/wifi.txt service call wifi 13 >>" + location +"/wifi.txt");
 
         /// get wifi Windows
-//        QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt netsh wlan show network >> " + Helper::getAppPath() + QDir::separator() + "wifi.txt");
-//        QProcess process;
-//        process.startDetached("cmd", QStringList() << "/c" << cmd);
-//        QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
-//        int line_count = 0;
-//        if (ssid.open(QFile::ReadWrite)) {
-//            QTextStream ssidIn(&ssid);
-//            while (!ssidIn.atEnd()) {
-//                QString line = ssidIn.readLine();
-//                if (line.startsWith("SSID")) {
-//                    QStringList parse = line.split(": ");
-//                    QString wifiName = parse.last();
-//                    line_count++;
-//                    emitWifiList(wifiName, line_count);
-//                } else {
-//                }
-//            }
-//            emitSizeWifiList(line_count);
-//        }
-//        ssid.close();
+        #if defined(Q_OS_WIN)
+            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt netsh wlan show network >> " + Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            QProcess process;
+            process.startDetached("cmd", QStringList() << "/c" << cmd);
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            int line_count = 0;
+            if (ssid.open(QFile::ReadWrite)) {
+                QTextStream ssidIn(&ssid);
+                while (!ssidIn.atEnd()) {
+                    QString line = ssidIn.readLine();
+                    if (line.startsWith("SSID")) {
+                        QStringList parse = line.split(": ");
+                        QString wifiName = parse.last();
+                        line_count++;
+                        emitWifiList(wifiName, line_count);
+                    } else {
+                    }
+                }
+                emitSizeWifiList(line_count);
+            }
+            ssid.close();
+        #endif
 
         /// get wifi MacOs
-//        QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt && /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s | awk '{print $1}' >>" + Helper::getAppPath() + "/wifi.txt");
-//        qDebug() << cmd;
-//        QProcess process;
-//        process.startDetached("sh", QStringList() << "-c" << cmd);
-//        process.waitForFinished();
-//        QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
-//        int line_count = 0;
-//        if (ssid.open(QFile::ReadWrite)) {
-//            QTextStream ssidIn(&ssid);
-//            while (!ssidIn.atEnd()) {
-//                QString line = ssidIn.readLine();
-//                if (line.contains("SSID")) {
-//                } else {
-//                    qDebug() << "line = " << line;
-//                    line_count++;
-//                    emitWifiList(line, line_count);
-//                }
-//            }
-//            qDebug() << "count = " << line_count;
-//            emitSizeWifiList(line_count);
-//        }
-//        ssid.close();
+        #if defined(Q_OS_MAC)
+            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt && /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s | awk '{print $1}' >>" + Helper::getAppPath() + "/wifi.txt");
+            qDebug() << cmd;
+            QProcess process;
+            process.startDetached("sh", QStringList() << "-c" << cmd);
+            process.waitForFinished();
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            int line_count = 0;
+            if (ssid.open(QFile::ReadWrite)) {
+                QTextStream ssidIn(&ssid);
+                while (!ssidIn.atEnd()) {
+                    QString line = ssidIn.readLine();
+                    if (line.contains("SSID")) {
+                    } else {
+                        qDebug() << "line = " << line;
+                        line_count++;
+                        emitWifiList(line, line_count);
+                    }
+                }
+                qDebug() << "count = " << line_count;
+                emitSizeWifiList(line_count);
+            }
+            ssid.close();
+        #endif
 
         /// get settings from file
         /// desktop

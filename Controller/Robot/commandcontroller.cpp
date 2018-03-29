@@ -10,7 +10,6 @@ CommandController::CommandController(QObject* parent, QString _ip, QString _robo
 }
 
 void CommandController::sendCommand(const QString cmd){
-//    qDebug() << "WE ARE IN CommandController::sendCommand()";
     if(!waitingForAnswer){
         waitingForAnswer = true;
         emit sendCommandSignal(cmd);
@@ -28,15 +27,12 @@ void CommandController::sendCommand(const QString cmd){
 
 void CommandController::cmdAnswerSlot(QString answer){
     QList<QString> list = answer.split(QChar(31), QString::SkipEmptyParts);
-    qDebug() << "CommandController::cmdAnswerSlot called" << list;
 
     if(list.size() > 1){
-        qDebug() << "CommandController::cmdAnswerSlot called" << list;
         if(list.at(0).compare("done") == 0){
             switch (list.at(1).at(0).unicode()) {
                 case 'a':
                     /// Changed the name of the robot
-                    qDebug() << "\na";
                     emit updateName(ip, list.at(2));
                     emit setMessageTop(2, "Renamed robot \"" + robotName + "\" to \"" + list.at(2) + "\"");
                     robotName = list.at(2);
@@ -47,29 +43,24 @@ void CommandController::cmdAnswerSlot(QString answer){
                     Q_UNREACHABLE();
                 break;*/
                 case 'c':
-                    qDebug() << "\nc";
                     /// Sent the robot to a new goal
                     /// nothing is needed on the qml side
                 break;
                 case 'd':
                     /// Paused the path of the robot
-                    qDebug() << "\nd";
                     emit setMessageTop(2, "Paused robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'e':
                     /// Played the scan of the map
-                    qDebug() << "\ne";
                     emit playedScanning(ip);
                 break;
                 case 'f':
                     /// Paused the scan of the map
-                    qDebug() << "\nf";
                     emit pausedScanning(ip);
                 break;
                 case 'g':
                     /// starts an automatic scan
-                    qDebug() << "\ng";
                 break;
                 /*
                 case 'h':
@@ -78,37 +69,32 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;*/
                 case 'i':
                     /// Sent a new path to the robot
-                    qDebug() << "\ni";
 //                    qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
                     list.removeFirst();
                     list.removeFirst();
-                    emit setMessageTop(2, "Updated the path of robot \"" + robotName + "\"");
+                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
                     emit updatePath(ip, QStringList(list));
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'j':
                     /// Played the path of the robot
-                    qDebug() << "\nj";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" is starting its mission");
                     emit updatePlayingPath(ip, true);
                 break;
                 case 'k':
                     /// Played the assigned point
-                    qDebug() << "\nk";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" is starting to go to assigned point");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'l':
                     /// Stopped the path of the robot
-                    qDebug() << "\nl";
                     emit setMessageTop(2, "Stopped robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false); // reset play path
                 break;
                 case 'm':
                     /// Stopped and deleted the path of the robot
-                    qDebug() << "\nm";
                     emit stoppedDeletedPath(ip);
-                    emit setMessageTop(2, "Deleted the path of robot \"" + robotName + "\"");
+                    emit setMessageTop(2, "Deleted robot \"" + robotName + "\" path");
                 break;
                 case 'n':
                     /// Sent the new home to the robot
@@ -118,20 +104,15 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'o':
                     /// Started the docking process
-                    qDebug() << "\no";
-                    qDebug() << "CommandController::cmdAnswerSlot Started docking" << list;
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'p':
                     /// Stopped the docking process
-                    qDebug() << "\np";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" is going to its charging station");
-                    qDebug() << "CommandController::cmdAnswerSlot Stopped docking" << list;
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'q':
                     /// Started the laser of the robot
-                    qDebug() << "\nq";
                     emit updateLaser(ip, true);
                 break;
                 case 'r':
@@ -155,17 +136,13 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'w':
                     /// Sound on
-                    qDebug() << "\nw";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" Sound On");
                 break;
                 case 'x':
                     /// Sound off
-                    qDebug() << "\nx";
                     emit setMessageTop(2, "Robot \"" + robotName + "\" Sound Off");
                 break;
             case 'y':
-                qDebug() << "\ny";
-//                qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'y'";
 
             break;
                 case ',':
@@ -182,10 +159,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case '1':
                    /// set velocity
-                   qDebug("before setVelocity from commandController.cpp");
                    emit setVelocity(ip, list.at(2).toDouble(), list.at(3).toDouble());
-                   qDebug("after setVelocity from commandController.cpp");
-                   emit setMessageTop(2, "Velocity" + list.at(2)); /// linear velocity
+                   emit setMessageTop(2, "Changed robot \"" + robotName + "\" velocity : linear = " + list.at(2) + " angular = " + list.at(3)); /// linear velocity
                break;
                case '2':
                    /// set battery
@@ -220,11 +195,9 @@ void CommandController::cmdAnswerSlot(QString answer){
 }
 
 void CommandController::cmdFinished(){
-    qDebug() << "CommandController::cmdFinished";
     waitingForAnswer = false;
     /// if the command queue is not empty we process the next command
     if(!cmdQueue.isEmpty()){
-        qDebug() << "CommandController::cmdAnswerSlot got an answer and processing the next cmd in the queue" << cmdQueue;
         waitingForAnswer = true;
         emit sendCommandSignal(cmdQueue.takeFirst());
     }

@@ -365,8 +365,10 @@ Frame {
                     top: parent.top
                 }
 
-                color: "#8F8E94"
-                text: langue === "English" ? qsTr("Linear velocity chinese") : qsTr("Linear Velocity")
+//                color: "#8F8E94"
+                color: Style.blackMenuTextColor
+                font.pointSize: 10
+                text: langue === "English" ? qsTr("Linear velocity chinese") : qsTr("Linear velocity")
             }
 
             HelpButton {
@@ -463,8 +465,10 @@ Frame {
                     top: parent.top
                 }
 
-                color: "#8F8E94"
-                text: langue === "English" ? qsTr("Angular velocity chinese") : qsTr("Angular Velocity")
+//                color: "#8F8E94"
+                color: Style.blackMenuTextColor
+                font.pointSize: 10
+                text: langue === "English" ? qsTr("Angular velocity chinese") : qsTr("Angular velocity")
             }
 
             HelpButton {
@@ -617,7 +621,7 @@ Frame {
                 }
 
                 color: "#8F8E94"
-                text: langue === "English" ? qsTr("低电量警告") : qsTr("Battery level Settings")
+                text: langue === "English" ? qsTr("低电量警告") : qsTr("Battery Level Settings")
             }
 
             HelpButton {
@@ -754,7 +758,7 @@ Frame {
             }
 
             color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个地图将被使用 ?") : qsTr("Which map do you want to use ?")
+            text: langue === "English" ? qsTr("哪一个地图将被使用 ?") : qsTr("Map Sync. Settings")
         }
 
         HelpButton {

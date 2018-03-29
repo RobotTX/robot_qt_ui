@@ -184,29 +184,29 @@ Frame {
         }
     }
 
-    Label {
-            id: groupRobotLabel
-            text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Robot")
-            color: Style.midGrey2
-            anchors {
-                left: parent.left
-                top: groupComboBox.bottom
-                right: parent.right
-                topMargin: 20
-            }
-        }
+//    Label {
+//            id: groupRobotLabel
+//            text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Robot")
+//            color: Style.midGrey2
+//            anchors {
+//                left: parent.left
+//                top: groupComboBox.bottom
+//                right: parent.right
+//                topMargin: 20
+//            }
+//        }
 
-        CustomComboBoxRobot {
-            id: groupRobotComboBox
-            model: robotModel
-            displayText: langue == "English" ? Helper.noRobotChinese : Helper.noRobot
-            anchors {
-                left: parent.left
-                top: groupRobotLabel.bottom
-                right: parent.right
-                topMargin: 8
-            }
-        }
+//        CustomComboBoxRobot {
+//            id: groupRobotComboBox
+//            model: robotModel
+//            displayText: langue == "English" ? Helper.noRobotChinese : Helper.noRobot
+//            anchors {
+//                left: parent.left
+//                top: groupRobotLabel.bottom
+//                right: parent.right
+//                topMargin: 8
+//            }
+//        }
 
     Label {
         id: homeLabel
@@ -214,7 +214,7 @@ Frame {
         color: Style.midGrey2
         anchors {
             left: parent.left
-            top: groupRobotComboBox.bottom
+            top: groupComboBox.bottom
             right: parent.right
             topMargin: 20
         }
@@ -411,18 +411,18 @@ Frame {
             if (groupComboBox.displayText === Helper.noGroupChinese) {
                 groupComboBox.displayText = Helper.noGroup;
             }
-            var action = 1; // feature with robotGroup
+//            var action = 1; // feature with robotGroup
 
-            var groupRobotName = groupRobotComboBox.displayText;
-            var finalGroupName = ""
+//            var groupRobotName = groupRobotComboBox.displayText;
+//            var finalGroupName = ""
 
-            if (groupRobotName !== Helper.noRobot && groupRobotName !== Helper.noRobotChinese) {
-                finalGroupName = groupRobotName;
-            } else {
-                finalGroupName = groupComboBox.displayText;
-            }
+//            if (groupRobotName !== Helper.noRobot && groupRobotName !== Helper.noRobotChinese) {
+//                finalGroupName = groupRobotName;
+//            } else {
+//                finalGroupName = groupComboBox.displayText;
+//            }
 
-            createPoint(newName,  finalGroupName, tmpPointView.x, tmpPointView.y,
+            createPoint(newName,  groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         Math.round(slider.valueAt(slider.position)));
 

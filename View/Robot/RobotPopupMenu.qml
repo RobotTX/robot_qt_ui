@@ -37,7 +37,7 @@ Menu {
         id: assignHome
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置充电站" : "Assign a Charging Station"
+        labelText: langue == "English" ? "设置充电站" : "Assign Home"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -58,7 +58,6 @@ Menu {
             pointModel: robotMenu.pointModel
             homeOnly: true
             onPointSelected: {
-                console.log("robotMenu.pointSelected");
                 robotMenu.pointSelected(posX, posY, orientation)
                 currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
@@ -77,7 +76,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置路径" : "Assign a Path"
+        labelText: langue == "English" ? "设置路径" : "Assign Path"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -124,7 +123,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前充电站" : "Save current home"
+        labelText: langue == "English" ? "保存当前充电站" : "Save My Home"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 2
@@ -135,7 +134,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前路径" : "Save current path"
+        labelText: langue == "English" ? "保存当前路径" : "Save My Path"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 3
@@ -171,7 +170,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "从机器人上删除路径" : "Delete Path from Robot"
+        labelText: langue == "English" ? "从机器人上删除路径" : "Delete My Path"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 5

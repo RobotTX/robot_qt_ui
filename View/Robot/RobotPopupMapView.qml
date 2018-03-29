@@ -47,7 +47,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置路径" : "Assign a Path"
+        labelText: langue == "English" ? "设置路径" : "Assign Path"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -94,7 +94,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前路径" : "Save current path"
+        labelText: langue == "English" ? "保存当前路径" : "Save My path"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 3
@@ -113,7 +113,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "从机器人上删除路径" : "Delete Path from Robot"
+        labelText: langue == "English" ? "从机器人上删除路径" : "Delete My Path"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 5

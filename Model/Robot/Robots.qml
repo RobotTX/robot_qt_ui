@@ -385,12 +385,12 @@ ListModel {
                     message5 = "机器人 " + get(i).name + " 到达充电桩，但可能没有完全对准充电桩"
                     message6 = "机器人 " + get(i).name +" 正在前往充电桩"
                 } else {
-                    message1 = "Robot \"" + get(i).name + "\" could not reach the charging station"
-                    message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station"
-                    message3 = "Robot \"" + get(i).name + "\" lost the signal of the charging station and could not reach it"
-                    message4 = "Robot \"" + get(i).name + "\" successfully reached its charging station"
-                    message5 = "Robot \"" + get(i).name + "\" successfully reached its charging station but might not be properly aligned"
-                    message6 = "Robot \"" + get(i).name + "\" is going to its charging station"
+                    message1 = "Robot \"" + get(i).name + "\" could not reach its"
+                    message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its home"
+                    message3 = "Robot \"" + get(i).name + "\" lost the signal of its home and could not reach it"
+                    message4 = "Robot \"" + get(i).name + "\" successfully reached its home"
+                    message5 = "Robot \"" + get(i).name + "\" successfully reached its home but might not be properly aligned"
+                    message6 = "Robot \"" + get(i).name + "\" is going to its home"
                 }
 
 

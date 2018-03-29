@@ -35,7 +35,7 @@ Menu {
 
     PopupMenuItem {
         id: assignPointTo
-        labelText: langue == "English" ? "Send point to robot" : "Send point to robot"
+        labelText: langue == "English" ? "Send point to robot" : "Send Point To"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -94,7 +94,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "移动到" : "Move to"
+        labelText: langue == "English" ? "移动到" : "Move To Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

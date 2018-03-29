@@ -36,7 +36,7 @@ Menu {
         id: assignPathBis
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置当前路径给" :"Assign this path to"
+        labelText: langue == "English" ? "设置当前路径给" :"Assign Path To"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -90,7 +90,7 @@ Menu {
     // third item
     PopupMenuItem {
         id: moveToMenu
-        labelText: langue == "English" ? "移动到" : "Move to"
+        labelText: langue == "English" ? "移动到" : "Move To Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

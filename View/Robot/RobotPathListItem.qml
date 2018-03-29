@@ -45,6 +45,7 @@ Frame {
             text: langue == "English" ? "设置路径" : "Assign Path"
             height: parent.height - 2
             padding: 0
+            width: 150
 
             background: Rectangle {
                 color: "white"
@@ -56,8 +57,8 @@ Frame {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
-                right: homeButton.left
-                rightMargin: 12
+//                right: stopPathButtonBis.left
+//                rightMargin: 12
             }
 
             onClicked: pathListInPopup.open()
@@ -76,6 +77,38 @@ Frame {
         }
 
         Button {
+            id: stopPathButtonBis
+            // prevents the icon from occasionally disappearing for no apparent reason
+
+            height: parent.height - 2
+            width: 28
+            padding: 0
+
+            background: Rectangle {
+                color: "white"
+                border.width: 1
+                border.color: Style.lightGreyBorder
+                radius: 3
+            }
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: assignPath.right
+                leftMargin: 12
+            }
+
+            contentItem: Image {
+                asynchronous: true
+                source: "qrc:/icons/stop"
+                fillMode: Image.PreserveAspectFit // For not stretching image
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            onClicked: robotModel.stopPathSignal(ip)
+        }
+
+        Button {
             id: homeButton
 
             height: parent.height - 2
@@ -91,6 +124,8 @@ Frame {
 
             anchors {
                 verticalCenter: parent.verticalCenter
+                left: stopPathButtonBis.right
+                leftMargin: 12
                 right: parent.right
             }
 
@@ -170,9 +205,9 @@ Frame {
                 imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                 tooltip: {
                     if (pathIsVisible) {
-                        langue == "English" ? "隐藏地图上的机器人路径" : "Hide the path of the robot on the map"
+                        langue == "English" ? "隐藏地图上的机器人路径" : "Hide robot path on map"
                     } else {
-                        langue == "English" ? "显示地图上的机器人路径" : "Show the path of the robot on the map"
+                        langue == "English" ? "显示地图上的机器人路径" : "Show robot path on map"
                     }
                 }
 
@@ -211,6 +246,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+                tooltip: pathIsOpen ? "Hide robot path detail" : "Show robot path detail"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -686,7 +722,8 @@ Frame {
                 height: parent.height - 2
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
-                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
+//                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
+                tooltip: looping ? "Unloop" : "Loop"
                 checkable: true
                 checked: looping
 
@@ -741,7 +778,8 @@ Frame {
                         break;
                     }
                 }
-                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
+//                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
+                tooltip: (dockStatus === 3) ? "Stop auto docking" : "Auto docking"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
