@@ -16,7 +16,6 @@ ListModel {
     property bool openGroup
 
     function addGroup(name){
-        console.log("we are creating a group for speech");
         append({
            "groupName": name,
            "isOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
@@ -26,8 +25,6 @@ ListModel {
 
     /// a speech has a label, belong to a group and has a text
     function addSpeech(name, groupName, tts){
-        console.log('we are adding a new speech');
-        console.log(name + " " + groupName + " " + tts );
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
                 get(i).speechs.append({
@@ -37,7 +34,6 @@ ListModel {
                 });
             }
         }
-        console.log(name + " " + groupName + " " + tts );
     }
 
     function hideShowDescription(groupName, name) {
@@ -53,7 +49,6 @@ ListModel {
     }
 
     function editSpeech(oldName, oldGroup, name, groupName, tts){
-        console.log('we are in editSpeech - Speechs.qml');
         deleteSpeech(oldGroup, oldName); /// while editing, not to have two times the same group which is edited
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
@@ -63,7 +58,6 @@ ListModel {
                 });
             }
         }
-        console.log("name and tts = " + name + " " + tts);
     }
 
     function deleteSpeech(groupName, name){

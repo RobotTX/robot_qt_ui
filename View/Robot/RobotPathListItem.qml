@@ -683,6 +683,7 @@ Frame {
                             robotModel.playPathSignal(ip);
                         }
                     }
+                    robotModel.pauseButtonClicked = true;
                 }
 
             }
@@ -712,6 +713,7 @@ Frame {
                         clickPausePlay = false;
                         lastPointLoop = false;
                     }
+                    robotModel.stopButtonClicked = true;
                 }
             }
 
@@ -792,6 +794,7 @@ Frame {
                 onClicked: {
                     dockClicked()
                     dockButtonClicked = true;
+                    console.log("audocking status = " + dockStatus)
                 }
             }
         }

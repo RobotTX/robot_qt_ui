@@ -48,10 +48,9 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-//    qDebug() << "\nWE ARE OM CmdRobotWorker::sendCommand()";
     qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;
+
     int nbDataSend = socket->write(QString(cmd + QChar(31) + QChar(23) + QChar(31)).toUtf8());
-//    qDebug() << "in cmdRobotWorker::sendCommand = " << QString(cmd + QChar(31) + QChar(23) + QChar(31));
 
     socket->waitForBytesWritten(100);
 
@@ -63,18 +62,17 @@ void CmdRobotWorker::sendCommand(const QString cmd){
 
 void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
-//    qDebug() << "\nWe are in CmdRobotWorker::readTcpDataSlot()";
-    qDebug() << "(Robot" << ipAddress << ") readTcpDataSlot :" << commandAnswer;
+
     /// if the command contains "Connected" it means the robot has just connected in which case
     /// we proceed a little differently (need to exchange home and path, modify settings page)
-    if(commandAnswer.contains("Connected"))
+    if(commandAnswer.contains("Connected")) {
         emit newConnection(commandAnswer);
-    else
+    } else {
         emit cmdAnswer(commandAnswer);
+    }
 }
 
 void CmdRobotWorker::connectedSlot(){
-    qDebug() << "(Robot" << ipAddress << ") Connected";
     emit connected();
 }
 
@@ -98,10 +96,12 @@ void CmdRobotWorker::pingSlot(void){
 
 void CmdRobotWorker::timerSlot(void){
     timeCounter++;
+
     if(timeCounter > 5)
         qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
+    /// ROBOT_TIMER = 15
     if(timeCounter >= ROBOT_TIMER){
         socket->close();
         timer->stop();

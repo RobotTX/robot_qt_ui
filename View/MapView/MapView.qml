@@ -369,9 +369,6 @@ Frame {
                     }
                 }
 
-
-
-
                 /// Repeater to display the paths points on the map
                 Repeater {
                     model: useTmpPathModel ? tmpPathModel : pathModel
@@ -437,20 +434,6 @@ Frame {
                 Repeater {
                     model: robotModel
                     delegate: Item{
-                        /// The robot on the map
-                        RobotView {
-                            id: robot
-                            _name: name
-                            _ip: ip
-                            x: posX - width / 2
-                            y: posY - height / 2
-                            mapOrientation: -topViewId.mapRotation
-                            robotModel: mapViewFrame.robotModel
-                            pathModel: mapViewFrame.pathModel
-                            pointModel: mapViewFrame.pointModel
-                            langue: mapViewFrame.langue
-                        }
-
                         /// The robot's home on the map
                         PointView {
                             id: homeView
@@ -472,16 +455,7 @@ Frame {
                                 _name: pathPointName
                                 _isVisible: useRobotPathModel ? pathIsVisible : false
                                 _groupName: pathName
-                                type: //index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
-//                                    if (index === 0) {
-//                                        Helper.PointViewType.PATHPOINT_START
-//                                    } else if (index === 1) {
-//                                        Helper.PointViewType.PATHPOINT
-//                                    } else {
-//                                        Helper.PointViewType.PATHPOINT_NEXT
-//                                    }
-                                    {
-                                        console.log("stage checking = " + stage + " index checking = " + index);
+                                type: {
                                         if (stage === 0) {
                                             if (index === 0) {
                                                 Helper.PointViewType.PATHPOINT_START_YELLOW
@@ -511,6 +485,20 @@ Frame {
                                 pointOrientation: orientation
 
                             }
+                        }
+
+                        /// The robot on the map
+                        RobotView {
+                            id: robot
+                            _name: name
+                            _ip: ip
+                            x: posX - width / 2
+                            y: posY - height / 2
+                            mapOrientation: -topViewId.mapRotation
+                            robotModel: mapViewFrame.robotModel
+                            pathModel: mapViewFrame.pathModel
+                            pointModel: mapViewFrame.pointModel
+                            langue: mapViewFrame.langue
                         }
                     }
                 }

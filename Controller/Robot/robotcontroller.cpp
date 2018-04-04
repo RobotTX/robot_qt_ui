@@ -235,7 +235,6 @@ void RobotController::updateRobotInfoSlot(const QString robotInfo){
 }
 
 void RobotController::sendCommand(const QString cmd){
-//    qDebug() << "\nWE ARE IN RobotController::sendCommand()";
     qDebug() << "(RobotController) Send command called" << cmd;
     commandController->sendCommand(cmd);
 }

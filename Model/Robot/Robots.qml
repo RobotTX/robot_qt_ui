@@ -14,6 +14,9 @@ ListModel {
     property string langue
     property bool sendPointToRobot
     property string ipRobot: ""
+    property bool stopButtonClicked: false
+    property bool pauseButtonClicked: false
+    property bool deletePathButtonClicked: false
 
     signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
@@ -110,7 +113,6 @@ ListModel {
     }
 
     function setHome(ip, posX, posY, ori){
-        console.log("Set home " + ip + " " + posX + " " + posY + " " + ori);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "homeX", posX);
@@ -121,7 +123,6 @@ ListModel {
     }
 
     function resetHome(ip){
-        console.log("Reset home " + ip);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "homeX", 0);
@@ -172,11 +173,9 @@ ListModel {
    }
 
    function setBatteryWarning(ip, batteryLevel) {
-           console.log("Robots.qml = setBAtteryWarning");
            for (var i = 0; i < count; i++) {
                if (get(i).ip === ip) {
                    setProperty(i, "batteryLevel", batteryLevel);
-                   console.log("batteryLevel = ", batteryLevel);
                }
            }
        }
@@ -247,7 +246,6 @@ ListModel {
     }
 
     function addPathPoint(ip, name, posX, posY, waitTime, orientation){
-        console.log("addPathPoint " + ip + " " + name + " " + posX + " " + posY + " " + waitTime);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 get(i).pathPoints.append({
@@ -258,7 +256,6 @@ ListModel {
                                           "orientation": orientation
                                       });
             }
-            console.log("name = " + name + "pos x = " + posX + " pos Y = " + posY + " waitTime = " + waitTime);
         visiblePathChanged();
     }
 
@@ -294,7 +291,6 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "laserActivated", activate);
-                console.log("laser set to "+ activate);
             }
     }
 
@@ -351,7 +347,6 @@ ListModel {
             if(get(i).ip === ip){
                 setProperty(i, "looping", loop);
                 ipRobot = ip;
-                console.log(ip + " looping : " + loop);
             }
     }
 

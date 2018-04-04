@@ -155,7 +155,6 @@ Menu {
                         /// Disable the group in which the path already is so we can't move it in
                         enabled: !(groupName === myGroup)
                         labelText: {
-                            console.log("number of robot = " + robotModel.count)
                             groupName
                         }
                         onTriggered: moveTo(groupName)

@@ -963,7 +963,6 @@ void MainController::removeScanMapSlot(QString ip){
 void MainController::sendScanGoal(QString ip, double x, double y){
     QPointF goal_in_robot_coords(Helper::Convert::pixelCoordToRobotCoord(QPointF(x, y), mapController->getOrigin().x(), mapController->getOrigin().y(),
                                                                          mapController->getResolution(), mapController->getHeight()));
-    qDebug() << "Sending command" << QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y());
     robotsController->sendCommand(ip, QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y()));
 }
 
@@ -1024,21 +1023,17 @@ void MainController::sendMapToAllRobots(QString id, QString date, QString metada
 }
 
 void MainController::saveVelocity(QString ip, double linearVelocity, double angularVelocity) {
-    qDebug() << "MainController::saveVelocitySignal : " << ip << linearVelocity << angularVelocity;
     QString cmd = QString("1") + QChar(31) + QString::number(linearVelocity) + QChar(31) + QString::number(angularVelocity);
     robotsController->sendCommand(ip,cmd);
 }
 
 void MainController::saveBattery(QString ip, double battery) {
-    qDebug() << "MainController::saveBattery : " << ip << battery;
     QString cmd = QString("2") + QChar(31) + QString::number(battery);
     robotsController->sendCommand(ip,cmd);
 }
 
 void MainController::updateLinearVelocitySlot(QString ip, double linear){
-    qDebug() << "MainController::updateLinearVelocitySlot";
     emit setLinearVelocity(ip, linear);
-    qDebug() << "linearVelocity = " << ip << linear;
 }
 
 

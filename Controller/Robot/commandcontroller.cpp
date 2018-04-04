@@ -1,4 +1,4 @@
-#include "commandcontroller.h"
+                                                  #include "commandcontroller.h"
 #include <QDebug>
 #include <QStringList>
 
@@ -13,13 +13,12 @@ void CommandController::sendCommand(const QString cmd){
     if(!waitingForAnswer){
         waitingForAnswer = true;
         emit sendCommandSignal(cmd);
-        qDebug() << "cmd = " << cmd;
 //        timer.start(15000);
-        timer.start(20000);
     } else {
-        qDebug() << "CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+        qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
+
     /// Send to the robot model to display the busy indicator when we are waiting for a cmd answer
     emit processingCmd(ip, waitingForAnswer);
 }
@@ -98,7 +97,6 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'n':
                     /// Sent the new home to the robot
-                    qDebug() << "\nn";
                     emit updateHome(ip, list.at(2).toDouble(), list.at(3).toDouble(), list.at(4).toDouble());
                     emit setMessageTop(2, "Robot " + robotName + " has a new home");
                 break;

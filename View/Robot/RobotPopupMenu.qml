@@ -7,6 +7,7 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
+import "../../Model/Robot"
 import "../Point"
 import "../Path"
 import "../Custom"
@@ -17,6 +18,7 @@ Menu {
     width: 220
     property Points pointModel
     property Paths pathModel
+    property Robots robotModel
     property string langue
     property int currentMenuIndex: -1
     signal pointSelected(double _homeX, double _homeY, int orientation)
@@ -174,8 +176,14 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 5
-        onClicked: if(visible) currentMenuIndex = 5
-        onTriggered: robotMenu.deletePath()
+        onClicked: {
+            robotModel.deletePathButtonClicked = true;
+            console.log("button delete path clicked");
+            if(visible) currentMenuIndex = 5
+        }
+        onTriggered: {
+            robotMenu.deletePath()
+        }
     }
 
     Rectangle {

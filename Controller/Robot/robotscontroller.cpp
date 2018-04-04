@@ -200,7 +200,6 @@ void RobotsController::shortcutDeleteRobot(void){
 }
 
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
-//    qDebug() << "\nWE ARE IN RobotsController::sendCommand()";
     if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
         qDebug() << "cmd in robotscontroller = " << cmd;
@@ -247,6 +246,7 @@ void RobotsController::sendCommandPlayPath(const QString ip){
 
 void RobotsController::sendCommandStopPath(const QString ip){
     sendCommand(ip, QString("l"));
+    qDebug() << "\n===========================\ncommand stop has been sent\n=======================\n";
 }
 
 void RobotsController::updatePlayingPathSlot(const QString ip, const bool playingPath){
@@ -442,12 +442,6 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         double angularVelocity = static_cast<QString>(strList.takeFirst()).toDouble();
         double batteryValue = static_cast<QString>(strList.takeFirst()).toDouble();
 
-        qDebug() << "playing_path = " << playing_path;
-        qDebug() << "looping = " << looping;
-        qDebug() << "linear velocity = " << linearVelocity;
-        qDebug() << "angular velocity = " << angularVelocity;
-        qDebug() << "battery value = " << batteryValue;
-
         /// What remains in the list is the path
 
         if(!strList.empty())
@@ -480,13 +474,8 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
 
         /// update velocity and battery values
        updateLinearVelocitySlot(ip, linearVelocity);
-       qDebug() <<"in robotsController.cpp before setVelocity";
        setVelocitySlot(ip, linearVelocity, angularVelocity);
-       qDebug() << "in robotscontroller.cpp setVelocitySlot " << ip << linearVelocity;
-
-       qDebug() << "in robotsController.cpp before setBatteryWarningSlot";
        setBatteryWarningSlot(ip, batteryValue);
-       qDebug() << "in robotsController.cpp after setBatteryWarningSlot" << ip << batteryValue;
 
     } else {
         /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
@@ -504,7 +493,6 @@ void RobotsController::updateHomeSlot(const QString ip, const double homeX, cons
 }
 
 void RobotsController::updateLinearVelocitySlot(QString ip, double linear) {
-    qDebug() << "RobotsController::updateLinearVelocitySlot";
     emit updateLinearVelocity(ip, linear);
 }
 
@@ -516,23 +504,17 @@ void RobotsController::updateLaserSlot(QString ip, bool activated){
 }
 
 void RobotsController::setLoopingSlot(QString ip, bool looping){
-    qDebug() << "RobotController::setLoopingSlot" << ip << "looping :" << looping;
     emit setLooping(ip, looping);
 }
 
 void RobotsController::setVelocitySlot(QString ip, double linear, double angular) {
-    qDebug() << "RobotsController::setLinearSlot" << ip << "linear :" << linear << "angular :" << angular;
     emit setVelocity(ip, linear, angular);
-    qDebug() << "RobotsController::setVelocitySlot after emit setVelocity";
 }
 
 void RobotsController::setBatteryWarningSlot(QString ip, double batteryLevel) {
-    qDebug() << "before RobotsController::setBatteryWarningSlot" << ip << "battery :" << batteryLevel;
     emit setBatteryWarning(ip, batteryLevel);
-    qDebug() << "after RobotsController::setBatteryWarningSlot";
 }
 
 void RobotsController::interruptDelay(QString ip){
     sendCommand(ip, QString("3") + QChar(31) + QString("1"));
-    qDebug() << "interruptDelay" << ip;
 }

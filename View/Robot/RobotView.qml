@@ -77,8 +77,8 @@ Image {
 //           console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
 //                       + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
             if (mouse.button === Qt.RightButton) {
-                console.log("right button on robot");
-                robotPopupMenu.open();
+//                console.log("right button on robot");
+//                robotPopupMenu.open();
             } else if (mouse.button === Qt.LeftButton) {
                 console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
                             + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
@@ -89,26 +89,26 @@ Image {
             hover = !hover
         }
 
-        RobotPopupMapView {
-            id: robotPopupMenu
-            pointModel: img.pointModel
-            pathModel: img.pathModel
-            robotModel: img.robotModel
-            langue: img.langue
-            onPointSelected: {
-                console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
-            }
-            onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
-            onDeletePath: robotModel.deletePathSignal(ip)
-            onSaveCurrentPath: {
-                pathModel.saveCurrentPath(pathName,pathPoints)
-            }
-            onSaveCurrentHome: {
-                pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
-                console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
-            }
-            onSoundOn: img.soundOn(ip)
-            onSoundOff: img.soundOff(ip)
-        }
+//        RobotPopupMapView {
+//            id: robotPopupMenu
+//            pointModel: img.pointModel
+//            pathModel: img.pathModel
+//            robotModel: img.robotModel
+//            langue: img.langue
+//            onPointSelected: {
+//                console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
+//            }
+//            onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
+//            onDeletePath: robotModel.deletePathSignal(ip)
+//            onSaveCurrentPath: {
+//                pathModel.saveCurrentPath(pathName,pathPoints)
+//            }
+//            onSaveCurrentHome: {
+//                pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
+//                console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
+//            }
+//            onSoundOn: img.soundOn(ip)
+//            onSoundOff: img.soundOff(ip)
+//        }
     }
 }
