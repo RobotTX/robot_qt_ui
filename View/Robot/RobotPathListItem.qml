@@ -13,6 +13,10 @@ Frame {
     property Paths pathModel
     property string langue
 
+    property variant consoleWhole: []
+    property variant consoleWholeReverse: []
+    property string consoleString
+
     property bool clickPausePlay
     property bool lastPointLoop
     property bool firstClick: false
@@ -21,6 +25,13 @@ Frame {
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
     signal interruptDelay(string ip)
+
+    /// signal for writing into console
+    signal stopPath()
+    signal playPath()
+    signal pausePath()
+    signal loopPath()
+    signal unloopPath()
 
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
@@ -70,6 +81,8 @@ Frame {
                 pathModel: frame.pathModel
                 onPathSelected: {
                     frame.pathSelected(pathName, groupName);
+
+                    robotModel.newPathSignal(ip, _groupName, _pathName)
                     currentMenuIndex = -1;
                     close();
                 }
@@ -105,7 +118,11 @@ Frame {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: robotModel.stopPathSignal(ip)
+            onClicked: {
+                robotModel.stopPathSignal(ip)
+                robotModel.stopButtonClicked = true;
+                stopPath();
+            }
         }
 
         Button {
@@ -166,7 +183,9 @@ Frame {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: dockClicked()
+            onClicked: {
+                dockClicked()
+            }
         }
     }
 
@@ -550,7 +569,6 @@ Frame {
 
                                                     } else {
                                                         elapsedTimer2.elapsed = 100000;
-                                                        console.log("hohohohohohohohohohohohohoho");
                                                     }
 
 
@@ -576,23 +594,23 @@ Frame {
                                     var elapsedTime = "";
                                     var elapsedTime2 = "";
                                     if (playingPath === false) { // if robot not playingPath
-                                        console.log("Path is not playing, so do nothing");
+//                                        console.log("Path is not playing, so do nothing");
                                     } else {
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) {
                                                 if (humanActionClicked === false) { /// if human action case
-                                                    console.log("Case looping = false : Human Action clicked");
+//                                                    console.log("Case looping = false : Human Action clicked");
                                                     interruptDelay(ip);
                                                     /// now we need to make the button non clickable
                                                     customLabelWaitTime.humanActionClicked = true;
                                                 } else {
-                                                    console.log("Human Action clicked already; do nothing");
+//                                                    console.log("Human Action clicked already; do nothing");
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 elapsedTimer.restart();
                                                 elapsedTime = waitTime - elapsedTimer.elapsed/1000;
                                                 if (elapsedTime <= 0) { /// if delay time is finished
-                                                    console.log("Case looping = false : time elapsed finished, do nothing");
+//                                                    console.log("Case looping = false : time elapsed finished, do nothing");
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
                                                     /// now we need to interrupt the time running / make the button non clickable
@@ -602,18 +620,18 @@ Frame {
                                         } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) {
                                             if (waitTime === -1) {
                                                 if (humanActionClicked === false) { /// if human action case
-                                                    console.log("Case looping = false : Human Action clicked");
+//                                                    console.log("Case looping = false : Human Action clicked");
                                                     interruptDelay(ip);
                                                     /// now we need to make the button non clickable
                                                     customLabelWaitTime.humanActionClicked = true;
                                                 } else {
-                                                    console.log("Human Action clicked already; do nothing");
+//                                                    console.log("Human Action clicked already; do nothing");
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 elapsedTimer2.restart();
                                                 elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
                                                 if (elapsedTime2 <= 0) { /// if delay time is finished
-                                                    console.log("Case looping = false : time elapsed finished, do nothing");
+//                                                    console.log("Case looping = false : time elapsed finished, do nothing");
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
                                                     /// now we need to interrupt the time running / make the button non clickable
@@ -621,7 +639,7 @@ Frame {
                                                 }
                                             }
                                         } else { /// for point where robot is not
-                                            console.log("Robot is not here, do nothing");
+//                                            console.log("Robot is not here, do nothing");
                                         }
                                     }
                                 }
@@ -664,7 +682,6 @@ Frame {
                     }
                 }
 
-
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: parent.left
@@ -683,7 +700,13 @@ Frame {
                             robotModel.playPathSignal(ip);
                         }
                     }
-                    robotModel.pauseButtonClicked = true;
+
+                    if (playingPath) {
+                        playPath();
+                    } else {
+                        pausePath();
+                    }
+
                 }
 
             }
@@ -714,6 +737,7 @@ Frame {
                         lastPointLoop = false;
                     }
                     robotModel.stopButtonClicked = true;
+                    stopPath();
                 }
             }
 
@@ -737,6 +761,12 @@ Frame {
 
                 onClicked: {
                     robotModel.setLoopingPathSignal(ip, !looping);
+
+                    if (looping) {
+                        unloopPath();
+                    } else {
+                        loopPath();
+                    }
                 }
             }
 
@@ -794,49 +824,7 @@ Frame {
                 onClicked: {
                     dockClicked()
                     dockButtonClicked = true;
-                    console.log("audocking status = " + dockStatus)
                 }
-            }
-        }
-
-        // console displaying actions
-        Rectangle {
-            id: idConsole
-            visible: true
-            height: 70
-            anchors {
-                top: pathItem.bottom
-                topMargin: 5
-                left: parent.left
-                right: parent.right
-            }
-            color: "white"
-            border.width: 1
-            border.color: Style.lightGreyBorder
-            radius: 3
-
-            Flickable {
-                id: flickConsole
-                ScrollBar.vertical: ScrollBar { }
-                contentHeight: contentItem.childrenRect.height
-                anchors.fill: parent
-                clip: true
-
-                Column {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-
-                    Text {
-                        id: consoleMessage
-                        fontSizeMode: Text.VerticalFit
-                        wrapMode: Text.WordWrap
-                        text: robotModel.msg
-
-                        font.pixelSize: 14
-                        color: Style.midGrey2
-                    }
-                }
-
             }
         }
     }

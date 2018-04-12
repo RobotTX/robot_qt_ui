@@ -144,6 +144,12 @@ Column {
                 SmallButton {
                     id: rightOpenSpeech
                     imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+                    tooltip: { if (descriptionIsOpen) {
+                               langue == "English" ? "在地图上隐藏路径" : "Hide the speech detail"
+                                } else {
+                               langue == "English" ? "在地图上显示路径" : "Show the speech detail"
+                            }
+                    }
                     anchors {
                         top: parent.top
                         bottom: parent.bottom

@@ -109,7 +109,7 @@ Frame {
 
             RobotListInPopup {
                 x: robotList.width
-                visible: settingsPage.currentMenuIndex === 0
+                visible: currentMenuIndex === 0
                 onVisibleChanged: if(!visible) currentMenuIndex = -1
                 robotModel: settingsPage.robotModel
                 onRobotSelected: {
@@ -226,7 +226,7 @@ Frame {
             Menu {
                 id: wifiMenu
                 x: userInputWifiName.width
-                visible: settingsPage.currentMenuIndex === 1
+                visible: currentMenuIndex === 1
                 onVisibleChanged: if (!visible) currentMenuIndex = -1
                 padding: 0
                 width: 300

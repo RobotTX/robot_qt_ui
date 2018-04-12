@@ -73,6 +73,12 @@ Frame {
                 id: infoLabel
                 color: Style.infoColor
             }
+
+            CustomLabelWithTimer {
+                id: unmovingLabel
+                color: Style.orangeColor
+            }
+
             Repeater {
                 model: robotModel
                 delegate: Label {
@@ -147,6 +153,9 @@ Frame {
             break;
             case 3:
                 infoLabel.text = msg;
+            break;
+            case 4:
+                unmovingLabel.text = msg;
             break;
             default:
                 console.log("Not supposed to be here");

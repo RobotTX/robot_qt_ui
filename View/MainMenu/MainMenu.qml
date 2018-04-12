@@ -59,7 +59,7 @@ Frame {
     MenuButton {
         id: speechButton
         txt: langue == "English" ? "目标点" : "Speech"
-        imgSrc: "qrc:/icons/point"
+        imgSrc: "qrc:/icons/speech"
         anchors.top: pointButton.bottom
         onClicked: checked ? selectMenu(3) : selectMenu(-1)
         checked: currentMenu == 3

@@ -47,7 +47,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'd':
                     /// Paused the path of the robot
-                    emit setMessageTop(2, "Paused robot \"" + robotName + "\" mission");
+                    emit setMessageTop(4, "Paused robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'e':
@@ -77,23 +77,23 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'j':
                     /// Played the path of the robot
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" is starting its mission");
+                    emit setMessageTop(2, "Start robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, true);
                 break;
                 case 'k':
                     /// Played the assigned point
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" is starting to go to assigned point");
+                    emit setMessageTop(2, "Robot \"" + robotName + "\" heading to assigned point");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'l':
                     /// Stopped the path of the robot
-                    emit setMessageTop(2, "Stopped robot \"" + robotName + "\" mission");
+                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false); // reset play path
                 break;
                 case 'm':
                     /// Stopped and deleted the path of the robot
                     emit stoppedDeletedPath(ip);
-                    emit setMessageTop(2, "Deleted robot \"" + robotName + "\" path");
+                    emit setMessageTop(4, "Deleted robot \"" + robotName + "\" path");
                 break;
                 case 'n':
                     /// Sent the new home to the robot
@@ -103,11 +103,12 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'o':
                     /// Started the docking process
                     emit updatePlayingPath(ip, false);
+                    emit setMessageTop(2, "Start robot \"" + robotName + "\" auto docking process");
                 break;
                 case 'p':
                     /// Stopped the docking process
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" is going to its charging station");
                     emit updatePlayingPath(ip, false);
+                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" docking process");
                 break;
                 case 'q':
                     /// Started the laser of the robot

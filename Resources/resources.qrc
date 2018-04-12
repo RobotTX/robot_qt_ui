@@ -34,6 +34,10 @@
         <file alias="path">icons/icPath_normal.png</file>
         <file alias="big_path">icons/Img_Path.png</file>
 
+        <file alias="speech_checked">icons/icSpeech_checked.png</file>
+        <file alias="speech">icons/icSpeech_normal.png</file>
+        <file alias="big_speech">icons/Img_Speech.png</file>
+
         <file alias="point_checked">icons/icPoint_checked.png</file>
         <file alias="point">icons/icPoint_normal.png</file>
         <file alias="pointView">icons/Point_s_80.png</file>

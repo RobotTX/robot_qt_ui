@@ -31,7 +31,7 @@ Frame {
         /// Only the invisible "No Group" left and it's empty
         visible: (speechModel.count === 1 && speechModel.get(0).speechs.count === 0) || speechModel.count === 0
         txt: langue == "English" ? "You don't have any speechs yet, click the '+' button to create a speech." : "You don't have any speechs yet, click the '+' button to create a speech."
-        imgSrc: "qrc:/icons/big_point"
+        imgSrc: "qrc:/icons/big_speech"
 
     }
 

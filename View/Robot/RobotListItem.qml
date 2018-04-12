@@ -16,6 +16,10 @@ Frame {
     property real batteryWarningThreshold
     property string langue
 
+    property variant consoleWhole: []
+    property variant consoleWholeReverse: []
+    property string consoleString: ""
+
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
     signal rebootRobot(string ip)
@@ -180,6 +184,12 @@ Frame {
                     nameLabel.visible = true;
                     nameField.focus = false;
                     robotModel.newNameSignal(ip, newName);
+                    consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot renamed to\n\"" + newName+ "\" \n");
+                    if (consoleWhole.length === 20) {
+                        consoleWhole.splice(0,1);
+                    }
+                    robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                    consoleString = consoleWholeReverse.join('');
                 }
             }
         }
@@ -210,10 +220,17 @@ Frame {
             charging = !charging;
             if (charging !== true) {
                 frame.soundOn(ip);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Unmute\n");
             } else {
                 // if mute is true then the corresponding command is x
                 frame.soundOff(ip);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Mute\n");
             }
+            if (consoleWhole.length === 20) {
+                consoleWhole.splice(0,1);
+            }
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            consoleString = consoleWholeReverse.join('');
         }
     }
 
@@ -235,21 +252,62 @@ Frame {
             pathModel: frame.pathModel
             robotModel: frame.robotModel
             langue: frame.langue
-            onPointSelected: { console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)}
-            onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
+            onPointSelected: {
+                console.log("robotModel.newHomeSignal");
+                robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "New home\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+                }
+            onPathSelected: {
+                robotModel.newPathSignal(ip, _groupName, _pathName)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + _pathName + "\" \nassigned to robot \""  + name +"\"\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
             onRenameRobot: {
                 nameLabel.visible = false;
                 nameField.focus = true;
             }
-            onDeletePath: robotModel.deletePathSignal(ip)
+            onDeletePath: {
+                robotModel.deletePathSignal(ip)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path deleted\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
             onSaveCurrentPath: {
                 pathModel.saveCurrentPath(pathName,pathPoints)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current path \"" + pathName + "\"\nsaved\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
             }
             onSaveCurrentHome: {
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
-//                console.log("\n we are in onSaveCurrentHome - RobotListItem.qml");
-                console.log( " home X = " + homeX + " home Y = " + homeY + " homeOri = " + homeOri);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current home saved\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
             }
         }
     }
@@ -423,16 +481,6 @@ Frame {
 
     property variant msgFinal: []
 
-    function inverseArray(array1, array2, len) {
-        console.log("array2 \n")
-        for (var i = len - 1; i >= 0; i--) {
-            for (var j = 0; j < len; j++) {
-                array2[j] = array1[i];
-                console.log(array2[j] + "\n");
-            }
-        }
-    }
-
     signal setMessageTop(int status, string msg)
 
     function reverse(arr1, arr2, len) {
@@ -593,6 +641,9 @@ Frame {
         robotModel: frame.robotModel
         pathModel: frame.pathModel
         langue: frame.langue
+        consoleWhole: frame.consoleWhole
+        consoleWholeReverse: frame.consoleWholeReverse
+        consoleString: frame.consoleString
         anchors {
             top: pathLabel.bottom
             left: parent.left
@@ -601,10 +652,135 @@ Frame {
             leftMargin: 20
             rightMargin: 20
         }
-        onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
-        onStartDockingRobot: frame.startDockingRobot(ip)
-        onStopDockingRobot: frame.stopDockingRobot(ip)
+        onPathSelected: {
+            robotModel.newPathSignal(ip, _groupName, _pathName)
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + _pathName + "\" assigned\nto robot \""  + name +"\"\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+            robotModel.reverse(frame.consoleWhole, frame.consoleWholeReverse, frame.consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+        onStartDockingRobot: {
+            console.log("docking clicked !!!");
+            frame.startDockingRobot(ip)
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Start robot \"" + name + "\" \nauto docking process\n");
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(frame.consoleWhole, frame.consoleWholeReverse, frame.consoleWhole.length);
+
+            frame.consoleString = frame.consoleWholeReverse.join('');
+
+        }
+        onStopDockingRobot: {
+            frame.stopDockingRobot(ip)
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop robot \"" + name + "\" \nauto docking process\n");
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(frame.consoleWhole, frame.consoleWholeReverse, frame.consoleWhole.length);
+
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
         onInterruptDelay: frame.interruptDelay(ip)
+        onStopPath: {
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop robot \"" + name + "\"\nmission\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+        onPlayPath: {
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Pause robot \"" + name + "\"\nmission\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+        onPausePath: {
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Start robot \"" + name + "\"\nmission\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+        onLoopPath: {
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Looping\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+        onUnloopPath: {
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Unlooping\n");
+
+            if (frame.consoleWhole.length === 20) {
+                frame.consoleWhole.splice(0,1);
+            }
+
+            robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+            frame.consoleString = frame.consoleWholeReverse.join('');
+        }
+    }
+
+    // console displaying actions
+    Rectangle {
+        id: idConsole
+        visible: true
+        height: 70
+        anchors {
+            top: robotPathListItem.bottom
+            topMargin: 5
+            left: parent.left
+            right: parent.right
+            leftMargin: 20
+            rightMargin: 20
+        }
+        color: "white"
+        border.width: 1
+        border.color: Style.lightGreyBorder
+        radius: 3
+
+        Flickable {
+            id: flickConsole
+            ScrollBar.vertical: ScrollBar { }
+            contentHeight: contentItem.childrenRect.height
+            anchors.fill: parent
+            clip: true
+
+            Column {
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                Text {
+                    id: consoleMessage
+                    fontSizeMode: Text.VerticalFit
+                    wrapMode: Text.WordWrap
+                    text: {
+                        consoleString
+                    }
+                    font.pixelSize: 14
+                    color: Style.midGrey2
+                }
+            }
+
+        }
     }
 
     ToolSeparator {
@@ -637,6 +813,5 @@ Frame {
         visible: processingCmd
         anchors.fill: parent
     }
-
 
 }

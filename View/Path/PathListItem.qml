@@ -164,6 +164,12 @@ Column {
                 SmallButton {
                     id: rightOpenPath
                     imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
+                    tooltip: { if (pathIsOpen) {
+                               langue == "English" ? "在地图上隐藏路径" : "Hide the path detail"
+                                } else {
+                               langue == "English" ? "在地图上显示路径" : "Show the path detail"
+                            }
+                    }
                     anchors {
                         top: parent.top
                         bottom: parent.bottom

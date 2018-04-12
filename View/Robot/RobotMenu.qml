@@ -14,6 +14,7 @@ Page {
     property Paths pathModel
     property real batteryWarningThreshold
     property string langue
+
     signal useRobotPathModel(bool use)
     signal closeMenu()
 

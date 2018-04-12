@@ -8,6 +8,7 @@ ListModel {
     property variant msgs: []
     property variant inverseMsg: []
     property variant tmp: []
+
     property string msg: ""
     property string test: ""
     property int statusColor: -1
@@ -380,12 +381,12 @@ ListModel {
                     message5 = "机器人 " + get(i).name + " 到达充电桩，但可能没有完全对准充电桩"
                     message6 = "机器人 " + get(i).name +" 正在前往充电桩"
                 } else {
-                    message1 = "Robot \"" + get(i).name + "\" could not reach its"
+                    message1 = "Robot \"" + get(i).name + "\" could not reach home"
                     message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its home"
                     message3 = "Robot \"" + get(i).name + "\" lost the signal of its home and could not reach it"
                     message4 = "Robot \"" + get(i).name + "\" successfully reached its home"
                     message5 = "Robot \"" + get(i).name + "\" successfully reached its home but might not be properly aligned"
-                    message6 = "Robot \"" + get(i).name + "\" is going to its home"
+                    message6 = "Robot \"" + get(i).name + "\" heading to home"
                 }
 
 
@@ -410,28 +411,11 @@ ListModel {
                         setMessageTop(2, message5);
                     break;
                     case 3:
-                        setMessageTop(3, message6);
+                        setMessageTop(2, message6);
                     break;
                 }
             }
     }
-
-//    CustomDialog {
-//        id: warningDialog
-//        x: mapMenuFrame.x / 2
-//        y: mapMenuFrame.y / 2
-//        height: 60
-//        title: "Warning dialog"
-////        acceptMessage: "Docking failed"
-//    }
-
-//    Dialog {
-//        id:warningDialog
-//        title: "Warning dialog"
-//        x: 20
-//        y: 30
-//        height: 60
-//    }
 
     function setSound(ip, mute) {
         for (var i = 0; i < count; i++) {
@@ -442,5 +426,11 @@ ListModel {
         }
 
 //        console.log("we are in setSound in Robot.qml file mute = " + mute)
+    }
+
+    function reverse(arr1, arr2, len) {
+        for (var i = len-1; i >=0; i--) {
+            arr2[(len-1) - i] = arr1[i];
+        }
     }
 }
