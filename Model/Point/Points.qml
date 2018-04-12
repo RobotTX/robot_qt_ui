@@ -71,7 +71,7 @@ ListModel {
                            message = "Deleted the point \"" + name + "\" in \"" + groupName + "\""
                        }
                         get(i).points.remove(j);
-                        setMessageTop(2, message);
+                        setMessageTop(3, message);
                     }
     }
 
@@ -86,7 +86,7 @@ ListModel {
                 } else {
                     message = "Deleted the group \"" + groupName + "\""
                 }
-                setMessageTop(2, message);
+                setMessageTop(3, message);
             }
         deleteGroupSignal(groupName);
     }
@@ -154,7 +154,7 @@ ListModel {
                 } else {
                     message = "Moved the point \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
                 }
-        setMessageTop(2, message);
+        setMessageTop(3, message);
         moveToSignal(name, oldGroup, newGroup)
     }
 

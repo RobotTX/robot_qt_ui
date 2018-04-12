@@ -314,7 +314,7 @@ ApplicationWindow {
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY, mapView.getMapRotation());
-        mapView.setMessageTop(2, message);
+        mapView.setMessageTop(3, message);
     }
 
     function setBatteryThreshold(threshold){

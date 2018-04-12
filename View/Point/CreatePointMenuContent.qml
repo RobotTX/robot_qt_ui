@@ -440,7 +440,7 @@ Frame {
                 mess2 = "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
-            setMessageTop(2, oldName === "" ? mess1 : mess2)
+            setMessageTop(3, oldName === "" ? mess1 : mess2)
         }
     }
 

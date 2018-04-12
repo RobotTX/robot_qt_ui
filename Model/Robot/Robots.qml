@@ -75,7 +75,7 @@ ListModel {
             message = "The robot \"" + name + "\" just connected"
         }
 
-        setMessageTop(3, message);
+        setMessageTop(2, message);
     }
 
     function removeRobot(ip){
@@ -386,7 +386,7 @@ ListModel {
                     message3 = "Robot \"" + get(i).name + "\" lost the signal of its home and could not reach it"
                     message4 = "Robot \"" + get(i).name + "\" successfully reached its home"
                     message5 = "Robot \"" + get(i).name + "\" successfully reached its home but might not be properly aligned"
-                    message6 = "Robot \"" + get(i).name + "\" heading to home"
+//                    message6 = "Robot \"" + get(i).name + "\" heading to home"
                 }
 
 
@@ -410,9 +410,9 @@ ListModel {
                     case 2:
                         setMessageTop(2, message5);
                     break;
-                    case 3:
-                        setMessageTop(2, message6);
-                    break;
+//                    case 3:
+//                        setMessageTop(2, message6);
+//                    break;
                 }
             }
     }

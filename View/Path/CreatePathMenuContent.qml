@@ -764,7 +764,7 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).orientation);
 
 
-                setMessageTop(2, oldName === "" ? mess1 : mess2)
+                setMessageTop(3, oldName === "" ? mess1 : mess2)
                 backToMenu();
             }
         }

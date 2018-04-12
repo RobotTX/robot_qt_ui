@@ -102,10 +102,10 @@ Frame {
             var newName = Helper.formatName(groupTextField.text);
             if(oldName === ""){
                 createGroup(newName);
-                setMessageTop(2, "Created the group \"" + newName + "\"");
+                setMessageTop(3, "Created the group \"" + newName + "\"");
             } else {
                 renameGroup(newName, oldName);
-                setMessageTop(2, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
+                setMessageTop(3, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
             }
             console.log("creating path " + newName)
             backToMenu();

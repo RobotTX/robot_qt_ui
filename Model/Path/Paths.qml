@@ -80,7 +80,7 @@ ListModel {
                 } else {
                     message = "Deleted the group \"" + groupName + "\""
                 }
-                setMessageTop(2, message);
+                setMessageTop(3, message);
             }
         deleteGroupSignal(groupName);
         visiblePathChanged();
@@ -104,7 +104,7 @@ ListModel {
                             message = "Deleted the path \"" + name + "\" in \"" + groupName + "\""
                         }
 
-                        setMessageTop(2, message);
+                        setMessageTop(3, message);
                     }
 
         deletePathSignal(groupName, name);
@@ -184,7 +184,7 @@ ListModel {
                     message = "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
                 }
 
-        setMessageTop(2, message);
+        setMessageTop(3, message);
         moveToSignal(name, oldGroup, newGroup)
     }
 

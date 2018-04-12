@@ -28,7 +28,7 @@ Frame {
     signal soundOn(string ip)
     signal soundOff(string ip)
 
-    height: 250 + robotPathListItem.height//105 + robotPathListItem.height
+    height: 240 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
 
     background: Rectangle {
@@ -787,7 +787,7 @@ Frame {
         orientation: Qt.Horizontal
 
         contentItem: Rectangle {
-            implicitHeight: 5
+            implicitHeight: 1
             color: Style.lightGreyBorder
         }
 
@@ -795,8 +795,8 @@ Frame {
             bottom: parent.bottom
             left: parent.left
             right: parent.right
-            leftMargin: 20
-            rightMargin: 20
+            leftMargin: 5
+            rightMargin: 5
         }
     }
 
