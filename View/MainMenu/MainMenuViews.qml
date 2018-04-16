@@ -65,6 +65,7 @@ Frame {
         tmpPathModel: mainMenuViewsFrame.tmpPathModel
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
+        speechModel: mainMenuViewsFrame.speechModel
         langue: mainMenuViewsFrame.langue
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)

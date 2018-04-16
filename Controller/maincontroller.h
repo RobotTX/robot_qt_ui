@@ -303,7 +303,7 @@ signals:
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
-    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
+    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation, QVariant speechName, QVariant speechContent, QVariant speechTime);
     void emitSettings(QVariant mapChoice);
     void emitWifiList(QVariant wifiList, QVariant count);
     void emitSizeWifiList(QVariant sizeWifiList);

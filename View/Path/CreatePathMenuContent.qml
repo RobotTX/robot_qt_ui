@@ -5,7 +5,9 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
 import "../../Model/Point"
+import "../../Model/Speech"
 import "../Point"
+import "../Speech"
 import "../Custom"
 
 Frame {
@@ -20,11 +22,12 @@ Frame {
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
+    property Speechs speechModel
     property string langue
 
     signal backToMenu()
     signal createPath(string groupName, string name)
-    signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation)
+    signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation, string speechName, string speechContent, int speechTime)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
 
@@ -75,7 +78,10 @@ Frame {
                                             "posY": pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
                                             "waitTime": pathModel.get(i).paths.get(j).pathPoints.get(k).waitTime,
                                             "orientation": pathModel.get(i).paths.get(j).pathPoints.get(k).orientation,
-                                            "validPos": true
+                                            "validPos": true,
+                                            "speechName": pathModel.get(i).paths.get(j).pathPoints.get(k).speechName,
+                                            "speechContent": pathModel.get(i).paths.get(j).pathPoints.get(k).speechContent,
+                                            "speechTime": pathModel.get(i).paths.get(j).pathPoints.get(k).speechTime
                                        });
                                     }
                                 }
@@ -244,7 +250,7 @@ Frame {
             y: addSavedPoint.y
             onPointSelected: {
                 console.log(name + " " + posX + " " + posY)
-                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
+                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
             }
@@ -311,7 +317,7 @@ Frame {
                         verticalCenter: parent.verticalCenter
                     }
                     width: dragArea.width
-                    height: 139
+                    height: 230
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
@@ -632,6 +638,177 @@ Frame {
                             field.text = Math.round(slider.valueAt(slider.position));
                         }
                     }
+
+                    NormalButton {
+                        id: addSpeech
+                        txt: langue == "English" ? "加入已有目标点" : "Add Speech"
+                        imgSrc: "qrc:/icons/add"
+                        anchors {
+                            left: parent.left
+                            top: slider.bottom
+                            right: parent.right
+                            topMargin: 8
+                        }
+                        onClicked: speechList.open()
+                    }
+
+                    SpeechListInPopup {
+                        id: speechList
+                        speechModel: createPathMenuFrame.speechModel
+                        x: addSpeech.width
+                        y: addSpeech.y
+                        onSpeechSelected: {
+                            tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, nameSpeech, tts, 0);
+                            console.log("nameSpeech in createpathmenucontent = " + nameSpeech);
+                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, nameSpeech, tts);
+                        }
+                    }
+
+                    Label {
+                        id: speechLabel
+                        visible: speechName !== ""
+                        text: "Name : "
+                        font.pointSize: 10
+                        color: Style.greyText
+                        anchors {
+                            left: waitFor.left
+                            top: addSpeech.bottom
+                            topMargin: 8
+                        }
+                    }
+
+                    Label {
+                        id: speechNameLabel
+                        visible: speechName !== ""
+                        text: speechName
+                        font.pointSize: 10
+                        color: Style.greyText
+                        anchors {
+                            left: speechLabel.right
+                            bottom: speechLabel.bottom
+                            leftMargin: 5
+                            verticalCenter: speechLabel.verticalCenter
+                        }
+                    }
+
+                    SmallButton {
+                        id: closeBtnSpeech
+                        visible: speechName !== ""
+                        imgSrc: "qrc:/icons/closeBtn"
+                        anchors {
+                            left: speechNameLabel.right
+                            leftMargin: 4
+                            verticalCenter: speechNameLabel.verticalCenter
+                            right: parent.right
+                        }
+                        onClicked: {
+                            speechName = ""
+                        }
+                    }
+
+                    Label {
+                        id: speechTimeLabel
+                        visible: speechName !== ""
+                        text: "Wait for"
+                        anchors {
+                            top: speechLabel.bottom
+                            left: speechLabel.left
+                            topMargin: 10
+                        }
+                        font.pointSize: 10
+                    }
+
+                    TextField {
+                        id: speechTimeTextField
+                        visible: speechName !== ""
+                        selectByMouse: true
+                        text: speechTime
+                        height: 20
+                        width: 40
+                        padding: 2
+                        horizontalAlignment: TextInput.AlignRight
+
+                        validator: IntValidator{bottom: 0; top: 999;}
+                        anchors {
+                            left: speechTimeLabel.right
+                            verticalCenter: speechTimeLabel.verticalCenter
+                            leftMargin: 4
+                        }
+                        enabled: speechLabel
+
+                        background: Rectangle {
+                            radius: 2
+                            border.color: speechTimeTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                            border.width: speechTimeTextField.activeFocus ? 3 : 1
+                        }
+                        onFocusChanged: !focus && text === "" ? text = "0" : undefined
+                        onTextChanged: text === "" ? speechTime = 0 : speechTime = parseInt(text)
+                    }
+
+                    Button {
+                        id: incButton2
+                        visible: speechName !== ""
+                        width: 12
+                        height: 21
+
+                        anchors {
+                            left: speechTimeTextField.right
+                            verticalCenter: speechTimeTextField.verticalCenter
+                            leftMargin: 4
+                        }
+
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+
+                        contentItem: Image {
+                            anchors.fill: parent
+                            source: "qrc:/icons/stepper"
+                            fillMode: Image.PreserveAspectFit
+
+                            MouseArea {
+                                id: mouseArea2
+                                anchors.fill: parent
+
+                                // so that you can press the button to increment the value instead of having to click a lot of times
+                                Timer {
+                                    id: timer2
+                                    interval: 50
+                                    repeat: true
+                                    onTriggered: {
+                                        // if we click the lower half of the button we decrement the value of otherwise we increment it
+                                        if(mouseArea2.pressed){
+                                            if(mouseArea2.mouseY > parent.height / 2)
+                                                speechTimeTextField.text = Math.max(0 , (parseInt(speechTimeTextField.text) - 1)).toString()
+                                            else
+                                                speechTimeTextField.text = Math.min((parseInt(speechTimeTextField.text) + 1)).toString()
+                                        }
+                                    }
+                                }
+
+                                onPressed: timer2.start()
+
+                                onReleased: timer2.stop()
+                            }
+                        }
+                    }
+
+                    Label {
+                        id: secText
+                        visible: speechName !== ""
+                        text: langue == "English" ? "秒" : "sec(s)"
+                        font.pointSize: 10
+                        color: Style.greyText
+                        anchors {
+                            left: incButton2.right
+                            verticalCenter: incButton2.verticalCenter
+                            leftMargin: 4
+                        }
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+
                 }
 
                 DropArea {
@@ -754,15 +931,19 @@ Frame {
                     mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
                 }
 
-                for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
+                for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
                     createPathPoint(groupComboBox.displayText,
                                     newName,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posX,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posY,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).waitTime,
-                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).orientation);
-
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).orientation,
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechName,
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechContent,
+                                    tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechTime
+                                    );
+                }
 
                 setMessageTop(3, oldName === "" ? mess1 : mess2)
                 backToMenu();

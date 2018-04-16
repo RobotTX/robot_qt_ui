@@ -17,7 +17,7 @@ public:
     void deleteGroup(const QString groupName);
     void addPath(const QString groupName, const QString name);
     void deletePath(const QString groupName, const QString name);
-    void addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation);
+    void addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const QString speechName, const QString speechContent, const int speechTime);
     void deletePathPoint(const QString groupName, const QString pathName, const QString name);
     void renameGroup(const QString newName, const QString oldName);
     void movePath(const QString name, const QString oldGroup, const QString newGroup);

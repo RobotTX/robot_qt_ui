@@ -15,8 +15,8 @@ void PathGroup::deletePath(const QString name){
     paths.remove(name);
 }
 
-void PathGroup::addPathPoint(const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation){
-    paths.value(pathName)->addPathPoint(name, x, y, waitTime, orientation);
+void PathGroup::addPathPoint(const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const QString speechName, const QString speechContent, const int speechTime){
+    paths.value(pathName)->addPathPoint(name, x, y, waitTime, orientation, speechName, speechContent, speechTime);
 }
 
 void PathGroup::deletePathPoint(const QString pathName, const QString name){

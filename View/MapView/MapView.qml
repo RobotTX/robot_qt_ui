@@ -293,7 +293,7 @@ Frame {
                                 console.log("robot 0 home pos " + robotModel.get(0).homeX + " " + robotModel.get(0).homeY + " " + useRobotPathModel)
                             }
                             if(useTmpPathModel){
-                                tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0);
+                                tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
                                 canvas.requestPaint();
                             }
@@ -334,7 +334,7 @@ Frame {
                                 onClicked: {
                                     console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
-                                        tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
+                                        tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                         tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                                         canvas.requestPaint();
                                     }
@@ -396,7 +396,7 @@ Frame {
                                     onClicked: {
                                         console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                         if(useTmpPathModel){
-                                            tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation);
+                                            tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                             tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                                             canvas.requestPaint();
                                         }

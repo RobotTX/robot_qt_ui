@@ -37,7 +37,7 @@ ListModel {
                 });
     }
 
-    function addPathPoint(name, pathName, groupName, x, y, waitTime, orientation){
+    function addPathPoint(name, pathName, groupName, x, y, waitTime, orientation, speechName, speechContent, speechTime){
         //console.log("Add pathpoint " + name + " to path " + pathName + " in group " + groupName);
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
@@ -54,7 +54,10 @@ ListModel {
                                      "posY": y,
                                      "waitTime": waitTime,
                                      "validPos": false,
-                                     "orientation": orientation
+                                     "orientation": orientation,
+                                     "speechName": speechName,
+                                     "speechContent": speechContent,
+                                     "speechTime": speechTime
                                 });
                         } else {
                             get(i).paths.get(j).pathPoints.append({
@@ -63,7 +66,11 @@ ListModel {
                                  "posY": y,
                                  "waitTime": waitTime,
                                  "validPos": false,
-                                 "orientation": orientation
+                                 "orientation": orientation,
+                                 "speechName": speechName,
+                                 "speechContent": speechContent,
+                                 "speechTime": speechTime
+
                             });
                         }
                     }
@@ -158,7 +165,10 @@ ListModel {
                                 "posY": get(i).paths.get(j).pathPoints.get(k).posY,
                                 "waitTime": get(i).paths.get(j).pathPoints.get(k).waitTime,
                                 "validPos": get(i).paths.get(j).pathPoints.get(k).validPos,
-                                "orientation": get(i).paths.get(j).pathPoints.get(k).orientation
+                                "orientation": get(i).paths.get(j).pathPoints.get(k).orientation,
+                                "speechName": get(i).paths.get(j).pathPoints.get(k).speechName,
+                                "speechContent": get(i).paths.get(j).pathPoints.get(k).speechContent,
+                                "speechTime": get(i).paths.get(j).pathPoints.get(k).speechTime,
                            });
                         }
 
@@ -211,5 +221,16 @@ ListModel {
                 for(var j = 0; j < get(i).paths.count; j++)
                     if(get(i).paths.get(j).pathName === pathName)
                         get(i).paths.get(j).pathPoints.get(index).orientation = orientation;
+    }
+
+    function setSpeechInfos(groupName, pathName, index, speechName, speechContent){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                for(var j = 0; j < get(i).paths.count; j++)
+                    if(get(i).paths.get(j).pathName === pathName) {
+                        get(i).paths.get(j).pathPoints.get(index).speechName = speechName;
+                        get(i).paths.get(j).pathPoints.get(index).speechContent = speechContent;
+
+                    }
     }
 }

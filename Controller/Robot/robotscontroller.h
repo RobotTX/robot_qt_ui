@@ -192,7 +192,7 @@ signals:
     void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
     void setPlayingPath(QVariant ip, QVariant playingPath);
-    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation);
+    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation, QVariant speechName, QVariant speechContent, QVariant speechTime);
     void displayRobots(void);
     void setStage(QVariant ip, QVariant stage);
     void setBattery(QVariant ip, QVariant battery, QVariant charging);

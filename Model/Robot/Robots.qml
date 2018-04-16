@@ -246,7 +246,7 @@ ListModel {
             }
     }
 
-    function addPathPoint(ip, name, posX, posY, waitTime, orientation){
+    function addPathPoint(ip, name, posX, posY, waitTime, orientation, speechName, speechContent, speechTime){
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 get(i).pathPoints.append({
@@ -254,7 +254,10 @@ ListModel {
                                           "pathPointPosX": posX,
                                           "pathPointPosY": posY,
                                           "waitTime": waitTime,
-                                          "orientation": orientation
+                                          "orientation": orientation,
+                                          "speechName": speechName,
+                                          "speechContent": speechContent,
+                                          "speechTime": speechTime
                                       });
             }
         visiblePathChanged();

@@ -931,7 +931,7 @@ Frame {
                 top: changeLanguageBtn.bottom
                 left: parent.left
                 right: parent.right
-                topMargin: 10
+                topMargin: 5
             }
         }
 
@@ -940,7 +940,7 @@ Frame {
                 height: 40
                 width: 70
                 checkable: true
-                text: ""//langue === "English" ? "断开" : "Deconnection"
+                text: langue === "English" ? "断开" : "Quit"
 
                 objectName: "deconnexionBtn"
                 signal deconnexion()
@@ -957,14 +957,26 @@ Frame {
 
                 anchors {
                     left : parent.left
-                    top : changeLanguageBtn.bottom;
+                    top : horizontalSeparation10.bottom;
+                    topMargin: 5
                 }
 
                 onClicked: {
-                    deconnexion()
-        //            Qt.quit()
+//                    deconnexion()
+                    Qt.quit()
                 }
             }
+
+        ToolSeparator {
+            id: horizontalSeparation11
+            orientation: Qt.Horizontal
+            anchors {
+                top: deconnexionBtn.bottom
+                left: parent.left
+                right: parent.right
+                topMargin: 5
+            }
+        }
 
         CancelButton {
             id: cancelButton

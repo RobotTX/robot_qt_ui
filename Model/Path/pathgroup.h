@@ -18,7 +18,7 @@ public:
     void addPath(const QString name);
     void addPath(const QString name, const QPointer<Path> path);
     void deletePath(const QString name);
-    void addPathPoint(const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation);
+    void addPathPoint(const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const QString speechName, const QString speechContent, const int speechTime);
     void deletePathPoint(const QString pathName, const QString name);
     QPointer<Path> takePath(const QString name);
 

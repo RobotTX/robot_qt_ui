@@ -556,17 +556,17 @@ void MainController::updatePathSlot(QString ip, QStringList strList){
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
     if(strList.size() > 0){
         qDebug() << "RobotsController::updatePathSlot"<<strList.size();
-        if(strList.size() % 5 == 1){
+        if(strList.size() % 7 == 1){
             qDebug() << "RobotsController::updatePathSlot" << ip << " updating the path";
             emit setPath(ip, strList.takeFirst());
-            for(int i = 0; i < strList.size(); i+=5){
+            for(int i = 0; i < strList.size(); i+=7){
                 QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
                                 QPointF(static_cast<QString>(strList.at(i+1)).toDouble(), static_cast<QString>(strList.at(i+2)).toDouble()),
                                 mapController->getOrigin().x(),
                                 mapController->getOrigin().y(),
                                 mapController->getResolution(),
                                 mapController->getHeight());
-                emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt(), static_cast<QString>(strList.at(i+4)).toInt());
+                emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt(), static_cast<QString>(strList.at(i+4)).toInt(), "", static_cast<QString>(strList.at(i+5)).toInt(), static_cast<QString>(strList.at(i+6)).toInt());
 //                PathXMLParser::save(pathController,location + "/robot_command_sent.xml");
             }
         } else
@@ -649,7 +649,9 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                 + QChar(31) + QString::number(pathPointPos.x())
                 + QChar(31) + QString::number(pathPointPos.y())
                 + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
-                + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation());
+                + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation())
+                + QChar(31) + pathPointVector.at(i)->getSpeechContent()
+                + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
     }
     QString cmd = QString("i") + QChar(31) + pathName + pathStr;
     robotsController->sendCommand(ip, cmd);

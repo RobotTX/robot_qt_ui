@@ -47,6 +47,9 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
                 xmlWriter.writeTextElement("y", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getPos().y()));
                 xmlWriter.writeTextElement("waittime", QString::number(l.value()->getPathPointVector().at(k)->getWaitTime()));
                 xmlWriter.writeTextElement("orientation", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getOrientation()));
+                xmlWriter.writeTextElement("speechname", l.value()->getPathPointVector().at(k)->getSpeechName());
+                xmlWriter.writeTextElement("speechcontent", l.value()->getPathPointVector().at(k)->getSpeechContent());
+                xmlWriter.writeTextElement("speechtime", QString::number(l.value()->getPathPointVector().at(k)->getSpeechTime()));
                 xmlWriter.writeEndElement();
             }
             xmlWriter.writeEndElement();
@@ -81,6 +84,11 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
                         xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getPos().y()));
                         xmlWriter.writeTextElement("waittime", QString::number(j.value()->getPathPointVector().at(k)->getWaitTime()));
                         xmlWriter.writeTextElement("orientation", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getOrientation()));
+                        xmlWriter.writeTextElement("speechname", l.value()->getPathPointVector().at(k)->getSpeechName());
+                        qDebug() << "speechname " <<  l.value()->getPathPointVector().at(k)->getSpeechName();
+                        xmlWriter.writeTextElement("speechcontent", l.value()->getPathPointVector().at(k)->getSpeechContent());
+                        qDebug() << "speechcontent " <<  l.value()->getPathPointVector().at(k)->getSpeechContent();
+                        xmlWriter.writeTextElement("speechtime", QString::number(l.value()->getPathPointVector().at(k)->getSpeechTime()));
                         xmlWriter.writeEndElement();
                     }
                     xmlWriter.writeEndElement();
@@ -177,6 +185,9 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
                                             QString name;
                                             int waitTime(0);
                                             int orientation(0);
+                                            QString speechName;
+                                            QString speechContent;
+                                            int speechTime(0);
                                             xmlReader.readNext();
                                             while(!xmlReader.atEnd()){
 
@@ -196,6 +207,15 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
                                                     } else if(xmlReader.name() == "orientation"){
                                                         orientation = readIntElement(xmlReader);
                                                         xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "speechname") {
+                                                        speechName = readStringElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "speechcontent") {
+                                                        speechContent = readStringElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "speechtime") {
+                                                        speechTime = readIntElement(xmlReader);
+                                                        xmlReader.readNext();
                                                     } else {
                                                         xmlReader.readNext();
                                                     }
@@ -204,7 +224,8 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
                                                     break;
                                                 } else xmlReader.readNext();
                                             }
-                                            pathController->addPathPoint(groupName, pathName, name, x, y, waitTime, orientation, false);
+                                            qDebug() << "speechName = " << speechName << " speechContent = " << speechContent << "speechTime = " << speechTime;
+                                            pathController->addPathPoint(groupName, pathName, name, x, y, waitTime, orientation, speechName, speechContent, speechTime, false);
 
                                             xmlReader.readNext();
                                         } else {

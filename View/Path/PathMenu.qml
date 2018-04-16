@@ -4,6 +4,7 @@ import "../Custom"
 import "../../Model/Path"
 import "../../Model/Point"
 import "../../Model/Robot"
+import "../../Model/Speech"
 import "../../Helper/helper.js" as Helper
 
 Page {
@@ -13,6 +14,7 @@ Page {
     property Paths tmpPathModel
     property Points pointModel
     property Robots robotModel
+    property Speechs speechModel
     property string langue
     property int menuIndex: 0
     signal useTmpPathModel(bool use)
@@ -82,6 +84,7 @@ Page {
             pathModel: page.pathModel
             tmpPathModel: page.tmpPathModel
             pointModel: page.pointModel
+            speechModel: page.speechModel
             langue: page.langue
             onUseTmpPathModel: page.useTmpPathModel(use)
             anchors {
