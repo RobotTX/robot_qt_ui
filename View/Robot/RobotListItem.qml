@@ -110,8 +110,8 @@ Frame {
             y: 200
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: "Do you want to switch off robot " + name + " ?"
-            acceptMessage: langue == "English" ? "Yes" : "Switch off"
+            message: "Do you want to power off robot " + name + " ?"
+            acceptMessage: langue == "English" ? "Yes" : "Ok"
             rejectMessage: "Cancel"
             onAccepted: {
                 frame.rebootRobot(timerRestartButton.ipToShutDown);

@@ -122,14 +122,14 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             Q_UNREACHABLE();
         }
 
-        QObject* deconnexionBtn = applicationWindow->findChild<QObject*>("deconnexionBtn");
-        if(deconnexionBtn){
-            connect(deconnexionBtn, SIGNAL(deconnexion()), this, SLOT(deconnexionSlot()));
-        } else {
-            /// NOTE can probably remove that when testing phase is over
-            qDebug() << "Authentification::Authentification could not find the deconnexionBtn";
-            Q_UNREACHABLE();
-        }
+//        QObject* deconnexionBtn = applicationWindow->findChild<QObject*>("deconnexionBtn");
+//        if(deconnexionBtn){
+//            connect(deconnexionBtn, SIGNAL(deconnexion()), this, SLOT(deconnexionSlot()));
+//        } else {
+//            /// NOTE can probably remove that when testing phase is over
+//            qDebug() << "Authentification::Authentification could not find the deconnexionBtn";
+//            Q_UNREACHABLE();
+//        }
 
         /// script shell script
         /// desktop

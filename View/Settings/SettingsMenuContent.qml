@@ -935,37 +935,38 @@ Frame {
             }
         }
 
-        Button {
-                id: deconnexionBtn
-                height: 40
-                width: 70
-                checkable: true
-                text: langue === "English" ? "断开" : "Exit"
+//        Button {
+//                id: deconnexionBtn
+//                height: 40
+//                width: 70
+//                checkable: true
+////                text: langue === "English" ? "断开" : "Exit"
 
-                objectName: "deconnexionBtn"
-                signal deconnexion()
-                contentItem: Label {
-                    text: deconnexionBtn.text
-                    font: deconnexionBtn.font
-                    verticalAlignment: Text.AlignVCenter
-                    color: Style.midGrey2
-                }
 
-                background: Rectangle {
-                    color: deconnexionBtn.checked ? "Red" : "transparent"
-                }
+//                objectName: "deconnexionBtn"
+//                signal deconnexion()
+//                contentItem: Label {
+//                    text: deconnexionBtn.text
+//                    font: deconnexionBtn.font
+//                    verticalAlignment: Text.AlignVCenter
+//                    color: Style.midGrey2
+//                }
 
-                anchors {
-                    left : parent.left
-                    top : horizontalSeparation10.bottom;
-                    topMargin: 5
-                }
+//                background: Rectangle {
+//                    color: deconnexionBtn.checked ? "Red" : "transparent"
+//                }
 
-                onClicked: {
-//                    deconnexion()
-                    Qt.quit()
-                }
-            }
+//                anchors {
+//                    left : parent.left
+//                    top : horizontalSeparation10.bottom;
+//                    topMargin: 5
+//                }
+
+//                onClicked: {
+////                    deconnexion()
+//                    Qt.quit()
+//                }
+//            }
 
         ToolSeparator {
             id: horizontalSeparation11
@@ -978,9 +979,23 @@ Frame {
             }
         }
 
-        CancelButton {
-            id: cancelButton
-            langue: settingsPage.langue
+        Button {
+            id: btnExit
+            height: 23
+
+            CustomLabel {
+                text: qsTr("Exit")
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            background: Rectangle {
+                radius: 3
+                border.width: 1
+                color: btn.pressed ? Style.whiteButtonPressed : "white"
+                border.color: Style.lightGreyBorder
+            }
+
             width: 70
 
             anchors.bottom: parent.bottom
@@ -988,10 +1003,41 @@ Frame {
             anchors.right: parent.right
 
             onClicked: {
-                nameRobot = "";
-                settingsPage.close()
+                exitDialog.open();
             }
         }
+
+        CustomDialog {
+            id: exitDialog
+            x: settingsPage.width / 2 + 100
+            y: 200
+            height: 130
+            title: langue == "English" ? "警告"  : "Warning"
+            message: "Do you want to exit the application ?"
+            acceptMessage: langue == "English" ? "Yes" : "Ok"
+            rejectMessage: "Cancel"
+            onAccepted: {
+                Qt.quit();
+            }
+            onRejected: console.log("Cancel");
+        }
+
+
+
+//        CancelButton {
+//            id: cancelButton
+//            langue: settingsPage.langue
+//            width: 70
+
+//            anchors.bottom: parent.bottom
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+
+//            onClicked: {
+//                nameRobot = "";
+//                settingsPage.close()
+//            }
+//        }
 
         CustomDialog {
             id: wifiDialog

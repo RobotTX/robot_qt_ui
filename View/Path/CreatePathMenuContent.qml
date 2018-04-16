@@ -642,13 +642,14 @@ Frame {
                     NormalButton {
                         id: addSpeech
                         txt: langue == "English" ? "加入已有目标点" : "Add Speech"
-                        imgSrc: "qrc:/icons/add"
+                        imgSrc: "qrc:/icons/add_speech"
                         anchors {
                             left: parent.left
                             top: slider.bottom
                             right: parent.right
                             topMargin: 8
                         }
+                        font.pointSize: 11
                         onClicked: speechList.open()
                     }
 
@@ -658,7 +659,6 @@ Frame {
                         x: addSpeech.width
                         y: addSpeech.y
                         onSpeechSelected: {
-                            tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, nameSpeech, tts, 0);
                             console.log("nameSpeech in createpathmenucontent = " + nameSpeech);
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, nameSpeech, tts);
                         }
@@ -702,7 +702,7 @@ Frame {
                             right: parent.right
                         }
                         onClicked: {
-                            speechName = ""
+                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, "", "");
                         }
                     }
 

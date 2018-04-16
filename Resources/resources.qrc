@@ -70,6 +70,7 @@
         <file alias="invisible">icons/Btn_Invisible.png</file>
         <file alias="more">icons/Btn_More.png</file>
         <file alias="add">icons/Btn_Add.png</file>
+        <file alias="add_speech">icons/Btn_Add_Sph.png</file>
         <file alias="back">icons/Btn_Back.png</file>
         <file alias="white_stepper">icons/White_Stepper.png</file>
         <file alias="stepper">icons/Stepper.png</file>
