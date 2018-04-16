@@ -91,14 +91,32 @@ Frame {
             interval: 50
             repeat: true
             property int elapsed
+            property string ipToShutDown
             onTriggered: elapsed += interval;
 
             onElapsedChanged: {
                 if(elapsed === restartButton.delay){
                     restartButton.released();
-                    frame.rebootRobot(ip);
+                    ipToShutDown = ip;
+                    rebootRobotDialog.open();
+
                 }
             }
+        }
+
+        CustomDialog {
+            id: rebootRobotDialog
+            x: frame.width / 2 + 100
+            y: 200
+            height: 130
+            title: langue == "English" ? "警告"  : "Warning"
+            message: "Do you want to switch off robot " + name + " ?"
+            acceptMessage: langue == "English" ? "Yes" : "Switch off"
+            rejectMessage: "Cancel"
+            onAccepted: {
+                frame.rebootRobot(timerRestartButton.ipToShutDown);
+            }
+            onRejected: console.log("Cancel");
         }
     }
 

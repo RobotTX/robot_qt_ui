@@ -940,7 +940,7 @@ Frame {
                 height: 40
                 width: 70
                 checkable: true
-                text: langue === "English" ? "断开" : "Quit"
+                text: langue === "English" ? "断开" : "Exit"
 
                 objectName: "deconnexionBtn"
                 signal deconnexion()

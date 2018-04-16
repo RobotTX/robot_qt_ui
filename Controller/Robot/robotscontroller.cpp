@@ -397,7 +397,6 @@ void RobotsController::resetHomePathSlot(QString ip){
 void RobotsController::callForRebootRobot(QString ip){
     qDebug() << "robotsController::callForRebootRobot called";
     sendCommand(ip, QString("v"));
-    //backupControllers.value(ip)->callForReboot();
 }
 
 void RobotsController::soundOn(QString ip) {
