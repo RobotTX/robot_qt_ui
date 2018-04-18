@@ -645,13 +645,25 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                         mapController->getOrigin().y(),
                         mapController->getResolution(),
                         mapController->getHeight());
-        pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
-                + QChar(31) + QString::number(pathPointPos.x())
-                + QChar(31) + QString::number(pathPointPos.y())
-                + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
-                + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation())
-                + QChar(31) + pathPointVector.at(i)->getSpeechContent()
-                + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
+
+        if (pathPointVector.at(i)->getSpeechContent().isEmpty()) {
+            pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
+                    + QChar(31) + QString::number(pathPointPos.x())
+                    + QChar(31) + QString::number(pathPointPos.y())
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation())
+                    + QChar(31) + "\"\""
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
+        } else {
+            pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
+                    + QChar(31) + QString::number(pathPointPos.x())
+                    + QChar(31) + QString::number(pathPointPos.y())
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation())
+                    + QChar(31) + pathPointVector.at(i)->getSpeechContent()
+                    + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
+        }
+
     }
     QString cmd = QString("i") + QChar(31) + pathName + pathStr;
     robotsController->sendCommand(ip, cmd);
