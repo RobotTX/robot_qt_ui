@@ -968,16 +968,16 @@ Frame {
 //                }
 //            }
 
-        ToolSeparator {
-            id: horizontalSeparation11
-            orientation: Qt.Horizontal
-            anchors {
-                top: deconnexionBtn.bottom
-                left: parent.left
-                right: parent.right
-                topMargin: 5
-            }
-        }
+//        ToolSeparator {
+//            id: horizontalSeparation11
+//            orientation: Qt.Horizontal
+//            anchors {
+//                top: deconnexionBtn.bottom
+//                left: parent.left
+//                right: parent.right
+//                topMargin: 5
+//            }
+//        }
 
         Button {
             id: btnExit
@@ -992,7 +992,7 @@ Frame {
             background: Rectangle {
                 radius: 3
                 border.width: 1
-                color: btn.pressed ? Style.whiteButtonPressed : "white"
+                color: btnExit.pressed ? Style.whiteButtonPressed : "white"
                 border.color: Style.lightGreyBorder
             }
 
