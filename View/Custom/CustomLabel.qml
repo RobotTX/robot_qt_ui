@@ -7,6 +7,8 @@ Label {
 
     maximumLineCount: 1
     elide: Text.ElideRight
+    wrapMode: "WrapAtWordBoundaryOrAnywhere"
+
     property bool hovered: false
     property bool timerTriggered: false
 

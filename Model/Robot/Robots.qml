@@ -18,6 +18,7 @@ ListModel {
     property bool stopButtonClicked: false
     property bool pauseButtonClicked: false
     property bool deletePathButtonClicked: false
+    property bool pathCompleted: false
 
     signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)

@@ -594,7 +594,7 @@ Frame {
                         reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                         robotModel.msg = robotModel.inverseMsg.join('');
                         langue == "English" ? qsTr("已完成当前路径") : qsTr("Current path completed");
-
+                        robotModel.pathCompleted = true;
                     } else {
                         langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
                     }

@@ -68,7 +68,7 @@ Frame {
 
     NormalButton {
         id: savePositionButton
-        txt: langue == "English" ? "保存当前地图位置" : "Save the position of the map"
+        txt: langue == "English" ? "保存当前地图位置" : "Save the map position"
         imgSrc: "qrc:/icons/saveState"
         anchors.top: editButton.bottom
         onClicked: mapMenuFrame.savePosition()
@@ -76,7 +76,7 @@ Frame {
 
     NormalButton {
         id: loadPositionButton
-        txt: langue == "English" ? "重置当前地图位置" : "Reset the position of the map"
+        txt: langue == "English" ? "重置当前地图位置" : "Reset the map position"
         imgSrc: "qrc:/icons/loadState"
         anchors.top: savePositionButton.bottom
         // the signal needs to be relayed in order to call the function that is in mapView

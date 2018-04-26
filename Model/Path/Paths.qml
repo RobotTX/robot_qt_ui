@@ -120,8 +120,10 @@ ListModel {
 
     function hideShowGroup(groupName){
         for(var i = 0; i < count; i++)
-            if(get(i).groupName === groupName)
+            if(get(i).groupName === groupName) {
                 setProperty(i, "groupIsOpen", !get(i).groupIsOpen);
+                console.log("groupIsOpen = " + !get(i).groupIsOpen);
+            }
     }
 
     function hideShowPath(groupName, name){
@@ -168,7 +170,7 @@ ListModel {
                                 "orientation": get(i).paths.get(j).pathPoints.get(k).orientation,
                                 "speechName": get(i).paths.get(j).pathPoints.get(k).speechName,
                                 "speechContent": get(i).paths.get(j).pathPoints.get(k).speechContent,
-                                "speechTime": get(i).paths.get(j).pathPoints.get(k).speechTime,
+                                "speechTime": get(i).paths.get(j).pathPoints.get(k).speechTime
                            });
                         }
 
@@ -185,15 +187,16 @@ ListModel {
         }
 
         var message = ''
-        for(i = 0; i < count; i++)
-            if(get(i).groupName === newGroup)
+        for(i = 0; i < count; i++) {
+            if(get(i).groupName === newGroup) {
                 get(i).paths.append(path);
                  if (langue == 'English') {
                     message = "移动路径 \"" + name + "\" 从 \"" + oldGroup + "\" 到 \"" + newGroup + "\""
                 } else {
                     message = "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
                 }
-
+            }
+        }
         setMessageTop(3, message);
         moveToSignal(name, oldGroup, newGroup)
     }

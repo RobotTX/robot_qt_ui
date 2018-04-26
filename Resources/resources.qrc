@@ -75,6 +75,28 @@
         <file alias="white_stepper">icons/White_Stepper.png</file>
         <file alias="stepper">icons/Stepper.png</file>
 
+        <file alias="click">icons/click.png</file>
+        <file alias="click_2424">icons/click_2424.png</file>
+        <file alias="click_3232">icons/click_3232.png</file>
+        <file alias="click_4848">icons/click_4848.png</file>
+        <file alias="click_128128">icons/click_128128.png</file>
+        <file alias="click_256256">icons/click_256256.png</file>
+
+        <file alias="back_128128">icons/back_128128.png</file>
+        <file alias="back_256256">icons/back_256256.png</file>
+
+        <file alias="pauseDialog">icons/pause_gold.png</file>
+        <file alias="playDialog">icons/play_gold.png</file>
+        <file alias="stopDialog">icons/stop_gold.png</file>
+
+        <file alias="pauseDialog400">icons/pause_gold_400400.png</file>
+        <file alias="playDialog400">icons/play_gold_400400.png</file>
+        <file alias="stopDialog400">icons/stop_gold_400400.png</file>
+
+        <file alias="pauseDialog300">icons/pause_gold_300300.png</file>
+        <file alias="playDialog300">icons/play_gold_300300.png</file>
+        <file alias="stopDialog300">icons/stop_gold_300300.png</file>
+
         <file alias="edit_map">icons/Ic_EditMap.png</file>
         <file alias="load_map">icons/Ic_LoadMap.png</file>
         <file alias="merge_map">icons/Ic_MergeMap.png</file>

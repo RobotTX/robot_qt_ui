@@ -7,7 +7,7 @@
  * In this file we put all sorts of useful functions used by any classes accross the application
  */
 
-#define NO_GROUP_NAME "No Group"
+#define NO_GROUP_NAME "Default"
 
 #define PORT_ROBOT_UPDATE 6000
 #define PORT_ROBOT_POS 4001

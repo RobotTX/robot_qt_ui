@@ -8,11 +8,11 @@ Frame {
     id: menuHeader
     padding: 0
     z: 2
-    readonly property string txt: "Guide"
+    property string txt
     property string langue
+    property int menuIndex: 0
     signal closeMenu(string txt)
-    signal openCreateSpeechMenu()
-    signal openCreateGroupMenu()
+    signal closePath()
 
     height: Style.menuHeaderHeight
     anchors {
@@ -30,8 +30,10 @@ Frame {
 
     SmallButton {
         id: closeBtn
-        onClicked: menuHeader.closeMenu(txt)
-        imgSrc: "qrc:/icons/closeBtn"
+        onClicked: {
+                menuHeader.closeMenu(txt)
+        }
+        imgSrc: "qrc:/icons/undo"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 11
@@ -39,7 +41,8 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: langue == "English" ? qsTr("管理 目标点") : qsTr("Manage " + txt)
+//        text: langue == "English" ? qsTr("管理 目标点") : qsTr("Manage " + txt)
+        text: qsTr(txt);
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

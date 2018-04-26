@@ -19,7 +19,7 @@ ApplicationWindow {
     maximumHeight:  120
     minimumWidth: 350
     minimumHeight: 120
-    title: qsTr("Authentification Go Anywhere application")
+    title: qsTr("Authentification Go Anywhere")
     Component.onCompleted: {
         setX(Screen.width / 2 - width / 2);
         setY(Screen.height / 2 - height / 2);
@@ -51,7 +51,7 @@ ApplicationWindow {
                 left: userId.right
                 top: userId.top
             }
-            anchors.leftMargin: 100
+            anchors.leftMargin: 120
             anchors.topMargin: -5
         }
 

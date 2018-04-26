@@ -144,7 +144,7 @@ Frame {
 //                Menu {
 //                    id: pointMenu
 //                    padding: 0
-//                    width: 140
+//                    width: 140z
 //                    x: parent.width
 //                    visible: currentMenuIndex === index && (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
 

@@ -82,7 +82,7 @@ Dialog {
                 bottomMargin: 10
             }
 
-            CancelButton {
+            CancelButtonGolden {
                 id: robotButton
                 visible: rejectMessage !== ""
                 txt: qsTr(rejectMessage)
@@ -93,7 +93,7 @@ Dialog {
                 Layout.rightMargin: 10
             }
 
-            SaveButton {
+            SaveButtonGolden {
                 id: yesButton
                 visible: yesMessage !== ""
                 txt: yesMessage
@@ -104,7 +104,7 @@ Dialog {
                 Layout.rightMargin: 10
             }
 
-            SaveButton {
+            SaveButtonGolden {
                 id: appButton
                 visible: acceptMessage !== ""
                 txt: acceptMessage
