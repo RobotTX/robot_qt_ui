@@ -23,7 +23,7 @@ void SpeechXMLParser::save(SpeechController *speechController, const QString fil
 
         xmlWriter.writeStartElement("speechs");
 
-        /// We write the "No Group" first
+        /// We write the "Default" first
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
 
@@ -39,7 +39,7 @@ void SpeechXMLParser::save(SpeechController *speechController, const QString fil
         }
 
         QMapIterator<QString, QPointer<SpeechGroup>> i(speechController->getSpeechs()->getGroups());
-        /// For each group except "No Group"
+        /// For each group except "Default"
         while (i.hasNext()) {
             i.next();
 

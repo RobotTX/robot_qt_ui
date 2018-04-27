@@ -14,6 +14,8 @@ ListModel {
     signal saveCurrentPath(string pathName, ListModel pathPoints)
     signal robotConnection(string ip)
 
+    property bool openGroup: false
+
     property string langue
 
     function addGroup(name){
@@ -122,8 +124,13 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName) {
                 setProperty(i, "groupIsOpen", !get(i).groupIsOpen);
-                console.log("groupIsOpen = " + !get(i).groupIsOpen);
+                console.log("groupName = " + groupName +" groupIsOpen = " + !get(i).groupIsOpen);
             }
+    }
+
+    function hideShowGroupAll(){
+        for(var i = 0; i < count; i++)
+            setProperty(i, "groupIsOpen", false);
     }
 
     function hideShowPath(groupName, name){

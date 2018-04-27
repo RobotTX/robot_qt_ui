@@ -12,8 +12,8 @@ Dialog {
     property string rejectMessage
     property string acceptMessage
     property string yesMessage
-    property string colorBackground: "transparent"
-    property string colorBorder: "bcb5b9"
+    property string colorBackground: "#f3f3f3"
+    property string colorBorder: "#bcb5b9"
     property string textColor: Style.greyText
     signal yes()
 

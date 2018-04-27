@@ -84,6 +84,8 @@
 
         <file alias="back_128128">icons/back_128128.png</file>
         <file alias="back_256256">icons/back_256256.png</file>
+        <file alias="back_gold_128128">icons/back_gold_128128.png</file>
+        <file alias="back_gold_256256">icons/back_gold_256256.png</file>
 
         <file alias="pauseDialog">icons/pause_gold.png</file>
         <file alias="playDialog">icons/play_gold.png</file>

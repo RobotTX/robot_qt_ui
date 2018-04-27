@@ -19,6 +19,7 @@ ListModel {
     property bool pauseButtonClicked: false
     property bool deletePathButtonClicked: false
     property bool pathCompleted: false
+    property bool robotStuck: false
 
     signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
@@ -203,7 +204,8 @@ ListModel {
 
     function setStage(ip, stage){
         var message = ''
-
+        pathCompleted = false;
+        robotStuck = false;
 
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
@@ -215,6 +217,7 @@ ListModel {
                 else if(Math.abs(get(i).stage) < 10000 && stage >= 9999){
                     if (langue == "English") {
                         message ="The robot \"" + get(i).name + "\" just completed its path"
+                        pathCompleted = true;
                     } else {
                         message = "机器人 " + get(i).name + " 完成路径"
                     }
@@ -224,6 +227,7 @@ ListModel {
                     if(get(i).dockStatus !== 3)
                         stopPathSignal(ip);
                 } else if(get(i).stage >= 0 && stage < 0) {
+                    robotStuck = true;
                     if (langue == "English") {
                     message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
                     } else {

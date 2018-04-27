@@ -29,7 +29,7 @@ void RobotServerWorker::newConnectionSlot(){
     /// if the server gets a new connection
     if(socket->state() == QTcpSocket::ConnectedState){
 
-        socket->write("OK");
+        socket->write("OK\n");
         socket->waitForReadyRead();
         QString str = socket->readAll();
 

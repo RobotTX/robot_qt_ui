@@ -96,7 +96,7 @@ void PointController::loadPoints(const QString fileName){
 QVector<double> PointController::getHome() {
     QVector<double> home;
     QMapIterator<QString, QPointer<PointGroup>> i(points->getGroups());
-    /// For each group except "No Group"
+    /// For each group except "Default"
     while (i.hasNext()) {
         i.next();
         if(i.key().compare(NO_GROUP_NAME) != 0){

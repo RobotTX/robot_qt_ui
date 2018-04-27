@@ -89,7 +89,6 @@ Column {
             }
 
             onClicked: {
-                console.log("groupSelected in guidelistitem = " + groupName);
                 groupSelected(groupName)
             }
         }

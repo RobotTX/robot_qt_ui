@@ -19,7 +19,7 @@ Column {
 
     Frame {
         id: groupItem
-        visible: !(groupName === Helper.noGroup)
+//        visible: !(groupName === Helper.noGroup)
         height: visible ? 37 : 0
         padding: 0
         anchors.left: parent.left

@@ -23,7 +23,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
 
         xmlWriter.writeStartElement("points");
 
-        /// We write the "No Group" first
+        /// We write the "Default" first
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
 
@@ -43,7 +43,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
         }
 
         QMapIterator<QString, QPointer<PointGroup>> i(pointController->getPoints()->getGroups());
-        /// For each group except "No Group"
+        /// For each group except "Default"
         while (i.hasNext()) {
             i.next();
 

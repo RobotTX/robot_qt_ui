@@ -233,7 +233,7 @@ Frame {
             id: addSavedPoint
             txt: langue == "English" ? "加入已有目标点" : "Add Saved Point"
 
-            imgSrc: "qrc:/icons/add"
+            imgSrc: "qrc:/icons/point_checked"
             anchors {
                 left: parent.left
                 top: pathPointsLabel.bottom
@@ -844,7 +844,9 @@ Frame {
                 model: paths
                 delegate: ListView {
                     id: view
-                    ScrollBar.vertical: ScrollBar { }
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     contentHeight: contentItem.childrenRect.height
 
                     anchors {

@@ -30,6 +30,7 @@ Page {
         if(visible){
             useRobotPathModel(false);
             pathModel.visiblePathChanged();
+            pathModel.hideShowGroupAll();
             menuIndex = 0;
         }
     }
@@ -145,7 +146,8 @@ Page {
             }
             onGroupSelected: {
                 page.groupSelected = groupName;
-                pathModel.hideShowGroup(groupName)
+                pathModel.hideShowGroupAll();
+                pathModel.hideShowGroup(groupName);
                 menuIndex = 1;
             }
             onCloseGuideMenu: {
@@ -217,13 +219,13 @@ Page {
                             width: 230
 
                             background: Rectangle {
-                                color: "#3b358e"
-                                border.width: 1
+                                color: "transparent"
+//                                border.width: 1
                             }
 
                             Image {
                                 id: icon
-                                source: "qrc:/icons/back_128128" //imgSrc
+                                source: "qrc:/icons/back_gold_128128" //imgSrc
                                 fillMode: Image.Pad // to not stretch the image
                                 anchors{
                                     left: parent.left
@@ -235,7 +237,7 @@ Page {
 
                             onClicked: {
                                 page.menuIndex = 0;
-                                pathModel.hideShowGroup(groupName);
+                                pathModel.hideShowGroupAll();
                             }
                         }
 
@@ -250,7 +252,7 @@ Page {
 
                         Button {
                             id: btnGroup
-                            visible: groupName === Helper.noGroup ? !groupIsOpen : groupIsOpen
+                            visible: groupIsOpen
                             height: 230
                             width: 230
 
@@ -289,6 +291,21 @@ Page {
                                 font.bold: true
                             }
 
+                            /// this is a "fake label", used mainly to get feedback of path completed and robot stuck from robot feedback
+                            CustomLabel {
+                                id: fakeLabel
+                                text: {
+                                    if (robotModel.robotStuck === true) { /// robot is stuck in its path
+                                        pauseRobotInPath.close();
+                                        playRobotInPath.open();
+                                    } else if (robotModel.pathCompleted === true) { /// robot has completed its path
+                                        pauseRobotInPath.close();
+                                        page.menuIndex = 0;
+                                    }
+                                    qsTr("");
+                                }
+                            }
+
                             onClicked: {
                                 sendPathToRobot.open();
                             }
@@ -300,7 +317,6 @@ Page {
                                 y: (page.height - height) / 2
                                 height: 130
                                 colorBackground: Style.backgroundColorItemGuide
-//                                title: langue == "English" ? "警告"  : "Warning"
                                 message: "Do you want the robot to perform path \"" + pathName +  "\" ?"
                                 textColor: Style.goldenColor
                                 colorBorder: Style.goldenColor
@@ -308,8 +324,9 @@ Page {
                                 acceptMessage: langue == "English" ? "Hao" : "Yes"
                                 rejectMessage: "Cancel"
                                 onAccepted: {
-                                        robotModel.newPathSignal(robotModel.ipRobot, groupName, pathName);
-                                        robotModel.playPathSignal(robotModel.ipRobot);
+                                        robotModel.newPathSignal(robotModel.ipRobot, groupName, pathName); /// send path to robot
+                                        robotModel.setLooping(robotModel.ipRobot, false); /// set looping to be false so the robot won t loop
+                                        robotModel.playPathSignal(robotModel.ipRobot); /// tell the robot to play the path
                                         pauseRobotInPath.open();
                                 }
                                 onRejected: console.log("Cancel");
@@ -320,7 +337,6 @@ Page {
                                 parent: ApplicationWindow.overlay
                                 x: (page.width - width) / 2
                                 y: (page.height - height) / 2
-
                                 height: 500
                                 width: 800
                                 message: "You can : \n\t> pause the robot by clicking on the \"PAUSE\" button \n\t> stop the robot by clicking on the \"STOP\" button ";
@@ -330,11 +346,13 @@ Page {
                                 colorPlayPause: Style.darkSkyBlueBorder
                                 onAccepted: {
                                     robotModel.stopPathSignal(robotModel.ipRobot);
+                                    pauseRobotInPath.close();
                                 }
+
                                 onYes: {
                                     robotModel.pausePathSignal(robotModel.ipRobot);
-                                    playRobotInPath.open();
                                     pauseRobotInPath.close();
+                                    playRobotInPath.open();
                                 }
                             }
 
@@ -343,7 +361,6 @@ Page {
                                 parent: ApplicationWindow.overlay
                                 x: (page.width - width) / 2
                                 y: (page.height - height) / 2
-
                                 height: 500
                                 width: 800
                                 message: "You can : \n\t> play the robot by clicking on the \"PLAY\" button \n\t> stop the robot by clicking on the \"STOP\" button ";
@@ -353,11 +370,12 @@ Page {
                                 colorPlayPause: Style.greenPlay
                                 onAccepted: {
                                     robotModel.stopPathSignal(robotModel.ipRobot);
+                                    pauseRobotInPath.close();
                                 }
                                 onYes: {
                                     robotModel.playPathSignal(robotModel.ipRobot);
-                                    pauseRobotInPath.open();
                                     playRobotInPath.close();
+                                    pauseRobotInPath.open();
                                 }
                             }
 

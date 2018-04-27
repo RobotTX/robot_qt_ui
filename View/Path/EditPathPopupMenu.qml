@@ -47,17 +47,17 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// destkop
-        onClicked: if(visible){ currentMenuIndex = 0 } /// android
+        onHoveredChanged: if(visible){ menu.currentMenuIndex = 0 } /// destkop
+//        onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
         RobotListInPopup {
             x: assignPathBis.width
             visible: menu.currentMenuIndex === 0
-            onVisibleChanged: if(!visible) currentMenuIndex = -1
+            onVisibleChanged: if(!visible) menu.currentMenuIndex = -1
             robotModel: menu.robotModel
             onRobotSelected: {
                 robotModel.newPathSignal(ip, groupName, pathName)
-                currentMenuIndex = -1;
+//                currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
             }
@@ -77,7 +77,7 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
 //        onHoveredChanged: if (visible) currentMenuIndex = 1
-        onClicked: if(visible){ currentMenuIndex = 1 }
+        onClicked: if(visible){ menu.currentMenuIndex = 1 }
         onTriggered: editPath()
     }
 
@@ -104,7 +104,7 @@ Menu {
             anchors.rightMargin: 12
         }
 
-        onHoveredChanged: if (visible) currentMenuIndex = 2 /// desktop
+        onHoveredChanged: if (visible) menu.currentMenuIndex = 2 /// desktop
 //        onClicked: if(visible){ currentMenuIndex = 2 } /// android
 
         Menu {

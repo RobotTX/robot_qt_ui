@@ -24,12 +24,12 @@ Frame {
     }
 
     /// This frame is displayed when there is no guide group
-    EmptyMenu {
-        /// Only the invisible "No Group" left and it's empty
-        visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
-        txt: langue == "English" ? "没有任何目标点，点击"+"按钮或者双击地图，创建目标点" : "No guide group"
-        imgSrc: "qrc:/icons/big_point"
-    }
+//    EmptyMenu {
+//        /// Only the invisible "No Group" left and it's empty
+//        visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
+//        txt: langue == "English" ? "没有任何目标点，点击"+"按钮或者双击地图，创建目标点" : "No guide group"
+//        imgSrc: "qrc:/icons/big_point"
+//    }
 
     /// for groups
     Component {
@@ -69,13 +69,13 @@ Frame {
                 width: 230
 
                 background: Rectangle {
-                    color: "#3b358e"
-                    border.width: 1
+                    color: "transparent"
+//                    border.width: 1
                 }
 
                 Image {
                     id: icon
-                    source: "qrc:/icons/back_256256" //imgSrc
+                    source: "qrc:/icons/back_gold_256256" //imgSrc
                     fillMode: Image.Pad // to not stretch the image
                     anchors{
                         left: parent.left
