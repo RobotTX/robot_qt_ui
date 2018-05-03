@@ -133,6 +133,14 @@ ListModel {
             setProperty(i, "groupIsOpen", false);
     }
 
+    function showGroupDefault() {
+        for (var i = 0; i < count; i++) {
+            if (get(i).groupName === Helper.noGroup) {
+                setProperty(i, "groupIsOpen", true);
+            }
+        }
+    }
+
     function hideShowPath(groupName, name){
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)

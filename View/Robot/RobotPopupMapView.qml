@@ -64,7 +64,6 @@ Menu {
         PathListInPopup {
             x: assignPath.width
             visible: robotMenu.currentMenuIndex === 1
-            onVisibleChanged: if(!visible) currentMenuIndex = -1
             pathModel: robotMenu.pathModel
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);

@@ -68,8 +68,6 @@ Frame {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
-//                right: stopPathButtonBis.left
-//                rightMargin: 12
             }
 
             onClicked: pathListInPopup.open()
@@ -77,11 +75,9 @@ Frame {
             PathListInPopup {
                 id: pathListInPopup
                 x: assignPath.width
-                onVisibleChanged: if(!visible) currentMenuIndex = -1
                 pathModel: frame.pathModel
                 onPathSelected: {
                     frame.pathSelected(pathName, groupName);
-
                     robotModel.newPathSignal(ip, _groupName, _pathName)
                     currentMenuIndex = -1;
                     close();

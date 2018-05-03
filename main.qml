@@ -214,9 +214,9 @@ ApplicationWindow {
 
     CustomDialog {
         id: dialog
-        x: applicationWindow.width / 2 - width / 2
-        y: applicationWindow.height / 2 - height / 2
-
+        parent: ApplicationWindow.overlay
+        x: (applicationWindow.width - width) / 2
+        y: (applicationWindow.height - height) / 2
         onAccepted: requestOrSendMap(ip, false)
         onRejected: requestOrSendMap(ip, true)
     }

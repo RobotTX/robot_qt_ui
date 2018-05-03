@@ -21,6 +21,7 @@ Page {
     property string groupSelected
     property variant pathsGuide: []
     property int menuIndex: 0
+    property int currentMenu: 0
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
     signal closeMenu()
@@ -110,6 +111,7 @@ Page {
             onAccepted: {
                 if (idTextField.text === "admin" && pwdTextField.text === "admin") {
                     page.closeMenu();
+                    pathModel.showGroupDefault();
                 } else {
                     wrongPwd.open();
                 }
@@ -295,7 +297,7 @@ Page {
                             CustomLabel {
                                 id: fakeLabel
                                 text: {
-                                    if (robotModel.robotStuck === true) { /// robot is stuck in its path
+                                    if (robotModel.robotStuck === true && currentMenu === 5 && pauseRobotInPath.visible) { /// robot is stuck in its path ; make sure that window does not appear when we are in RobotView
                                         pauseRobotInPath.close();
                                         playRobotInPath.open();
                                     } else if (robotModel.pathCompleted === true) { /// robot has completed its path

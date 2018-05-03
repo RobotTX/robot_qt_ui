@@ -547,7 +547,7 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
                     mapController->getHeight());
     double orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
-    //qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getWidth() << mapController->getHeight();
+//    qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getWidth() << mapController->getHeight();
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
@@ -600,7 +600,7 @@ void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, 
                         mapController->getOrigin().y(),
                         mapController->getResolution(),
                         mapController->getHeight());
-        qDebug() << "\nMainController::sendCommandNewHome" << homeX << homeY << homePos;
+        qDebug() << "\nMainController::sendCommandNewHome" << homeX << homeY << homePos << homeOri;
         cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
     }
     robotsController->sendCommand(ip, cmd);

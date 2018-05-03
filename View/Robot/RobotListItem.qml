@@ -106,12 +106,13 @@ Frame {
 
         CustomDialog {
             id: rebootRobotDialog
-            x: frame.width / 2 + 100
-            y: 200
+            parent: ApplicationWindow.overlay
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
             message: "Do you want to power off robot " + name + " ?"
-            acceptMessage: langue == "English" ? "Yes" : "Ok"
+            acceptMessage: langue == "English" ? "Yes" : "Yes"
             rejectMessage: "Cancel"
             onAccepted: {
                 frame.rebootRobot(timerRestartButton.ipToShutDown);
@@ -318,6 +319,10 @@ Frame {
                 consoleString = consoleWholeReverse.join('');
             }
             onSaveCurrentHome: {
+                if (homeOri < 0) {
+                    homeOri = homeOri + 360;
+                }
+
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
                 consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current home saved\n");
 
@@ -327,6 +332,22 @@ Frame {
                 robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
                 consoleString = consoleWholeReverse.join('');
             }
+        }
+    }
+
+    Label {
+        text: {
+            if (robotModel.robotSelected === true && robotModel.getRobotIP() === ip) {
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + robotModel.getPathName() + "\" \nassigned to robot \""  + robotModel.nameRobotPath +"\"\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+                robotModel.robotSelected = false;
+            }
+            qsTr("");
         }
     }
 
@@ -649,8 +670,9 @@ Frame {
 
     CustomDialog {
         id: warningDialog
-        x: frame.x / 2
-        y: frame.y / 2
+        parent: ApplicationWindow.overlay
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
         height: 60
         title: "Warning dialog"
     }

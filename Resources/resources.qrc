@@ -39,6 +39,8 @@
         <file alias="big_speech">icons/Img_Speech.png</file>
 
         <file alias="point_checked">icons/icPoint_checked.png</file>
+        <file alias="point_checked_2020">icons/icPoint_checked_2020.png</file>
+        <file alias="point_checked_2525">icons/icPoint_checked_2525.png</file>
         <file alias="point">icons/icPoint_normal.png</file>
         <file alias="pointView">icons/Point_s_80.png</file>
         <file alias="big_point">icons/Img_Point.png</file>

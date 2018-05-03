@@ -112,6 +112,7 @@ Frame {
         langue: mainMenuViewsFrame.langue
         tmpPathModel: mainMenuViewsFrame.tmpPathModel
         speechModel: mainMenuViewsFrame.speechModel
+        currentMenu: mainMenuViewsFrame.currentMenu
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()

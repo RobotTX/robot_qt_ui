@@ -57,7 +57,6 @@ Menu {
             id: robotListInPopup
             x: assignPointTo.width
             visible: menu.currentMenuIndex === 0
-            onVisibleChanged: if (!visible) currentMenuIndex = -1
             robotModel: menu.robotModel
             onRobotSelected: {
                 robotModel.savePlaceSignal(ip, namePoint, posX, posY, orientation, home)

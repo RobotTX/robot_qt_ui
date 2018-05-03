@@ -20,7 +20,7 @@ Column {
 
     Rectangle {
         id: groupItem
-        visible: true //!(groupName === Helper.noGroup)
+//        visible: true //!(groupName === Helper.noGroup)
         height: 70
         anchors {
             left: parent.left
@@ -78,6 +78,8 @@ Column {
             CustomLabel {
                 text: qsTr(groupName)
                 color: "white"
+                width: parent.width
+                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                 anchors{
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter

@@ -20,6 +20,10 @@ ListModel {
     property bool deletePathButtonClicked: false
     property bool pathCompleted: false
     property bool robotStuck: false
+    property bool robotSelected: false
+    property string pathNameAssigned: ""
+    property string nameRobotPath: ""
+    property string robotIP: ""
 
     signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
@@ -440,5 +444,17 @@ ListModel {
         for (var i = len-1; i >=0; i--) {
             arr2[(len-1) - i] = arr1[i];
         }
+    }
+
+    function getPathName() {
+        return pathNameAssigned;
+    }
+
+    function getRobotNamePath() {
+        return nameRobotPath;
+    }
+
+    function getRobotIP() {
+        return robotIP;
     }
 }

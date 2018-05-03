@@ -66,7 +66,6 @@ Menu {
             id: robotListInPopup
             x: sendTtsToRobot.width
             visible: menu.currentMenuIndex === 0
-            onVisibleChanged: if (!visible) currentMenuIndex = -1
             robotModel: menu.robotModel
             onRobotSelected: {
                 robotModel.sendTtsToRobot(ip, sendTtsToRobot.ttsSpeech);
@@ -126,7 +125,6 @@ Menu {
             width: 140
             x: parent.width
             visible: menu.currentMenuIndex === 1
-            onVisibleChanged: menu.currentMenuIndex = -1
 
             background: Rectangle {
                 color: Style.lightGreyBackground

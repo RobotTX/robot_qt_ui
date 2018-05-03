@@ -290,7 +290,7 @@ Frame {
                             }
                             if(robotModel.count > 0){
                                 console.log("robot 0 pos " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
-                                console.log("robot 0 home pos " + robotModel.get(0).homeX + " " + robotModel.get(0).homeY + " " + useRobotPathModel)
+                                console.log("robot 0 home pos " + robotModel.get(0).homeX + " " + robotModel.get(0).homeY + " " + robotModel.get(0).homeOri  + useRobotPathModel)
                             }
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
