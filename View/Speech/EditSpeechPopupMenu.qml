@@ -87,6 +87,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 1}
         onTriggered: {
             console.log("button edit pressed");
             editSpeech()
@@ -114,7 +115,7 @@ Menu {
             anchors.rightMargin: 12
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-        onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
+        onHoveredChanged: if (visible) { currentMenuIndex = 2} /// desktop
 //        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
@@ -123,7 +124,7 @@ Menu {
             padding: 0
             width: 140
             x: parent.width
-            visible: menu.currentMenuIndex === 1
+            visible: menu.currentMenuIndex === 2
 
             background: Rectangle {
                 color: Style.lightGreyBackground
@@ -185,6 +186,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 3}
         onTriggered: deleteSpeech(name)
     }
 }
