@@ -58,6 +58,7 @@ Menu {
             visible: robotMenu.currentMenuIndex === 0
             pointModel: robotMenu.pointModel
             homeOnly: true
+            menuIndex: robotMenu.currentMenuIndex
             onPointSelected: {
                 robotMenu.pointSelected(posX, posY, orientation)
 //                currentMenuIndex = -1;
@@ -95,6 +96,7 @@ Menu {
             x: assignPath.width
             visible: robotMenu.currentMenuIndex === 1
             pathModel: robotMenu.pathModel
+            menuIndex: robotMenu.currentMenuIndex
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);
 //                currentMenuIndex = -1;
@@ -126,8 +128,8 @@ Menu {
         labelText: langue == "English" ? "保存当前充电站" : "Save My Home"
         leftPadding: Style.menuItemLeftPadding
 
-//        onHoveredChanged: if(visible) currentMenuIndex = 2
-        onClicked: if(visible) currentMenuIndex = 2
+        onHoveredChanged: if(visible) currentMenuIndex = 2
+//        onClicked: if(visible) currentMenuIndex = 2
         onTriggered: robotMenu.saveCurrentHome()
     }
 
@@ -137,8 +139,8 @@ Menu {
         labelText: langue == "English" ? "保存当前路径" : "Save My Path"
         leftPadding: Style.menuItemLeftPadding
 
-//        onHoveredChanged: if(visible) currentMenuIndex = 3
-        onClicked: if(visible) currentMenuIndex = 3
+        onHoveredChanged: if(visible) currentMenuIndex = 3
+//        onClicked: if(visible) currentMenuIndex = 3
         onTriggered: {
             robotMenu.saveCurrentPath();
         }
@@ -156,8 +158,8 @@ Menu {
         labelText: langue == "English" ? "重命名" : "Rename"
         leftPadding: Style.menuItemLeftPadding
 
-//        onHoveredChanged: if(visible) currentMenuIndex = 4
-        onClicked: if(visible) currentMenuIndex = 4
+        onHoveredChanged: if(visible) currentMenuIndex = 4
+//        onClicked: if(visible) currentMenuIndex = 4
         onTriggered: robotMenu.renameRobot()
     }
 
@@ -173,13 +175,14 @@ Menu {
         labelText: langue == "English" ? "从机器人上删除路径" : "Delete My Path"
         leftPadding: Style.menuItemLeftPadding
 
-//        onHoveredChanged: if(visible) currentMenuIndex = 5
-        onClicked: {
-            robotModel.deletePathButtonClicked = true;
-            console.log("button delete path clicked");
-            if(visible) currentMenuIndex = 5
-        }
+        onHoveredChanged: if(visible) currentMenuIndex = 5
+//        onClicked: {
+
+//            console.log("button delete path clicked");
+//            if(visible) currentMenuIndex = 5
+//        }
         onTriggered: {
+            robotModel.deletePathButtonClicked = true;
             robotMenu.deletePath()
         }
     }

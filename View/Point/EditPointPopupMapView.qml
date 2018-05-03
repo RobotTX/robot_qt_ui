@@ -82,6 +82,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 1}
         onTriggered: {
             editPoint()
         }
@@ -98,6 +99,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 2}
         onTriggered: pointModel.hideShowPoint(groupName, name)
     }
 
@@ -112,6 +114,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 3}
         onTriggered: {
             console.log("deleting the point in editpointpopupmapview.qml");
             deletePoint(name)

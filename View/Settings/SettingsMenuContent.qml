@@ -105,7 +105,7 @@ Frame {
                 anchors.rightMargin: 12
             }
             onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// desktop
-//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+            onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
             RobotListInPopup {
                 x: robotList.width
@@ -220,7 +220,7 @@ Frame {
             }
             onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
 
-//            onClicked: if(visible){ currentMenuIndex = 1} /// android
+            onClicked: if(visible){ currentMenuIndex = 1} /// android
 
             Menu {
                 id: wifiMenu

@@ -12,6 +12,7 @@ Menu {
     width: 140
     property Paths pathModel
     property int currentMenuIndex: -1
+    property int menuIndex: -1
     signal pathSelected(string pathName, string groupName)
 
     background: Rectangle {
@@ -54,7 +55,7 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-                    visible: currentMenuIndex === index
+                    visible: (currentMenuIndex === index && menuIndex === 1)
 
                     background: Rectangle {
                         implicitWidth: parent.width

@@ -177,10 +177,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-//        onHoveredChanged: if (visible) {
-
-//                              currentMenuIndex = 3
-//                          console.log("DELETE PATH SHOULD BE 3 : currentMenuIndex = " + currentMenuIndex + " visible = " + visible)}
+        onHoveredChanged: if (visible) { currentMenuIndex = 3}
 //        onClicked: if(visible){ currentMenuIndex = 3 }
         onTriggered: deletePath()
     }

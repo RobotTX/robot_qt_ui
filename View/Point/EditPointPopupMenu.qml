@@ -82,6 +82,7 @@ Menu {
         labelText: langue == "English" ? "修改目标点" : "Edit Point"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
+        onHoveredChanged: if (visible) { currentMenuIndex = 1}
         height: Style.menuItemHeight
         onTriggered: editPoint()
     }
@@ -96,6 +97,7 @@ Menu {
         labelText: langue == "English" ? "移动到" : "Move To Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
+        onHoveredChanged: if (visible) { currentMenuIndex = 2}
         height: Style.menuItemHeight
 
         Image {
@@ -106,8 +108,6 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-//        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-        onHoveredChanged: if (visible) { currentMenuIndex = 1} /// desktop
 //        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
@@ -116,7 +116,7 @@ Menu {
             padding: 0
             width: 140
             x: parent.width
-            visible: menu.currentMenuIndex === 1
+            visible: menu.currentMenuIndex === 2
 
             background: Rectangle {
                 color: Style.lightGreyBackground
@@ -178,6 +178,7 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
+        onHoveredChanged: if (visible) { currentMenuIndex = 3}
         onTriggered: deletePoint(name)
     }
 }
