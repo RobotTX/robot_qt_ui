@@ -4,10 +4,11 @@ import QtQuick.Controls 2.1
 Label {
 
     id: label
+//    property string wrapModeLabel: "WrapAtWordBoundaryOrAnywhere"
 
     maximumLineCount: 1
     elide: Text.ElideRight
-    wrapMode: "WrapAtWordBoundaryOrAnywhere"
+//    wrapMode: wrapModeLabel
 
     property bool hovered: false
     property bool timerTriggered: false

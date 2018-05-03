@@ -69,7 +69,6 @@ Menu {
             robotModel: menu.robotModel
             onRobotSelected: {
                 robotModel.sendTtsToRobot(ip, sendTtsToRobot.ttsSpeech);
-                console.log("ttsSpeech = " + sendTtsToRobot.ttsSpeech);
                 currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
@@ -101,7 +100,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "移动到" : "Move to"
+        labelText: langue == "English" ? "移动到" : "Move to Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

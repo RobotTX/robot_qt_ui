@@ -45,8 +45,8 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-//                onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index /// desktop
-                onHoveredChanged: if (visible) pointMenu.open();
+                onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index /// desktop
+//                onHoveredChanged: if (visible) pointMenu.open();
 //                onClicked: if(visible && !pointMenu.visible) currentMenuIndex = index /// android
 
 
@@ -79,7 +79,7 @@ Menu {
                                 visible: homeOnly ? home : true
                                 labelText: name
 
-                                onTriggered: {console.log("selectPointMenu.pointSelected");selectPointMenu.pointSelected(name, posX, posY, orientation)}
+                                onTriggered: selectPointMenu.pointSelected(name, posX, posY, orientation)
                             }
                         }
                     }

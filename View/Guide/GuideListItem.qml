@@ -79,7 +79,7 @@ Column {
                 text: qsTr(groupName)
                 color: "white"
                 width: parent.width
-                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+//                wrapModeLabel: Label.NoWrap
                 anchors{
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter

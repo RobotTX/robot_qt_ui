@@ -74,14 +74,14 @@ Frame {
         checked: currentMenu == 4
     }
 
-    MenuButton {
-        id: guideButton
-        txt: langue == "English" ? "地图" : "Guide"
-        imgSrc: "qrc:/icons/robot"
-        anchors.top: mapButton.bottom
-        onClicked: checked ? selectMenu(5) : selectMenu(-1)
-        checked: currentMenu == 5
-    }
+//    MenuButton {
+//        id: guideButton
+//        txt: langue == "English" ? "地图" : "Guide"
+//        imgSrc: "qrc:/icons/robot"
+//        anchors.top: mapButton.bottom
+//        onClicked: checked ? selectMenu(5) : selectMenu(-1)
+//        checked: currentMenu == 5
+//    }
 
     MenuButton {
         id: settingsButton

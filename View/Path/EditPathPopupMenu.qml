@@ -47,7 +47,7 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// destkop
+        onHoveredChanged: if(visible){ menu.currentMenuIndex = 0 } /// destkop
 //        onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
         RobotListInPopup {
@@ -60,7 +60,7 @@ Menu {
                 robotModel.nameRobotPath = name;
                 robotModel.robotIP = ip;
                 robotModel.robotSelected = true; /// for console in robotView
-                currentMenuIndex = -1;
+//                currentMenuIndex = -1;
                 menu.currentMenuIndex = -1;
                 menu.close();
             }
@@ -79,8 +79,8 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-//        onHoveredChanged: if (visible) currentMenuIndex = 1
-        onClicked: if(visible){ currentMenuIndex = 1 }
+        onHoveredChanged: if (visible) menu.currentMenuIndex = 1
+        onClicked: if(visible){ menu.currentMenuIndex = 1 }
         onTriggered: editPath()
     }
 
@@ -107,7 +107,7 @@ Menu {
             anchors.rightMargin: 12
         }
 
-        onHoveredChanged: if (visible) currentMenuIndex = 2 /// desktop
+        onHoveredChanged: if (visible) menu.currentMenuIndex = 2 /// desktop
 //        onClicked: if(visible){ currentMenuIndex = 2 } /// android
 
         Menu {

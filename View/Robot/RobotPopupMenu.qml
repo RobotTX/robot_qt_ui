@@ -60,7 +60,7 @@ Menu {
             homeOnly: true
             onPointSelected: {
                 robotMenu.pointSelected(posX, posY, orientation)
-                currentMenuIndex = -1;
+//                currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();
             }
