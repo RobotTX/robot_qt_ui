@@ -68,7 +68,7 @@ Frame {
 
     NormalButton {
         id: savePositionButton
-        txt: langue == "English" ? "保存当前地图位置" : "Save the position of the map"
+        txt: langue == "English" ? "保存当前地图位置" : "Save the map position"
         imgSrc: "qrc:/icons/saveState"
         anchors.top: editButton.bottom
         onClicked: mapMenuFrame.savePosition()
@@ -76,7 +76,7 @@ Frame {
 
     NormalButton {
         id: loadPositionButton
-        txt: langue == "English" ? "重置当前地图位置" : "Reset the position of the map"
+        txt: langue == "English" ? "重置当前地图位置" : "Reset the map position"
         imgSrc: "qrc:/icons/loadState"
         anchors.top: savePositionButton.bottom
         // the signal needs to be relayed in order to call the function that is in mapView
@@ -138,8 +138,9 @@ Frame {
 
     CustomDialog {
         id: warningDialog
-        x: mapMenuFrame.width
-        y: mapMenuFrame.height / 2 - height / 2
+        parent: ApplicationWindow.overlay
+        x: (mapMenuFrame.width - width) / 2
+        y: (mapMenuFrame.height - height) / 2
         height: 60
         title: langue == "English" ? "警告窗口" : "Warning dialog"
         acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"
@@ -169,8 +170,12 @@ Frame {
         yesMessage: langue == "English" ? "保存&读取" : "Save & Load"
         height: 170
 
-        x: mapMenuFrame.width
-        y: mapMenuFrame.height / 2 - height / 2;// - Style.menuHeaderHeight
+//        x: mapMenuFrame.width
+//        y: mapMenuFrame.height / 2 - height / 2;// - Style.menuHeaderHeight
+
+        parent: ApplicationWindow.overlay
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
 
         onRejected: console.log("You canceled the import of a map");
         onAccepted: {

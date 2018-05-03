@@ -347,8 +347,11 @@ Frame {
 
     CustomDialog {
         id: warningDialog
-        x: scanLeftMenuFrame.x / 2
-        y: scanLeftMenuFrame.y / 2
+//        x: scanLeftMenuFrame.x / 2
+//        y: scanLeftMenuFrame.y / 2
+        parent: ApplicationWindow.overlay
+        x: (scanLeftMenuFrame.width - width) / 2
+        y: (scanLeftMenuFrame.height - height) / 2
         height: 60
         title: langue == "English" ? "警告窗口" : "Warning dialog"
         acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"

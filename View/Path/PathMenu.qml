@@ -135,6 +135,7 @@ Page {
             console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
             createPathMenuContent.robotPathName = pathName;
             createPathMenuContent.robotPathPoints = pathPoints;
+            console.log("pathPoints = " + pathPoints);
 
             page.menuIndex = 1;
             console.log("menu = " + page.menuIndex);

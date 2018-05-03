@@ -92,12 +92,14 @@ Frame {
                             }
                 // if creating point from robot
             } else if (homeName !== "") {
-//                console.log("We are in createpointmenucontent homeX = " + homeX + "homeY = " + homeY + " homeOri = " + homeOri);
                 homeCheckBox.checked = true;
                 slider.value = homeOri;
                 tmpPointView.x = homeX;
                 tmpPointView.y = homeY;
                 tmpPointView.setOrientation(homeOri);
+                console.log("homeOri from robot = " + homeOri);
+                console.log("homeX from robot = " + homeX);
+                console.log("homeY from robot = " + homeY);
             }
         }
         pointTextField.text = oldName;
@@ -269,7 +271,7 @@ Frame {
         font.pointSize: 10
         anchors {
             left: oriLabel.right
-            leftMargin: 4
+            leftMargin: 15
             verticalCenter: oriLabel.verticalCenter
         }
         // to update the slider value accordingly

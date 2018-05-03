@@ -13,7 +13,7 @@ var PointViewType = {
     HOME_ORANGE: 11
 };
 
-var noGroup = "No Group";
+var noGroup = "Default";
 var noGroupChinese = "默认组"
 var noRobot = "No Robot";
 var noRobotChinese = "没有机器人"

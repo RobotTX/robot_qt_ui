@@ -56,12 +56,11 @@ Menu {
         PointListInPopup {
             x: assignHome.width
             visible: robotMenu.currentMenuIndex === 0
-            onVisibleChanged: if(!visible) currentMenuIndex = -1
             pointModel: robotMenu.pointModel
             homeOnly: true
             onPointSelected: {
                 robotMenu.pointSelected(posX, posY, orientation)
-                currentMenuIndex = -1;
+//                currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();
             }
@@ -95,11 +94,10 @@ Menu {
         PathListInPopup {
             x: assignPath.width
             visible: robotMenu.currentMenuIndex === 1
-            onVisibleChanged: if(!visible) currentMenuIndex = -1
             pathModel: robotMenu.pathModel
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);
-                currentMenuIndex = -1;
+//                currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();
             }

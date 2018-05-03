@@ -159,8 +159,9 @@ Window {
 
     CustomDialog {
         id: dualChoiceMessageDialog
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
+        parent: ApplicationWindow.overlay
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
 
         onAccepted: scanMapLeftMenu.startScanning(ip)
         onRejected: scanMapLeftMenu.setBusy(ip, false)

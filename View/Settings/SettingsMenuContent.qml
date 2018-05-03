@@ -110,7 +110,6 @@ Frame {
             RobotListInPopup {
                 x: robotList.width
                 visible: currentMenuIndex === 0
-                onVisibleChanged: if(!visible) currentMenuIndex = -1
                 robotModel: settingsPage.robotModel
                 onRobotSelected: {
                     console.log("ip = " + ip + " name = " + name);
@@ -227,7 +226,6 @@ Frame {
                 id: wifiMenu
                 x: userInputWifiName.width
                 visible: currentMenuIndex === 1
-                onVisibleChanged: if (!visible) currentMenuIndex = -1
                 padding: 0
                 width: 300
 
@@ -901,13 +899,17 @@ Frame {
                 }
 
                 background: Rectangle {
-                    color: "transparent"
+//                    color: "transparent"
+                    color: changeLanguageBtn.pressed ? Style.lightBlue : "transparent"
+                    width: parent.width
+                    height: 50
                 }
 
                 anchors {
                     left : parent.left
                     top : horizontalSeparation4.bottom;
                 }
+
                 onClicked: {
                     if (changeLanguageBtn.checked) {
                         changeLanguage("English");
@@ -968,53 +970,68 @@ Frame {
 //                }
 //            }
 
-        ToolSeparator {
-            id: horizontalSeparation11
-            orientation: Qt.Horizontal
-            anchors {
-                top: deconnexionBtn.bottom
-                left: parent.left
-                right: parent.right
-                topMargin: 5
-            }
-        }
+//        ToolSeparator {
+//            id: horizontalSeparation11
+//            orientation: Qt.Horizontal
+//            anchors {
+//                top: deconnexionBtn.bottom
+//                left: parent.left
+//                right: parent.right
+//                topMargin: 5
+//            }
+//        }
 
         Button {
             id: btnExit
             height: 23
 
             CustomLabel {
-                text: qsTr("Exit")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Exit Application")
+                color: Style.midGrey
+                verticalAlignment: Text.AlignVCenter
+                anchors {
+                    left: parent.left
+                    leftMargin: 8
+                }
             }
 
             background: Rectangle {
-                radius: 3
-                border.width: 1
-                color: btn.pressed ? Style.whiteButtonPressed : "white"
-                border.color: Style.lightGreyBorder
+                color: btnExit.pressed ? Style.lightBlue : "transparent"
+                width: parent.width
+                height: 50
             }
 
-            width: 70
+            width: parent.width
 
-            anchors.bottom: parent.bottom
+            anchors.top: horizontalSeparation10.bottom
             anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.topMargin: 10
 
             onClicked: {
                 exitDialog.open();
             }
         }
 
+        ToolSeparator {
+            id: horizontalSeparation11
+            orientation: Qt.Horizontal
+            anchors {
+                top: btnExit.bottom
+                left: parent.left
+                right: parent.right
+                topMargin: 10
+            }
+        }
+
         CustomDialog {
             id: exitDialog
-            x: settingsPage.width / 2 + 100
-            y: 200
+            parent: ApplicationWindow.overlay
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
             message: "Do you want to exit the application ?"
-            acceptMessage: langue == "English" ? "Yes" : "Ok"
+            acceptMessage: langue == "English" ? "Yes" : "Yes"
             rejectMessage: "Cancel"
             onAccepted: {
                 Qt.quit();
@@ -1041,8 +1058,9 @@ Frame {
 
         CustomDialog {
             id: wifiDialog
-            x: settingsPage.width
-            y: settingsPage.height / 2 - height
+            parent: ApplicationWindow.overlay
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
             height: 60
             title: langue == "English" ? "警告"  : "Warning"
             acceptMessage: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"

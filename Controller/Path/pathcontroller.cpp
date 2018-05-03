@@ -99,11 +99,13 @@ void PathController::addGroup(const QString groupName, const bool saveXML){
         if(saveXML)
             PathXMLParser::save(this, currentPathsFile);
     }
+    qDebug() << "we are in pathcontroller::addGroup";
 }
 
 void PathController::deleteGroup(const QString groupName){
     paths->deleteGroup(groupName);
     PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we are in pathcontroller::deleteGroup";
 }
 
 void PathController::addPath(const QString groupName, const QString name, const bool saveXML){
@@ -111,11 +113,13 @@ void PathController::addPath(const QString groupName, const QString name, const 
     emit addPathQml(name, groupName);
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we are in pathcontroller::addPath";
 }
 
 void PathController::deletePath(const QString groupName, const QString name){
     paths->deletePath(groupName, name);
     PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we are in pathcontroller::deletePath";
 }
 
 void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const QString speechName, const QString speechContent, const int speechTime, const bool saveXML){
@@ -126,11 +130,13 @@ void PathController::addPathPoint(const QString groupName, const QString pathNam
 
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we are in pathcontroller::addPathPoint";
 }
 
 void PathController::deletePathPoint(const QString groupName, const QString pathName, const QString name){
     paths->deletePathPoint(groupName, pathName, name);
     PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we are in pathcontroller::deletePathPoint";
 }
 
 void PathController::renameGroup(const QString newName, const QString oldName){
@@ -147,6 +153,7 @@ void PathController::checkGroup(const QString name){
 void PathController::moveTo(const QString name, const QString oldGroup, const QString newGroup){
     paths->movePath(name, oldGroup, newGroup);
     PathXMLParser::save(this, currentPathsFile);
+    qDebug() << "we ar ein pathcontroller::moveto";
 }
 
 void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){

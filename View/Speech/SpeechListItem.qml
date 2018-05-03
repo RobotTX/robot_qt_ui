@@ -216,6 +216,8 @@ Column {
                     text: "text: " + tts
                     height: 15
                     font.pixelSize: 14
+                    wrapMode: Label.WordWrap
+                    width: parent.width
                     color: Style.midGrey2
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left

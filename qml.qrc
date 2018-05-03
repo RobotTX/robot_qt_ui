@@ -104,5 +104,11 @@
         <file>View/Speech/SpeechMenuContent.qml</file>
         <file>View/Speech/SpeechMenuHeader.qml</file>
         <file>Model/Speech/Speechs.qml</file>
+        <file>View/Guide/GuidePathContent.qml</file>
+        <file>View/Guide/GuidePathListItem.qml</file>
+        <file>View/Custom/CustomStopDialog.qml</file>
+        <file>View/Custom/SaveButtonGolden.qml</file>
+        <file>View/Custom/CancelButtonGolden.qml</file>
+        <file>View/Custom/CustomDialogGolden.qml</file>
     </qresource>
 </RCC>

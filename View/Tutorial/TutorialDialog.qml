@@ -54,6 +54,7 @@ Dialog {
                 rightMargin: 10
             }
             text: qsTr(tutoMessage)
+            font.pointSize: 12
             wrapMode: Text.WordWrap
         }
 

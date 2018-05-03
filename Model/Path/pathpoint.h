@@ -19,6 +19,9 @@ public:
     int getSpeechTime(void) const { return speechTime; }
 
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
+    void setSpeechName(const QString _speechName) { speechName = _speechName; }
+    void setSpeechContent(const QString _speechContent) { speechContent = _speechContent; }
+    void setSpeechTime(const int _speechTime) { speechTime = _speechTime; }
 
 private:
     /**

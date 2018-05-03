@@ -113,7 +113,7 @@ Frame {
     /// The save state button
     SmallButton {
         id: saveStateButton
-        tooltip: langue == "English" ? "保存当前地图位置" : "Save the position of the map"
+        tooltip: langue == "English" ? "保存当前地图位置" : "Save the map position"
         imgSrc: "qrc:/icons/saveState"
         anchors {
             top: parent.top
@@ -128,7 +128,7 @@ Frame {
     /// The load state button
     SmallButton {
         id: loadStateButton
-        tooltip:  langue == "English" ? "重置当前地图位置" : "Reset the position of the map"
+        tooltip:  langue == "English" ? "重置当前地图位置" : "Reset the map position"
         imgSrc: "qrc:/icons/loadState"
         anchors {
             top: parent.top

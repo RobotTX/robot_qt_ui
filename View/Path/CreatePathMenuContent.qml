@@ -90,13 +90,15 @@ Frame {
                     } // if creating path from robot
                 } else if (robotPathName !== "") {
                     for(var l = 0; l < robotPathPoints.count; l++){
+                        /// speechName will always be empty when user would save a path
                         tmpPathModel.get(0).paths.get(0).pathPoints.append({
                             "name": robotPathPoints.get(l).pathPointName,
                             "posX": robotPathPoints.get(l).pathPointPosX,
                             "posY": robotPathPoints.get(l).pathPointPosY,
                             "waitTime": robotPathPoints.get(l).waitTime,
                             "orientation": robotPathPoints.get(l).orientation,
-                            "validPos": true
+                            "validPos": true,
+                            "speechName": ""
                        });
                     }
                 }
@@ -218,6 +220,7 @@ Frame {
         Label {
             id: pathPointsLabel
             text: langue == "English" ? qsTr("路径目标点") : qsTr("Path Points")
+            font.pointSize: 12
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -232,8 +235,8 @@ Frame {
         NormalButton {
             id: addSavedPoint
             txt: langue == "English" ? "加入已有目标点" : "Add Saved Point"
-
-            imgSrc: "qrc:/icons/add"
+            sizeTxt: "11"
+            imgSrc: "qrc:/icons/point_checked_2525"
             anchors {
                 left: parent.left
                 top: pathPointsLabel.bottom
@@ -844,7 +847,9 @@ Frame {
                 model: paths
                 delegate: ListView {
                     id: view
-                    ScrollBar.vertical: ScrollBar { }
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     contentHeight: contentItem.childrenRect.height
 
                     anchors {

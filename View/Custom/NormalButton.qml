@@ -6,6 +6,7 @@ Button {
 
     property string txt
     property string imgSrc
+    property string sizeTxt: "11"
 
     height: 40
 
@@ -32,6 +33,7 @@ Button {
     CustomLabel {
         text: qsTr(txt)
         color: "#262626"
+        font.pointSize: sizeTxt
         anchors{
             verticalCenter: parent.verticalCenter
             left: icon.right

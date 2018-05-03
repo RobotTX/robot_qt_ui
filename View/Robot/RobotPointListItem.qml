@@ -21,72 +21,13 @@ Column {
     signal editPoint(string name, string groupName)
     signal createGroup(string name)
 
-//    Rectangle {
-//        id: groupItem
-//        visible: !(name === Helper.noRobot)
-//        height: visible ? 37 :0
-//        anchors.left: parent.left
-//        anchors.right: parent.right
-//        color: "transparent"
-
-        /// The blue rectangle on the selected item
-//        Rectangle {
-//            anchors.verticalCenter: parent.verticalCenter
-//            height: parent.height - 10
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-//            color: (column.selectedGroup === name && column.selectedPoint === "") ? Style.selectedItemColor : "transparent"
-//        }
-
-//        MouseArea {
-//            onClicked: {
-//                column.selectedGroup = groupName;
-//                column.selectedPoint = "";
-//            }
-//            anchors.fill: parent
-//        }
-
-        /// The left button in each element of the list
-//        SmallButton {
-//            id: leftButton
-//            imgSrc: if (open) {
-//                        "qrc:/icons/fold" ;
-//                    } else {
-//                        "qrc:/icons/unfold";
-//                    }
-//            anchors {
-//                top: parent.top
-//                left: parent.left
-//                bottom: parent.bottom
-//                leftMargin: 20
-//            }
-
-//            onClicked: {
-//                if (open === false) {
-//                    open = true
-//                } else {
-//                    open = false
-//                }
-//            }
-//        }
-
         /// The item displaying the name of the point/group
         Label {
             text: if (name !== "") {
-                      console.log("name robot in robotPointListItem.qml = " + name);
                       pointModel.addGroup("Robot - " + name);
-//                      qsTr(name);
-                      console.log("----- before pointModel.createGroup(name) in robotPointListItem.qml");
                       createGroup(name);
-                      console.log("----- after pointModel.createGroup(name) in robotPointListItem.qml");
-                      qsTr("")
                   }
             visible: false
-//            color: Style.blackMenuTextColor
             anchors.verticalCenter: parent.verticalCenter
-//            anchors.left: leftButton.right
-//            anchors.leftMargin: 5
         }
-
-//    }
 }

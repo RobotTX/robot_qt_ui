@@ -218,7 +218,7 @@ Column {
             Component {
                 id: delegatePathPoint
                 Frame {
-                    visible: pathIsOpen
+                    visible: pathIsOpen && groupIsOpen
                     height: visible ? 25 : 0
                     anchors {
                         left: parent.left

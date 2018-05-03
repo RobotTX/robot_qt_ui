@@ -12,12 +12,16 @@ Dialog {
     property string rejectMessage
     property string acceptMessage
     property string yesMessage
+    property string colorBackground: "#f3f3f3"
+    property string colorBorder: "#bcb5b9"
+    property string textColor: Style.greyText
     signal yes()
 
     background: Rectangle {
-        color: "#f3f3f3"
+//        color: "#f3f3f3"
+        color: colorBackground
         border.width: 2
-        border.color: "#bcb5b9"
+        border.color: colorBorder
         radius: 5
     }
 
@@ -27,17 +31,19 @@ Dialog {
     header: Label {
         id: customHeader
         background: Rectangle {
-            color: "transparent"
+            color: colorBackground
+            width: parent.width - 20
         }
         anchors {
             top: parent.top
             left: parent.left
             topMargin: 5
-            leftMargin: 10
+            leftMargin: 5
         }
 
         font.bold: true
         text: qsTr(title)
+        color: textColor
     }
 
     contentItem: Rectangle {
@@ -57,12 +63,14 @@ Dialog {
                 left: parent.left
                 right: parent.right
                 bottom: layout.top
+                bottomMargin: 10
                 topMargin: customHeader.height + 10
                 leftMargin: 10
                 rightMargin: 10
             }
             text: qsTr(message)
             wrapMode: Text.WordWrap
+            color: textColor
         }
 
         RowLayout {

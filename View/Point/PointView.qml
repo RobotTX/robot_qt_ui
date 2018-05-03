@@ -128,5 +128,6 @@ Item {
 
     function setOrientation(newOri){
         pointOrientation = newOri;
+        console.log("orientation = " + pointOrientation);
     }
 }
