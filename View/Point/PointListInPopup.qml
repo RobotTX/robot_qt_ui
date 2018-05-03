@@ -12,6 +12,7 @@ Menu {
     width: 140
     property Points pointModel
     property int currentMenuIndex: -1
+    property int menuIndex: -1
     property bool homeOnly: false
     signal pointSelected(string name, double posX, double posY, int orientation)
 
@@ -55,8 +56,9 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-                    visible: currentMenuIndex === index && (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
-
+//                    visible: currentMenuIndex === index //&& (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
+                    visible: (currentMenuIndex === index && menuIndex === 0)
+                    height: visible ? implicitHeight : 0
                     background: Rectangle {
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder

@@ -272,7 +272,6 @@ Frame {
             robotModel: frame.robotModel
             langue: frame.langue
             onPointSelected: {
-                console.log("robotModel.newHomeSignal");
                 robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
                 consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "New home\n");
 

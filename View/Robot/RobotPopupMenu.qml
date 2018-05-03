@@ -58,6 +58,7 @@ Menu {
             visible: robotMenu.currentMenuIndex === 0
             pointModel: robotMenu.pointModel
             homeOnly: true
+            menuIndex: robotMenu.currentMenuIndex
             onPointSelected: {
                 robotMenu.pointSelected(posX, posY, orientation)
 //                currentMenuIndex = -1;
@@ -95,6 +96,7 @@ Menu {
             x: assignPath.width
             visible: robotMenu.currentMenuIndex === 1
             pathModel: robotMenu.pathModel
+            menuIndex: robotMenu.currentMenuIndex
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);
 //                currentMenuIndex = -1;
