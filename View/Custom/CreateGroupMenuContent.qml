@@ -48,7 +48,7 @@ Frame {
     TextField {
         id: groupTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("路径名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("组名称") : qsTr("Enter name")
         height: 28
         anchors {
             left: parent.left

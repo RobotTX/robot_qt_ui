@@ -34,7 +34,7 @@ Menu {
 
     PopupMenuItem {
         id: sendTtsToRobot
-        labelText: langue == "English" ? "Send speech to robot" : "Send speech to robot"
+        labelText: langue == "English" ? "发语音给机器人" : "Send speech to robot"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -83,7 +83,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "Edit Speech" : "Edit Speech"
+        labelText: langue == "English" ? "编辑语音" : "Edit Speech"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -182,7 +182,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "Delete Speech" : "Delete Speech"
+        labelText: langue == "English" ? "删除语音" : "Delete Speech"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

@@ -24,6 +24,7 @@ Frame {
     property Points pointModel
     property Speechs speechModel
     property string langue
+    property int menuIndex: 0
 
     signal backToMenu()
     signal createPath(string groupName, string name)
@@ -158,7 +159,7 @@ Frame {
         TextField {
             id: pathTextField
             selectByMouse: true
-            placeholderText: langue == "English" ? "路径名称" : qsTr("Enter name")
+            placeholderText: langue == "English" ? "输入路径名称" : qsTr("Enter name")
             height: 28
             anchors {
                 left: parent.left
@@ -243,7 +244,10 @@ Frame {
                 right: parent.right
                 topMargin: 5
             }
-            onClicked: pointList.open()
+            onClicked: {
+                console.log("add saved point");
+                pointList.open()
+            }
         }
 
         PointListInPopup {
@@ -251,8 +255,8 @@ Frame {
             pointModel: createPathMenuFrame.pointModel
             x: addSavedPoint.width
             y: addSavedPoint.y
+            menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
-                console.log(name + " " + posX + " " + posY)
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
@@ -653,7 +657,10 @@ Frame {
                             topMargin: 8
                         }
                         font.pointSize: 11
-                        onClicked: speechList.open()
+                        onClicked: {
+                            console.log("add speech clicked")
+                            speechList.open()
+                        }
                     }
 
                     SpeechListInPopup {
@@ -661,8 +668,8 @@ Frame {
                         speechModel: createPathMenuFrame.speechModel
                         x: addSpeech.width
                         y: addSpeech.y
+                        menuIndex: createPathMenuFrame.menuIndex
                         onSpeechSelected: {
-                            console.log("nameSpeech in createpathmenucontent = " + nameSpeech);
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, nameSpeech, tts);
                         }
                     }
@@ -670,7 +677,7 @@ Frame {
                     Label {
                         id: speechLabel
                         visible: speechName !== ""
-                        text: "Name : "
+                        text: langue == "English" ? "名称 : " : "Name : "
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -712,7 +719,7 @@ Frame {
                     Label {
                         id: speechTimeLabel
                         visible: speechName !== ""
-                        text: "Wait for"
+                        text: langue == "English" ? "等待" : "Wait for"
                         anchors {
                             top: speechLabel.bottom
                             left: speechLabel.left

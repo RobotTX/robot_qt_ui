@@ -266,7 +266,7 @@ Column {
 
                     CustomLabel {
                         id: customLabelWaitTime
-                        text: waitTime === -1 ? qsTr("Human Action") : qsTr("Delay : " + waitTime + " s")
+                        text: waitTime === -1 ? qsTr(langue == "English" ? "人为干预" : "Human Action") : qsTr(langue == "English" ? "等待: " + waitTime + "秒" :  "Delay : "+ waitTime +"秒")
                         horizontalAlignment: Text.AlignRight
                         font.pixelSize: 14
                         color: Style.midGrey2

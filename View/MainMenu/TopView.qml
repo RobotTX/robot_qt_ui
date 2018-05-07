@@ -12,7 +12,9 @@ Frame {
     property string langue
     property int mapRotation: Math.round(slider.valueAt(slider.position))
     signal savePosition()
-    signal loadPosition()
+    signal zoomInMap()
+    signal zoomOutMap()
+    signal centerMapTopView()
     padding: 0
 
     Layout.minimumHeight: Style.menuHeaderHeight
@@ -102,42 +104,60 @@ Frame {
         width: 100
 
         anchors {
-            verticalCenter: saveStateButton.verticalCenter
-            right: saveStateButton.left
+            verticalCenter: zoomOutButton.verticalCenter
+            right: zoomOutButton.left
             rightMargin: 15
         }
 
         onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
     }
 
-    /// The save state button
+    /// Zoom out button
     SmallButton {
-        id: saveStateButton
-        tooltip: langue == "English" ? "保存当前地图位置" : "Save the map position"
-        imgSrc: "qrc:/icons/saveState"
+        id: zoomOutButton
+        tooltip: langue == "English" ? "地图放小" : "Zoom out"
+        imgSrc: "qrc:/icons/zoomOut"
         anchors {
             top: parent.top
             topMargin: 10
-            right: loadStateButton.left
+            right: zoomInButton.left
             rightMargin: 14
         }
         enabled: hasMap
-        onClicked: topViewFrame.savePosition()
+        onClicked: topViewFrame.zoomOutMap()
     }
 
-    /// The load state button
+    /// Zoom in button
     SmallButton {
-        id: loadStateButton
-        tooltip:  langue == "English" ? "重置当前地图位置" : "Reset the map position"
-        imgSrc: "qrc:/icons/loadState"
+        id: zoomInButton
+        tooltip: langue == "English" ? "地图放大" : "Zoom in"
+        imgSrc: "qrc:/icons/zoomIn"
+        anchors {
+            top: parent.top
+            topMargin: 10
+            right: centerMapButton.left
+            rightMargin: 14
+        }
+        enabled: hasMap
+        onClicked: topViewFrame.zoomInMap()
+    }
+
+    /// Center map button
+    SmallButton {
+        id: centerMapButton
+        tooltip:  langue == "English" ? "地图中心" : "Center map"
+        imgSrc: "qrc:/icons/centerMap"
         anchors {
             top: parent.top
             topMargin: 10
             right: parent.right
             rightMargin: 10
         }
-        enabled: hasMap
-        onClicked: topViewFrame.loadPosition()
+
+        onClicked: {
+            console.log("click")
+            topViewFrame.centerMapTopView()
+        }
     }
 
     function setMessageTop(label, msg){

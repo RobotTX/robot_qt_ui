@@ -42,16 +42,20 @@ Frame {
     }
 
     onVisibleChanged: {
+
+        homeCheckBox.checked = false;
+        slider.value = 0;
+
         if(tmpPointView && createPointMenuFrame){
             tmpPointView._isVisible = visible;
             tmpPointView.x =0;
             tmpPointView.y = 0;
         }
 
-        homeCheckBox.checked = false;
-        slider.value = 0;
+        console.log("visible in createpointmenucontent = " + visible);
 
         if(!visible){
+            console.log("we are creating a new point");
             /// When you finish or cancel an edition, we show the point you were editing
             if(oldName !== ""){
                 for(var i = 0; i < pointModel.count; i++)
@@ -60,9 +64,9 @@ Frame {
                             if(pointModel.get(i).points.get(j).name === oldName)
                                 pointModel.get(i).points.setProperty(j, "isVisible", true);
             }
-
             oldName = "";
             oldGroup = "";
+
             var displayTextChange = "";
             if (langue == "English") {
                 displayTextChange = Helper.noGroupChinese;
@@ -72,8 +76,10 @@ Frame {
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = displayTextChange;
         } else {
+            console.log("we are in editing")
             // if editing
             if(oldName !== ""){
+                console.log("we are editing a point");
                 for(var i = 0; i < pointModel.count; i++)
                     if(pointModel.get(i).groupName === oldGroup)
                         for(var j = 0; j < pointModel.get(i).points.count; j++)
@@ -90,16 +96,14 @@ Frame {
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
                             }
-                // if creating point from robot
+            // if creating point from robot (home)
             } else if (homeName !== "") {
+                console.log("homeName = " + homeName);
                 homeCheckBox.checked = true;
                 slider.value = homeOri;
                 tmpPointView.x = homeX;
                 tmpPointView.y = homeY;
                 tmpPointView.setOrientation(homeOri);
-                console.log("homeOri from robot = " + homeOri);
-                console.log("homeX from robot = " + homeX);
-                console.log("homeY from robot = " + homeY);
             }
         }
         pointTextField.text = oldName;
@@ -128,7 +132,7 @@ Frame {
     TextField {
         id: pointTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("路径名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("偷入目标点名称") : qsTr("Enter name")
 
         text: oldName
         height: 28
@@ -236,7 +240,6 @@ Frame {
 
     Label {
         id: oriLabel
-//        visible: homeCheckBox.checked
         text: langue == "English" ? qsTr("方向") : qsTr("Orientation")
         color: Style.midGrey2
         anchors {
@@ -427,6 +430,8 @@ Frame {
             createPoint(newName,  groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         Math.round(slider.valueAt(slider.position)));
+
+            homeName = ""; /// reset homeName
 
 //            createPoint(newName, groupComboBox.displayText, tmpPointView.x, tmpPointView.y,
 //                        oldName, oldGroup, true, homeCheckBox.checked,

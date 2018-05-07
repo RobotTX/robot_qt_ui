@@ -18,7 +18,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "创建目标点" : "New Speech"
+        labelText: langue == "English" ? "创建语音" : "New Speech"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
