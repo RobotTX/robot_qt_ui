@@ -21,6 +21,8 @@ Frame {
     property bool lastPointLoop
     property bool firstClick: false
 
+    property int currentMenuIndex: 1
+
     signal pathSelected(string _pathName, string _groupName)
     signal startDockingRobot(string ip)
     signal stopDockingRobot(string ip)
@@ -75,12 +77,12 @@ Frame {
             PathListInPopup {
                 id: pathListInPopup
                 x: assignPath.width
+                menuIndex: frame.currentMenuIndex
                 pathModel: frame.pathModel
                 onPathSelected: {
                     frame.pathSelected(pathName, groupName);
                     robotModel.newPathSignal(ip, _groupName, _pathName)
-                    currentMenuIndex = -1;
-                    close();
+
                 }
             }
         }
