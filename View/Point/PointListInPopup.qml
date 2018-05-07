@@ -56,7 +56,6 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-//                    visible: currentMenuIndex === index //&& (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
                     visible: (currentMenuIndex === index && menuIndex === 0)
                     height: visible ? implicitHeight : 0
                     background: Rectangle {
