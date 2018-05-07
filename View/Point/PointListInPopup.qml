@@ -57,7 +57,7 @@ Menu {
                     width: 140
                     x: parent.width
                     visible: (currentMenuIndex === index && menuIndex === 0)
-                    height: visible ? implicitHeight : 0
+//                    height: visible ? implicitHeight : 0
                     background: Rectangle {
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder
@@ -80,7 +80,11 @@ Menu {
                                 visible: homeOnly ? home : true
                                 labelText: name
 
-                                onTriggered: selectPointMenu.pointSelected(name, posX, posY, orientation)
+                                onTriggered: {
+                                    selectPointMenu.pointSelected(name, posX, posY, orientation)
+                                    pointMenu.close();
+                                    selectPointMenu.close();
+                                }
                             }
                         }
                     }

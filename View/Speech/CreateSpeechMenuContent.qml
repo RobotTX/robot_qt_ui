@@ -77,7 +77,7 @@ Frame {
 
     Label {
         id: speechLabel
-        text: langue == "English" ? qsTr("Speech Label") : qsTr("Speech Label")
+        text: langue == "English" ? qsTr("语音名称") : qsTr("Speech Label")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -88,7 +88,7 @@ Frame {
     TextField {
         id: speechTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("Enter label") : qsTr("Enter label")
+        placeholderText: langue == "English" ? qsTr("输入语音名称") : qsTr("Enter label")
 
         text: oldName
         height: 28
@@ -141,7 +141,7 @@ Frame {
 
     Label {
         id: ttsLabel
-        text: langue == "English" ? qsTr("Text") : qsTr("Text")
+        text: langue == "English" ? qsTr("正文") : qsTr("Text")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -188,7 +188,7 @@ Frame {
     TextField {
         id: ttsTextField
 //        anchors.fill: parent
-        placeholderText: "Enter text"
+        placeholderText: langue == "English" ? "正文" : "Enter text"
         wrapMode: "WrapAtWordBoundaryOrAnywhere"
         text: tts
         selectByMouse: true

@@ -40,6 +40,7 @@ Frame {
     signal loadPosition()
     signal doubleClickedOnMap(double mouseX, double mouseY)
     signal editPoint(string name, string groupName)
+    signal centerMapSignal()
 
     onUseRobotPathModelChanged: canvas.requestPaint()
 
@@ -101,7 +102,52 @@ Frame {
             // qml got a path of this format : file://path_understood_by_Qt for linux or file:C:/path_understood_by_Qt
             langue: mapViewFrame.langue
             onSavePosition: emitPosition()
-            onLoadPosition: mapViewFrame.loadPosition()
+            onZoomInMap: {
+                var oldPos = mapToItem(mapImage, width / 2, height / 2);
+                var factor = 1.1;
+                var newScale = zoomScale.xScale * factor;
+                /// Zoom into the image
+                if(newScale > Style.minZoom && newScale < Style.maxZoom) {
+                    zoomScale.xScale = newScale;
+                }
+
+                var newPos = mapToItem(mapImage, width / 2, height / 2);
+
+                /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
+                var diff = Qt.point(newPos.x - oldPos.x, newPos.y - oldPos.y);
+                var res = Qt.point(diff.x* Math.cos(topViewId.mapRotation * (Math.PI / 180)) - diff.y * Math.sin(topViewId.mapRotation * (Math.PI / 180)),
+                                 diff.x* Math.sin(topViewId.mapRotation * (Math.PI / 180)) + diff.y * Math.cos(topViewId.mapRotation * (Math.PI / 180)));
+
+                mapImage.x = mapImage.x + res.x * zoomScale.xScale;
+                mapImage.y = mapImage.y + res.y * zoomScale.xScale;
+            }
+
+            onZoomOutMap: {
+                var oldPos = mapToItem(mapImage, width / 2, height / 2);
+                var factor = 0.9;
+                var newScale = zoomScale.xScale * factor;
+
+                /// Zoom into the image
+                if(newScale > Style.minZoom && newScale < Style.maxZoom) {
+                    zoomScale.xScale = newScale;
+                }
+
+                var newPos = mapToItem(mapImage, width / 2, height / 2);
+
+                /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
+                var diff = Qt.point(newPos.x - oldPos.x, newPos.y - oldPos.y);
+                var res = Qt.point(diff.x* Math.cos(topViewId.mapRotation * (Math.PI / 180)) - diff.y * Math.sin(topViewId.mapRotation * (Math.PI / 180)),
+                                 diff.x* Math.sin(topViewId.mapRotation * (Math.PI / 180)) + diff.y * Math.cos(topViewId.mapRotation * (Math.PI / 180)));
+
+                mapImage.x = mapImage.x + res.x * zoomScale.xScale;
+                mapImage.y = mapImage.y + res.y * zoomScale.xScale;
+            }
+
+            onCenterMapTopView: {
+                console.log("center mapSignal before");
+                mapViewFrame.centerMapSignal()
+                console.log("center map signal after");
+            }
             /// If we have a map, the mapImage is visible
             /// so we enable the buttons to save/load the state of the map
             hasMap: mapImage.visible
@@ -144,7 +190,6 @@ Frame {
                     pinch.minimumScale: 0.1
                     pinch.maximumScale: 10
                     pinch.dragAxis: Pinch.XAndYAxis
-//                    onPinchStarted: setFrameColor();
                     property real zRestore: 0
                     onSmartZoom: {
                         if (pinch.scale > 0) {
@@ -164,13 +209,6 @@ Frame {
                         }
                     }
 
-//                    function setFrameColor() {
-//                                            if (currentFrame)
-//                                                currentFrame.border.color = "black";
-//                                            currentFrame = photoFrame;
-//                                            currentFrame.border.color = "red";
-//                                        }
-
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
@@ -186,8 +224,10 @@ Frame {
                         var newScale = zoomScale.xScale * factor;
 
                         /// Zoom into the image
-                        if(newScale > Style.minZoom && newScale < Style.maxZoom)
+                        if(newScale > Style.minZoom && newScale < Style.maxZoom) {
                             zoomScale.xScale = newScale;
+                            console.log("scale zoom = " + zoomScale.xScale);
+                        }
 
                         var newPos = mapToItem(mapImage, width / 2, height / 2);
 

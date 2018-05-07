@@ -28,6 +28,7 @@ Menu {
     signal laserPressed()
     signal saveCurrentPath()
     signal saveCurrentHome()
+    signal doNothing()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -51,6 +52,12 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible) currentMenuIndex = 0 /// desktop
+//        onTriggered: robotMenu.doNothing()
+        onTriggered: {
+            console.log("here")
+            robotMenu.open()
+            console.log("here")
+        }
 //        onClicked: if(visible) currentMenuIndex = 0 /// android
 
         PointListInPopup {
@@ -61,7 +68,7 @@ Menu {
             menuIndex: robotMenu.currentMenuIndex
             onPointSelected: {
                 robotMenu.pointSelected(posX, posY, orientation)
-//                currentMenuIndex = -1;
+                currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();
             }
@@ -90,6 +97,9 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
+        onTriggered: {
+            console.log("clicked clicked clicked clicked clicked");
+        }
 //        onClicked: if(visible) currentMenuIndex = 1 /// android
 
         PathListInPopup {
@@ -99,7 +109,6 @@ Menu {
             menuIndex: robotMenu.currentMenuIndex
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);
-//                currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();
             }

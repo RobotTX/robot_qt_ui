@@ -11,6 +11,7 @@ Menu {
     padding: 0
     width: 140
     property Speechs speechModel
+    property int menuIndex: -1
     property int currentMenuIndex: -1
     signal speechSelected(string nameSpeech, string tts)
 
@@ -44,14 +45,15 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-//                onHoveredChanged: if(visible && !speechMenu.visible) currentMenuIndex = index /// desktop
-                onHoveredChanged: if (visible) speechMenu.open();
+                onHoveredChanged: if(visible && !speechMenu.visible) currentMenuIndex = index /// desktop
+//                onHoveredChanged: if (visible) speechMenu.open();
 
                 Menu {
                     id: speechMenu
                     padding: 0
                     width: 140
                     x: parent.width
+                    visible: (currentMenuIndex === index && menuIndex === 0)
 
                     background: Rectangle {
                         color: Style.lightGreyBackground
@@ -73,7 +75,11 @@ Menu {
                                 Layout.preferredHeight: Style.menuItemHeight+1
                                 Layout.preferredWidth: parent.width
                                 labelText: name
-                                onTriggered: selectSpeechMenu.speechSelected(name, tts)
+                                onTriggered: {
+                                    selectSpeechMenu.speechSelected(name, tts);
+                                    speechMenu.close();
+                                    selectSpeechMenu.close();
+                                }
                             }
                         }
                     }
