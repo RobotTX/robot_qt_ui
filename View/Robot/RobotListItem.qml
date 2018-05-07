@@ -277,7 +277,10 @@ Frame {
             rightMargin: 15
         }
 
-        onClicked: robotPopupMenu.open()
+        onClicked: {
+            robotPopupMenu.open()
+            console.log("menu opened");
+        }
 
         RobotPopupMenu {
             id: robotPopupMenu
@@ -286,6 +289,12 @@ Frame {
             pathModel: frame.pathModel
             robotModel: frame.robotModel
             langue: frame.langue
+            onDoNothing: {
+                console.log("do nothing");
+
+                console.log("we are in onDoNothing");
+            }
+
             onPointSelected: {
                 var HomeLabel=""
                 if (langue == "English") {
