@@ -115,8 +115,8 @@ Frame {
     /// Zoom out button
     SmallButton {
         id: zoomOutButton
-        tooltip: langue == "English" ? "保存当前地图位置" : "Zoom out"
-        imgSrc: "qrc:/icons/zoomIn"
+        tooltip: langue == "English" ? "地图放小" : "Zoom out"
+        imgSrc: "qrc:/icons/zoomOut"
         anchors {
             top: parent.top
             topMargin: 10
@@ -130,8 +130,8 @@ Frame {
     /// Zoom in button
     SmallButton {
         id: zoomInButton
-        tooltip: langue == "English" ? "保存当前地图位置" : "Zoom in"
-        imgSrc: "qrc:/icons/zoomOut"
+        tooltip: langue == "English" ? "地图放大" : "Zoom in"
+        imgSrc: "qrc:/icons/zoomIn"
         anchors {
             top: parent.top
             topMargin: 10
