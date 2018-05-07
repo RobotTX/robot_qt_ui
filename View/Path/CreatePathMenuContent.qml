@@ -24,6 +24,7 @@ Frame {
     property Points pointModel
     property Speechs speechModel
     property string langue
+    property int menuIndex: 0
 
     signal backToMenu()
     signal createPath(string groupName, string name)
@@ -251,6 +252,7 @@ Frame {
             pointModel: createPathMenuFrame.pointModel
             x: addSavedPoint.width
             y: addSavedPoint.y
+            menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
                 console.log(name + " " + posX + " " + posY)
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
