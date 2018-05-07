@@ -414,7 +414,7 @@ Window {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            CustomToolTip { text: langue == "English" ? "Help" : "Help" }
+            CustomToolTip { text: langue == "English" ? "提示" : "Help" }
 
             onClicked: langue == "English" ? tutorialDChinese.open() : tutorialD.open()
         }
