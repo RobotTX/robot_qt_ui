@@ -81,7 +81,7 @@ Frame {
                 pathModel: frame.pathModel
                 onPathSelected: {
                     frame.pathSelected(pathName, groupName);
-                    robotModel.newPathSignal(ip, _groupName, _pathName)
+                    robotModel.newPathSignal(ip, groupName, pathName);
 
                 }
             }
