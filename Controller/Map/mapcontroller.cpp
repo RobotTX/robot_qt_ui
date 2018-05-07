@@ -43,6 +43,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, int, QString)), this, SLOT(savePositionSlot(double, double, double, int, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
+        connect(mapViewFrame, SIGNAL(centerMapSignal()), this, SLOT(centerMapSlot()));
         connect(this, SIGNAL(requestReloadMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
     } else {
         /// NOTE can probably remove that when testing phase is over

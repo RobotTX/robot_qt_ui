@@ -262,7 +262,10 @@ Frame {
             rightMargin: 15
         }
 
-        onClicked: robotPopupMenu.open()
+        onClicked: {
+            robotPopupMenu.open()
+            console.log("menu opened");
+        }
 
         RobotPopupMenu {
             id: robotPopupMenu
@@ -271,6 +274,12 @@ Frame {
             pathModel: frame.pathModel
             robotModel: frame.robotModel
             langue: frame.langue
+            onDoNothing: {
+                console.log("do nothing");
+
+                console.log("we are in onDoNothing");
+            }
+
             onPointSelected: {
                 robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
                 consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "New home\n");

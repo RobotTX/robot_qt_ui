@@ -59,7 +59,6 @@ Page {
                 menuIndex = 2;
             }
             onEditPath: {
-                console.log("langue = " + langue)
                 createPathMenuContent.oldName = name;
                 createPathMenuContent.oldGroup = groupName;
                 menuIndex = 1;
@@ -93,7 +92,11 @@ Page {
                 right: parent.right
                 bottom: parent.bottom
             }
-            onBackToMenu: menuIndex = 0;
+            onBackToMenu: {
+                console.log("onBackToMenu");
+                page.menuIndex = 0;
+                console.log(page.menuIndex);
+            }
             onSetMessageTop: page.setMessageTop(status, msg)
         }
     }

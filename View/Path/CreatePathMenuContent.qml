@@ -244,7 +244,10 @@ Frame {
                 right: parent.right
                 topMargin: 5
             }
-            onClicked: pointList.open()
+            onClicked: {
+                console.log("add saved point");
+                pointList.open()
+            }
         }
 
         PointListInPopup {
@@ -254,7 +257,6 @@ Frame {
             y: addSavedPoint.y
             menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
-                console.log(name + " " + posX + " " + posY)
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
@@ -655,7 +657,10 @@ Frame {
                             topMargin: 8
                         }
                         font.pointSize: 11
-                        onClicked: speechList.open()
+                        onClicked: {
+                            console.log("add speech clicked")
+                            speechList.open()
+                        }
                     }
 
                     SpeechListInPopup {
@@ -663,8 +668,8 @@ Frame {
                         speechModel: createPathMenuFrame.speechModel
                         x: addSpeech.width
                         y: addSpeech.y
+                        menuIndex: createPathMenuFrame.menuIndex
                         onSpeechSelected: {
-                            console.log("nameSpeech in createpathmenucontent = " + nameSpeech);
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, nameSpeech, tts);
                         }
                     }

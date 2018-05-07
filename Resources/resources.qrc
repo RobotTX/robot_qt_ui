@@ -65,6 +65,9 @@
         <file alias="checkmark">icons/Checkmark_Selected.png</file>
         <file alias="disco">icons/disconnected2.png</file>
 
+        <file alias="zoomIn">icons/zoom_in.png</file>
+        <file alias="zoomOut">icons/zoom_out.png</file>
+
         <file alias="arrow">icons/Arrow.png</file>
         <file alias="fold">icons/Btn_Fold.png</file>
         <file alias="visible">icons/Btn_Visible.png</file>
