@@ -158,7 +158,7 @@ Frame {
         TextField {
             id: pathTextField
             selectByMouse: true
-            placeholderText: langue == "English" ? "路径名称" : qsTr("Enter name")
+            placeholderText: langue == "English" ? "输入路径名称" : qsTr("Enter name")
             height: 28
             anchors {
                 left: parent.left
@@ -670,7 +670,7 @@ Frame {
                     Label {
                         id: speechLabel
                         visible: speechName !== ""
-                        text: "Name : "
+                        text: langue == "English" ? "名称 : " : "Name : "
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -712,7 +712,7 @@ Frame {
                     Label {
                         id: speechTimeLabel
                         visible: speechName !== ""
-                        text: "Wait for"
+                        text: langue == "English" ? "等待" : "Wait for"
                         anchors {
                             top: speechLabel.bottom
                             left: speechLabel.left

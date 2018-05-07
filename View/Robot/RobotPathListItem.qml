@@ -261,7 +261,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                tooltip: pathIsOpen ? "Hide robot path detail" : "Show robot path detail"
+                tooltip: pathIsOpen ? langue == "English" ? "隐藏路径" : " Hide robot path detail" : langue == "English" ? "显示路径" : " Show robot path detail"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -431,47 +431,62 @@ Frame {
                                     var waitTimeText = "";
                                     var elapsedTime = "";
                                     var elapsedTime2 = "";
+                                    var waitTimeLabel = "";
+                                    var humanActionLabel="";
+                                    var SecondsLabel="";
+
+//                                    waitTimeLabel = "toto"
+                                    if (langue == "English") {
+                                        waitTimeLabel = "等待 ："
+                                        humanActionLabel="人为干预"
+                                        SecondsLabel=" 秒"
+                                    } else {
+                                        waitTimeLabel = "Delay : "
+                                        humanActionLabel="Human Action"
+                                        SecondsLabel=" s"
+                                    }
+
                                     if (playingPath === false) { // if robot not playingPath
                                         elapsedTimer.elapsed = 0;
                                         elapsedTimer2.elapsed = 0;
                                         customLabelWaitTime.humanActionClicked = false;
                                         customLabelWaitTime.previousStage = 0;
                                         if (waitTime === -1) {
-                                            waitTimeText = "Human Action";
+                                            waitTimeText = humanActionLabel+"";
                                         } else {
-                                            waitTimeText = "Delay : " + waitTime + " s";
+                                            waitTimeText = waitTimeLabel+"" + waitTime +""+SecondsLabel;
                                         }
                                     } else {
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
-                                                waitTimeText = "Human Action";
+                                                waitTimeText = humanActionLabel+"";
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 elapsedTimer.restart();
                                                 elapsedTime = waitTime - elapsedTimer.elapsed/1000;
                                                 if (elapsedTime <= 0) { /// if delay time is finished
-                                                    waitTimeText = "Delay : " + waitTime + " s";
+                                                   waitTimeText = waitTimeLabel+"" + waitTime + ""+SecondsLabel;
                                                 } else { /// if delay time is still running
-                                                    waitTimeText = "Delay : " + elapsedTime + " s";
+                                                    waitTimeText = waitTimeLabel+"" + elapsedTime + ""+SecondsLabel;
                                                 }
                                             }
                                         } else if ((looping === true) && (customLabelWaitTime.previousStage === pathPoints.count - 1) && (stage === 0) && (index === customLabelWaitTime.previousStage)) { /// if last point
                                             if (waitTime === -1) { /// if human action case
-                                                waitTimeText = "Human Action";
+                                                waitTimeText = humanActionLabel+"";
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 elapsedTimer2.restart();
                                                 elapsedTime2 = waitTime - elapsedTimer2.elapsed/1000;
                                                 if (elapsedTime2 <= 0) { /// if delay time is finished
-                                                    waitTimeText = "Delay : " + waitTime + " s";
+                                                    waitTimeText = waitTimeLabel+""+ waitTime + ""+SecondsLabel;
 
                                                 } else { /// if delay time is still running
-                                                    waitTimeText = "Delay : " + elapsedTime2 + " s";
+                                                    waitTimeText = waitTimeLabel+""+ elapsedTime2 + ""+SecondsLabel;
                                                 }
                                             }
                                         } else { /// for point where robot is not while path is playing
                                             if (waitTime === -1) {
-                                                waitTimeText = "Human Action";
+                                                waitTimeText = humanActionLabel+"";
                                             } else {
-                                                waitTimeText = "Delay : " + waitTime + " s";
+                                                waitTimeText = waitTimeLabel+"" + waitTime +""+SecondsLabel;
                                             }
                                         }
 
@@ -745,7 +760,7 @@ Frame {
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
 //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
-                tooltip: looping ? "Unloop" : "Loop"
+                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"开始循环":"Loop"
                 checkable: true
                 checked: looping
 
@@ -807,7 +822,7 @@ Frame {
                     }
                 }
 //                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
-                tooltip: (dockStatus === 3) ? "Stop auto docking" : "Auto docking"
+                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动对接":"Stop auto docking" : langue == "English" ?"自动对接":"Auto docking"
 
                 anchors {
                     verticalCenter: parent.verticalCenter

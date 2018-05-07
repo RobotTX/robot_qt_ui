@@ -128,7 +128,7 @@ Frame {
     TextField {
         id: pointTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("路径名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("偷入目标点名称") : qsTr("Enter name")
 
         text: oldName
         height: 28

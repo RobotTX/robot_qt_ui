@@ -414,7 +414,9 @@ Window {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            onClicked: tutorialD.open()
+            CustomToolTip { text: langue == "English" ? "Help" : "Help" }
+
+            onClicked: langue == "English" ? tutorialDChinese.open() : tutorialD.open()
         }
 
         EditMapToolButton {

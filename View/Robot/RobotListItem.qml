@@ -49,7 +49,7 @@ Frame {
         height: 25
 
         imgSrc: "qrc:/icons/restart"
-        tooltip: "Shut Down robot"
+        tooltip: langue == "English" ? "退出程序" : "Shut Down Robot"
 
         property int delay: 1500
         onPressed: {
@@ -229,7 +229,7 @@ Frame {
         id: muteButton
         objectName: "muteBtn"
         imgSrc: if (charging == true) { "qrc:/icons/muteOn" } else  { "qrc:/icons/muteOff" }
-        tooltip: if (charging == true) { "Unmute sound" } else {"Mute sound"}
+        tooltip: if (charging == true) { langue == "English" ?"取消静音":"Unmute sound" } else {langue == "English" ?"静音":"Mute sound"}
         anchors {
             verticalCenter: nameLabel.verticalCenter
             right: rightButton.left
@@ -463,7 +463,7 @@ Frame {
 
             Label {
                 id: linearSpeedLabel
-                text: "Linear Speed"
+                text: langue == "English" ? "线速度" : "Linear Speed"
                 anchors {
                     left: parent.left
                     leftMargin: 20
@@ -491,7 +491,7 @@ Frame {
 
             Label {
                 id: angularSpeedLabel
-                text: qsTr("Angular Speed")
+                text: qsTr(langue == "English" ? "角速度" : "Angular Speed")
                 anchors {
                     left: linearSpeedLabel.right
                     leftMargin: 40

@@ -341,7 +341,7 @@ Frame {
             }
 
             color: "#8F8E94"
-            text: langue === "English" ? qsTr("Velocity chinese") : qsTr("Velocity Settings")
+            text: langue === "English" ? qsTr("速度") : qsTr("Velocity Settings")
         }
 
         Item {
@@ -366,7 +366,7 @@ Frame {
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
                 font.pointSize: 10
-                text: langue === "English" ? qsTr("Linear velocity chinese") : qsTr("Linear velocity")
+                text: langue === "English" ? qsTr("线速度") : qsTr("Linear velocity")
             }
 
             HelpButton {
@@ -380,7 +380,7 @@ Frame {
                     verticalCenter: linearVelocityHelp.verticalCenter
                 }
 
-                tooltipText: langue === "English" ? "Linear velocity chinese" : "Recommend 0.4 m/s"
+                tooltipText: langue === "English" ? "推荐 0.4 m/s" : "Recommend 0.4 m/s"
             }
         }
 
@@ -466,7 +466,7 @@ Frame {
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
                 font.pointSize: 10
-                text: langue === "English" ? qsTr("Angular velocity chinese") : qsTr("Angular velocity")
+                text: langue === "English" ? qsTr("角速度") : qsTr("Angular velocity")
             }
 
             HelpButton {
@@ -480,7 +480,7 @@ Frame {
                     verticalCenter: angularVelocityHelp.verticalCenter
                 }
 
-                tooltipText: langue === "English" ? "Angular velocity chinese" : "Recommend 40 deg/s"
+                tooltipText: langue === "English" ? "推荐 40 deg/s" : "Recommend 40 deg/s"
             }
         }
 
@@ -986,7 +986,7 @@ Frame {
             height: 23
 
             CustomLabel {
-                text: qsTr("Exit Application")
+                text: langue == "English" ? "退出程序" : "Exit Application"
                 color: Style.midGrey
                 verticalAlignment: Text.AlignVCenter
                 anchors {
@@ -1030,9 +1030,9 @@ Frame {
             y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: "Do you want to exit the application ?"
-            acceptMessage: langue == "English" ? "Yes" : "Yes"
-            rejectMessage: "Cancel"
+            message: langue == "English" ? "你想退出应用程序吗？" : "Do you want to exit the application ?"
+            acceptMessage: langue == "English" ? "是" : "Yes"
+            rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
                 Qt.quit();
             }
