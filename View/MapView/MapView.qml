@@ -104,7 +104,7 @@ Frame {
             onSavePosition: emitPosition()
             onZoomInMap: {
                 var oldPos = mapToItem(mapImage, width / 2, height / 2);
-                var factor = 1.1;
+                var factor = 1.3;
                 var newScale = zoomScale.xScale * factor;
                 /// Zoom into the image
                 if(newScale > Style.minZoom && newScale < Style.maxZoom) {
@@ -124,7 +124,7 @@ Frame {
 
             onZoomOutMap: {
                 var oldPos = mapToItem(mapImage, width / 2, height / 2);
-                var factor = 0.9;
+                var factor = 0.7;
                 var newScale = zoomScale.xScale * factor;
 
                 /// Zoom into the image

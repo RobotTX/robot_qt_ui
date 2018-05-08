@@ -75,8 +75,9 @@ Frame {
                 topMargin: -10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个无线网将被使用 ?") : qsTr("Robot Selection")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("机器人设置") : qsTr("Robot Settings")
         }
 
         PopupMenuItem {
@@ -84,7 +85,6 @@ Frame {
             height: Style.menuItemHeight
             width: parent.width
             labelText: {
-                console.log("nameRobot = " + nameRobot);
                 if (nameRobot === "") {
                     langue === "English" ? "选择机器人" : "Select a robot"
                 } else {
@@ -104,15 +104,18 @@ Frame {
                 anchors.right: parent.right
                 anchors.rightMargin: 12
             }
-            onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// desktop
-            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+            onHoveredChanged: if(visible){
+                                robotListInPopup.open();
+                                settingsPage.currentMenuIndex = 0
+                              } /// desktop
+//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
             RobotListInPopup {
+                id: robotListInPopup
                 x: robotList.width
-                visible: currentMenuIndex === 0
+                visible: settingsPage.currentMenuIndex === 0
                 robotModel: settingsPage.robotModel
                 onRobotSelected: {
-                    console.log("ip = " + ip + " name = " + name);
                     ipRobotWifi = ip;
                     nameRobot = name;
 
@@ -154,6 +157,9 @@ Frame {
                     function getAngularVelocityReverse(av) {
                         return av === 20 ? av = 0 : av = (av/100) - 0.1
                     }
+
+                    settingsPage.currentMenuIndex = -1;
+
                 }
             }
         }
@@ -177,8 +183,9 @@ Frame {
                 topMargin: 10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个无线网将被使用 ?") : qsTr("WiFi Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("无线网设置") : qsTr("WiFi Settings")
         }
 
         Label {
@@ -200,7 +207,7 @@ Frame {
             width: parent.width
             labelText: {
                 if (inputNameWifi === "") {
-                    langue === "English" ? "选择机器人" : "Select a WiFi"
+                    langue === "English" ? "选择无线网" : "Select a WiFi"
                 } else {
                     langue === "English" ?  inputNameWifi :  inputNameWifi
                 }
@@ -218,14 +225,17 @@ Frame {
                 anchors.right: parent.right
                 anchors.rightMargin: 12
             }
-            onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
+            onHoveredChanged: if(visible){
+                                wifiMenu.open();
+                                settingsPage.currentMenuIndex = 1;
+                              } /// desktop
 
-            onClicked: if(visible){ currentMenuIndex = 1} /// android
+//            onClicked: if(visible){ currentMenuIndex = 1} /// android
 
             Menu {
                 id: wifiMenu
                 x: userInputWifiName.width
-                visible: currentMenuIndex === 1
+                visible: settingsPage.currentMenuIndex === 1
                 padding: 0
                 width: 300
 
@@ -249,10 +259,9 @@ Frame {
                             labelText: modelData
                             enabled: true
                             leftPadding: Style.menuItemLeftPadding
-
                             onTriggered: {
-                                console.log("clicked on " + modelData);
                                 inputNameWifi = modelData;
+                                settingsPage.currentMenuIndex = -1;
                                 wifiMenu.close();
                             }
                         }
@@ -305,6 +314,7 @@ Frame {
                langue: settingsPage.langue
                txt: langue == "English" ? "应用" : "Apply"
                width: 70
+               font.pointSize: 11
 
                anchors.top: userInputWifiPwd.bottom
                anchors.topMargin: 15
@@ -340,8 +350,9 @@ Frame {
                 topMargin: 10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("速度") : qsTr("Velocity Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("速度设置") : qsTr("Velocity Settings")
         }
 
         Item {
@@ -549,6 +560,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "应用" : "Apply"
                 width: 70
+                font.pointSize: 11
 
                 anchors.top: lineMeasurement52.bottom
                 anchors.topMargin: 15
@@ -561,7 +573,7 @@ Frame {
                         console.log("angularVelocitySlider = ", angularVelocitySlider.value)
                         saveVelocitySignal(ipRobotWifi, getLinearVelocity(linearVelocitySlider.value), getAngularVelocity(angularVelocitySlider.value));
                     } else {
-                        wifiDialog.open();
+                        robotSelectionDialog.open();
                     }
                 }
 
@@ -618,8 +630,9 @@ Frame {
                     top: parent.top
                 }
 
-                color: "#8F8E94"
-                text: langue === "English" ? qsTr("低电量警告") : qsTr("Battery Level Settings")
+                color: Style.darkSkyBlue
+                font.pointSize: 12
+                text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Settings")
             }
 
             HelpButton {
@@ -707,6 +720,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "应用" : "Apply"
                 width: 70
+                font.pointSize: 11
 
                 anchors.top: lineMeasurement5.bottom
                 anchors.topMargin: 15
@@ -720,7 +734,7 @@ Frame {
                         saveBatterySignal(ipRobotWifi, getBattery(batterySlider.value))
                         console.log("value battery = ", getBattery((batterySlider.value)))
                     } else {
-                        wifiDialog.open();
+                        robotSelectionDialog.open();
                     }
                 }
 
@@ -755,8 +769,9 @@ Frame {
                 topMargin: 20
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个地图将被使用 ?") : qsTr("Map Sync. Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("地图同步设置") : qsTr("Map Sync. Settings")
         }
 
         HelpButton {
@@ -860,6 +875,7 @@ Frame {
                langue: settingsPage.langue
                txt: langue == "English" ? "应用" : "Apply"
                width: 70
+               font.pointSize: 11
 
                anchors.top: mapChoices.bottom
                anchors.topMargin: 15
@@ -895,7 +911,7 @@ Frame {
                     text: changeLanguageBtn.checked ? "English" : "中文"
                     font: changeLanguageBtn.font
                     verticalAlignment: Text.AlignVCenter
-                    color: Style.midGrey2
+                    color: Style.darkSkyBlue
                 }
 
                 background: Rectangle {
@@ -987,7 +1003,7 @@ Frame {
 
             CustomLabel {
                 text: langue == "English" ? "退出程序" : "Exit Application"
-                color: Style.midGrey
+                color: Style.darkSkyBlue
                 verticalAlignment: Text.AlignVCenter
                 anchors {
                     left: parent.left
@@ -1031,7 +1047,7 @@ Frame {
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
             message: langue == "English" ? "你想退出应用程序吗？" : "Do you want to exit the application ?"
-            acceptMessage: langue == "English" ? "是" : "Yes"
+            acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
                 Qt.quit();
@@ -1061,9 +1077,21 @@ Frame {
             parent: ApplicationWindow.overlay
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
-            height: 60
+            height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            acceptMessage: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"
+            message: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"
+            acceptMessage: "Ok"
+        }
+
+        CustomDialog {
+            id: robotSelectionDialog
+            parent: ApplicationWindow.overlay
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
+            height: 130
+            title: langue == "English" ? "警告"  : "Warning"
+            message: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot"
+            acceptMessage: "Ok"
         }
     }
 

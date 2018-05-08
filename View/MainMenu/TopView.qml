@@ -115,7 +115,7 @@ Frame {
     /// Zoom out button
     SmallButton {
         id: zoomOutButton
-        tooltip: langue == "English" ? "地图放小" : "Zoom out"
+        tooltip: langue == "English" ? "地图缩小" : "Zoom out"
         imgSrc: "qrc:/icons/zoomOut"
         anchors {
             top: parent.top

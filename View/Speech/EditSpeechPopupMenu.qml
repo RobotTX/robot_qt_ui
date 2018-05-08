@@ -17,7 +17,7 @@ Menu {
     property Speechs speechModel
     property Robots robotModel
     property string myGroup
-    property int currentMenuIndex: -1
+    property int currentMenuIndex
     property string langue
 
     signal editSpeech()
@@ -34,12 +34,10 @@ Menu {
 
     PopupMenuItem {
         id: sendTtsToRobot
-        labelText: langue == "English" ? "发语音给机器人" : "Send speech to robot"
+        labelText: langue == "English" ? "发送语音给" : "Send Speech To"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-//        visible: myGroup == "Gobot"
-//        enabled: myGroup == "Gobot"
         visible: true
         enabled: true
         Image {
@@ -53,7 +51,8 @@ Menu {
             visible: true
         }
         onHoveredChanged: if (visible) {
-                              currentMenuIndex = 0
+                              robotListInPopup.open();
+                              currentMenuIndex = 0;
                           } /// desktop
 //        onClicked: if (visible) {
 //                       currentMenuIndex = 0

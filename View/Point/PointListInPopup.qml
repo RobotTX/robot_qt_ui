@@ -46,8 +46,12 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-                onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index /// desktop
-//                onHoveredChanged: if (visible) pointMenu.open();
+                onHoveredChanged: {
+                    if (visible) {
+                        pointMenu.open();
+                        currentMenuIndex = index;
+                    } /// desktop
+                }
 //                onClicked: if(visible && !pointMenu.visible) currentMenuIndex = index /// android
 
 
@@ -57,7 +61,6 @@ Menu {
                     width: 140
                     x: parent.width
                     visible: (currentMenuIndex === index && menuIndex === 0)
-//                    height: visible ? implicitHeight : 0
                     background: Rectangle {
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder

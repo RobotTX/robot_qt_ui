@@ -657,10 +657,7 @@ Frame {
                             topMargin: 8
                         }
                         font.pointSize: 11
-                        onClicked: {
-                            console.log("add speech clicked")
-                            speechList.open()
-                        }
+                        onClicked: speechList.open()
                     }
 
                     SpeechListInPopup {

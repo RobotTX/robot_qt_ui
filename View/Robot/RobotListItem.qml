@@ -15,6 +15,7 @@ Frame {
     property Robots robotModel
     property real batteryWarningThreshold
     property string langue
+    property int menuIndex: -1
 
     property variant consoleWhole: []
     property variant consoleWholeReverse: []
@@ -49,7 +50,7 @@ Frame {
         height: 25
 
         imgSrc: "qrc:/icons/restart"
-        tooltip: langue == "English" ? "退出程序" : "Shut Down Robot"
+        tooltip: langue == "English" ? "关机" : "Shut Down Robot"
 
         property int delay: 1500
         onPressed: {
@@ -112,8 +113,8 @@ Frame {
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
             message: "Do you want to power off robot " + name + " ?"
-            acceptMessage: langue == "English" ? "是" : "Yes"
-            rejectMessage: angue == "English" ? "取消" : "Cancel"
+            acceptMessage: langue == "English" ? "确认" : "Yes"
+            rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
                 frame.rebootRobot(timerRestartButton.ipToShutDown);
             }
@@ -278,13 +279,15 @@ Frame {
         }
 
         onClicked: {
-            robotPopupMenu.open()
-            console.log("menu opened");
+            menuIndex = -1;
+            robotPopupMenu.open();
+
         }
 
         RobotPopupMenu {
             id: robotPopupMenu
             x: rightButton.width
+            currentMenuIndex: frame.menuIndex
             pointModel: frame.pointModel
             pathModel: frame.pathModel
             robotModel: frame.robotModel
@@ -504,7 +507,7 @@ Frame {
         id: rectSpeed
         anchors {
             left: parent.left
-            leftMargin: 20
+            leftMargin: 10
             right: parent.right
             rightMargin: 20
             top : batteryLevel.bottom
@@ -512,10 +515,10 @@ Frame {
         }
         height: 35
         width: 100
-        border.color: Style.lightGreyBorder
-        border.width: 1
+//        border.color: Style.lightGreyBorder
+//        border.width: 1
         radius: 3
-        color: "white"
+        color: "transparent"
 
         RowLayout {
             id: rowSpeed
@@ -755,17 +758,17 @@ Frame {
             rightMargin: 20
         }
         onPathSelected: {
-            var ActionLabel=""
-            var AssignLabel=""
+            var actionLabel=""
+            var assignLabel=""
             if (langue == "English") {
-                ActionLabel = "路径"
-                AssignLabel = "分配给机器"
+                actionLabel = "路径"
+                assignLabel = "分配给机器"
             } else {
-                ActionLabel = "Path"
-                AssignLabel = "assigned to robot"
+                actionLabel = "Path"
+                assignLabel = "assigned to robot"
             }
             robotModel.newPathSignal(ip, _groupName, _pathName)
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "\"" + _pathName + "\"" +AssignLabel+"\""  + name +"\"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + _pathName + "\"" + assignLabel +"\""  + name +"\"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -774,18 +777,18 @@ Frame {
             frame.consoleString = frame.consoleWholeReverse.join('');
         }
         onStartDockingRobot: {
-            var ActionLabel=""
-            var AutoDockingLabel=""
+            var actionLabel=""
+            var autoDockingLabel=""
             if (langue == "English") {
-                ActionLabel = "机器 ："
-                AutoDockingLabel = "开始自动对接"
+                actionLabel = "机器人 "
+                autoDockingLabel = "开始自动充电"
             } else {
-                ActionLabel = "Start robot ："
-                AutoDockingLabel = "auto docking process"
+                actionLabel = "Start robot "
+                autoDockingLabel = "auto docking process"
             }
             console.log("docking clicked !!!");
             frame.startDockingRobot(ip)
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "" + name + "\"\n"+AutoDockingLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ autoDockingLabel + "\n");
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
             }
@@ -796,18 +799,18 @@ Frame {
 
         }
         onStopDockingRobot: {
-            var ActionLabel=""
-            var AutoDockingLabel=""
+            var actionLabel=""
+            var autoDockingLabel=""
             if (langue == "English") {
-                ActionLabel = "机器 ："
-                AutoDockingLabel = "停止自动对接"
+                actionLabel = "机器人 "
+                autoDockingLabel = "停止自动充电"
             } else {
-                ActionLabel = "Stop robot ："
-                AutoDockingLabel = "auto docking process"
+                actionLabel = "Stop robot ："
+                autoDockingLabel = "auto docking process"
             }
 
             frame.stopDockingRobot(ip)
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "" + name + "\"\n"+AutoDockingLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ autoDockingLabel +"\n");
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
             }
@@ -818,16 +821,16 @@ Frame {
         }
         onInterruptDelay: frame.interruptDelay(ip)
         onStopPath: {
-            var ActionLabel=""
-            var MissonLabel=""
+            var actionLabel=""
+            var missonLabel=""
             if (langue == "English") {
-                ActionLabel = "机器 ："
-                MissonLabel = "停止行驶路径"
+                actionLabel = "机器 ："
+                missonLabel = "停止行驶路径"
             } else {
-                ActionLabel = "Stop robot ："
-                MissonLabel = "misson"
+                actionLabel = "Stop robot ："
+                missonLabel = "misson"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "" + name + "\"\n"+MissonLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -837,16 +840,16 @@ Frame {
             frame.consoleString = frame.consoleWholeReverse.join('');
         }
         onPlayPath: {
-            var ActionLabel=""
-            var MissonLabel=""
+            var actionLabel=""
+            var missonLabel=""
             if (langue == "English") {
-                ActionLabel = "机器 ："
-                MissonLabel = "暂停行驶路径"
+                actionLabel = "机器 ："
+                nissonLabel = "暂停行驶路径"
             } else {
-                ActionLabel = "Pause robot ："
-                MissonLabel = "mission"
+                actionLabel = "Pause robot ："
+                missonLabel = "mission"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "" + name + "\"\n"+MissonLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel + "\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -856,16 +859,16 @@ Frame {
             frame.consoleString = frame.consoleWholeReverse.join('');
         }
         onPausePath: {
-            var ActionLabel=""
-            var MissonLabel=""
+            var actionLabel=""
+            var missonLabel=""
             if (langue == "English") {
-                ActionLabel = "机器 ："
-                MissonLabel = "开始行驶路径"
+                actionLabel = "机器 ："
+                missonLabel = "开始行驶路径"
             } else {
-                ActionLabel = "Start robot ："
-                MissonLabel = "misson"
+                actionLabel = "Start robot ："
+                missonLabel = "misson"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "" + name + "\"\n"+MissonLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -875,13 +878,13 @@ Frame {
             frame.consoleString = frame.consoleWholeReverse.join('');
         }
         onLoopPath: {
-            var LoopLabel=""
+            var loopLabel=""
             if (langue == "English") {
-                LoopLabel = "开始循环"
+                loopLabel = "开始循环"
             } else {
-                LoopLabel = "Looping"
+                loopLabel = "Looping"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +LoopLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + loopLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -891,13 +894,13 @@ Frame {
             frame.consoleString = frame.consoleWholeReverse.join('');
         }
         onUnloopPath: {
-            var LoopLabel=""
+            var loopLabel=""
             if (langue == "English") {
-                LoopLabel = "停止循环"
+                loopLabel = "停止循环"
             } else {
-                LoopLabel = "Unlooping"
+                loopLabel = "Unlooping"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +LoopLabel+"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + loopLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
