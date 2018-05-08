@@ -112,7 +112,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "从机器人上删除路径" : "Delete My Path"
+        labelText: langue == "English" ? "删除当前路径" : "Delete My Path"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 5

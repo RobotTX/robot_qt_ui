@@ -45,7 +45,14 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-                onHoveredChanged: if(visible && !speechMenu.visible) currentMenuIndex = index /// desktop
+//                onHoveredChanged: if(visible && !speechMenu.visible) currentMenuIndex = index /// desktop
+                onHoveredChanged: {
+                    if (visible) {
+                        speechMenu.open();
+                        currentMenuIndex = index;
+                    }
+                }
+
 //                onHoveredChanged: if (visible) speechMenu.open();
 
                 Menu {

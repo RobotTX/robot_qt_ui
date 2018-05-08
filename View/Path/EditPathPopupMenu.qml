@@ -18,7 +18,7 @@ Menu {
     property string myGroup
     property string myRobot
     property string langue
-    property int currentMenuIndex: -1
+    property int currentMenuIndex
 
     signal newPathSignal(string ip, string groupName, string pathName)
     signal editPath()
@@ -36,8 +36,10 @@ Menu {
         id: assignPathBis
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置当前路径给" :"Assign Path To"
+        labelText: langue == "English" ? "发送路径给" :"Send Path To"
         leftPadding: Style.menuItemLeftPadding
+        visible: true
+        enabled: true
 
         Image {
             asynchronous: true
@@ -47,10 +49,14 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ menu.currentMenuIndex = 0 } /// destkop
+        onHoveredChanged: if(visible){
+                            robotListInPopup.open()
+                            menu.currentMenuIndex = 0
+                          } /// destkop
 //        onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
         RobotListInPopup {
+            id: robotListInPopup
             x: assignPathBis.width
             visible: menu.currentMenuIndex === 0
             robotModel: menu.robotModel

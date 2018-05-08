@@ -29,7 +29,6 @@ Page {
     }
 
     SettingsMenuContent {
-
         id: settings
         pathModel: page.pathModel
         robotModel: page.robotModel

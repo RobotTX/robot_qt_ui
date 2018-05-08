@@ -20,7 +20,7 @@ Menu {
     property Paths pathModel
     property Robots robotModel
     property string langue
-    property int currentMenuIndex: -1
+    property int currentMenuIndex
     signal pointSelected(double _homeX, double _homeY, int orientation)
     signal pathSelected(string _pathName, string _groupName)
     signal renameRobot()
@@ -51,16 +51,18 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible) currentMenuIndex = 0 /// desktop
+        onHoveredChanged: if(visible) {
+                            pointListInPopup.open();
+                            currentMenuIndex = 0;
+                          }/// desktop
 //        onTriggered: robotMenu.doNothing()
         onTriggered: {
-            console.log("here")
             robotMenu.open()
-            console.log("here")
         }
 //        onClicked: if(visible) currentMenuIndex = 0 /// android
 
         PointListInPopup {
+            id: pointListInPopup
             x: assignHome.width
             visible: robotMenu.currentMenuIndex === 0
             pointModel: robotMenu.pointModel
@@ -142,6 +144,12 @@ Menu {
         onTriggered: robotMenu.saveCurrentHome()
     }
 
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
@@ -181,7 +189,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "从机器人上删除路径" : "Delete My Path"
+        labelText: langue == "English" ? "删除当前路径" : "Delete My Path"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 5

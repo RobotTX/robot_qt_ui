@@ -188,7 +188,7 @@ Frame {
     TextField {
         id: ttsTextField
 //        anchors.fill: parent
-        placeholderText: langue == "English" ? "正文" : "Enter text"
+        placeholderText: langue == "English" ? "输入正文" : "Enter text"
         wrapMode: "WrapAtWordBoundaryOrAnywhere"
         text: tts
         selectByMouse: true

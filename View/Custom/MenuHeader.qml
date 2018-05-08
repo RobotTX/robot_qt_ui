@@ -41,6 +41,7 @@ Frame {
     Label {
         color: Style.midGrey2
         text: langue == "English" ? qsTr("管理 " + txt) : qsTr("Manage " + txt)
+        font.pointSize: 13
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
