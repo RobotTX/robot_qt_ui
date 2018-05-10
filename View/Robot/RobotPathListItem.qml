@@ -824,7 +824,7 @@ Frame {
                     }
                 }
 //                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
-                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动对接":"Stop auto docking" : langue == "English" ?"自动对接":"Auto docking"
+                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"
 
                 anchors {
                     verticalCenter: parent.verticalCenter

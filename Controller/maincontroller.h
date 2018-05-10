@@ -142,7 +142,7 @@ private slots:
      * have a different map, the level of battery under which the user is warned
      * and whether or not the tutorial should be shown to the user
      */
-    void saveSettings(int mapChoice, double batteryThreshold);
+    void saveSettings(int mapChoice, double batteryThreshold, int languageChoice);
     /**
      * @brief newMapFromRobotSlot
      * @param ip
@@ -299,7 +299,7 @@ private slots:
 
     void saveBattery(QString ip, double battery);
 
-    void changeLanguage(QString language);
+//    void changeLanguage(QString language);
 
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
@@ -307,7 +307,8 @@ signals:
     void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation, QVariant speechName, QVariant speechContent, QVariant speechTime);
-    void emitSettings(QVariant mapChoice);
+    void emitSettings(QVariant mapChoice, QVariant languageChoice);
+    void emitLanguage(QVariant language);
     void emitWifiList(QVariant wifiList, QVariant count);
     void emitSizeWifiList(QVariant sizeWifiList);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);

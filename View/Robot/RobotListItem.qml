@@ -545,7 +545,8 @@ Frame {
                     left: parent.left
                     leftMargin: langue === "English" ? 30 : 20
                 }
-                color: Style.midGrey2
+//                color: Style.midGrey2
+                color: Style.blackMenuTextColor
                 font.pointSize: 9
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -574,7 +575,8 @@ Frame {
                     leftMargin: langue === "English" ? 80 : 40
                 }
                 font.pointSize: 9
-                color: Style.midGrey2
+//                color: Style.midGrey2
+                color: Style.blackMenuTextColor
                 horizontalAlignment: Text.AlignHCenter
             }
 
@@ -645,16 +647,18 @@ Frame {
                 if(stage >= 0){
                     if(stage < pathPoints.count){
                         if(playingPath) {
-                            if (stage == 0) {
+                            if (stage === 0) {
+                                console.log("stage === 0")
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its \nmission" + "\n")
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("正在移动到 tototoooo" + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                             } else {
+                                console.log("stage >= 0 = " + stage);
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("正在移动到 cococooooo" + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                             }
                         } else {
                             if (robotModel.stopButtonClicked === true) {
@@ -696,25 +700,25 @@ Frame {
                         langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
                     }
                 } else {
+                    console.log("stage where >= 0 || stage = " + stage);
                     if(Math.abs(stage + 1) < pathPoints.count){
+
                         if(stage == -1) {
+                            playingPath = false;
                             langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在到 " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "去的路上" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
                             reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                             robotModel.msg = robotModel.inverseMsg.join('');
                             langue == "English" ? qsTr("困在到 " +  pathPoints.get(Math.abs(stage + 1)).pathPointName + " 去的路上") : qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                            playingPath = false;
                             qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
 //                            warningDialog.message = "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName;
 //                            warningDialog.open();
                         } else {
+                            playingPath = false;
                             langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
                             reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                             robotModel.msg = robotModel.inverseMsg.join('');
                             langue == "English" ? qsTr("困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上") : qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                            playingPath = false;
                             qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-//                            warningDialog.message = "Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName;
-//                            warningDialog.open();
                         }
                     } else {
                         langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
@@ -728,12 +732,15 @@ Frame {
         font.pixelSize: 14
         color: {
             if(pathName !== "" && pathPoints.count > 0){
-                if(stage >= 0)
+                if(stage >= 0) {
                     Style.darkSkyBlue
-                else
+                } else {
+                    playingPath = false;
                     Style.errorColor2
-            } else
+                }
+            } else {
                 Style.midGrey2
+            }
         }
         anchors {
             top: rectSpeed.bottom

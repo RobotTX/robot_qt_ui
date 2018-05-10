@@ -7,7 +7,7 @@ Button {
     property string langue
     property string txt: langue == "English"  ? "保存" : "Save"
     property string tooltip
-    property bool canSave: true
+    property bool canSave: false
     property bool timerTriggered: false
     height: 23
 
@@ -20,7 +20,12 @@ Button {
 
     background: Rectangle {
         radius: 3
-        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
+//        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
+        color: {
+            console.log("canSave : " + canSave);
+            canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
+        }
+
         border.width: 1
         border.color: canSave ? Style.darkSkyBlueBorder : Style.disableSaveBorder
     }

@@ -60,6 +60,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double, int)), this, SLOT(saveMapConfig(QString, double, double, double, int)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
+
         connect(applicationWindow, SIGNAL(test()), this, SLOT(testSlot()));
         connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
         connect(this, SIGNAL(openWarningDialog(QVariant, QVariant)), applicationWindow, SLOT(openWarningDialog(QVariant, QVariant)));
@@ -88,16 +89,25 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             Q_UNREACHABLE();
         }
 
+        QObject* paths = applicationWindow->findChild<QObject*>("pathModel");
+        if (paths) {
+            connect(this, SIGNAL(emitLanguage(QVariant)), paths, SLOT(languageChoice(QVariant)));
+        } else {
+            /// NOTE can probably remove that when testing phase is over
+            qDebug() << "MapController::MapController could not find the paths";
+            Q_UNREACHABLE();
+        }
+
         QObject* settings = applicationWindow->findChild<QObject*>("settings");
         if(settings){
-            connect(this, SIGNAL(emitSettings(QVariant)), settings, SLOT(setSettings(QVariant)));
+            connect(this, SIGNAL(emitSettings(QVariant, QVariant)), settings, SLOT(setSettings(QVariant, QVariant)));
             connect(this, SIGNAL(emitWifiList(QVariant, QVariant)), settings, SLOT(getWifiList(QVariant, QVariant)));
             connect(this, SIGNAL(emitSizeWifiList(QVariant)), settings, SLOT(getSizeWifiList(QVariant)));
-            connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
+            connect(settings, SIGNAL(saveSettingsSignal(int, double, int)), this, SLOT(saveSettings(int, double, int)));
             connect(settings, SIGNAL(saveWifiSignal(QString, QString, QString)), this, SLOT(saveWifi(QString, QString, QString)));
             connect(settings, SIGNAL(saveVelocitySignal(QString, double, double)), this, SLOT(saveVelocity(QString, double, double)));
             connect(settings, SIGNAL(saveBatterySignal(QString, double)), this, SLOT(saveBattery(QString, double)));
-            connect(settings, SIGNAL(changeLanguage(QString)), this, SLOT(changeLanguage(QString)));
+//            connect(settings, SIGNAL(changeLanguage(QString)), this, SLOT(changeLanguage(QString)));
 
         } else {
             /// NOTE can probably remove that when testing phase is over
@@ -227,31 +237,34 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             if(in.atEnd()){
                 QTextStream stream(&file);
                 /// if the file was corrupted we put as default the mode
-                /// "always ask" as for the choice of the map and 10% for
-                /// the battery
-                stream << 2 << " " << 0.0;
-                emit emitSettings(2);
+                /// "always ask" as for the choice of the map, 10% for
+                /// the battery and "english" for the language
+                stream << 2 << " " << 0.0 << " " << 0;
+                emit emitSettings(2, 0);
                 emit emitBatteryThreshold(0.0);
             } else {
                 while (!in.atEnd()){
                     QString line = in.readLine();
                     int mapChoice(2);
+                    int languageChoice(0);
                     double batteryThreshold(0.3);
                     QStringList list = line.split(' ');
-                    qDebug() << "settings " << list;
-                    if(list.size() == 2){
+                    qDebug() << "settings maincontroller.cpp" << list;
+                    if(list.size() == 3){
                         mapChoice = list.at(0).toInt();
                         if(list.at(1).toDouble() >= 0 && list.at(1).toDouble() <= 1)
                             batteryThreshold = list.at(1).toDouble();
+                        languageChoice = list.at(2).toInt();
                     } else {
                         file.resize(0);
                         QTextStream stream(&file);
                         /// if the file was corrupted we put as default the mode
                         /// "always ask" as for the choice of the map and 10% for
                         /// the battery
-                        stream << 2 << " " << 0.0;
+                        stream << 2 << " " << 0.0 << 0;
                     }
-                    emit emitSettings(mapChoice);
+                    emit emitSettings(mapChoice, languageChoice);
+                    emit emitLanguage(languageChoice);
                     emit emitBatteryThreshold(batteryThreshold);
                 }
                 file.close();
@@ -517,8 +530,8 @@ void MainController::loadMapConfig(QString fileName) {
     }
 }
 
-void MainController::saveSettings(int mapChoice, double batteryThreshold){
-    qDebug() << "save settings called" << mapChoice << batteryThreshold;
+void MainController::saveSettings(int mapChoice, double batteryThreshold, int languageChoice){
+    qDebug() << "save settings called" << mapChoice << batteryThreshold << languageChoice;
 
     /// desktop
     QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
@@ -529,7 +542,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
 
     if(file.open(QFile::WriteOnly)){
         QTextStream stream(&file);
-        stream << mapChoice << " " << batteryThreshold ;
+        stream << mapChoice << " " << batteryThreshold << " " << languageChoice;
         file.close();
         emit emitBatteryThreshold(batteryThreshold);
     }
@@ -1063,10 +1076,10 @@ void MainController::updateLinearVelocitySlot(QString ip, double linear){
     emit setLinearVelocity(ip, linear);
 }
 
-void MainController::changeLanguage(QString language) {
-    qDebug() << "language in maincontroller = " << language;
-    robotsController->changeLanguageSlot(language);
-}
+//void MainController::changeLanguage(QString language) {
+//    qDebug() << "language in maincontroller = " << language;
+//    robotsController->changeLanguageSlot(language);
+//}
 
 
 /**********************************************************************************************************/

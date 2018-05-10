@@ -921,15 +921,13 @@ Frame {
                 if (groupComboBox.displayText === Helper.noGroupChinese) {
                     groupComboBox.displayText = Helper.noGroup;
                 }
-                console.log("create " + groupComboBox.displayText + " : " + newName);
-
 
                 if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
                     console.log("oldname != '' ", oldName)
                 }
                 createPath(groupComboBox.displayText, newName);
-                console.log("createPath + groupComboBox.displayText + newName = " + groupComboBox.displayText + " " + newName)
+
                 var mess1 = ''
                 var mess2 = ''
                 if (langue == "English") {

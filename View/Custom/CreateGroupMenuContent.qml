@@ -22,6 +22,10 @@ Frame {
 
     onVisibleChanged: {
         groupTextField.text = oldName;
+        if (groupTextField.text === "") {
+            saveButton.canSave = false;
+        }
+
         errorMsg = "";
         setMessageTop(1, errorMsg);
     }
@@ -64,7 +68,9 @@ Frame {
 */
         background: Rectangle {
             radius: 2
-            border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.color: {
+                console.log("saveButtonGroup === " + !saveButton.canSave)
+                !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder}
             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
         onTextChanged: {
@@ -95,8 +101,9 @@ Frame {
             right: parent.right
             bottom: parent.bottom
         }
-        canSave: false
+
         tooltip: errorMsg
+        canSave: false
         anchors.leftMargin: 5
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(groupTextField.text);
@@ -111,9 +118,11 @@ Frame {
             }
 
             if(oldName === ""){
+                console.log("oldName === empty");
                 createGroup(newName);
                 setMessageTop(3, creationGroup + newName + "\"");
             } else {
+                console.log("oldName !== empty");
                 renameGroup(newName, oldName);
                 setMessageTop(3, renameGroupLabel);
             }
