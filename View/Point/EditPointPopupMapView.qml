@@ -36,8 +36,6 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-//        visible: myGroup == "Gobot"
-//        enabled: myGroup == "Gobot"
         visible: true
         enabled: true
         Image {
@@ -50,7 +48,12 @@ Menu {
 //            visible: myGroup == "Gobot"
             visible: true
         }
-        onHoveredChanged: if (visible) { currentMenuIndex = 0 } /// desktop
+        onHoveredChanged: {
+            if (visible) {
+                robotListInPopup.open();
+                currentMenuIndex = 0;
+            } /// desktop
+        }
 //        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {

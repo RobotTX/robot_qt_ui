@@ -54,6 +54,7 @@ Frame {
         pointModel: mainMenuViewsFrame.pointModel
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         langue: mainMenuViewsFrame.langue
+        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }

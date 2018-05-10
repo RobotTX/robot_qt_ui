@@ -247,7 +247,8 @@ Frame {
             var mess1 = ''
             var mess2 = ''
             if (langue == "English") {
-                mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
+                mess1 = "已创建语音 \"" + newName + "\" 在 \"" + groupName + "\"";
+                mess2 = "已修改 \"" + oldGroup + "\" 中的语音 \"" + oldName + "\" ，并保存为 \"" + groupName + "\" 的语音 \"" + newName + "\"";
                 mess2 = "Edited the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             } else {
                 mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
@@ -266,11 +267,11 @@ Frame {
         var mess1 = ''
         var mess2 = ''
         if (langue == "English") {
-            mess1 = "the speech label cannot be empty"
-            mess2 = "the speech label \"" + Helper.formatName(speechTextField.text) + "\" is already taken"
+            mess1 = "语音名称不可以为空";
+            mess2 = "语音名 \"" + Helper.formatName(speechTextField.text) + "\" 已经被占用";
         } else {
-            mess1 = "The speech label cannot be empty"
-            mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken"
+            mess1 = "The speech label cannot be empty";
+            mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken";
         }
 
         if(!saveButton.canSave){

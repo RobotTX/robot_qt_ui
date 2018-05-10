@@ -55,9 +55,9 @@ Menu {
                             pointListInPopup.open();
                             currentMenuIndex = 0;
                           }/// desktop
-//        onTriggered: robotMenu.doNothing()
+
         onTriggered: {
-            robotMenu.open()
+            doNothing();
         }
 //        onClicked: if(visible) currentMenuIndex = 0 /// android
 

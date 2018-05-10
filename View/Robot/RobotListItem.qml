@@ -52,13 +52,11 @@ Frame {
         imgSrc: "qrc:/icons/restart"
         tooltip: langue == "English" ? "关机" : "Shut Down Robot"
 
-        property int delay: 1500
+        property int delay: 700
         onPressed: {
-            console.log("timer starts")
             timerRestartButton.restart()
         }
         onReleased: {
-            console.log("timer stop");
             timerRestartButton.stop();
             timerRestartButton.elapsed = 0
         }
@@ -112,7 +110,7 @@ Frame {
             y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: "Do you want to power off robot " + name + " ?"
+            message: langue == "English" ? "\n你想要关闭机器人 " + name + " ?" : "\nDo you want to power off robot " + name + " ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
@@ -201,16 +199,18 @@ Frame {
             onClicked: {
                 var newName = Helper.formatName(nameField.text);
                 if(newName !== ""){
-                    var NameLabel=""
+                    var nameLabelChange = ""
+                    var msg = ""
                     if (langue == "English") {
-                      NameLabel="机器名改成"
+                      nameLabelChange ="机器名改成"
                     } else {
-                      NameLabel="Robot renamed to"
+                      nameLabelChange = "Robot renamed to"
                     }
                     nameLabel.visible = true;
                     nameField.focus = false;
                     robotModel.newNameSignal(ip, newName);
-                    consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +NameLabel+ "\n\"" + newName+ "\" \n");
+                    setMessageTop(2, nameLabelChange + "\"" + newName + "\"");
+                    consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + nameLabelChange + "\n\"" + newName+ "\" \n");
                     if (consoleWhole.length === 20) {
                         consoleWhole.splice(0,1);
                     }
@@ -243,23 +243,25 @@ Frame {
             leftMargin: 1
         }
         onReleased:  {
-            var MuteLabel=""
-            var UnmuteLabel=""
+            var muteLabel=""
+            var unmuteLabel=""
             if (langue == "English") {
-                MuteLabel = "静音"
-                UnmuteLabel = "取消静音"
+                muteLabel = "静音"
+                unmuteLabel = "取消静音"
             } else {
-                MuteLabel = "Mute"
-                UnmuteLabel = "Unmute"
+                muteLabel = "Mute"
+                unmuteLabel = "Unmute"
             }
             charging = !charging;
             if (charging !== true) {
                 frame.soundOn(ip);
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +UnmuteLabel+"\n");
+                setMessageTop(2, unmuteLabel);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +unmuteLabel+"\n");
             } else {
                 // if mute is true then the corresponding command is x
                 frame.soundOff(ip);
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +MuteLabel+ "\n");
+                setMessageTop(2, muteLabel);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +muteLabel+ "\n");
             }
             if (consoleWhole.length === 20) {
                 consoleWhole.splice(0,1);
@@ -284,6 +286,10 @@ Frame {
 
         }
 
+        function openMenu() {
+            robotPopupMenu.open();
+        }
+
         RobotPopupMenu {
             id: robotPopupMenu
             x: rightButton.width
@@ -293,20 +299,21 @@ Frame {
             robotModel: frame.robotModel
             langue: frame.langue
             onDoNothing: {
-                console.log("do nothing");
-
-                console.log("we are in onDoNothing");
+                menuIndex = -1;
+                rightButton.openMenu();
+                console.log("click click click");
             }
 
             onPointSelected: {
-                var HomeLabel=""
+                var homeLabel=""
                 if (langue == "English") {
-                  HomeLabel="新充电站"
+                  homeLabel="新充电站"
                 } else {
-                  HomeLabel="New home"
+                  homeLabel="New home"
                 }
+                setMessageTop(2, homeLabel);
                 robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +HomeLabel+ "\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + homeLabel+ "\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -315,17 +322,19 @@ Frame {
                 consoleString = consoleWholeReverse.join('');
                 }
             onPathSelected: {
-                var ActionLabel=""
-                var AssignLabel=""
+                var actionLabel=""
+                var assignLabel=""
                 if (langue == "English") {
-                    ActionLabel = "路径"
-                    AssignLabel = "分配给机器"
+                    actionLabel = "路径"
+                    assignLabel = "分配给机器"
                 } else {
-                    ActionLabel = "Path"
-                    AssignLabel = "assigned to robot"
+                    actionLabel = "Path"
+                    assignLabel = "assigned to robot"
                 }
+
+                setMessageTop(2, actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\""  + name +"\"");
                 robotModel.newPathSignal(ip, _groupName, _pathName)
-                frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +ActionLabel+ "\"" + _pathName + "\"" +AssignLabel+"\"\n"  + name +"\"\n");
+                frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\"\n" + name +"\"\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -338,14 +347,15 @@ Frame {
                 nameField.focus = true;
             }
             onDeletePath: {
-                var PathLabel=""
+                var pathLabel=""
                 if (langue == "English") {
-                  PathLabel="删除路径"
+                  pathLabel="删除路径"
                 } else {
-                  PathLabel="Path deleted"
+                  pathLabel="Path deleted"
                 }
+                setMessageTop(2, pathLabel);
                 robotModel.deletePathSignal(ip)
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +PathLabel+ "\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + pathLabel + "\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -356,17 +366,19 @@ Frame {
             }
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
             onSaveCurrentPath: {
-                var PathLabel=""
-                var Savelabel=""
+                var pathLabel=""
+                var savelabel=""
                 if (langue == "English") {
-                  PathLabel="当前的路径"
-                  Savelabel="保存了"
+                    pathLabel="当前的路径"
+                    savelabel="保存了"
                 } else {
-                    PathLabel="Current path"
-                    Savelabel="saved"
+                    pathLabel="Current path"
+                    savelabel="saved"
                 }
+
+                setMessageTop(2, pathLabel + " " + pathName + " " + savelabel)
                 pathModel.saveCurrentPath(pathName,pathPoints)
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +PathLabel+ "" + pathName + ""+Savelabel+"\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +pathLabel+ " " + pathName + " "+ savelabel + "\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -378,16 +390,17 @@ Frame {
                 if (homeOri < 0) {
                     homeOri = homeOri + 360;
                 }
-                var HomeLabel=""
+                var homeLabel=""
                 if (langue == "English") {
-                  HomeLabel="当前的充电站保存了"
+                  homeLabel="当前的充电站保存了"
                 } else {
-                  HomeLabel="Current home saved"
+                  homeLabel="Current home saved"
 
                 }
 
+                setMessageTop(2, homeLabel)
                 pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +HomeLabel+"\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + homeLabel + "\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -530,7 +543,7 @@ Frame {
                 text: langue == "English" ? "线速度" : "Linear Speed"
                 anchors {
                     left: parent.left
-                    leftMargin: 20
+                    leftMargin: langue === "English" ? 30 : 20
                 }
                 color: Style.midGrey2
                 font.pointSize: 9
@@ -548,7 +561,7 @@ Frame {
                 anchors {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
-                    leftMargin: 10
+                    leftMargin: langue === "English" ? -5 : 10
                     topMargin: 3
                 }
             }
@@ -558,7 +571,7 @@ Frame {
                 text: qsTr(langue == "English" ? "角速度" : "Angular Speed")
                 anchors {
                     left: linearSpeedLabel.right
-                    leftMargin: 40
+                    leftMargin: langue === "English" ? 80 : 40
                 }
                 font.pointSize: 9
                 color: Style.midGrey2
@@ -575,7 +588,7 @@ Frame {
                 anchors {
                     top: linearSpeed.top
                     left:angularSpeedLabel.left
-                    leftMargin: 15
+                    leftMargin: langue === "English" ? -10 : 15
                 }
             }
         }
@@ -708,6 +721,7 @@ Frame {
                     }
                 }
             } else {
+                console.log("Langue === " + langue);
                 langue == "English" ? qsTr("尚未设置路径") : qsTr("No Path Assigned");
             }
         }
@@ -764,9 +778,12 @@ Frame {
                 actionLabel = "路径"
                 assignLabel = "分配给机器"
             } else {
-                actionLabel = "Path"
+                actionLabel = "Path "
                 assignLabel = "assigned to robot"
             }
+
+            setMessageTop(2, actionLabel + "\"" + _pathName + "\"" + assignLabel + "\"" + name);
+
             robotModel.newPathSignal(ip, _groupName, _pathName)
             frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + _pathName + "\"" + assignLabel +"\""  + name +"\"\n");
 
@@ -786,9 +803,11 @@ Frame {
                 actionLabel = "Start robot "
                 autoDockingLabel = "auto docking process"
             }
-            console.log("docking clicked !!!");
+
+            setMessageTop(2, actionLabel + "\"" + name + "\""+ autoDockingLabel);
+
             frame.startDockingRobot(ip)
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ autoDockingLabel + "\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ autoDockingLabel + "\n");
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
             }
@@ -805,12 +824,14 @@ Frame {
                 actionLabel = "机器人 "
                 autoDockingLabel = "停止自动充电"
             } else {
-                actionLabel = "Stop robot ："
+                actionLabel = "Stop robot "
                 autoDockingLabel = "auto docking process"
             }
 
+            setMessageTop(2, actionLabel + "\"" + name + "\""+ autoDockingLabel);
+
             frame.stopDockingRobot(ip)
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ autoDockingLabel +"\n");
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ autoDockingLabel +"\n");
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
             }
@@ -824,13 +845,15 @@ Frame {
             var actionLabel=""
             var missonLabel=""
             if (langue == "English") {
-                actionLabel = "机器 ："
+                actionLabel = "机器 "
                 missonLabel = "停止行驶路径"
             } else {
-                actionLabel = "Stop robot ："
+                actionLabel = "Stop robot "
                 missonLabel = "misson"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel +"\n");
+
+            setMessageTop(2, actionLabel + "\"" + name + "\""+ missonLabel);
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missonLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -841,15 +864,16 @@ Frame {
         }
         onPlayPath: {
             var actionLabel=""
-            var missonLabel=""
+            var missionLabel=""
             if (langue == "English") {
-                actionLabel = "机器 ："
-                nissonLabel = "暂停行驶路径"
+                actionLabel = "机器 "
+                missionLabel = "暂停行驶路径"
             } else {
-                actionLabel = "Pause robot ："
-                missonLabel = "mission"
+                actionLabel = "Pause robot "
+                missionLabel = "mission"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel + "\n");
+            setMessageTop(2, actionLabel + "\"" + name + "\"" + missionLabel);
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missionLabel + "\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -860,15 +884,17 @@ Frame {
         }
         onPausePath: {
             var actionLabel=""
-            var missonLabel=""
+            var missionLabel=""
             if (langue == "English") {
-                actionLabel = "机器 ："
-                missonLabel = "开始行驶路径"
+                actionLabel = "机器 "
+                missionLabel = "开始行驶路径"
             } else {
-                actionLabel = "Start robot ："
-                missonLabel = "misson"
+                actionLabel = "Start robot "
+                missionLabel = "misson"
             }
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "" + name + "\"\n"+ missonLabel +"\n");
+
+            setMessageTop(2, actionLabel + "\"" + name + "\"" + missionLabel);
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missionLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -884,6 +910,9 @@ Frame {
             } else {
                 loopLabel = "Looping"
             }
+
+            setMessageTop(2, loopLabel);
+
             frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + loopLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
@@ -900,6 +929,9 @@ Frame {
             } else {
                 loopLabel = "Unlooping"
             }
+
+            setMessageTop(2, loopLabel);
+
             frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + loopLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {

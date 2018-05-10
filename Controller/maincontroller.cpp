@@ -97,6 +97,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(settings, SIGNAL(saveWifiSignal(QString, QString, QString)), this, SLOT(saveWifi(QString, QString, QString)));
             connect(settings, SIGNAL(saveVelocitySignal(QString, double, double)), this, SLOT(saveVelocity(QString, double, double)));
             connect(settings, SIGNAL(saveBatterySignal(QString, double)), this, SLOT(saveBattery(QString, double)));
+            connect(settings, SIGNAL(changeLanguage(QString)), this, SLOT(changeLanguage(QString)));
 
         } else {
             /// NOTE can probably remove that when testing phase is over
@@ -457,7 +458,7 @@ void MainController::loadMapConfig(QString fileName) {
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //        QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
-        setMessageTopSlot(1,  "GobotLocation path = " + filePath); /// no debugging mode so use topmessage to show output
+//        setMessageTopSlot(1,  "GobotLocation path = " + filePath); /// no debugging mode so use topmessage to show output
 
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath)){
@@ -503,8 +504,14 @@ void MainController::loadMapConfig(QString fileName) {
                                                  mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
                                                  mapController->getMetadataString(),
                                                  mapController->getMapImage());
-
-            setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
+            QString message = "";
+            if (langue == "English") {
+                message = "Loaded the map chinese: ";
+            } else {
+                message = "Loaded the map: ";
+            }
+//            setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
+            setMessageTopSlot(2, message + mapFileInfo.fileName());
         } else
             emit openWarningDialog("WARNING", "No configuration found for this map.\n\n\tPlease select another file.");
     }
@@ -526,7 +533,14 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
         file.close();
         emit emitBatteryThreshold(batteryThreshold);
     }
-    setMessageTopSlot(2, "Settings saved");
+    QString message = "";
+    if (langue == "English") {
+        message = "Settings save chinese";
+    } else {
+        message = "Settings save";
+    }
+//    setMessageTopSlot(2, "Settings saved");
+    setMessageTopSlot(2, message);
 }
 
 void MainController::saveWifi(QString ip, QString wifi, QString pwd) {
@@ -1047,6 +1061,11 @@ void MainController::saveBattery(QString ip, double battery) {
 
 void MainController::updateLinearVelocitySlot(QString ip, double linear){
     emit setLinearVelocity(ip, linear);
+}
+
+void MainController::changeLanguage(QString language) {
+    qDebug() << "language in maincontroller = " << language;
+    robotsController->changeLanguageSlot(language);
 }
 
 
