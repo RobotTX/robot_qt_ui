@@ -100,21 +100,40 @@ Frame {
         anchors.leftMargin: 5
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(groupTextField.text);
+            var creationGroup = "";
+            var renameGroupLabel = "";
+            if (langue === "English") {
+                creationGroup = "已创建分组";
+                renameGroupLabel = "已重命名分组 \"" +  oldName + "\" 为 " + "\"" + newName + "\"";
+            } else {
+                creationGroup = "Created the group \"";
+                renameGroupLabel = "Renamed the group \"" + oldName + "\" to \"" + newName + "\"";
+            }
+
             if(oldName === ""){
                 createGroup(newName);
-                setMessageTop(3, "Created the group \"" + newName + "\"");
+                setMessageTop(3, creationGroup + newName + "\"");
             } else {
                 renameGroup(newName, oldName);
-                setMessageTop(3, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
+                setMessageTop(3, renameGroupLabel);
             }
-            console.log("creating path " + newName)
             backToMenu();
         }
     }
 
     function enableSave(enable){
         saveButton.canSave = enable;
-        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? "The name of the group cannot be empty" : "\"" + groupTextField.text + "\" is already taken";
+        var msg1 = "";
+        var msg2 = "";
+        if (langue === "English") {
+            msg1 = "组名称不可以为空";
+            msg2 = "\"" + groupTextField.text + "\" 已经被占用";
+        } else {
+            msg1 = "The name of the group cannot be empty";
+            msg2 = "\"" + groupTextField.text + "\" is already taken";
+        }
+
+        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? msg1 : msg2;
         setMessageTop(1, errorMsg);
     }
 }

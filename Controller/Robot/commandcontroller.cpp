@@ -1,4 +1,4 @@
-                                                  #include "commandcontroller.h"
+#include "commandcontroller.h"
 #include <QDebug>
 #include <QStringList>
 
@@ -23,7 +23,6 @@ void CommandController::sendCommand(const QString cmd){
     emit processingCmd(ip, waitingForAnswer);
 }
 
-
 void CommandController::cmdAnswerSlot(QString answer){
     QList<QString> list = answer.split(QChar(31), QString::SkipEmptyParts);
 
@@ -33,7 +32,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'a':
                     /// Changed the name of the robot
                     emit updateName(ip, list.at(2));
-                    emit setMessageTop(2, "Renamed robot \"" + robotName + "\" to \"" + list.at(2) + "\"");
+//                    emit setMessageTop(2, "Renamed robot \"" + robotName + "\" to \"" + list.at(2) + "\"");
                     robotName = list.at(2);
                 break;
                 /*case 'b':
@@ -47,7 +46,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'd':
                     /// Paused the path of the robot
-                    emit setMessageTop(4, "Paused robot \"" + robotName + "\" mission");
+//                    emit setMessageTop(4, "Paused robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'e':
@@ -71,44 +70,44 @@ void CommandController::cmdAnswerSlot(QString answer){
 //                    qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
                     list.removeFirst();
                     list.removeFirst();
-                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
+//                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
                     emit updatePath(ip, QStringList(list));
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'j':
                     /// Played the path of the robot
-                    emit setMessageTop(2, "Start robot \"" + robotName + "\" mission");
+//                    emit setMessageTop(2, "Start robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, true);
                 break;
                 case 'k':
                     /// Played the assigned point
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" heading to assigned point");
+//                    emit setMessageTop(2, "Robot \"" + robotName + "\" heading to assigned point");
                     emit updatePlayingPath(ip, false);
                 break;
                 case 'l':
                     /// Stopped the path of the robot
-                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" mission");
+//                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" mission");
                     emit updatePlayingPath(ip, false); // reset play path
                 break;
                 case 'm':
                     /// Stopped and deleted the path of the robot
                     emit stoppedDeletedPath(ip);
-                    emit setMessageTop(4, "Deleted robot \"" + robotName + "\" path");
+//                    emit setMessageTop(4, "Deleted robot \"" + robotName + "\" path");
                 break;
                 case 'n':
                     /// Sent the new home to the robot
                     emit updateHome(ip, list.at(2).toDouble(), list.at(3).toDouble(), list.at(4).toDouble());
-                    emit setMessageTop(2, "Robot " + robotName + " has a new home");
+//                    emit setMessageTop(2, "Robot " + robotName + " has a new home");
                 break;
                 case 'o':
                     /// Started the docking process
                     emit updatePlayingPath(ip, false);
-                    emit setMessageTop(2, "Start robot \"" + robotName + "\" auto docking process");
+//                    emit setMessageTop(2, "Start robot \"" + robotName + "\" auto docking process");
                 break;
                 case 'p':
                     /// Stopped the docking process
                     emit updatePlayingPath(ip, false);
-                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" docking process");
+//                    emit setMessageTop(4, "Stopped robot \"" + robotName + "\" docking process");
                 break;
                 case 'q':
                     /// Started the laser of the robot
@@ -135,11 +134,11 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'w':
                     /// Sound on
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" Sound On");
+//                    emit setMessageTop(2, "Robot \"" + robotName + "\" Sound On");
                 break;
                 case 'x':
                     /// Sound off
-                    emit setMessageTop(2, "Robot \"" + robotName + "\" Sound Off");
+//                    emit setMessageTop(2, "Robot \"" + robotName + "\" Sound Off");
                 break;
             case 'y':
 
@@ -159,7 +158,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case '1':
                    /// set velocity
                    emit setVelocity(ip, list.at(2).toDouble(), list.at(3).toDouble());
-                   emit setMessageTop(2, "Changed robot \"" + robotName + "\" velocity : linear = " + list.at(2) + " angular = " + list.at(3)); /// linear velocity
+//                   emit setMessageTop(2, "Changed robot \"" + robotName + "\" velocity : linear = " + list.at(2) + " angular = " + list.at(3)); /// linear velocity
                break;
                case '2':
                    /// set battery

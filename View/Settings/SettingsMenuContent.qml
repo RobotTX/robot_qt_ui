@@ -1046,7 +1046,7 @@ Frame {
             y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: langue == "English" ? "你想退出应用程序吗？" : "Do you want to exit the application ?"
+            message: langue == "English" ? "\n你想退出应用程序吗？" : "\nDo you want to exit the application ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
@@ -1079,8 +1079,8 @@ Frame {
             y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"
-            acceptMessage: "Ok"
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot or fill the WiFi name"
+            acceptMessage: langue == "English" ? "是" : "Ok"
         }
 
         CustomDialog {
@@ -1090,8 +1090,9 @@ Frame {
             y: (parent.height - height) / 2
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
-            message: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot"
-            acceptMessage: "Ok"
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot"
+            acceptMessage: langue == "English" ? "是" : "Ok"
+
         }
     }
 

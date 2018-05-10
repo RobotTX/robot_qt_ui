@@ -245,7 +245,6 @@ Frame {
                 topMargin: 5
             }
             onClicked: {
-                console.log("add saved point");
                 pointList.open()
             }
         }
@@ -270,7 +269,7 @@ Frame {
                 left: parent.left
                 top: addSavedPoint.bottom
                 right: parent.right
-                topMargin: 5
+                topMargin: langue === "English" ? 20 : 5
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -284,6 +283,7 @@ Frame {
         anchors {
             left: parent.left
             top: topFrame.bottom
+            topMargin: langue === "English" ? 20 : 0
             right: parent.right
             bottom: bottomFrame.top
         }
@@ -839,7 +839,7 @@ Frame {
                         left: parent.let
                         right: parent.right
                         top: content.bottom
-                        topMargin: 10
+                        topMargin: langue === "English" ? 20 : 10
                     }
                 }
             }
@@ -864,7 +864,7 @@ Frame {
                     model: pathPoints
                     delegate: dragDelegate
 
-                    spacing: 4
+                    spacing: 10
                 }
             }
         }

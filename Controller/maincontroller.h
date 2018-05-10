@@ -26,6 +26,7 @@ public:
 
     QPointer<MapController> getMapController(void) const { return mapController; }
     QPointer<RobotsController> getRobotsController(void) const { return robotsController; }
+    QString getLanguage(void) const { return langue; }
 
 private :
     /**
@@ -298,6 +299,8 @@ private slots:
 
     void saveBattery(QString ip, double battery);
 
+    void changeLanguage(QString language);
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
@@ -336,7 +339,7 @@ private:
     QPointer<SpeechController> speechController;
     QPointer<PathController> pathController;
     QPointer<RobotsController> robotsController;
-
+    QString langue;
     /**
      * @brief discardMap
      * Boolean to tell that even if we received a new map from a scan, we already saved the map and don't want to use the new one

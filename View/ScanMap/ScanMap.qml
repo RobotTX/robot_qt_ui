@@ -138,7 +138,8 @@ Window {
                 console.log("x = " + x + " y = " + y)
             }
 
-            color: "#cdcdcd"
+//            color: "#cdcdcd"
+            color: Style.mapGrey
 
             MouseArea {
                 anchors.fill: parent

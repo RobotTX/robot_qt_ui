@@ -143,7 +143,7 @@ Frame {
         y: (mapMenuFrame.height - height) / 2
         height: 60
         title: langue == "English" ? "警告窗口" : "Warning dialog"
-        acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"
+        acceptMessage: langue == "English" ? "\n地图名称不能包含空格" : "\nSpace are not allowed"
     }
 
     FileDialog {
@@ -164,7 +164,7 @@ Frame {
     CustomDialog {
         id: messageDialog
         title: langue == "English" ? "导入已经存在的地图" : "Importing an existing map"
-        message: langue == "English" ? "在读取新地图之前，是否保存当前地图?" : "Do you wish to save the current map before importing a new one ?\n\n\tIf you don't save the current map, your changes will be discarded"
+        message: langue == "English" ? "\n在读取新地图之前，是否保存当前地图?" : "\nDo you wish to save the current map before importing a new one ?\n\n\tIf you don't save the current map, your changes will be discarded"
         rejectMessage: langue == "English" ? "取消" : "Cancel"
         acceptMessage: langue == "English" ? "读取" : "Load"
         yesMessage: langue == "English" ? "保存&读取" : "Save & Load"

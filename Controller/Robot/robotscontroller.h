@@ -28,6 +28,7 @@ public:
     ~RobotsController();
 
     QMap<QString, QPointer<RobotController>> getRobots(void) const { return robots; }
+    QString getLangue(void) const { return langue; }
 
     /**
      * @brief setRobotPos
@@ -97,6 +98,7 @@ public:
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
+    void changeLanguageSlot(const QString language);
 private:
     void launchServer(void);
 
@@ -233,6 +235,7 @@ private:
     bool receivingMap;
     QPointer<QTimer> sendMapTimer;
     QPointer<QTimer> requestMapTimer;
+    QString langue;
 };
 
 #endif /// ROBOTSCONTROLLER_H
