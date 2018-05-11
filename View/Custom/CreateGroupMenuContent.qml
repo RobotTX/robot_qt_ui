@@ -68,9 +68,7 @@ Frame {
 */
         background: Rectangle {
             radius: 2
-            border.color: {
-                console.log("saveButtonGroup === " + !saveButton.canSave)
-                !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder}
+            border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
         onTextChanged: {

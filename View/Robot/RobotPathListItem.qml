@@ -689,9 +689,9 @@ Frame {
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                 tooltip: { if(playingPath) {
-                            langue == "English" ? "暂停机器人路径" : "Pause my path"
+                            langue == "English" ? "暂停机器人路径" : "Pause robot path"
                     } else {
-                        langue == "English" ? "开始机器人路径" : "Play my robot"
+                        langue == "English" ? "开始机器人路径" : "Play robot path"
                     }
                 }
 
@@ -762,7 +762,7 @@ Frame {
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
 //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
-                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"开始循环":"Loop"
+                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"循环":"Loop"
                 checkable: true
                 checked: looping
 
@@ -824,7 +824,26 @@ Frame {
                     }
                 }
 //                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
-                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"
+//                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"
+                tooltip: {
+                    if (langue === "English") {
+                        if (dockStatus === 3) {
+                            "停止自动充电";
+                        } else if (dockStatus === 1) {
+                            "充电中";
+                        } else {
+                            "自动充电";
+                        }
+                    } else {
+                        if (dockStatus === 3) {
+                            "Stop auto docking" ;
+                        } else if (dockStatus === 1) {
+                            "Charging";
+                        } else {
+                            "Auto docking";
+                        }
+                    }
+                }
 
                 anchors {
                     verticalCenter: parent.verticalCenter

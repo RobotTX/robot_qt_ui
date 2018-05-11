@@ -828,8 +828,8 @@ Frame {
             var actionLabel=""
             var autoDockingLabel=""
             if (langue == "English") {
-                actionLabel = "机器人 "
-                autoDockingLabel = "停止自动充电"
+                actionLabel = "停止机器人 "
+                autoDockingLabel = "任务"
             } else {
                 actionLabel = "Stop robot "
                 autoDockingLabel = "auto docking process"
@@ -873,8 +873,8 @@ Frame {
             var actionLabel=""
             var missionLabel=""
             if (langue == "English") {
-                actionLabel = "机器 "
-                missionLabel = "暂停行驶路径"
+                actionLabel = "暂停机器人 "
+                missionLabel = "路径"
             } else {
                 actionLabel = "Pause robot "
                 missionLabel = "mission"
@@ -893,8 +893,8 @@ Frame {
             var actionLabel=""
             var missionLabel=""
             if (langue == "English") {
-                actionLabel = "机器 "
-                missionLabel = "开始行驶路径"
+                actionLabel = "开始机器人 "
+                missionLabel = "路径"
             } else {
                 actionLabel = "Start robot "
                 missionLabel = "misson"

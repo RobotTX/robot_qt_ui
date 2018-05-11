@@ -648,7 +648,7 @@ Frame {
 
                     NormalButton {
                         id: addSpeech
-                        txt: langue == "English" ? "加入已有目标点" : "Add Speech"
+                        txt: langue == "English" ? "加入已有语音" : "Add Speech"
                         imgSrc: "qrc:/icons/add_speech"
                         anchors {
                             left: parent.left

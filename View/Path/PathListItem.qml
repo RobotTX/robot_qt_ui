@@ -166,9 +166,9 @@ Column {
                     id: rightOpenPath
                     imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (pathIsOpen) {
-                               langue == "English" ? "收起路径细节" : "Hide path detail"
+                               langue == "English" ? "隐藏路径细节" : "Hide path detail"
                                 } else {
-                               langue == "English" ? "展开路径细节" : "Show path detail"
+                               langue == "English" ? "查看路径细节" : "Show path detail"
                             }
                     }
                     anchors {

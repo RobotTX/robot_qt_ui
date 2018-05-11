@@ -52,7 +52,6 @@ ApplicationWindow {
     property real batteryWarningThreshold: 20
 //    property string langue: _robotModel.langue
     property string langue: {
-        console.log("pathLanguage in main.qml = " + _pathModel.langue)
         _pathModel.langue
     }
 
@@ -69,7 +68,6 @@ ApplicationWindow {
             id: _pointModel
             objectName: "pointModel"
             langue: {
-                console.log("language point = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             onSetMessageTop: mapView.setMessageTop(status, msg)
@@ -85,7 +83,6 @@ ApplicationWindow {
             id: _speechModel
             objectName: "speechModel"
             langue: {
-                console.log("language speechs = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             onSetMessageTop: mapView.setMessageTop(status, msg)
@@ -95,7 +92,6 @@ ApplicationWindow {
             id: _pathModel
             objectName: "pathModel"
             langue: {
-                console.log("language paths = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             onSetMessageTop: mapView.setMessageTop(status, msg)
@@ -108,7 +104,6 @@ ApplicationWindow {
             id: _tmpPathModel
             objectName: "tmpPathModel"
             langue: {
-                console.log("language paths = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             Component.onCompleted: clearTmpPath();
@@ -120,7 +115,6 @@ ApplicationWindow {
             onSetMessageTop: mapView.setMessageTop(status, msg)
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
             langue: {
-                console.log("language robots = " + applicationWindow.langue)
                 applicationWindow.langue
             }
         }
@@ -129,7 +123,6 @@ ApplicationWindow {
             id: _tutorial
             objectName: "tutorialModel"
             langue: {
-                console.log("language tutorial = " + applicationWindow.langue)
                 applicationWindow.langue
             }
         }
@@ -157,7 +150,6 @@ ApplicationWindow {
             imgSource: mapView.mapSrc
             tutorial: _tutorial
             langue: {
-                console.log("language editmap = " + applicationWindow.langue)
                 applicationWindow.langue
             }
         }
@@ -167,7 +159,6 @@ ApplicationWindow {
             robotModel: _robotModel
             tutorial: _tutorial
             langue: {
-                console.log("language scanmap = " + applicationWindow.langue)
                 applicationWindow.langue
             }
         }
@@ -185,7 +176,6 @@ ApplicationWindow {
             id: mainMenu
             z: 1
             langue: {
-                console.log("language mainmenu = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             currentMenu: mainFrame.currentMenu
@@ -207,7 +197,6 @@ ApplicationWindow {
             currentMenu: mainFrame.currentMenu
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
             langue: {
-                console.log("language mainmenubiews = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             anchors {
@@ -230,7 +219,6 @@ ApplicationWindow {
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
             langue: {
-                console.log("language mapview = " + applicationWindow.langue)
                 applicationWindow.langue
             }
             useTmpPathModel: applicationWindow.useTmpPathModel
@@ -242,7 +230,6 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
             onDoubleClickedOnMap: {
-                console.log("size map " + width + " " + height);
                 mainFrame.currentMenu = 2;
                 mainMenuViews.doubleClickedOnMap(mouseX, mouseY);
             }
