@@ -648,7 +648,7 @@ Frame {
 
                     NormalButton {
                         id: addSpeech
-                        txt: langue == "English" ? "加入已有目标点" : "Add Speech"
+                        txt: langue == "English" ? "加入已有语音" : "Add Speech"
                         imgSrc: "qrc:/icons/add_speech"
                         anchors {
                             left: parent.left
@@ -921,15 +921,13 @@ Frame {
                 if (groupComboBox.displayText === Helper.noGroupChinese) {
                     groupComboBox.displayText = Helper.noGroup;
                 }
-                console.log("create " + groupComboBox.displayText + " : " + newName);
-
 
                 if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
                     console.log("oldname != '' ", oldName)
                 }
                 createPath(groupComboBox.displayText, newName);
-                console.log("createPath + groupComboBox.displayText + newName = " + groupComboBox.displayText + " " + newName)
+
                 var mess1 = ''
                 var mess2 = ''
                 if (langue == "English") {

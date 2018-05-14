@@ -98,7 +98,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "Hide point" : "Hide point"
+        labelText: langue == "English" ? "隐藏目标点" : "Hide point"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

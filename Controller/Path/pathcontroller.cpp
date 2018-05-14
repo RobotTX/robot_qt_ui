@@ -28,7 +28,6 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(deletePathSignal(QString, QString)), this, SLOT(deletePath(QString, QString)));
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
-
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the qml point model";

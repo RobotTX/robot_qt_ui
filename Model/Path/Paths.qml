@@ -27,6 +27,15 @@ ListModel {
         });
     }
 
+    function languageChoice(language) {
+        if (language === 0) {
+            langue = "中文"
+        } else {
+            langue = "English";
+        }
+        console.log("language in paths = " + langue);
+    }
+
     function addPath(name, groupName){
         //console.log("Add path " + name + " to group " + groupName);
         for(var i = 0; i < count; i++)

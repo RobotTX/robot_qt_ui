@@ -50,7 +50,10 @@ ApplicationWindow {
     property bool useTmpPathModel: false
     property bool useRobotPathModel: false
     property real batteryWarningThreshold: 20
-    property string langue: _robotModel.langue
+//    property string langue: _robotModel.langue
+    property string langue: {
+        _pathModel.langue
+    }
 
     title:langue == "English" ? qsTr("小Go去哪儿") : qsTr("Go Anywhere")
 
@@ -64,7 +67,9 @@ ApplicationWindow {
         Points {
             id: _pointModel
             objectName: "pointModel"
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             onSetMessageTop: mapView.setMessageTop(status, msg)
             onSaveCurrentHome: {
                 mainFrame.currentMenu = 2
@@ -77,14 +82,18 @@ ApplicationWindow {
         Speechs {
             id: _speechModel
             objectName: "speechModel"
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         Paths {
             id: _pathModel
             objectName: "pathModel"
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             onSetMessageTop: mapView.setMessageTop(status, msg)
             onSaveCurrentPath: {
                 mainFrame.currentMenu = 1
@@ -94,7 +103,9 @@ ApplicationWindow {
         Paths {
             id: _tmpPathModel
             objectName: "tmpPathModel"
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             Component.onCompleted: clearTmpPath();
         }
 
@@ -103,13 +114,17 @@ ApplicationWindow {
             objectName: "robotModel"
             onSetMessageTop: mapView.setMessageTop(status, msg)
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
         }
 
         Tutorial {
             id: _tutorial
             objectName: "tutorialModel"
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
         }
 
         /// NOTE Just for testing, to remove later
@@ -134,14 +149,18 @@ ApplicationWindow {
             id: editMap
             imgSource: mapView.mapSrc
             tutorial: _tutorial
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
         }
 
         ScanMap {
             id: scanMap
             robotModel: _robotModel
             tutorial: _tutorial
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
         }
     }
 
@@ -156,7 +175,9 @@ ApplicationWindow {
         MainMenu {
             id: mainMenu
             z: 1
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             currentMenu: mainFrame.currentMenu
             onSelectMenu: mainFrame.currentMenu = index
 //            visible: mainFrame.currentMenu === 5 ? false : true
@@ -175,7 +196,9 @@ ApplicationWindow {
             tutorial: _tutorial
             currentMenu: mainFrame.currentMenu
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             anchors {
                 left: mainMenu.right
                 top: parent.top
@@ -195,7 +218,9 @@ ApplicationWindow {
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
-            langue: applicationWindow.langue
+            langue: {
+                applicationWindow.langue
+            }
             useTmpPathModel: applicationWindow.useTmpPathModel
             useRobotPathModel: applicationWindow.useRobotPathModel
             anchors {
@@ -205,7 +230,6 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
             onDoubleClickedOnMap: {
-                console.log("size map " + width + " " + height);
                 mainFrame.currentMenu = 2;
                 mainMenuViews.doubleClickedOnMap(mouseX, mouseY);
             }

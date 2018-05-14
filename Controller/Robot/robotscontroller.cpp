@@ -236,10 +236,10 @@ void RobotsController::stoppedDeletedPathSlot(const QString ip){
     emit setPlayingPath(ip, false);
 }
 
-void RobotsController::changeLanguageSlot(const QString language) {
-    qDebug() << "language in robotsController = " << language;
-    langue = language;
-}
+//void RobotsController::changeLanguageSlot(const QString language) {
+//    qDebug() << "language in robotsController = " << language;
+//    langue = language;
+//}
 
 void RobotsController::sendCommandPausePath(const QString ip){
     sendCommand(ip, QString("d"));

@@ -98,7 +98,7 @@ public:
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
-    void changeLanguageSlot(const QString language);
+//    void changeLanguageSlot(const QString language);
 private:
     void launchServer(void);
 

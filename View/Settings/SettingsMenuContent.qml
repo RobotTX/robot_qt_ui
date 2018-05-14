@@ -15,9 +15,9 @@ Frame {
     objectName: "settings"
 
     signal close()
-    signal saveSettingsSignal(int mapChoice, double _batteryThreshold)
+    signal saveSettingsSignal(int mapChoice, double _batteryThreshold, int languageChoice)
     signal saveWifiSignal(string ip_wifi, string wifi, string pwd_wifi)
-    signal changeLanguage(string language)
+//    signal changeLanguage(string language)
     signal openCreatePointMenu()
     signal saveVelocitySignal(string ipRobotWifi, double linearVelocity, double angularVelocity)
     signal saveBatterySignal(string ipRobotWifi, double battery)
@@ -29,12 +29,14 @@ Frame {
     property variant ssidWifi: []
 
     property real batteryWarningThreshold
-    property int mapChoice
+    property int mapChoice: 1
+    property int languageChoice: 0
     property string langue
     property string nameRobot
 
     property real oriBatteryWarningThreshold
     property int oriMapChoice
+    property int oriLanguageChoice
 
     property Robots robotModel
     property Tutorial tutorial
@@ -49,6 +51,7 @@ Frame {
 
     onVisibleChanged: {
         settingsPage.mapChoice = oriMapChoice;
+
         settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
         batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
         linearVelocitySlider.initializeVelocity(0.3);
@@ -77,7 +80,7 @@ Frame {
 
             color: Style.darkSkyBlue
             font.pointSize: 12
-            text: langue === "English" ? qsTr("机器人设置") : qsTr("Robot Settings")
+            text: langue === "English" ? qsTr("机器人设置") : qsTr("Robot Setting")
         }
 
         PopupMenuItem {
@@ -185,7 +188,7 @@ Frame {
 
             color: Style.darkSkyBlue
             font.pointSize: 12
-            text: langue === "English" ? qsTr("无线网设置") : qsTr("WiFi Settings")
+            text: langue === "English" ? qsTr("无线网设置") : qsTr("WiFi Setting")
         }
 
         Label {
@@ -352,7 +355,7 @@ Frame {
 
             color: Style.darkSkyBlue
             font.pointSize: 12
-            text: langue === "English" ? qsTr("速度设置") : qsTr("Velocity Settings")
+            text: langue === "English" ? qsTr("速度设置") : qsTr("Velocity Setting")
         }
 
         Item {
@@ -632,7 +635,7 @@ Frame {
 
                 color: Style.darkSkyBlue
                 font.pointSize: 12
-                text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Settings")
+                text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Setting")
             }
 
             HelpButton {
@@ -771,7 +774,7 @@ Frame {
 
             color: Style.darkSkyBlue
             font.pointSize: 12
-            text: langue === "English" ? qsTr("地图同步设置") : qsTr("Map Sync. Settings")
+            text: langue === "English" ? qsTr("地图同步设置") : qsTr("Map Sync. Setting")
         }
 
         HelpButton {
@@ -786,12 +789,11 @@ Frame {
         }
 
         // the radio buttons to choose which map is used for the robots
-
         Rectangle {
 
             id: mapChoices
 
-            height: 130
+            height: 90
 
             anchors {
                 top: choiceMapLabel.bottom
@@ -841,33 +843,6 @@ Frame {
                 text: langue === "English" ? qsTr("总是询问我") : qsTr("Always ask me")
                 onClicked: mapChoice = 2
             }
-
-            RoundCheckBox {
-                id: mapChoice4
-                ButtonGroup.group: mapChoiceGroup
-                checked: mapChoice == 3
-                anchors {
-                    left: parent.left
-                    top: mapChoice3.bottom
-                    topMargin: 12
-                }
-                text: langue === "English" ? qsTr("最新的地图") : qsTr("The newest map")
-                onClicked: mapChoice = 3
-            }
-
-            RoundCheckBox {
-                id: mapChoice5
-                ButtonGroup.group: mapChoiceGroup
-                checked: mapChoice == 4
-                anchors {
-                    left: parent.left
-                    top: mapChoice4.bottom
-                    topMargin: 12
-                }
-
-                text: langue === "English" ? qsTr("最旧的地图") : qsTr("The oldest map")
-                onClicked: mapChoice = 4
-            }
         }
 
         SaveButton {
@@ -885,7 +860,7 @@ Frame {
                onReleased: {
                    console.log("batterySLider.value = ", batterySlider.value)
                    batteryWarningThreshold = batterySlider.value;
-                   saveSettingsSignal(mapChoice, batterySlider.value);
+                   saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                }
            }
 
@@ -900,53 +875,88 @@ Frame {
             }
         }
 
-        Button {
-                id: changeLanguageBtn
-                height: 40
-                width: 70
-                checkable: true
-                text: ""
-                objectName: "language"
-                contentItem: Label {
-                    text: changeLanguageBtn.checked ? "English" : "中文"
-                    font: changeLanguageBtn.font
-                    verticalAlignment: Text.AlignVCenter
-                    color: Style.darkSkyBlue
-                }
+        Label {
+            id: choiceLanguageLabel
+            anchors {
+                left: parent.left
+                top: horizontalSeparation4.bottom
+                topMargin: 20
+            }
 
-                background: Rectangle {
-//                    color: "transparent"
-                    color: changeLanguageBtn.pressed ? Style.lightBlue : "transparent"
-                    width: parent.width
-                    height: 50
-                }
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("语言设置") : qsTr("Language Setting")
+        }
 
+        // the radio buttons to choose which map is used for the robots
+        Rectangle {
+
+            id: languageChoices
+
+            height: 50
+
+            anchors {
+                top: choiceLanguageLabel.bottom
+                topMargin: 20
+                left: parent.left
+                leftMargin: 20
+            }
+
+            ButtonGroup {
+                id: languageChoiceGroup
+            }
+
+            RoundCheckBox {
+                id: languageChoice1
+                ButtonGroup.group: languageChoiceGroup
+                checked: languageChoice == 0
+                text: qsTr("English")
                 anchors {
-                    left : parent.left
-                    top : horizontalSeparation4.bottom;
+                    left: parent.left
                 }
 
                 onClicked: {
-                    if (changeLanguageBtn.checked) {
-                        changeLanguage("English");
-                        langue = "English";
-                        robotModel.langue = "English"
-                        pathModel.langue = "English"
-                    } else {
-                        changeLanguage("Chinese");
-                        langue = "Chinese";
-                        robotModel.langue = "Chinese"
-                        pathModel.langue = "English"
-                    }
-                    openCreatePointMenu()
+                    languageChoice = 0;
+//                    changeLanguage("中文");
+                    langue = "中文";
+//                    robotModel.langue = "中文";
+                    pathModel.langue = "中文";
+                    openCreatePointMenu();
+                    pathModel.languageChoice(languageChoice);
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                 }
             }
+
+            RoundCheckBox {
+                id: languageChoice2
+                ButtonGroup.group: mapChoiceGroup
+                checked: languageChoice == 1
+
+                anchors {
+                    left: parent.left
+                    top: languageChoice1.bottom
+                    topMargin: 12
+                }
+                text: qsTr("中文")
+
+                onClicked: {
+                    languageChoice = 1;
+//                    changeLanguage("English");
+                    langue = "English";
+//                    robotModel.langue = "English";
+                    pathModel.langue = "English";
+                    openCreatePointMenu();
+                    pathModel.languageChoice(languageChoice);
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                }
+            }
+        }
 
         ToolSeparator {
             id: horizontalSeparation10
             orientation: Qt.Horizontal
             anchors {
-                top: changeLanguageBtn.bottom
+                top: languageChoices.bottom
                 left: parent.left
                 right: parent.right
                 topMargin: 5
@@ -1096,11 +1106,16 @@ Frame {
         }
     }
 
+    function choiceLanguage(language) {
 
+    }
 
-    function setSettings(mapChoice){
+    function setSettings(mapChoice, languageChoice){
         oriMapChoice = mapChoice;
+        oriLanguageChoice = languageChoice;
         settingsPage.mapChoice = mapChoice;
+        settingsPage.languageChoice = languageChoice;
+        console.log("setSettings = " + oriMapChoice + " " + oriLanguageChoice);
     }
 
     function getWifiList(wifiList, count) {
