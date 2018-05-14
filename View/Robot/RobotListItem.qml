@@ -109,8 +109,12 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 100 : 40;
+            rightMarginLabel: langue === "English" ? 100 : 40
             title: langue == "English" ? "警告"  : "Warning"
-            message: langue == "English" ? "\n你想要关闭机器人 " + name + " ?" : "\nDo you want to power off robot " + name + " ?"
+            message: langue == "English" ? "\你想关闭机器人 " + name + " 吗?" : "\nDo you want to power off robot " + name + " ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
@@ -334,7 +338,7 @@ Frame {
 
                 setMessageTop(2, actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\""  + name +"\"");
                 robotModel.newPathSignal(ip, _groupName, _pathName)
-                frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\"\n" + name +"\"\n");
+                frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +actionLabel+ "\"" + _pathName + "\n\"" + assignLabel + "\"" + name +"\"\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -378,7 +382,7 @@ Frame {
 
                 setMessageTop(2, pathLabel + " " + pathName + " " + savelabel)
                 pathModel.saveCurrentPath(pathName,pathPoints)
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +pathLabel+ " " + pathName + " "+ savelabel + "\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + pathLabel + "\"" + pathName + "\"\n"+ savelabel + "\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -413,8 +417,18 @@ Frame {
 
     Label {
         text: {
+            var actionLabel=""
+            var assignLabel=""
+            if (langue == "English") {
+                actionLabel = "路径"
+                assignLabel = "分配给机器"
+            } else {
+                actionLabel = "Path"
+                assignLabel = "assigned to robot"
+            }
+
             if (robotModel.robotSelected === true && robotModel.getRobotIP() === ip) {
-                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + robotModel.getPathName() + "\" \nassigned to robot \""  + robotModel.nameRobotPath +"\"\n");
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "\"" + actionLabel + "\"" + robotModel.getPathName() + "\n\"" + assignLabel + "\""  + robotModel.nameRobotPath +"\"\n");
 
                 if (consoleWhole.length === 20) {
                     consoleWhole.splice(0,1);
@@ -547,7 +561,7 @@ Frame {
                 }
 //                color: Style.midGrey2
                 color: Style.blackMenuTextColor
-                font.pointSize: 9
+                font.pointSize: 10
                 horizontalAlignment: Text.AlignHCenter
             }
 
@@ -558,7 +572,7 @@ Frame {
                 color: Style.darkSkyBlue
                 horizontalAlignment: Text.Center
                 verticalAlignment: Text.Center
-                font.pointSize: 9
+                font.pointSize: 10
                 anchors {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
@@ -574,7 +588,7 @@ Frame {
                     left: linearSpeedLabel.right
                     leftMargin: langue === "English" ? 80 : 40
                 }
-                font.pointSize: 9
+                font.pointSize: 10
 //                color: Style.midGrey2
                 color: Style.blackMenuTextColor
                 horizontalAlignment: Text.AlignHCenter
@@ -586,7 +600,7 @@ Frame {
                 color: Style.darkSkyBlue
                 horizontalAlignment: Text.Center
                 verticalAlignment: Text.Center
-                font.pointSize: 9
+                font.pointSize: 10
                 anchors {
                     top: linearSpeed.top
                     left:angularSpeedLabel.left
@@ -652,13 +666,13 @@ Frame {
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its \nmission" + "\n")
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 tototoooo" + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                             } else {
                                 console.log("stage >= 0 = " + stage);
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 cococooooo" + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                             }
                         } else {
                             if (robotModel.stopButtonClicked === true) {
@@ -729,7 +743,7 @@ Frame {
                 langue == "English" ? qsTr("尚未设置路径") : qsTr("No Path Assigned");
             }
         }
-        font.pixelSize: 14
+        font.pointSize: 10
         color: {
             if(pathName !== "" && pathPoints.count > 0){
                 if(stage >= 0) {
@@ -850,17 +864,17 @@ Frame {
         onInterruptDelay: frame.interruptDelay(ip)
         onStopPath: {
             var actionLabel=""
-            var missonLabel=""
+            var missionLabel=""
             if (langue == "English") {
-                actionLabel = "机器 "
-                missonLabel = "停止行驶路径"
+                actionLabel = "停止机器人 "
+                missionLabel = "任务"
             } else {
                 actionLabel = "Stop robot "
-                missonLabel = "misson"
+                missionLabel = "mission"
             }
 
-            setMessageTop(2, actionLabel + "\"" + name + "\""+ missonLabel);
-            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missonLabel +"\n");
+            setMessageTop(2, actionLabel + "\"" + name + "\""+ missionLabel);
+            frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missionLabel +"\n");
 
             if (frame.consoleWhole.length === 20) {
                 frame.consoleWhole.splice(0,1);
@@ -897,7 +911,7 @@ Frame {
                 missionLabel = "路径"
             } else {
                 actionLabel = "Start robot "
-                missionLabel = "misson"
+                missionLabel = "mission"
             }
 
             setMessageTop(2, actionLabel + "\"" + name + "\"" + missionLabel);

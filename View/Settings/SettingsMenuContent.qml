@@ -50,7 +50,7 @@ Frame {
     }
 
     onVisibleChanged: {
-        settingsPage.mapChoice = oriMapChoice;
+//        settingsPage.mapChoice = oriMapChoice;
 
         settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
         batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
@@ -858,7 +858,6 @@ Frame {
                anchors.right: parent.right
 
                onReleased: {
-                   console.log("batterySLider.value = ", batterySlider.value)
                    batteryWarningThreshold = batterySlider.value;
                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                }
@@ -917,19 +916,18 @@ Frame {
 
                 onClicked: {
                     languageChoice = 0;
-//                    changeLanguage("中文");
                     langue = "中文";
-//                    robotModel.langue = "中文";
                     pathModel.langue = "中文";
-                    openCreatePointMenu();
+                    console.log(settingsPage.mapChoice);
+//                    openCreatePointMenu();
                     pathModel.languageChoice(languageChoice);
-                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                    saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
                 }
             }
 
             RoundCheckBox {
                 id: languageChoice2
-                ButtonGroup.group: mapChoiceGroup
+                ButtonGroup.group: languageChoiceGroup
                 checked: languageChoice == 1
 
                 anchors {
@@ -941,13 +939,11 @@ Frame {
 
                 onClicked: {
                     languageChoice = 1;
-//                    changeLanguage("English");
                     langue = "English";
-//                    robotModel.langue = "English";
                     pathModel.langue = "English";
-                    openCreatePointMenu();
+//                    openCreatePointMenu();
                     pathModel.languageChoice(languageChoice);
-                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                    saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
                 }
             }
         }
@@ -1055,6 +1051,10 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 120 : 40;
+            rightMarginLabel: langue === "English" ? 120 : 40
             title: langue == "English" ? "警告"  : "Warning"
             message: langue == "English" ? "\n你想退出应用程序吗？" : "\nDo you want to exit the application ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
@@ -1088,6 +1088,10 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 20;
+            rightMarginLabel: langue === "English" ? 80 : 20;
             title: langue == "English" ? "警告"  : "Warning"
             message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot or fill the WiFi name"
             acceptMessage: langue == "English" ? "是" : "Ok"
@@ -1099,15 +1103,15 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
-            title: langue == "English" ? "警告"  : "Warning"
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 100;
+            rightMarginLabel: langue === "English" ? 80 : 100
+            title: langue == "English" ? "警告"  : "Warning";
             message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot"
             acceptMessage: langue == "English" ? "是" : "Ok"
 
         }
-    }
-
-    function choiceLanguage(language) {
-
     }
 
     function setSettings(mapChoice, languageChoice){

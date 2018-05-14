@@ -932,10 +932,10 @@ Frame {
                 var mess2 = ''
                 if (langue == "English") {
                     mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\""
-                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
+//                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
                 } else {
                     mess1 = "Created the path \"" + newName + "\" in \"" + groupName + "\""
-                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+//                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
@@ -952,7 +952,8 @@ Frame {
                                     );
                 }
 
-                setMessageTop(3, oldName === "" ? mess1 : mess2)
+//                setMessageTop(3, oldName === "" ? mess1 : mess2)
+                setMessageTop(3, mess1)
                 backToMenu();
             }
         }

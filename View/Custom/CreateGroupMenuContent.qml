@@ -72,11 +72,21 @@ Frame {
             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
         onTextChanged: {
-            console.log(text)
-            if(oldName === groupTextField.text)
-                saveButton.canSave = true
-            else
-                checkGroup(Helper.formatName(groupTextField.text))
+//            console.log("text = " + text);
+//            if(oldName === groupTextField.text) { /// if editing groupName
+//                saveButton.canSave = true
+//            } else {
+//                checkGroup(Helper.formatName(groupTextField.text))
+//            }
+            if (oldName === groupTextField.text) {
+                if (groupTextField.length === 0) {
+                    saveButton.canSave = false;
+                } else {
+                    saveButton.canSave = true;
+                }
+            } else {
+                checkGroup(Helper.formatName(groupTextField.text));
+            }
         }
     }
 

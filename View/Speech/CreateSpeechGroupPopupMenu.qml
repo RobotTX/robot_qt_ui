@@ -23,7 +23,6 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onTriggered: {
-            console.log("1 !!! createspeechgrouppopupmenu new speech");
             openCreateSpeechMenu()
         }
     }

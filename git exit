@@ -1,0 +1,288 @@
+[33mcommit 6c4c1584e55f5cc113331145dbd6613378864f4b[m
+Author: oogyvai <vaiani.ariiotima@gtrobots.com>
+Date:   Fri May 11 11:16:45 2018 +0800
+
+    modification chinese version
+
+[1mdiff --git a/View/Custom/CreateGroupMenuContent.qml b/View/Custom/CreateGroupMenuContent.qml[m
+[1mindex 1b1486d..cb14cb6 100644[m
+[1m--- a/View/Custom/CreateGroupMenuContent.qml[m
+[1m+++ b/View/Custom/CreateGroupMenuContent.qml[m
+[36m@@ -68,9 +68,7 @@[m [mFrame {[m
+ */[m
+         background: Rectangle {[m
+             radius: 2[m
+[31m-            border.color: {[m
+[31m-                console.log("saveButtonGroup === " + !saveButton.canSave)[m
+[31m-                !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder}[m
+[32m+[m[32m            border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder[m
+             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1[m
+         }[m
+         onTextChanged: {[m
+[1mdiff --git a/View/Custom/SaveButton.qml b/View/Custom/SaveButton.qml[m
+[1mindex 9cd78ab..28ae509 100644[m
+[1m--- a/View/Custom/SaveButton.qml[m
+[1m+++ b/View/Custom/SaveButton.qml[m
+[36m@@ -7,7 +7,7 @@[m [mButton {[m
+     property string langue[m
+     property string txt: langue == "English"  ? "保存" : "Save"[m
+     property string tooltip[m
+[31m-    property bool canSave: false[m
+[32m+[m[32m    property bool canSave: true[m
+     property bool timerTriggered: false[m
+     height: 23[m
+ [m
+[36m@@ -20,12 +20,7 @@[m [mButton {[m
+ [m
+     background: Rectangle {[m
+         radius: 3[m
+[31m-//        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor[m
+[31m-        color: {[m
+[31m-            console.log("canSave : " + canSave);[m
+[31m-            canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor[m
+[31m-        }[m
+[31m-[m
+[32m+[m[32m        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor[m
+         border.width: 1[m
+         border.color: canSave ? Style.darkSkyBlueBorder : Style.disableSaveBorder[m
+     }[m
+[1mdiff --git a/View/Path/CreatePathMenuContent.qml b/View/Path/CreatePathMenuContent.qml[m
+[1mindex 19566e5..badf36f 100644[m
+[1m--- a/View/Path/CreatePathMenuContent.qml[m
+[1m+++ b/View/Path/CreatePathMenuContent.qml[m
+[36m@@ -648,7 +648,7 @@[m [mFrame {[m
+ [m
+                     NormalButton {[m
+                         id: addSpeech[m
+[31m-                        txt: langue == "English" ? "加入已有目标点" : "Add Speech"[m
+[32m+[m[32m                        txt: langue == "English" ? "加入已有语音" : "Add Speech"[m
+                         imgSrc: "qrc:/icons/add_speech"[m
+                         anchors {[m
+                             left: parent.left[m
+[1mdiff --git a/View/Path/PathListItem.qml b/View/Path/PathListItem.qml[m
+[1mindex b5af369..b16d473 100644[m
+[1m--- a/View/Path/PathListItem.qml[m
+[1m+++ b/View/Path/PathListItem.qml[m
+[36m@@ -166,9 +166,9 @@[m [mColumn {[m
+                     id: rightOpenPath[m
+                     imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"[m
+                     tooltip: { if (pathIsOpen) {[m
+[31m-                               langue == "English" ? "收起路径细节" : "Hide path detail"[m
+[32m+[m[32m                               langue == "English" ? "隐藏路径细节" : "Hide path detail"[m
+                                 } else {[m
+[31m-                               langue == "English" ? "展开路径细节" : "Show path detail"[m
+[32m+[m[32m                               langue == "English" ? "查看路径细节" : "Show path detail"[m
+                             }[m
+                     }[m
+                     anchors {[m
+[1mdiff --git a/View/Point/EditPointPopupMapView.qml b/View/Point/EditPointPopupMapView.qml[m
+[1mindex 3483930..d872afb 100644[m
+[1m--- a/View/Point/EditPointPopupMapView.qml[m
+[1m+++ b/View/Point/EditPointPopupMapView.qml[m
+[36m@@ -98,7 +98,7 @@[m [mMenu {[m
+     }[m
+ [m
+     PopupMenuItem {[m
+[31m-        labelText: langue == "English" ? "Hide point" : "Hide point"[m
+[32m+[m[32m        labelText: langue == "English" ? "隐藏目标点" : "Hide point"[m
+         width: parent.width[m
+         leftPadding: Style.menuItemLeftPadding[m
+         height: Style.menuItemHeight[m
+[1mdiff --git a/View/Robot/RobotListItem.qml b/View/Robot/RobotListItem.qml[m
+[1mindex 8c14cbe..4925f8a 100644[m
+[1m--- a/View/Robot/RobotListItem.qml[m
+[1m+++ b/View/Robot/RobotListItem.qml[m
+[36m@@ -828,8 +828,8 @@[m [mFrame {[m
+             var actionLabel=""[m
+             var autoDockingLabel=""[m
+             if (langue == "English") {[m
+[31m-                actionLabel = "机器人 "[m
+[31m-                autoDockingLabel = "停止自动充电"[m
+[32m+[m[32m                actionLabel = "停止机器人 "[m
+[32m+[m[32m                autoDockingLabel = "任务"[m
+             } else {[m
+                 actionLabel = "Stop robot "[m
+                 autoDockingLabel = "auto docking process"[m
+[36m@@ -873,8 +873,8 @@[m [mFrame {[m
+             var actionLabel=""[m
+             var missionLabel=""[m
+             if (langue == "English") {[m
+[31m-                actionLabel = "机器 "[m
+[31m-                missionLabel = "暂停行驶路径"[m
+[32m+[m[32m                actionLabel = "暂停机器人 "[m
+[32m+[m[32m                missionLabel = "路径"[m
+             } else {[m
+                 actionLabel = "Pause robot "[m
+                 missionLabel = "mission"[m
+[36m@@ -893,8 +893,8 @@[m [mFrame {[m
+             var actionLabel=""[m
+             var missionLabel=""[m
+             if (langue == "English") {[m
+[31m-                actionLabel = "机器 "[m
+[31m-                missionLabel = "开始行驶路径"[m
+[32m+[m[32m                actionLabel = "开始机器人 "[m
+[32m+[m[32m                missionLabel = "路径"[m
+             } else {[m
+                 actionLabel = "Start robot "[m
+                 missionLabel = "misson"[m
+[1mdiff --git a/View/Robot/RobotPathListItem.qml b/View/Robot/RobotPathListItem.qml[m
+[1mindex b44b818..5c9ca07 100644[m
+[1m--- a/View/Robot/RobotPathListItem.qml[m
+[1m+++ b/View/Robot/RobotPathListItem.qml[m
+[36m@@ -689,9 +689,9 @@[m [mFrame {[m
+                 width: 32[m
+                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"[m
+                 tooltip: { if(playingPath) {[m
+[31m-                            langue == "English" ? "暂停机器人路径" : "Pause my path"[m
+[32m+[m[32m                            langue == "English" ? "暂停机器人路径" : "Pause robot path"[m
+                     } else {[m
+[31m-                        langue == "English" ? "开始机器人路径" : "Play my robot"[m
+[32m+[m[32m                        langue == "English" ? "开始机器人路径" : "Play robot path"[m
+                     }[m
+                 }[m
+ [m
+[36m@@ -762,7 +762,7 @@[m [mFrame {[m
+                 width: playPausePathButton.width[m
+                 imgSrc: "qrc:/icons/reset"[m
+ //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"[m
+[31m-                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"开始循环":"Loop"[m
+[32m+[m[32m                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"循环":"Loop"[m
+                 checkable: true[m
+                 checked: looping[m
+ [m
+[36m@@ -824,7 +824,26 @@[m [mFrame {[m
+                     }[m
+                 }[m
+ //                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"[m
+[31m-                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"[m
+[32m+[m[32m//                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"[m
+[32m+[m[32m                tooltip: {[m
+[32m+[m[32m                    if (langue === "English") {[m
+[32m+[m[32m                        if (dockStatus === 3) {[m
+[32m+[m[32m                            "停止自动充电";[m
+[32m+[m[32m                        } else if (dockStatus === 1) {[m
+[32m+[m[32m                            "充电中";[m
+[32m+[m[32m                        } else {[m
+[32m+[m[32m                            "自动充电";[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    } else {[m
+[32m+[m[32m                        if (dockStatus === 3) {[m
+[32m+[m[32m                            "Stop auto docking" ;[m
+[32m+[m[32m                        } else if (dockStatus === 1) {[m
+[32m+[m[32m                            "Charging";[m
+[32m+[m[32m                        } else {[m
+[32m+[m[32m                            "Auto docking";[m
+[32m+[m[32m                        }[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+ [m
+                 anchors {[m
+                     verticalCenter: parent.verticalCenter[m
+[1mdiff --git a/main.qml b/main.qml[m
+[1mindex 9a8cc13..097f070 100644[m
+[1m--- a/main.qml[m
+[1m+++ b/main.qml[m
+[36m@@ -52,7 +52,6 @@[m [mApplicationWindow {[m
+     property real batteryWarningThreshold: 20[m
+ //    property string langue: _robotModel.langue[m
+     property string langue: {[m
+[31m-        console.log("pathLanguage in main.qml = " + _pathModel.langue)[m
+         _pathModel.langue[m
+     }[m
+ [m
+[36m@@ -69,7 +68,6 @@[m [mApplicationWindow {[m
+             id: _pointModel[m
+             objectName: "pointModel"[m
+             langue: {[m
+[31m-                console.log("language point = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             onSetMessageTop: mapView.setMessageTop(status, msg)[m
+[36m@@ -85,7 +83,6 @@[m [mApplicationWindow {[m
+             id: _speechModel[m
+             objectName: "speechModel"[m
+             langue: {[m
+[31m-                console.log("language speechs = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             onSetMessageTop: mapView.setMessageTop(status, msg)[m
+[36m@@ -95,7 +92,6 @@[m [mApplicationWindow {[m
+             id: _pathModel[m
+             objectName: "pathModel"[m
+             langue: {[m
+[31m-                console.log("language paths = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             onSetMessageTop: mapView.setMessageTop(status, msg)[m
+[36m@@ -108,7 +104,6 @@[m [mApplicationWindow {[m
+             id: _tmpPathModel[m
+             objectName: "tmpPathModel"[m
+             langue: {[m
+[31m-                console.log("language paths = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             Component.onCompleted: clearTmpPath();[m
+[36m@@ -120,7 +115,6 @@[m [mApplicationWindow {[m
+             onSetMessageTop: mapView.setMessageTop(status, msg)[m
+             batteryWarningThreshold: applicationWindow.batteryWarningThreshold[m
+             langue: {[m
+[31m-                console.log("language robots = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+         }[m
+[36m@@ -129,7 +123,6 @@[m [mApplicationWindow {[m
+             id: _tutorial[m
+             objectName: "tutorialModel"[m
+             langue: {[m
+[31m-                console.log("language tutorial = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+         }[m
+[36m@@ -157,7 +150,6 @@[m [mApplicationWindow {[m
+             imgSource: mapView.mapSrc[m
+             tutorial: _tutorial[m
+             langue: {[m
+[31m-                console.log("language editmap = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+         }[m
+[36m@@ -167,7 +159,6 @@[m [mApplicationWindow {[m
+             robotModel: _robotModel[m
+             tutorial: _tutorial[m
+             langue: {[m
+[31m-                console.log("language scanmap = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+         }[m
+[36m@@ -185,7 +176,6 @@[m [mApplicationWindow {[m
+             id: mainMenu[m
+             z: 1[m
+             langue: {[m
+[31m-                console.log("language mainmenu = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             currentMenu: mainFrame.currentMenu[m
+[36m@@ -207,7 +197,6 @@[m [mApplicationWindow {[m
+             currentMenu: mainFrame.currentMenu[m
+             batteryWarningThreshold: applicationWindow.batteryWarningThreshold[m
+             langue: {[m
+[31m-                console.log("language mainmenubiews = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             anchors {[m
+[36m@@ -230,7 +219,6 @@[m [mApplicationWindow {[m
+             tmpPathModel: _tmpPathModel[m
+             robotModel: _robotModel[m
+             langue: {[m
+[31m-                console.log("language mapview = " + applicationWindow.langue)[m
+                 applicationWindow.langue[m
+             }[m
+             useTmpPathModel: applicationWindow.useTmpPathModel[m
+[36m@@ -242,7 +230,6 @@[m [mApplicationWindow {[m
+                 bottom: parent.bottom[m
+             }[m
+             onDoubleClickedOnMap: {[m
+[31m-                console.log("size map " + width + " " + height);[m
+                 mainFrame.currentMenu = 2;[m
+                 mainMenuViews.doubleClickedOnMap(mouseX, mouseY);[m
+             }[m

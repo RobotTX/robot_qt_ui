@@ -75,6 +75,7 @@ ListModel {
             "batteryLevel": 0,
         });
         robotConnection(ip);
+        console.log("language in robots.qml = " + langue);
         if (langue == "English") {
             message = "The robot \"" + name + "\" just connected";
         } else {
