@@ -54,7 +54,6 @@ Page {
                 bottom: parent.bottom
             }
             onRenameGroup: {
-                console.log("langue = " + langue)
                 createGroupMenuContent.oldName = name;
                 menuIndex = 2;
             }

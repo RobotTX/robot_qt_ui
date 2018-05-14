@@ -441,13 +441,14 @@ Frame {
             var mess2 = ''
             if (langue == "English") {
                 mess1 = "已创建目标点 \"" + newName + "\" 在 \"" + groupName + "\""
-                mess2 = "编辑目标点 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
+//                mess2 = "编辑目标点 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
             } else {
                 mess1 = "Created the point \"" + newName + "\" in \"" + groupName + "\""
-                mess2 = "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+//                mess2 = "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
-            setMessageTop(3, oldName === "" ? mess1 : mess2)
+//            setMessageTop(3, oldName === "" ? mess1 : mess2)
+            setMessageTop(3, mess1);
         }
     }
 

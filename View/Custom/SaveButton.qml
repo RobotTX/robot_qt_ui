@@ -20,9 +20,13 @@ Button {
 
     background: Rectangle {
         radius: 3
-        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
+        color: {
+             canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor;
+
+           }
         border.width: 1
-        border.color: canSave ? Style.darkSkyBlueBorder : Style.disableSaveBorder
+//        border.color: canSave ? Style.darkSkyBlueBorder : Style.disableSaveBorder
+        border.color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor;
     }
 
     MouseArea {

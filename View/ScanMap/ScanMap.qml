@@ -140,6 +140,7 @@ Window {
 
 //            color: "#cdcdcd"
             color: Style.mapGrey
+//            color: "yellow"
 
             MouseArea {
                 anchors.fill: parent

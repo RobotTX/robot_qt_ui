@@ -164,7 +164,7 @@ Frame {
     CustomDialog {
         id: messageDialog
         title: langue == "English" ? "导入已经存在的地图" : "Importing an existing map"
-        message: langue == "English" ? "\n在读取新地图之前，是否保存当前地图?" : "\nDo you wish to save the current map before importing a new one ?\n\n\tIf you don't save the current map, your changes will be discarded"
+        message: langue == "English" ? "\n在读取新地图之前，是否保存当前地图?" : "\nDo you wish to save the current map before importing a new one ?"
         rejectMessage: langue == "English" ? "取消" : "Cancel"
         acceptMessage: langue == "English" ? "读取" : "Load"
         yesMessage: langue == "English" ? "保存&读取" : "Save & Load"

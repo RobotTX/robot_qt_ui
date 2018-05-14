@@ -26,7 +26,6 @@ Frame {
 
     onVisibleChanged: {
         ttsTextField.text = ""; /// initialized value of textfield when creating new speech
-//        textfield.text = "";
         if(!visible){
             /// When you finish or cancel an edition, we show the speech you were editing
             if(oldName !== ""){
@@ -247,15 +246,15 @@ Frame {
             var mess1 = ''
             var mess2 = ''
             if (langue == "English") {
-                mess1 = "已创建语音 \"" + newName + "\" 在 \"" + groupName + "\"";
-                mess2 = "已修改 \"" + oldGroup + "\" 中的语音 \"" + oldName + "\" ，并保存为 \"" + groupName + "\" 的语音 \"" + newName + "\"";
-                mess2 = "Edited the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+                mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\"";
+//                mess2 = "已修改 \"" + oldGroup + "\" 中的语音 \"" + oldName + "\" ，并保存为 \"" + groupName + "\" 的语音 \"" + newName + "\"";
             } else {
                 mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
-                mess2 = "Edited the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+//                mess2 = "Created the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
-            setMessageTop(3, oldName === "" ? mess1 : mess2)
+//            setMessageTop(3, oldName === "" ? mess1 : mess2)
+            setMessageTop(3, mess1);
         }
     }
 
