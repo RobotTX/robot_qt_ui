@@ -362,19 +362,26 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     qDebug() << "save map from:" << oldFilePath;
 
     /// desktop
+    qDebug() << "MainController::saveMapConfig new_config = " << new_config;
     if(!new_config){
+        qDebug() << "New config is wrong " << !new_config;
         if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
             ///saves the image to the user given directory
             mapController->saveMapToFile(fileName + ".pgm");
+            qDebug() << "Saving the map to user given directory";
         }
 
         /// saves the image as a pgm file to the software directory
+        qDebug() << "we are saving the map to the software directory";
         mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
+        qDebug() << "we are saving the position";
         mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
+        qDebug() << "we are setting the map file";
         mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
+        qDebug() << "we are saving the map savemapconfig";
         mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
 
         /// saves the current points to the points file associated with the new configuration
@@ -390,11 +397,10 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
         PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
     }
     else {
-
+        qDebug() << "New config is right " << new_config;
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->saveMapConfig(filePath, 0, 0, 1, 0);
-
     }
 
     /// android

@@ -372,7 +372,19 @@ void MapController::saveEditedImage(const QString locationD){
 
     setMapFile(locationD);
     /// and request the main map to be reload on the qml side
-    emit requestReloadMap("file:/" + locationD);
+//    emit requestReloadMap("file:/" + locationD);
+    #if defined(Q_OS_WIN)
+        emit requestReloadMap("C" + locationD);
+    #endif
+
+    #if defined(Q_OS_LINUX)
+        emit requestReloadMap("file:/" + locationD);
+    #endif
+
+    #if defined(Q_OS_MAC)
+        emit requestReloadMap("file:/" + locationD);
+    #endif
+
     emit sendMapToRobots("EDIT"+map->getMapId().toString(), map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), getMetadataString(), QImage(map->getMapFile()));
 }
 

@@ -147,6 +147,8 @@ void ScanMapController::saveScanSlot(QString file_name){
             it.value()->update();
         }
 
+        /// notify qml that map ready to be saved in file_name
+        qDebug() << "Filename in scanmapcontroller for readyToBeGrabbed : " << file_name;
         emit readyToBeGrabbed(file_name);
         emit setMessageTop(2, "Finished to scan the new map");
         emit clearPointsAndPaths();
