@@ -15,9 +15,9 @@ Frame {
     objectName: "settings"
 
     signal close()
-    signal saveSettingsSignal(int mapChoice, double _batteryThreshold)
+    signal saveSettingsSignal(int mapChoice, double _batteryThreshold, int languageChoice)
     signal saveWifiSignal(string ip_wifi, string wifi, string pwd_wifi)
-    signal changeLanguage(string language)
+//    signal changeLanguage(string language)
     signal openCreatePointMenu()
     signal saveVelocitySignal(string ipRobotWifi, double linearVelocity, double angularVelocity)
     signal saveBatterySignal(string ipRobotWifi, double battery)
@@ -29,12 +29,14 @@ Frame {
     property variant ssidWifi: []
 
     property real batteryWarningThreshold
-    property int mapChoice
+    property int mapChoice: 1
+    property int languageChoice: 0
     property string langue
     property string nameRobot
 
     property real oriBatteryWarningThreshold
     property int oriMapChoice
+    property int oriLanguageChoice
 
     property Robots robotModel
     property Tutorial tutorial
@@ -48,7 +50,8 @@ Frame {
     }
 
     onVisibleChanged: {
-        settingsPage.mapChoice = oriMapChoice;
+//        settingsPage.mapChoice = oriMapChoice;
+
         settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
         batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
         linearVelocitySlider.initializeVelocity(0.3);
@@ -75,8 +78,9 @@ Frame {
                 topMargin: -10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个无线网将被使用 ?") : qsTr("Robot Selection")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("机器人设置") : qsTr("Robot Setting")
         }
 
         PopupMenuItem {
@@ -84,7 +88,6 @@ Frame {
             height: Style.menuItemHeight
             width: parent.width
             labelText: {
-                console.log("nameRobot = " + nameRobot);
                 if (nameRobot === "") {
                     langue === "English" ? "选择机器人" : "Select a robot"
                 } else {
@@ -104,15 +107,18 @@ Frame {
                 anchors.right: parent.right
                 anchors.rightMargin: 12
             }
-            onHoveredChanged: if(visible){ currentMenuIndex = 0 } /// desktop
-            onClicked: if(visible){ currentMenuIndex = 0 } /// android
+            onHoveredChanged: if(visible){
+                                robotListInPopup.open();
+                                settingsPage.currentMenuIndex = 0
+                              } /// desktop
+//            onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
             RobotListInPopup {
+                id: robotListInPopup
                 x: robotList.width
-                visible: currentMenuIndex === 0
+                visible: settingsPage.currentMenuIndex === 0
                 robotModel: settingsPage.robotModel
                 onRobotSelected: {
-                    console.log("ip = " + ip + " name = " + name);
                     ipRobotWifi = ip;
                     nameRobot = name;
 
@@ -154,6 +160,9 @@ Frame {
                     function getAngularVelocityReverse(av) {
                         return av === 20 ? av = 0 : av = (av/100) - 0.1
                     }
+
+                    settingsPage.currentMenuIndex = -1;
+
                 }
             }
         }
@@ -177,8 +186,9 @@ Frame {
                 topMargin: 10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个无线网将被使用 ?") : qsTr("WiFi Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("无线网设置") : qsTr("WiFi Setting")
         }
 
         Label {
@@ -200,7 +210,7 @@ Frame {
             width: parent.width
             labelText: {
                 if (inputNameWifi === "") {
-                    langue === "English" ? "选择机器人" : "Select a WiFi"
+                    langue === "English" ? "选择无线网" : "Select a WiFi"
                 } else {
                     langue === "English" ?  inputNameWifi :  inputNameWifi
                 }
@@ -218,14 +228,17 @@ Frame {
                 anchors.right: parent.right
                 anchors.rightMargin: 12
             }
-            onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
+            onHoveredChanged: if(visible){
+                                wifiMenu.open();
+                                settingsPage.currentMenuIndex = 1;
+                              } /// desktop
 
-            onClicked: if(visible){ currentMenuIndex = 1} /// android
+//            onClicked: if(visible){ currentMenuIndex = 1} /// android
 
             Menu {
                 id: wifiMenu
                 x: userInputWifiName.width
-                visible: currentMenuIndex === 1
+                visible: settingsPage.currentMenuIndex === 1
                 padding: 0
                 width: 300
 
@@ -249,10 +262,9 @@ Frame {
                             labelText: modelData
                             enabled: true
                             leftPadding: Style.menuItemLeftPadding
-
                             onTriggered: {
-                                console.log("clicked on " + modelData);
                                 inputNameWifi = modelData;
+                                settingsPage.currentMenuIndex = -1;
                                 wifiMenu.close();
                             }
                         }
@@ -305,6 +317,7 @@ Frame {
                langue: settingsPage.langue
                txt: langue == "English" ? "应用" : "Apply"
                width: 70
+               font.pointSize: 11
 
                anchors.top: userInputWifiPwd.bottom
                anchors.topMargin: 15
@@ -340,8 +353,9 @@ Frame {
                 topMargin: 10
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("速度") : qsTr("Velocity Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("速度设置") : qsTr("Velocity Setting")
         }
 
         Item {
@@ -549,6 +563,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "应用" : "Apply"
                 width: 70
+                font.pointSize: 11
 
                 anchors.top: lineMeasurement52.bottom
                 anchors.topMargin: 15
@@ -561,7 +576,7 @@ Frame {
                         console.log("angularVelocitySlider = ", angularVelocitySlider.value)
                         saveVelocitySignal(ipRobotWifi, getLinearVelocity(linearVelocitySlider.value), getAngularVelocity(angularVelocitySlider.value));
                     } else {
-                        wifiDialog.open();
+                        robotSelectionDialog.open();
                     }
                 }
 
@@ -618,8 +633,9 @@ Frame {
                     top: parent.top
                 }
 
-                color: "#8F8E94"
-                text: langue === "English" ? qsTr("低电量警告") : qsTr("Battery Level Settings")
+                color: Style.darkSkyBlue
+                font.pointSize: 12
+                text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Setting")
             }
 
             HelpButton {
@@ -707,6 +723,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "应用" : "Apply"
                 width: 70
+                font.pointSize: 11
 
                 anchors.top: lineMeasurement5.bottom
                 anchors.topMargin: 15
@@ -720,7 +737,7 @@ Frame {
                         saveBatterySignal(ipRobotWifi, getBattery(batterySlider.value))
                         console.log("value battery = ", getBattery((batterySlider.value)))
                     } else {
-                        wifiDialog.open();
+                        robotSelectionDialog.open();
                     }
                 }
 
@@ -755,8 +772,9 @@ Frame {
                 topMargin: 20
             }
 
-            color: "#8F8E94"
-            text: langue === "English" ? qsTr("哪一个地图将被使用 ?") : qsTr("Map Sync. Settings")
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("地图同步设置") : qsTr("Map Sync. Setting")
         }
 
         HelpButton {
@@ -771,12 +789,11 @@ Frame {
         }
 
         // the radio buttons to choose which map is used for the robots
-
         Rectangle {
 
             id: mapChoices
 
-            height: 130
+            height: 90
 
             anchors {
                 top: choiceMapLabel.bottom
@@ -809,7 +826,11 @@ Frame {
                 }
 
                 text: langue === "English" ? qsTr("本地地图") : qsTr("The application's map")
-                onClicked: mapChoice = 1
+                onClicked: {
+                    mapChoice = 1
+                    batteryWarningThreshold = batterySlider.value;
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                }
             }
 
             RoundCheckBox {
@@ -824,113 +845,122 @@ Frame {
                 }
 
                 text: langue === "English" ? qsTr("总是询问我") : qsTr("Always ask me")
-                onClicked: mapChoice = 2
-            }
-
-            RoundCheckBox {
-                id: mapChoice4
-                ButtonGroup.group: mapChoiceGroup
-                checked: mapChoice == 3
-                anchors {
-                    left: parent.left
-                    top: mapChoice3.bottom
-                    topMargin: 12
+                onClicked: {
+                    mapChoice = 2
+                    batteryWarningThreshold = batterySlider.value;
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                 }
-                text: langue === "English" ? qsTr("最新的地图") : qsTr("The newest map")
-                onClicked: mapChoice = 3
-            }
-
-            RoundCheckBox {
-                id: mapChoice5
-                ButtonGroup.group: mapChoiceGroup
-                checked: mapChoice == 4
-                anchors {
-                    left: parent.left
-                    top: mapChoice4.bottom
-                    topMargin: 12
-                }
-
-                text: langue === "English" ? qsTr("最旧的地图") : qsTr("The oldest map")
-                onClicked: mapChoice = 4
             }
         }
 
-        SaveButton {
-               id: applyButtonMapChoice
-               langue: settingsPage.langue
-               txt: langue == "English" ? "应用" : "Apply"
-               width: 70
+//        SaveButton {
+//               id: applyButtonMapChoice
+//               langue: settingsPage.langue
+//               txt: langue == "English" ? "应用" : "Apply"
+//               width: 70
+//               font.pointSize: 11
 
-               anchors.top: mapChoices.bottom
-               anchors.topMargin: 15
-               anchors.left: parent.left
-               anchors.right: parent.right
+//               anchors.top: mapChoices.bottom
+//               anchors.topMargin: 15
+//               anchors.left: parent.left
+//               anchors.right: parent.right
 
-               onReleased: {
-                   console.log("batterySLider.value = ", batterySlider.value)
-                   batteryWarningThreshold = batterySlider.value;
-                   saveSettingsSignal(mapChoice, batterySlider.value);
-               }
-           }
+//               onReleased: {
+//                   batteryWarningThreshold = batterySlider.value;
+//                   saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+//               }
+//           }
 
         ToolSeparator {
             id: horizontalSeparation4
             orientation: Qt.Horizontal
             anchors {
-                top: applyButtonMapChoice.bottom
+                top: mapChoices.bottom
                 left: parent.left
                 right: parent.right
                 topMargin: 10
             }
         }
 
-        Button {
-                id: changeLanguageBtn
-                height: 40
-                width: 70
-                checkable: true
-                text: ""
-                objectName: "language"
-                contentItem: Label {
-                    text: changeLanguageBtn.checked ? "English" : "中文"
-                    font: changeLanguageBtn.font
-                    verticalAlignment: Text.AlignVCenter
-                    color: Style.midGrey2
-                }
+        Label {
+            id: choiceLanguageLabel
+            anchors {
+                left: parent.left
+                top: horizontalSeparation4.bottom
+                topMargin: 20
+            }
 
-                background: Rectangle {
-//                    color: "transparent"
-                    color: changeLanguageBtn.pressed ? Style.lightBlue : "transparent"
-                    width: parent.width
-                    height: 50
-                }
+            color: Style.darkSkyBlue
+            font.pointSize: 12
+            text: langue === "English" ? qsTr("语言设置") : qsTr("Language Setting")
+        }
 
+        // the radio buttons to choose which map is used for the robots
+        Rectangle {
+
+            id: languageChoices
+
+            height: 50
+
+            anchors {
+                top: choiceLanguageLabel.bottom
+                topMargin: 20
+                left: parent.left
+                leftMargin: 20
+            }
+
+            ButtonGroup {
+                id: languageChoiceGroup
+            }
+
+            RoundCheckBox {
+                id: languageChoice1
+                ButtonGroup.group: languageChoiceGroup
+                checked: languageChoice == 0
+                text: qsTr("English")
                 anchors {
-                    left : parent.left
-                    top : horizontalSeparation4.bottom;
+                    left: parent.left
                 }
 
                 onClicked: {
-                    if (changeLanguageBtn.checked) {
-                        changeLanguage("English");
-                        langue = "English";
-                        robotModel.langue = "English"
-                        pathModel.langue = "English"
-                    } else {
-                        changeLanguage("Chinese");
-                        langue = "Chinese";
-                        robotModel.langue = "Chinese"
-                        pathModel.langue = "English"
-                    }
-                    openCreatePointMenu()
+                    languageChoice = 0;
+                    langue = "中文";
+                    pathModel.langue = "中文";
+                    console.log(settingsPage.mapChoice);
+//                    openCreatePointMenu();
+                    pathModel.languageChoice(languageChoice);
+                    saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
                 }
             }
+
+            RoundCheckBox {
+                id: languageChoice2
+                ButtonGroup.group: languageChoiceGroup
+                checked: languageChoice == 1
+
+                anchors {
+                    left: parent.left
+                    top: languageChoice1.bottom
+                    topMargin: 12
+                }
+                text: qsTr("中文")
+
+                onClicked: {
+                    languageChoice = 1;
+                    langue = "English";
+                    pathModel.langue = "English";
+//                    openCreatePointMenu();
+                    pathModel.languageChoice(languageChoice);
+                    saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
+                }
+            }
+        }
 
         ToolSeparator {
             id: horizontalSeparation10
             orientation: Qt.Horizontal
             anchors {
-                top: changeLanguageBtn.bottom
+                top: languageChoices.bottom
                 left: parent.left
                 right: parent.right
                 topMargin: 5
@@ -987,7 +1017,7 @@ Frame {
 
             CustomLabel {
                 text: langue == "English" ? "退出程序" : "Exit Application"
-                color: Style.midGrey
+                color: Style.darkSkyBlue
                 verticalAlignment: Text.AlignVCenter
                 anchors {
                     left: parent.left
@@ -1023,15 +1053,34 @@ Frame {
             }
         }
 
+        Label {
+            id: versionApp
+            text: "Version 1.0 updated on 18/05/2018"
+            color: Style.midGrey
+            font.italic: true
+            font.pointSize: 8
+            anchors {
+//                top: horizontalSeparation11.bottom
+//                topMargin: 20
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
+            }
+        }
+
         CustomDialog {
             id: exitDialog
             parent: ApplicationWindow.overlay
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 120 : 40;
+            rightMarginLabel: langue === "English" ? 120 : 40
             title: langue == "English" ? "警告"  : "Warning"
-            message: langue == "English" ? "你想退出应用程序吗？" : "Do you want to exit the application ?"
-            acceptMessage: langue == "English" ? "是" : "Yes"
+            message: langue == "English" ? "\n你想退出应用程序吗？" : "\nDo you want to exit the application ?"
+            acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
             onAccepted: {
                 Qt.quit();
@@ -1061,17 +1110,39 @@ Frame {
             parent: ApplicationWindow.overlay
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
-            height: 60
+            height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 20;
+            rightMarginLabel: langue === "English" ? 80 : 20;
             title: langue == "English" ? "警告"  : "Warning"
-            acceptMessage: langue == "English" ? "请选择机器人或输入WiFi名称" : "Please select a robot or fill the WiFi name"
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot or fill the WiFi name"
+            acceptMessage: langue == "English" ? "是" : "Ok"
+        }
+
+        CustomDialog {
+            id: robotSelectionDialog
+            parent: ApplicationWindow.overlay
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
+            height: 130
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 100;
+            rightMarginLabel: langue === "English" ? 80 : 100
+            title: langue == "English" ? "警告"  : "Warning";
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot"
+            acceptMessage: langue == "English" ? "是" : "Ok"
+
         }
     }
 
-
-
-    function setSettings(mapChoice){
+    function setSettings(mapChoice, languageChoice){
         oriMapChoice = mapChoice;
+        oriLanguageChoice = languageChoice;
         settingsPage.mapChoice = mapChoice;
+        settingsPage.languageChoice = languageChoice;
+        console.log("setSettings = " + oriMapChoice + " " + oriLanguageChoice);
     }
 
     function getWifiList(wifiList, count) {

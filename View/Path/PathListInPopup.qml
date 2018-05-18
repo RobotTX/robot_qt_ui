@@ -47,7 +47,13 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-                onHoveredChanged: if(visible && !pathMenu.visible) currentMenuIndex = index /// desktop
+
+                onHoveredChanged: {
+                    if (visible) {
+                        pathMenu.open();
+                        currentMenuIndex = index;
+                    } /// desktop
+                }
 //                onClicked: if(visible && !pathMenu.visible) currentMenuIndex = index /// android
 
                 Menu {
@@ -84,7 +90,10 @@ Menu {
                                 Layout.preferredWidth: parent.width
                                 labelText:  pathName
 
-                                onTriggered: selectPathMenu.pathSelected(pathName, groupName)
+                                onTriggered: {
+                                    selectPathMenu.pathSelected(pathName, groupName);
+                                    pathMenu.close();
+                                }
                             }
                         }
                     }

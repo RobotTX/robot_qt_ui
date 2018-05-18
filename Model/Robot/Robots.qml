@@ -75,10 +75,11 @@ ListModel {
             "batteryLevel": 0,
         });
         robotConnection(ip);
+        console.log("language in robots.qml = " + langue);
         if (langue == "English") {
-            message = "机器人 \"" + name + "\"已连接"
+            message = "The robot \"" + name + "\" just connected";
         } else {
-            message = "The robot \"" + name + "\" just connected"
+            message = "机器人 \"" + name + "\"已连接";
         }
 
         setMessageTop(2, message);
@@ -233,9 +234,9 @@ ListModel {
                 } else if(get(i).stage >= 0 && stage < 0) {
                     robotStuck = true;
                     if (langue == "English") {
-                    message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
+                        message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"";
                     } else {
-                    message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\""
+                        message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"";
                     }
                 } else {
 

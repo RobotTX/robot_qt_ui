@@ -21,6 +21,7 @@ Frame {
     signal rebootRobot(string ip)
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal setMessageTop(int status, string msg)
     signal interruptDelay(string ip)
 
     background: Rectangle {
@@ -59,6 +60,7 @@ Frame {
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                     onSoundOn: robotMenuFrame.soundOn(ip)
                     onSoundOff: robotMenuFrame.soundOff(ip)
+                    onSetMessageTop: robotMenuFrame.setMessageTop(status, msg)
                     onInterruptDelay: robotMenuFrame.interruptDelay(ip)
                 }
             }

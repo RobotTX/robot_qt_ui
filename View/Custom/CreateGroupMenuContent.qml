@@ -22,6 +22,10 @@ Frame {
 
     onVisibleChanged: {
         groupTextField.text = oldName;
+        if (groupTextField.text === "") {
+            saveButton.canSave = false;
+        }
+
         errorMsg = "";
         setMessageTop(1, errorMsg);
     }
@@ -48,7 +52,7 @@ Frame {
     TextField {
         id: groupTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("组名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("输入组名称") : qsTr("Enter name")
         height: 28
         anchors {
             left: parent.left
@@ -68,11 +72,21 @@ Frame {
             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
         onTextChanged: {
-            console.log(text)
-            if(oldName === groupTextField.text)
-                saveButton.canSave = true
-            else
-                checkGroup(Helper.formatName(groupTextField.text))
+//            console.log("text = " + text);
+//            if(oldName === groupTextField.text) { /// if editing groupName
+//                saveButton.canSave = true
+//            } else {
+//                checkGroup(Helper.formatName(groupTextField.text))
+//            }
+            if (oldName === groupTextField.text) {
+                if (groupTextField.length === 0) {
+                    saveButton.canSave = false;
+                } else {
+                    saveButton.canSave = true;
+                }
+            } else {
+                checkGroup(Helper.formatName(groupTextField.text));
+            }
         }
     }
 
@@ -95,26 +109,48 @@ Frame {
             right: parent.right
             bottom: parent.bottom
         }
-        canSave: false
+
         tooltip: errorMsg
+        canSave: false
         anchors.leftMargin: 5
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(groupTextField.text);
-            if(oldName === ""){
-                createGroup(newName);
-                setMessageTop(3, "Created the group \"" + newName + "\"");
+            var creationGroup = "";
+            var renameGroupLabel = "";
+            if (langue === "English") {
+                creationGroup = "已创建分组";
+                renameGroupLabel = "已重命名分组 \"" +  oldName + "\" 为 " + "\"" + newName + "\"";
             } else {
-                renameGroup(newName, oldName);
-                setMessageTop(3, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
+                creationGroup = "Created the group \"";
+                renameGroupLabel = "Renamed the group \"" + oldName + "\" to \"" + newName + "\"";
             }
-            console.log("creating path " + newName)
+
+            if(oldName === ""){
+                console.log("oldName === empty");
+                createGroup(newName);
+                setMessageTop(3, creationGroup + newName + "\"");
+            } else {
+                console.log("oldName !== empty");
+                renameGroup(newName, oldName);
+                setMessageTop(3, renameGroupLabel);
+            }
             backToMenu();
         }
     }
 
     function enableSave(enable){
         saveButton.canSave = enable;
-        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? "The name of the group cannot be empty" : "\"" + groupTextField.text + "\" is already taken";
+        var msg1 = "";
+        var msg2 = "";
+        if (langue === "English") {
+            msg1 = "组名称不可以为空";
+            msg2 = "\"" + groupTextField.text + "\" 已经被占用";
+        } else {
+            msg1 = "The name of the group cannot be empty";
+            msg2 = "\"" + groupTextField.text + "\" is already taken";
+        }
+
+        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? msg1 : msg2;
         setMessageTop(1, errorMsg);
     }
 }

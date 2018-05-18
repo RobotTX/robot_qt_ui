@@ -26,7 +26,6 @@ Frame {
 
     onVisibleChanged: {
         ttsTextField.text = ""; /// initialized value of textfield when creating new speech
-//        textfield.text = "";
         if(!visible){
             /// When you finish or cancel an edition, we show the speech you were editing
             if(oldName !== ""){
@@ -188,7 +187,7 @@ Frame {
     TextField {
         id: ttsTextField
 //        anchors.fill: parent
-        placeholderText: langue == "English" ? "正文" : "Enter text"
+        placeholderText: langue == "English" ? "输入正文" : "Enter text"
         wrapMode: "WrapAtWordBoundaryOrAnywhere"
         text: tts
         selectByMouse: true
@@ -247,14 +246,15 @@ Frame {
             var mess1 = ''
             var mess2 = ''
             if (langue == "English") {
-                mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
-                mess2 = "Edited the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+                mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\"";
+//                mess2 = "已修改 \"" + oldGroup + "\" 中的语音 \"" + oldName + "\" ，并保存为 \"" + groupName + "\" 的语音 \"" + newName + "\"";
             } else {
                 mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
-                mess2 = "Edited the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+//                mess2 = "Created the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
-            setMessageTop(3, oldName === "" ? mess1 : mess2)
+//            setMessageTop(3, oldName === "" ? mess1 : mess2)
+            setMessageTop(3, mess1);
         }
     }
 
@@ -266,11 +266,11 @@ Frame {
         var mess1 = ''
         var mess2 = ''
         if (langue == "English") {
-            mess1 = "the speech label cannot be empty"
-            mess2 = "the speech label \"" + Helper.formatName(speechTextField.text) + "\" is already taken"
+            mess1 = "语音名称不可以为空";
+            mess2 = "语音名 \"" + Helper.formatName(speechTextField.text) + "\" 已经被占用";
         } else {
-            mess1 = "The speech label cannot be empty"
-            mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken"
+            mess1 = "The speech label cannot be empty";
+            mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken";
         }
 
         if(!saveButton.canSave){

@@ -28,6 +28,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(updateLinearVelocity(QString, double)), parent, SLOT(updateLinearVelocitySlot(QString, double)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
+//    connect(commandController, SIGNAL(changeLanguage(QString)), parent, SLOT(changeLanguageSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
     connect(commandController, SIGNAL(startedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(stoppedScanning(QString)), parent, SLOT(stoppedScanningSlot(QString)));

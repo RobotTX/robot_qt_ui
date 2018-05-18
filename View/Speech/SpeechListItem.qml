@@ -14,6 +14,7 @@ Column {
     property Column column
     property Robots robotModel
     property string langue
+    property int menuIndex: -1
     signal renameGroup(string name)
     signal editSpeech(string name, string groupName)
 
@@ -145,9 +146,9 @@ Column {
                     id: rightOpenSpeech
                     imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (descriptionIsOpen) {
-                               langue == "English" ? "在地图上隐藏路径" : "Hide the speech detail"
+                               langue == "English" ? "隐藏语音细节" : "Hide speech detail"
                                 } else {
-                               langue == "English" ? "在地图上显示路径" : "Show the speech detail"
+                               langue == "English" ? "查看语音细节" : "Show speech detail"
                             }
                     }
                     anchors {
@@ -177,12 +178,14 @@ Column {
                     onClicked: {
                         column.selectedGroup = groupName;
                         column.selectedSpeech = name;
+                        menuIndex = -1;
                         editSpeechPopupMenu.open();
                     }
 
                     EditSpeechPopupMenu {
                         id: editSpeechPopupMenu
                         x: rightButton.width
+                        currentMenuIndex: groupListItem.menuIndex
                         speechModel: groupListItem.speechModel
                         robotModel: groupListItem.robotModel
                         langue: groupListItem.langue

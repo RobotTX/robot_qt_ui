@@ -14,6 +14,7 @@ Column {
     property Column column
     property Robots robotModel
     property string langue
+    property int menuIndex: -1
 
     signal renameGroup(string name)
     signal editPoint(string name, string groupName)
@@ -142,9 +143,9 @@ Column {
                 id: leftButton2
                 tooltip: {
                     if (isVisible) {
-                        langue == "English" ? "隐藏地图上的目标点" : "Hide the point on the map"
+                        langue == "English" ? "隐藏地图上该目标点" : "Hide point on map"
                     } else {
-                        langue == "English" ? "显示地图上的目标点" : "Show the point on the map"
+                        langue == "English" ? "显示地图上该目标点" : "Show point on map"
                     }
                 }
                 imgSrc: isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
@@ -184,12 +185,14 @@ Column {
                 onClicked: {
                     column.selectedGroup = groupName
                     column.selectedPoint = name
+                    groupListItem.menuIndex = -1;
                     editPointPopupMenu.open();
                 }
 
                 EditPointPopupMenu {
                     id: editPointPopupMenu
                     x: rightButton.width
+                    currentMenuIndex: groupListItem.menuIndex
                     pointModel: groupListItem.pointModel
                     robotModel: groupListItem.robotModel
                     langue: groupListItem.langue

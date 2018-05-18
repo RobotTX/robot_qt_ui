@@ -42,7 +42,17 @@ void Paths::movePath(const QString name, const QString oldGroup, const QString n
 }
 
 bool Paths::checkGroupName(const QString name){
-    return name.isEmpty() || groups.find(name) != groups.end();
+//    bool checkGroup = false;
+//    if (name.isEmpty()) {
+//        checkGroup = false;
+//    } else if (groups.find(name) != groups.end()) {
+//        checkGroup = false;
+//    } else if (name.length() == 0) {
+//        checkGroup = false;
+//    }
+//    qDebug() << "checkGroup = " << checkGroup << ;
+    return (name.isEmpty()) || (groups.find(name) != groups.end()) || (name.length() == 0);
+//    return checkGroup;
 }
 
 void Paths::clearGroups(void){

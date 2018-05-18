@@ -32,12 +32,10 @@ Menu {
 
     PopupMenuItem {
         id: assignPointTo
-        labelText: langue == "English" ? "发目标点给机器人" : "Send Point To"
+        labelText: langue == "English" ? "发送目标点给" : "Send Point To"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-//        visible: myGroup == "Gobot"
-//        enabled: myGroup == "Gobot"
         visible: true
         enabled: true
         Image {
@@ -50,7 +48,12 @@ Menu {
 //            visible: myGroup == "Gobot"
             visible: true
         }
-        onHoveredChanged: if (visible) { currentMenuIndex = 0 } /// desktop
+        onHoveredChanged: {
+            if (visible) {
+                robotListInPopup.open();
+                currentMenuIndex = 0;
+            } /// desktop
+        }
 //        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
@@ -95,7 +98,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "Hide point" : "Hide point"
+        labelText: langue == "English" ? "隐藏目标点" : "Hide point"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

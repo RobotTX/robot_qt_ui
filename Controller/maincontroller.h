@@ -26,6 +26,7 @@ public:
 
     QPointer<MapController> getMapController(void) const { return mapController; }
     QPointer<RobotsController> getRobotsController(void) const { return robotsController; }
+    QString getLanguage(void) const { return langue; }
 
 private :
     /**
@@ -141,7 +142,7 @@ private slots:
      * have a different map, the level of battery under which the user is warned
      * and whether or not the tutorial should be shown to the user
      */
-    void saveSettings(int mapChoice, double batteryThreshold);
+    void saveSettings(int mapChoice, double batteryThreshold, int languageChoice);
     /**
      * @brief newMapFromRobotSlot
      * @param ip
@@ -298,13 +299,16 @@ private slots:
 
     void saveBattery(QString ip, double battery);
 
+//    void changeLanguage(QString language);
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setLinearVelocity(QVariant ip, QVariant linear);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime, QVariant orientation, QVariant speechName, QVariant speechContent, QVariant speechTime);
-    void emitSettings(QVariant mapChoice);
+    void emitSettings(QVariant mapChoice, QVariant languageChoice);
+    void emitLanguage(QVariant language);
     void emitWifiList(QVariant wifiList, QVariant count);
     void emitSizeWifiList(QVariant sizeWifiList);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
@@ -336,7 +340,7 @@ private:
     QPointer<SpeechController> speechController;
     QPointer<PathController> pathController;
     QPointer<RobotsController> robotsController;
-
+    QString langue;
     /**
      * @brief discardMap
      * Boolean to tell that even if we received a new map from a scan, we already saved the map and don't want to use the new one

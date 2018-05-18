@@ -15,6 +15,11 @@ Dialog {
     property string colorBackground: "#f3f3f3"
     property string colorBorder: "#bcb5b9"
     property string textColor: Style.greyText
+    property int bottomMarginLabel: 10
+    property int leftMarginLabel: 10
+    property int rightMarginLabel: 10
+    property int topMarginLabel: 10
+
     signal yes()
 
     background: Rectangle {
@@ -63,10 +68,12 @@ Dialog {
                 left: parent.left
                 right: parent.right
                 bottom: layout.top
-                bottomMargin: 10
-                topMargin: customHeader.height + 10
-                leftMargin: 10
-                rightMargin: 10
+//                bottomMargin: 10
+                bottomMargin: bottomMarginLabel
+                topMargin: customHeader.height + topMarginLabel
+//                leftMargin: 10
+                leftMargin: leftMarginLabel
+                rightMargin: rightMarginLabel
             }
             text: qsTr(message)
             wrapMode: Text.WordWrap

@@ -34,6 +34,7 @@ private slots:
     void cmdFinished(void);
 
 signals:
+
     /**
      * @brief sendCommandSignal
      * @param cmd
@@ -72,6 +73,8 @@ signals:
      * propagated to the robots controller to reset the path of the robot at ip <ip>
      */
     void stoppedDeletedPath(QString ip);
+
+//    void changeLanguage(QString language);
 
     /**
      * @brief updatePlayingPath
@@ -148,6 +151,8 @@ signals:
      * 3: info
      */
     void setMessageTop(int status, QString msg);
+
+
 
     /**
      * @brief updateLaser

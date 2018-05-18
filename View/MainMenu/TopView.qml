@@ -104,27 +104,12 @@ Frame {
         width: 100
 
         anchors {
-            verticalCenter: zoomOutButton.verticalCenter
-            right: zoomOutButton.left
+            verticalCenter: zoomInButton.verticalCenter
+            right: zoomInButton.left
             rightMargin: 15
         }
 
         onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
-    }
-
-    /// Zoom out button
-    SmallButton {
-        id: zoomOutButton
-        tooltip: langue == "English" ? "地图放小" : "Zoom out"
-        imgSrc: "qrc:/icons/zoomOut"
-        anchors {
-            top: parent.top
-            topMargin: 10
-            right: zoomInButton.left
-            rightMargin: 14
-        }
-        enabled: hasMap
-        onClicked: topViewFrame.zoomOutMap()
     }
 
     /// Zoom in button
@@ -135,11 +120,26 @@ Frame {
         anchors {
             top: parent.top
             topMargin: 10
-            right: centerMapButton.left
+            right: zoomOutButton.left
             rightMargin: 14
         }
         enabled: hasMap
         onClicked: topViewFrame.zoomInMap()
+    }
+
+    /// Zoom out button
+    SmallButton {
+        id: zoomOutButton
+        tooltip: langue == "English" ? "地图缩小" : "Zoom out"
+        imgSrc: "qrc:/icons/zoomOut"
+        anchors {
+            top: parent.top
+            topMargin: 10
+            right: centerMapButton.left
+            rightMargin: 14
+        }
+        enabled: hasMap
+        onClicked: topViewFrame.zoomOutMap()
     }
 
     /// Center map button

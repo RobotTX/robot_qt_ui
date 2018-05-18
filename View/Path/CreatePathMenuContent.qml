@@ -245,7 +245,6 @@ Frame {
                 topMargin: 5
             }
             onClicked: {
-                console.log("add saved point");
                 pointList.open()
             }
         }
@@ -270,7 +269,7 @@ Frame {
                 left: parent.left
                 top: addSavedPoint.bottom
                 right: parent.right
-                topMargin: 5
+                topMargin: langue === "English" ? 20 : 5
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -284,6 +283,7 @@ Frame {
         anchors {
             left: parent.left
             top: topFrame.bottom
+            topMargin: langue === "English" ? 20 : 0
             right: parent.right
             bottom: bottomFrame.top
         }
@@ -648,7 +648,7 @@ Frame {
 
                     NormalButton {
                         id: addSpeech
-                        txt: langue == "English" ? "加入已有目标点" : "Add Speech"
+                        txt: langue == "English" ? "加入已有语音" : "Add Speech"
                         imgSrc: "qrc:/icons/add_speech"
                         anchors {
                             left: parent.left
@@ -657,10 +657,7 @@ Frame {
                             topMargin: 8
                         }
                         font.pointSize: 11
-                        onClicked: {
-                            console.log("add speech clicked")
-                            speechList.open()
-                        }
+                        onClicked: speechList.open()
                     }
 
                     SpeechListInPopup {
@@ -842,7 +839,7 @@ Frame {
                         left: parent.let
                         right: parent.right
                         top: content.bottom
-                        topMargin: 10
+                        topMargin: langue === "English" ? 20 : 10
                     }
                 }
             }
@@ -867,7 +864,7 @@ Frame {
                     model: pathPoints
                     delegate: dragDelegate
 
-                    spacing: 4
+                    spacing: 10
                 }
             }
         }
@@ -924,23 +921,21 @@ Frame {
                 if (groupComboBox.displayText === Helper.noGroupChinese) {
                     groupComboBox.displayText = Helper.noGroup;
                 }
-                console.log("create " + groupComboBox.displayText + " : " + newName);
-
 
                 if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
                     console.log("oldname != '' ", oldName)
                 }
                 createPath(groupComboBox.displayText, newName);
-                console.log("createPath + groupComboBox.displayText + newName = " + groupComboBox.displayText + " " + newName)
+
                 var mess1 = ''
                 var mess2 = ''
                 if (langue == "English") {
                     mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\""
-                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
+//                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
                 } else {
                     mess1 = "Created the path \"" + newName + "\" in \"" + groupName + "\""
-                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
+//                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
@@ -957,7 +952,8 @@ Frame {
                                     );
                 }
 
-                setMessageTop(3, oldName === "" ? mess1 : mess2)
+//                setMessageTop(3, oldName === "" ? mess1 : mess2)
+                setMessageTop(3, mess1)
                 backToMenu();
             }
         }

@@ -14,6 +14,7 @@ Column {
     property Column column
     property Robots robotModel
     property string langue
+    property int menuIndex: -1
     signal renameGroup(string name)
     signal editPath(string name, string groupName)
 
@@ -132,9 +133,9 @@ Column {
                 SmallButton {
                     id: leftButton2
                     tooltip: { if (pathIsVisible) {
-                               langue == "English" ? "在地图上隐藏路径" : "Hide the path on the map"
+                               langue == "English" ? "隐藏地图上该路径" : "Hide path on map"
                                 } else {
-                               langue == "English" ? "在地图上显示路径" : "Show the path on the map"
+                               langue == "English" ? "显示地图上该路径" : "Show path on map"
                             }
                     }
                     imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
@@ -165,9 +166,9 @@ Column {
                     id: rightOpenPath
                     imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (pathIsOpen) {
-                               langue == "English" ? "在地图上隐藏路径" : "Hide the path detail"
+                               langue == "English" ? "隐藏路径细节" : "Hide path detail"
                                 } else {
-                               langue == "English" ? "在地图上显示路径" : "Show the path detail"
+                               langue == "English" ? "查看路径细节" : "Show path detail"
                             }
                     }
                     anchors {
@@ -193,12 +194,14 @@ Column {
                     onClicked: {
                         column.selectedGroup = groupName;
                         column.selectedPath = pathName;
+                        groupListItem.menuIndex = -1;
                         editPathPopupMenu.open();
                     }
 
                     EditPathPopupMenu {
                         id: editPathPopupMenu
                         x: rightButton.width
+                        currentMenuIndex: groupListItem.menuIndex
                         pathModel: groupListItem.pathModel
                         robotModel: groupListItem.robotModel
                         langue: groupListItem.langue
@@ -266,7 +269,7 @@ Column {
 
                     CustomLabel {
                         id: customLabelWaitTime
-                        text: waitTime === -1 ? qsTr(langue == "English" ? "人为干预" : "Human Action") : qsTr(langue == "English" ? "等待: " + waitTime + "秒" :  "Delay : "+ waitTime +"秒")
+                        text: waitTime === -1 ? qsTr(langue == "English" ? "人为干预" : "Human Action") : qsTr(langue == "English" ? "等待: " + waitTime + "秒" :  "Delay : "+ waitTime + "s")
                         horizontalAlignment: Text.AlignRight
                         font.pixelSize: 14
                         color: Style.midGrey2

@@ -42,6 +42,7 @@ Frame {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
+        font.pointSize: 13
     }
 
     Button {

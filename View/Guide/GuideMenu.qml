@@ -127,7 +127,7 @@ Page {
             height: 130
             title: langue == "English" ? "警告"  : "Warning"
             message: "The id or the password is wrong. Please try again."
-            acceptMessage: langue == "English" ? "Yes" : "Ok"
+            acceptMessage: langue == "English" ? "是" : "Ok"
             colorBackground: Style.backgroundColorItemGuide
             textColor: Style.goldenColor
             colorBorder: Style.goldenColor
@@ -323,7 +323,7 @@ Page {
                                 textColor: Style.goldenColor
                                 colorBorder: Style.goldenColor
                                 font.bold: true
-                                acceptMessage: langue == "English" ? "Hao" : "Yes"
+                                acceptMessage: langue == "English" ? "确认" : "Yes"
                                 rejectMessage: "Cancel"
                                 onAccepted: {
                                         robotModel.newPathSignal(robotModel.ipRobot, groupName, pathName); /// send path to robot

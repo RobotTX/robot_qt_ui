@@ -176,6 +176,7 @@ Frame {
         anchors {
             top: parent.top
             topMargin: 5
+//            topMargin: 50
             left: parent.left
             right: parent.right
         }
@@ -201,8 +202,9 @@ Frame {
             anchors{
                 verticalCenter: parent.verticalCenter
                 left: icon.right
-                leftMargin: 11
+                leftMargin: 7
             }
+            font.pointSize: 11
         }
 
         HelpButton {
@@ -340,21 +342,21 @@ Frame {
                 console.log("space in the name not authorized");
                 warningDialog.open()
             } else {
+//                console.log("@@@@@@@@@@@ filename in saveScan qml = " + "C:\\Users\\User\\Desktop\\Gobot2\\build-Gobot-Desktop_Qt_5_10_0_MinGW_32bit-Debug\\debug\\mapConfigs\\tmpImage_paths.xml");
                 scanLeftMenuFrame.saveScan(fileStr)
+//                scanLeftMenuFrame.saveScan("C:\\Users\\User\\Desktop\\Gobot2\\build-Gobot-Desktop_Qt_5_10_0_MinGW_32bit-Debug\\debug\\mapConfigs\\test7.pgm");
             }
         }
     }
 
     CustomDialog {
         id: warningDialog
-//        x: scanLeftMenuFrame.x / 2
-//        y: scanLeftMenuFrame.y / 2
         parent: ApplicationWindow.overlay
         x: (scanLeftMenuFrame.width - width) / 2
         y: (scanLeftMenuFrame.height - height) / 2
         height: 60
         title: langue == "English" ? "警告窗口" : "Warning dialog"
-        acceptMessage: langue == "English" ? "地图名称不能包含空格" : "Space are not allowed"
+        acceptMessage: langue == "English" ? "\n地图名称不能包含空格" : "\nSpace are not allowed"
     }
 
     TutorialDialog {

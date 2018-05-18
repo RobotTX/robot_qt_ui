@@ -15,6 +15,7 @@ Page {
     property real batteryWarningThreshold
     property string langue
 
+    signal setMessageTop(int status, string msg)
     signal useRobotPathModel(bool use)
     signal closeMenu()
 
@@ -39,6 +40,7 @@ Page {
         pointModel: page.pointModel
         pathModel: page.pathModel
         langue: page.langue
+        onSetMessageTop: page.setMessageTop(status, msg)
         batteryWarningThreshold: page.batteryWarningThreshold
         anchors {
             left: parent.left

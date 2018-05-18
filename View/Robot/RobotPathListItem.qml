@@ -82,7 +82,7 @@ Frame {
                 onPathSelected: {
                     frame.pathSelected(pathName, groupName);
                     robotModel.newPathSignal(ip, groupName, pathName);
-
+                    pathListInPopup.close();
                 }
             }
         }
@@ -263,7 +263,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                tooltip: pathIsOpen ? langue == "English" ? "隐藏路径" : " Hide robot path detail" : langue == "English" ? "显示路径" : " Show robot path detail"
+                tooltip: pathIsOpen ? langue == "English" ? "隐藏路径细节" : " Hide robot path detail" : langue == "English" ? "查看路径细节" : " Show robot path detail"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -689,9 +689,9 @@ Frame {
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                 tooltip: { if(playingPath) {
-                            langue == "English" ? "暂停机器人的任务" : "Pause the robot in its path"
+                            langue == "English" ? "暂停机器人路径" : "Pause robot path"
                     } else {
-                        langue == "English" ? "继续机器人的任务" : "Play the path of the robot"
+                        langue == "English" ? "开始机器人路径" : "Play robot path"
                     }
                 }
 
@@ -730,7 +730,7 @@ Frame {
                 height: parent.height - 2
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/stop"
-                tooltip: langue == "English" ? "停止机器人的任务" : "Stop the robot in its path"
+                tooltip: langue == "English" ? "停止机器人" : "Stop robot"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -762,7 +762,7 @@ Frame {
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
 //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
-                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"开始循环":"Loop"
+                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"循环":"Loop"
                 checkable: true
                 checked: looping
 
@@ -824,7 +824,26 @@ Frame {
                     }
                 }
 //                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
-                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动对接":"Stop auto docking" : langue == "English" ?"自动对接":"Auto docking"
+//                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"
+                tooltip: {
+                    if (langue === "English") {
+                        if (dockStatus === 3) {
+                            "停止自动充电";
+                        } else if (dockStatus === 1) {
+                            "充电中";
+                        } else {
+                            "自动充电";
+                        }
+                    } else {
+                        if (dockStatus === 3) {
+                            "Stop auto docking" ;
+                        } else if (dockStatus === 1) {
+                            "Charging";
+                        } else {
+                            "Auto docking";
+                        }
+                    }
+                }
 
                 anchors {
                     verticalCenter: parent.verticalCenter

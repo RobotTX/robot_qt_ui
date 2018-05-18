@@ -236,6 +236,11 @@ void RobotsController::stoppedDeletedPathSlot(const QString ip){
     emit setPlayingPath(ip, false);
 }
 
+//void RobotsController::changeLanguageSlot(const QString language) {
+//    qDebug() << "language in robotsController = " << language;
+//    langue = language;
+//}
+
 void RobotsController::sendCommandPausePath(const QString ip){
     sendCommand(ip, QString("d"));
 }
@@ -517,3 +522,5 @@ void RobotsController::setBatteryWarningSlot(QString ip, double batteryLevel) {
 void RobotsController::interruptDelay(QString ip){
     sendCommand(ip, QString("3") + QChar(31) + QString("1"));
 }
+
+
