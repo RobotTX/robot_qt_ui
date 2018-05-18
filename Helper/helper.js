@@ -14,7 +14,8 @@ var PointViewType = {
 };
 
 var noGroup = "Default";
-var noGroupChinese = "默认组"
+//var noGroupChinese = "默认组"
+var noGroupChinese = "Default";
 var noRobot = "No Robot";
 var noRobotChinese = "没有机器人"
 
