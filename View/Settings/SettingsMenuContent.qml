@@ -826,7 +826,11 @@ Frame {
                 }
 
                 text: langue === "English" ? qsTr("本地地图") : qsTr("The application's map")
-                onClicked: mapChoice = 1
+                onClicked: {
+                    mapChoice = 1
+                    batteryWarningThreshold = batterySlider.value;
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                }
             }
 
             RoundCheckBox {
@@ -841,33 +845,37 @@ Frame {
                 }
 
                 text: langue === "English" ? qsTr("总是询问我") : qsTr("Always ask me")
-                onClicked: mapChoice = 2
+                onClicked: {
+                    mapChoice = 2
+                    batteryWarningThreshold = batterySlider.value;
+                    saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+                }
             }
         }
 
-        SaveButton {
-               id: applyButtonMapChoice
-               langue: settingsPage.langue
-               txt: langue == "English" ? "应用" : "Apply"
-               width: 70
-               font.pointSize: 11
+//        SaveButton {
+//               id: applyButtonMapChoice
+//               langue: settingsPage.langue
+//               txt: langue == "English" ? "应用" : "Apply"
+//               width: 70
+//               font.pointSize: 11
 
-               anchors.top: mapChoices.bottom
-               anchors.topMargin: 15
-               anchors.left: parent.left
-               anchors.right: parent.right
+//               anchors.top: mapChoices.bottom
+//               anchors.topMargin: 15
+//               anchors.left: parent.left
+//               anchors.right: parent.right
 
-               onReleased: {
-                   batteryWarningThreshold = batterySlider.value;
-                   saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
-               }
-           }
+//               onReleased: {
+//                   batteryWarningThreshold = batterySlider.value;
+//                   saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
+//               }
+//           }
 
         ToolSeparator {
             id: horizontalSeparation4
             orientation: Qt.Horizontal
             anchors {
-                top: applyButtonMapChoice.bottom
+                top: mapChoices.bottom
                 left: parent.left
                 right: parent.right
                 topMargin: 10
@@ -1042,6 +1050,21 @@ Frame {
                 left: parent.left
                 right: parent.right
                 topMargin: 10
+            }
+        }
+
+        Label {
+            id: versionApp
+            text: "Version 1.0 updated on 18/05/2018"
+            color: Style.midGrey
+            font.italic: true
+            font.pointSize: 8
+            anchors {
+//                top: horizontalSeparation11.bottom
+//                topMargin: 20
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
             }
         }
 

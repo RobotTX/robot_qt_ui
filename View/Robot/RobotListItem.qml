@@ -538,9 +538,9 @@ Frame {
             right: parent.right
             rightMargin: 20
             top : batteryLevel.bottom
-            topMargin: 15
+//            topMargin: 15
         }
-        height: 35
+        height: 50
         width: 100
 //        border.color: Style.lightGreyBorder
 //        border.width: 1
@@ -549,22 +549,19 @@ Frame {
 
         RowLayout {
             id: rowSpeed
-                width: 150
+                width: parent.width
                 height: 20
 
-            Label {
+            Image {
                 id: linearSpeedLabel
-                text: langue == "English" ? "线速度" : "Linear Speed"
+                asynchronous: true
+                fillMode: Image.Pad
+                source: "qrc:/icons/speed_linear"
                 anchors {
                     left: parent.left
-                    leftMargin: langue === "English" ? 30 : 20
+                    leftMargin: 30
                 }
-//                color: Style.midGrey2
-                color: Style.blackMenuTextColor
-                font.pointSize: 10
-                horizontalAlignment: Text.AlignHCenter
             }
-
 
             Label {
                 id: linearSpeed
@@ -576,22 +573,23 @@ Frame {
                 anchors {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
-                    leftMargin: langue === "English" ? -5 : 10
-                    topMargin: 3
+//                    leftMargin: langue === "English" ? -5 : 10
+                    leftMargin: 13
+                    topMargin: -13
                 }
             }
 
-            Label {
+            Image {
                 id: angularSpeedLabel
-                text: qsTr(langue == "English" ? "角速度" : "Angular Speed")
+                asynchronous: true
+                fillMode: Image.Pad
+                source: "qrc:/icons/speed_angular"
                 anchors {
-                    left: linearSpeedLabel.right
-                    leftMargin: langue === "English" ? 80 : 40
+                    left: linearSpeedLabel.left
+                    leftMargin: 100
+                    right: parent.right
+                    rightMargin: 30
                 }
-                font.pointSize: 10
-//                color: Style.midGrey2
-                color: Style.blackMenuTextColor
-                horizontalAlignment: Text.AlignHCenter
             }
 
             Label {
@@ -604,7 +602,8 @@ Frame {
                 anchors {
                     top: linearSpeed.top
                     left:angularSpeedLabel.left
-                    leftMargin: langue === "English" ? -10 : 15
+//                    leftMargin: langue === "English" ? -10 : 15
+                    leftMargin: 12
                 }
             }
         }
@@ -760,7 +759,7 @@ Frame {
             top: rectSpeed.bottom
             left: parent.left
             right: parent.right
-            topMargin: 10
+            topMargin: 25
             leftMargin: 20
             rightMargin: 20
         }

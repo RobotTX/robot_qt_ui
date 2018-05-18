@@ -454,6 +454,7 @@ Window {
             onClicked: {
                 dialog.hide();
                 dialog.saveImage(imgSource.substring(6));
+                console.log("imgSource.substring = " + imgSource.substring(6));
             }
         }
     }

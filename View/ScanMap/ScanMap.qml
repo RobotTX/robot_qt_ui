@@ -203,7 +203,7 @@ Window {
     }
 
     function grabScannedMap(file_name){
-        console.log("scan: grabbed called " + file_name.substring(7) + ".pgm");
+        console.log("scan: grabbed called " + file_name.substring(7));
 
         if(file_name.toString().lastIndexOf(".pgm") === -1)
             file_name += ".pgm";
