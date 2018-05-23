@@ -45,6 +45,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
 
+    /// we set mapreceived property to true
     emit receivedScanMap(ip);
 
     if(!paintedItems.contains(ip)){

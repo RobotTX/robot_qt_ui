@@ -859,7 +859,22 @@ void MainController::getMapFromRobot(QString ip){
 void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){
     qDebug() << "MainController::resetMapConfiguration" << file_name;
 
-    QString cpp_file_name = file_name.mid(7);
+    #if defined(Q_OS_WIN)
+        QString cpp_file_name = file_name.mid(10);
+    #endif
+
+    #if defined(Q_OS_LINUX)
+        QString cpp_file_name = file_name.mid(7);
+    #endif
+
+    #if defined(Q_OS_MAC)
+        QString cpp_file_name = file_name.mid(7);
+    #endif
+
+    #if defined(Q_OS_ANDROID)
+        QString cpp_file_name = file_name.mid(7);
+    #endif
+
     /// this is the position of the robot at the end of the scan
     QPointF initPos(0.0f, 0.0f);
     /// orientation of the robot at the end of the scan
