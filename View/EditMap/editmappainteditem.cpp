@@ -117,7 +117,7 @@ void EditMapPaintedItem::saveImage(QImage image, QString location){
         image.save("C" + location, "PGM");
     #endif
 
-    #if defined(Q_OS_MAC)
+    #if defined(Q_OS_LINUX)
         image.save(location, "PGM");
     #endif
 
