@@ -52,10 +52,7 @@ Frame {
             tmpPointView.y = 0;
         }
 
-        console.log("visible in createpointmenucontent = " + visible);
-
         if(!visible){
-            console.log("we are creating a new point");
             /// When you finish or cancel an edition, we show the point you were editing
             if(oldName !== ""){
                 for(var i = 0; i < pointModel.count; i++)
@@ -76,10 +73,8 @@ Frame {
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = displayTextChange;
         } else {
-            console.log("we are in editing")
             // if editing
             if(oldName !== ""){
-                console.log("we are editing a point");
                 for(var i = 0; i < pointModel.count; i++)
                     if(pointModel.get(i).groupName === oldGroup)
                         for(var j = 0; j < pointModel.get(i).points.count; j++)
@@ -98,7 +93,6 @@ Frame {
                             }
             // if creating point from robot (home)
             } else if (homeName !== "") {
-                console.log("homeName = " + homeName);
                 homeCheckBox.checked = true;
                 slider.value = homeOri;
                 tmpPointView.x = homeX;

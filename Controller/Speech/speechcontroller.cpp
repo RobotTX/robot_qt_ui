@@ -33,7 +33,7 @@ SpeechController::SpeechController(QObject *applicationWindow, MainController *p
 
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "SpeechController::SpeechController could not find the qml speech model";
+//        qDebug() << "SpeechController::SpeechController could not find the qml speech model";
         Q_UNREACHABLE();
     }
 
@@ -47,7 +47,7 @@ SpeechController::SpeechController(QObject *applicationWindow, MainController *p
         connect(createSpeechMenuFrame, SIGNAL(createSpeech(QString, QString, QString, QString, QString)), this, SLOT(addSpeech(QString,QString,QString,QString, QString)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "SpeechController::SpeechController could not find the createSpeechMenuFrame";
+//        qDebug() << "SpeechController::SpeechController could not find the createSpeechMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -63,12 +63,12 @@ SpeechController::SpeechController(QObject *applicationWindow, MainController *p
         connect(createSpeechGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "SpeechController::SpeechController could not find the createSpeechMenuFrame";
+//        qDebug() << "SpeechController::SpeechController could not find the createSpeechMenuFrame";
         Q_UNREACHABLE();
     }
 
     /// desktop
-    currentSpeechsFile = Helper::getAppPath() + QDir::separator() + "currentSpeechs.xml";
+    currentSpeechsFile = Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentSpeechs.xml";
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -101,14 +101,14 @@ void SpeechController::addSpeech(const QString name, const QString groupName, co
     else {
         deleteSpeech(oldGroup, oldName);
         emit editSpeechQml(oldName, oldGroup, name, groupName, tts);
-        qDebug() << "editSpeechQml editing speech in addSpech speechcontroller.cpp";
+//        qDebug() << "editSpeechQml editing speech in addSpech speechcontroller.cpp";
     }
     if(saveXML)
         SpeechXMLParser::save(this, currentSpeechsFile);
 }
 
 void SpeechController::deleteSpeech(QString groupName, QString name){
-    qDebug() << "Delete speech";
+//    qDebug() << "Delete speech";
     /// we remove the speech from the c++ side
     speechs->deleteSpeech(groupName, name);
     SpeechXMLParser::save(this, currentSpeechsFile);
@@ -133,14 +133,14 @@ bool SpeechController::checkSpeechName(const QString name){
 }
 
 void SpeechController::renameGroup(QString newName, QString oldName){
-    qDebug() << "SpeechController::renameGroup from" << oldName << "to" << newName;
+//    qDebug() << "SpeechController::renameGroup from" << oldName << "to" << newName;
     speechs->renameGroup(newName, oldName);
     emit renameGroupQml(newName, oldName);
     SpeechXMLParser::save(this, currentSpeechsFile);
 }
 
 void SpeechController::moveTo(QString name, QString oldGroup, QString newGroup){
-    qDebug() << "SpeechController::move" << name << "from" << oldGroup << "to" << newGroup;
+//    qDebug() << "SpeechController::move" << name << "from" << oldGroup << "to" << newGroup;
     speechs->moveSpeech(name, oldGroup, newGroup);
     SpeechXMLParser::save(this, currentSpeechsFile);
 }
@@ -165,7 +165,7 @@ void SpeechController::checkGroup(QString name){
 }
 
 void SpeechController::clearSpeechs(){
-    qDebug() << "SpeechController::clearSpeechs called";
+//    qDebug() << "SpeechController::clearSpeechs called";
     emit deleteAllGroupsQml();
     speechs->clearGoups();
 }

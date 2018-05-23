@@ -41,7 +41,7 @@ Slider {
     }
 
     function initializeBatteryThreshold(_value){
-        console.log("ini value to " + _value)
+//        console.log("ini value to " + _value)
         slider.value = _value
     }
 }

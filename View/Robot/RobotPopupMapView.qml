@@ -136,11 +136,9 @@ Menu {
             charging = !charging;
             if (charging !== true) {
                 robotModel.soundOn(ip)
-                console.log("sound on");
             } else {
                 // if mute is true then the corresponding command is x
                 robotModel.soundOff(ip);
-                console.log("sound off");
             }
         }
     }

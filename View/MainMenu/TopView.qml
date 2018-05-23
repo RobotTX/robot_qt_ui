@@ -10,6 +10,7 @@ Frame {
     property bool hasMap
     property Robots robotModel
     property string langue
+    property string mapSrc
     property int mapRotation: Math.round(slider.valueAt(slider.position))
     signal savePosition()
     signal zoomInMap()
@@ -43,7 +44,7 @@ Frame {
         }
 
         MouseArea {
-            onWheel: console.log
+            onWheel: {}
         }
 
         Column {
@@ -109,7 +110,8 @@ Frame {
             rightMargin: 15
         }
 
-        onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
+//        onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
+        onPositionChanged: {}
     }
 
     /// Zoom in button
@@ -119,7 +121,7 @@ Frame {
         imgSrc: "qrc:/icons/zoomIn"
         anchors {
             top: parent.top
-            topMargin: 10
+            topMargin: 7
             right: zoomOutButton.left
             rightMargin: 14
         }
@@ -134,7 +136,7 @@ Frame {
         imgSrc: "qrc:/icons/zoomOut"
         anchors {
             top: parent.top
-            topMargin: 10
+            topMargin: 7
             right: centerMapButton.left
             rightMargin: 14
         }
@@ -149,15 +151,32 @@ Frame {
         imgSrc: "qrc:/icons/centerMap"
         anchors {
             top: parent.top
-            topMargin: 10
+            topMargin: 7
             right: parent.right
             rightMargin: 10
         }
 
-        onClicked: {
-            console.log("click")
-            topViewFrame.centerMapTopView()
+        onClicked: topViewFrame.centerMapTopView()
+    }
+
+    property string mapFileName: mapSrc.toString()
+
+    CustomLabel {
+        id: mapName
+        text: {
+            var indexLastSlash = mapFileName.lastIndexOf("/");
+            qsTr(mapFileName.substring(indexLastSlash + 1));
         }
+        anchors {
+            top: slider.bottom
+            right: parent.right
+            topMargin: 4
+            rightMargin: 10
+        }
+        font.pointSize: 8
+        color: Style.midGrey
+        font.italic: true
+
     }
 
     function setMessageTop(label, msg){

@@ -37,11 +37,7 @@ Frame {
 
             /// The list containing both the graphical and model of the paths in the menu
             Repeater {
-                model: {
-                    console.log("pathsGudie = " + toto)
-                    toto
-
-                }
+                model: toto
                 delegate: del
             }
         }

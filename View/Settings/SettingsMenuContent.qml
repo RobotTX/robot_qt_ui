@@ -306,7 +306,6 @@ Frame {
             anchors.leftMargin: 76
 
             onTextChanged: {
-                console.log("input user pwd = " + userInputWifiPwd.text);
                 inputPwdWifi = userInputWifiPwd.text
             }
         }
@@ -572,8 +571,6 @@ Frame {
 
                 onReleased: {
                     if ((ipRobotWifi !== "")) {
-                        console.log("linearSlider = ", linearVelocitySlider.value);
-                        console.log("angularVelocitySlider = ", angularVelocitySlider.value)
                         saveVelocitySignal(ipRobotWifi, getLinearVelocity(linearVelocitySlider.value), getAngularVelocity(angularVelocitySlider.value));
                     } else {
                         robotSelectionDialog.open();
@@ -732,10 +729,8 @@ Frame {
 
                 onReleased: {
                     batteryWarningThreshold = batterySlider.value;
-                    console.log("***batterySlider.value*** = ",batterySlider.value);
                     if ((ipRobotWifi !== "")) {
                         saveBatterySignal(ipRobotWifi, getBattery(batterySlider.value))
-                        console.log("value battery = ", getBattery((batterySlider.value)))
                     } else {
                         robotSelectionDialog.open();
                     }
@@ -926,7 +921,6 @@ Frame {
                     languageChoice = 0;
                     langue = "中文";
                     pathModel.langue = "中文";
-                    console.log(settingsPage.mapChoice);
 //                    openCreatePointMenu();
                     pathModel.languageChoice(languageChoice);
                     saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
@@ -1085,7 +1079,7 @@ Frame {
             onAccepted: {
                 Qt.quit();
             }
-            onRejected: console.log("Cancel");
+//            onRejected: console.log("Cancel");
         }
 
 
@@ -1142,12 +1136,11 @@ Frame {
         oriLanguageChoice = languageChoice;
         settingsPage.mapChoice = mapChoice;
         settingsPage.languageChoice = languageChoice;
-        console.log("setSettings = " + oriMapChoice + " " + oriLanguageChoice);
     }
 
     function getWifiList(wifiList, count) {
         ssidWifi.push(wifiList);
-        console.log("wifiList = " + wifiList);
+//        console.log("wifiList = " + wifiList);
     }
 
     property int sizeWifiList

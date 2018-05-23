@@ -29,7 +29,7 @@ Frame {
     signal soundOn(string ip)
     signal soundOff(string ip)
 
-    height: 240 + robotPathListItem.height//105 + robotPathListItem.height
+    height: 260 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
 
     background: Rectangle {
@@ -120,7 +120,7 @@ Frame {
             onAccepted: {
                 frame.rebootRobot(timerRestartButton.ipToShutDown);
             }
-            onRejected: console.log("Cancel");
+            onRejected: {}
         }
     }
 
@@ -305,7 +305,6 @@ Frame {
             onDoNothing: {
                 menuIndex = -1;
                 rightButton.openMenu();
-                console.log("click click click");
             }
 
             onPointSelected: {
@@ -538,7 +537,7 @@ Frame {
             right: parent.right
             rightMargin: 20
             top : batteryLevel.bottom
-//            topMargin: 15
+            topMargin: 15
         }
         height: 50
         width: 100
@@ -574,8 +573,8 @@ Frame {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
 //                    leftMargin: langue === "English" ? -5 : 10
-                    leftMargin: 13
-                    topMargin: -13
+                    leftMargin: 10
+                    topMargin: 3
                 }
             }
 
@@ -616,7 +615,6 @@ Frame {
     function reverse(arr1, arr2, len) {
         for (var i = len-1; i >=0; i--) {
             arr2[(len-1) - i] = arr1[i];
-//            console.log("\n in first loop normalArray["+i+"] = " + arr1[i] +  "\n secondArray == reverseArray["+((len-1) - i)+"] = " + arr2[(len-1)-i]);
         }
     }
 
@@ -661,13 +659,11 @@ Frame {
                     if(stage < pathPoints.count){
                         if(playingPath) {
                             if (stage === 0) {
-                                console.log("stage === 0")
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its \nmission" + "\n")
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
                                 langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
                             } else {
-                                console.log("stage >= 0 = " + stage);
                                 langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
@@ -713,7 +709,6 @@ Frame {
                         langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
                     }
                 } else {
-                    console.log("stage where >= 0 || stage = " + stage);
                     if(Math.abs(stage + 1) < pathPoints.count){
 
                         if(stage == -1) {
@@ -738,7 +733,6 @@ Frame {
                     }
                 }
             } else {
-                console.log("Langue === " + langue);
                 langue == "English" ? qsTr("尚未设置路径") : qsTr("No Path Assigned");
             }
         }

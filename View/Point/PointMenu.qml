@@ -139,12 +139,9 @@ Page {
     Connections {
         target: pointModel
         onEditPointB: {
-            console.log("we are in pointMenu.qml connections");
             createPointMenuContent.oldName = name;
             createPointMenuContent.oldGroup = groupName;
             page.menuIndex = 1;
-            console.log("createPointMenuContent.oldName = " + createPointMenuContent.oldName);
-            console.log("createPointMenuContent.oldGroup = " + createPointMenuContent.oldGroup)
 
         }
     }

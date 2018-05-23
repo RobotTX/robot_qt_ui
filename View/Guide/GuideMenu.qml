@@ -116,7 +116,8 @@ Page {
                     wrongPwd.open();
                 }
             }
-            onRejected: console.log("Cancel");
+//            onRejected: console.log("Cancel");
+            onRejected: {}
         }
 
         CustomDialogGolden {
@@ -331,7 +332,8 @@ Page {
                                         robotModel.playPathSignal(robotModel.ipRobot); /// tell the robot to play the path
                                         pauseRobotInPath.open();
                                 }
-                                onRejected: console.log("Cancel");
+//                                onRejected: console.log("Cancel");
+                                onRejected: {}
                             }
 
                             CustomStopDialog {

@@ -641,7 +641,7 @@ Frame {
                         }
                         onPositionChanged: {
                             tmpPathModel.setOrientation("tmpGroup", "tmpPath", index, Math.round(slider.valueAt(slider.position)));
-                            console.log("index : " + index);
+//                            console.log("index : " + index);
                             field.text = Math.round(slider.valueAt(slider.position));
                         }
                     }
@@ -924,7 +924,7 @@ Frame {
 
                 if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
-                    console.log("oldname != '' ", oldName)
+//                    console.log("oldname != '' ", oldName)
                 }
                 createPath(groupComboBox.displayText, newName);
 

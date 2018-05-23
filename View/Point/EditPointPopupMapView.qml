@@ -119,7 +119,6 @@ Menu {
         height: Style.menuItemHeight
         onHoveredChanged: if (visible) { currentMenuIndex = 3}
         onTriggered: {
-            console.log("deleting the point in editpointpopupmapview.qml");
             deletePoint(name)
         }
     }

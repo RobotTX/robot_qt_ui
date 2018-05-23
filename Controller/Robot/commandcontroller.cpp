@@ -15,7 +15,7 @@ void CommandController::sendCommand(const QString cmd){
         emit sendCommandSignal(cmd);
 //        timer.start(15000);
     } else {
-        qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+//        qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
 

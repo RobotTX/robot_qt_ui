@@ -35,7 +35,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
 
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PointController::PointController could not find the qml point model";
+//        qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
     }
 
@@ -49,7 +49,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double, QString, QString, bool, bool, int)), this, SLOT(addPoint(QString, QString, double, double, QString, QString, bool, bool, int)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
+//        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -65,7 +65,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(createPointGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
+//        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -77,13 +77,13 @@ PointController::PointController(QObject *applicationWindow, MainController* par
 
 
     /// desktop
-    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
+    currentPointsFile = Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPoints.xml";
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    currentPointsFile = location + QDir::separator() + "currentPoints.xml";
 
-    qDebug() << "PointController::PointController" << currentPointsFile;
+//    qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 
 //    robotPointsFile = location + QDir::separator() + "robotPointsFile.xml";
@@ -103,7 +103,7 @@ QVector<double> PointController::getHome() {
             /// For each point of the group
             for(int j = 0; j < i.value()->getPointVector().size(); j++){
                 if(i.value()->getPointVector().at(j)->isHome()){
-                    qDebug() << "group:" <<i.key();
+//                    qDebug() << "group:" <<i.key();
                     home.push_back(i.value()->getPointVector().at(j)->getPos().x());
                     home.push_back(i.value()->getPointVector().at(j)->getPos().y());
                     home.push_back(i.value()->getPointVector().at(j)->getOrientation());
@@ -115,7 +115,7 @@ QVector<double> PointController::getHome() {
     if(points->getGroups().contains(NO_GROUP_NAME)){
         for(int j = 0; j < points->getGroups().value(NO_GROUP_NAME)->getPointVector().size(); j++){
             if(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isHome()){
-                qDebug() << "group:" <<NO_GROUP_NAME;
+//                qDebug() << "group:" <<NO_GROUP_NAME;
                 home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x());
                 home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y());
                 home.push_back(points->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getOrientation());
@@ -154,15 +154,15 @@ void PointController::addPoint(const QString name, const QString groupName, cons
     if(saveXML)
         XMLParser::save(this, currentPointsFile);
 
-    qDebug() << "we are creating a point";
+//    qDebug() << "we are creating a point";
 }
 
 
 void PointController::deletePoint(QString groupName, QString name){
-    qDebug() << "Delete point";
+//    qDebug() << "Delete point";
     /// we remove the point from the c++ side
     points->deletePoint(groupName, name);
-    qDebug() << "point has been deleted";
+//    qDebug() << "point has been deleted";
     XMLParser::save(this, currentPointsFile);
 }
 
@@ -172,7 +172,7 @@ void PointController::deleteGroup(QString groupName){
 }
 
 void PointController::hideShow(QString groupName, QString name){
-    qDebug() << "PointController::hideShow" << name << groupName;
+//    qDebug() << "PointController::hideShow" << name << groupName;
     points->hideShow(groupName, name);
     XMLParser::save(this, currentPointsFile);
 }
@@ -191,14 +191,14 @@ bool PointController::checkPointName(const QString name){
 }
 
 void PointController::renameGroup(QString newName, QString oldName){
-    qDebug() << "PointController::renameGroup from" << oldName << "to" << newName;
+//    qDebug() << "PointController::renameGroup from" << oldName << "to" << newName;
     points->renameGroup(newName, oldName);
     emit renameGroupQml(newName, oldName);
     XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
-    qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
+//    qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
     points->movePoint(name, oldGroup, newGroup);
     XMLParser::save(this, currentPointsFile);
 }
@@ -230,7 +230,7 @@ void PointController::checkGroup(QString name){
 }
 
 void PointController::clearPoints(){
-    qDebug() << "PointController::clearPoints called";
+//    qDebug() << "PointController::clearPoints called";
     emit deleteAllGroupsQml();
     points->clearGoups();
 }

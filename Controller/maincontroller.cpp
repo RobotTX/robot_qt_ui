@@ -76,7 +76,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(tuto, SIGNAL(updateFile(int, bool)), this, SLOT(updateTutoFile(int, bool)));
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "could not find tuto model";
+//            qDebug() << "could not find tuto model";
             Q_UNREACHABLE();
         }
 
@@ -85,7 +85,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "MapController::MapController could not find the mapMenuFrame";
+//            qDebug() << "MapController::MapController could not find the mapMenuFrame";
             Q_UNREACHABLE();
         }
 
@@ -94,7 +94,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(this, SIGNAL(emitLanguage(QVariant)), paths, SLOT(languageChoice(QVariant)));
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "MapController::MapController could not find the paths";
+//            qDebug() << "MapController::MapController could not find the paths";
             Q_UNREACHABLE();
         }
 
@@ -111,7 +111,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "MapController::MapController could not find the settings";
+//            qDebug() << "MapController::MapController could not find the settings";
             Q_UNREACHABLE();
         }
 
@@ -120,7 +120,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(this, SIGNAL(openRestartScanMessageDialog(QVariant)), scanWindow, SLOT(openRestartScanMessageDialog(QVariant)));
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "MapController::MapController could not find the scanWindow";
+//            qDebug() << "MapController::MapController could not find the scanWindow";
             Q_UNREACHABLE();
         }
 
@@ -129,7 +129,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(this, SIGNAL(setMessageTop(QVariant, QVariant)), topView, SLOT(setMessageTop(QVariant, QVariant)));
         } else {
             /// NOTE can probably remove that when testing phase is over
-            qDebug() << "MapController::MapController could not find the topView";
+//            qDebug() << "MapController::MapController could not find the topView";
             Q_UNREACHABLE();
         }
 
@@ -146,11 +146,11 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         /// desktop
         #if defined(Q_OS_LINUX)
 
-            QString cmd = QString(" > " + Helper::getAppPath() + "/wifi.txt && nmcli -t -f ssid dev wifi >> " + Helper::getAppPath() + "/wifi.txt");
+            QString cmd = QString(" > " + Helper::getAppPath() + QDir::separator() +  "data" + QDir::separator() + "/wifi.txt && nmcli -t -f ssid dev wifi >> " + Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "/wifi.txt");
             QProcess process;
             process.startDetached("sh", QStringList() << "-c" << cmd);
             process.waitForFinished();
-            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt");
             int line_count = 0;
             if (ssid.open(QFile::ReadWrite)) {
                 QTextStream ssidIn(&ssid);
@@ -159,7 +159,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                     line_count++;
                     emitWifiList(line, line_count);
                 }
-                qDebug() << "count wifi = " << line_count;
+//                qDebug() << "count wifi = " << line_count;
                 emitSizeWifiList(line_count);
             }
 
@@ -174,10 +174,10 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// get wifi Windows
         #if defined(Q_OS_WIN)
-            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt netsh wlan show network >> " + Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt netsh wlan show network >> " + Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt");
             QProcess process;
             process.startDetached("cmd", QStringList() << "/c" << cmd);
-            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt");
             int line_count = 0;
             if (ssid.open(QFile::ReadWrite)) {
                 QTextStream ssidIn(&ssid);
@@ -198,12 +198,12 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// get wifi MacOs
         #if defined(Q_OS_MAC)
-            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "wifi.txt && /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s | awk '{print $1}' >>" + Helper::getAppPath() + "/wifi.txt");
-            qDebug() << cmd;
+            QString cmd = QString("> " + Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt && /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s | awk '{print $1}' >>" + Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt");
+//            qDebug() << cmd;
             QProcess process;
             process.startDetached("sh", QStringList() << "-c" << cmd);
             process.waitForFinished();
-            QFile ssid(Helper::getAppPath() + QDir::separator() + "wifi.txt");
+            QFile ssid(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "wifi.txt");
             int line_count = 0;
             if (ssid.open(QFile::ReadWrite)) {
                 QTextStream ssidIn(&ssid);
@@ -211,12 +211,12 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                     QString line = ssidIn.readLine();
                     if (line.contains("SSID")) {
                     } else {
-                        qDebug() << "line = " << line;
+//                        qDebug() << "line = " << line;
                         line_count++;
                         emitWifiList(line, line_count);
                     }
                 }
-                qDebug() << "count = " << line_count;
+//                qDebug() << "count = " << line_count;
                 emitSizeWifiList(line_count);
             }
             ssid.close();
@@ -224,7 +224,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// get settings from file
         /// desktop
-        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
+        QFile file(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "settings.txt");
 
         /// android
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -249,7 +249,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                     int languageChoice(0);
                     double batteryThreshold(0.3);
                     QStringList list = line.split(' ');
-                    qDebug() << "settings maincontroller.cpp" << list;
+//                    qDebug() << "settings maincontroller.cpp" << list;
                     if(list.size() == 3){
                         mapChoice = list.at(0).toInt();
                         if(list.at(1).toDouble() >= 0 && list.at(1).toDouble() <= 1)
@@ -272,11 +272,11 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         }
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
+//        qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
 
-    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt"); /// desktop
+    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "tutorial.txt"); /// desktop
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    QFile tutoFile(location + QDir::separator() + "tutorial.txt");
     if(tutoFile.exists() && tutoFile.open(QIODevice::ReadOnly)){
@@ -294,7 +294,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             case 0: updateTutorialMessageVisibility("edit_map", static_cast<bool>(line.toInt()));
                 break;
 
-            case 1: qDebug("ok");
+//            case 1: qDebug("ok");
+            case 1:
                 break;
 
             case 2: updateTutorialMessageVisibility("recover_position", static_cast<bool>(line.toInt()));
@@ -341,12 +342,12 @@ void MainController::checkTmpPosition(int index, double x, double y){
 }
 
 void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY, int mapRotation, bool new_config) const {
-    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY << new_config;
+//    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY << new_config;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
-        qDebug() << "save map to:" << fileName;
+//        qDebug() << "save map to:" << fileName;
         fileName = fileName.mid(0, fileName.length()-4);
-        qDebug() << "fileName after" << fileName;
+//        qDebug() << "fileName after" << fileName;
     }
 
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
@@ -359,45 +360,40 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 //    QString filePath(location + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
     QString oldFilePath = mapController->getMapFile();
-    qDebug() << "save map from:" << oldFilePath;
+//    qDebug() << "save map from:" << oldFilePath;
 
     /// desktop
-    qDebug() << "MainController::saveMapConfig new_config = " << new_config;
+//    qDebug() << "MainController::saveMapConfig new_config = " << new_config;
     if(!new_config){
-        qDebug() << "New config is wrong " << !new_config;
+//        qDebug() << "New config is wrong " << !new_config;
         if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
             ///saves the image to the user given directory
             mapController->saveMapToFile(fileName + ".pgm");
-            qDebug() << "Saving the map to user given directory";
+//            qDebug() << "Saving the map to user given directory";
         }
 
         /// saves the image as a pgm file to the software directory
-        qDebug() << "we are saving the map to the software directory";
         mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        qDebug() << "we are saving the position";
         mapController->savePositionSlot2(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        qDebug() << "we are setting the map file";
         mapController->setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        qDebug() << "we are saving the map savemapconfig";
         mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
 
         /// saves the current points to the points file associated with the new configuration
         XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
         /// saves the new configuration to the current configuration file
-        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
+        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPoints.xml");
 
         /// saves the current points to the points file associated with the new configuration
         PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
         /// saves the new configuration to the current configuration file
-        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPaths.xml");
     }
     else {
-        qDebug() << "New config is right " << new_config;
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->saveMapConfig(filePath, 0, 0, 1, 0);
@@ -451,7 +447,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 }
 
 void MainController::loadMapConfig(QString fileName) {
-    qDebug() << "MainController::loadMapConfig called with file" << fileName;
+//    qDebug() << "MainController::loadMapConfig called with file" << fileName;
 
     if(!fileName.isEmpty()){
         QString fileNameWithoutExtension;
@@ -459,11 +455,9 @@ void MainController::loadMapConfig(QString fileName) {
             fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
 
         ///save the current points and paths to the attached map before clearing it for new map
-        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
-        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
-        qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
+        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_paths.xml";
+        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_points.xml";
         PathXMLParser::save(pathController,oldfilePaths);
-        qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
         XMLParser::save(pointController,oldfilePoints);
 
 
@@ -471,7 +465,6 @@ void MainController::loadMapConfig(QString fileName) {
 
         /// desktop
         QString filePath(Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
-        qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
 
         /// android
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -487,16 +480,16 @@ void MainController::loadMapConfig(QString fileName) {
 
             /// imports points associated to the map and save them in the current file
             /// desktop
-            qDebug() << " reading points from" << Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
+//            qDebug() << " reading points from" << Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
             XMLParser::readPoints(pointController, Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
             /// saves the new configuration to the current configuration file
-            XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
+            XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPoints.xml");
 
             PathXMLParser::readPaths(pathController, Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
             /// saves the imported paths in the current paths file
-            PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+            PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPaths.xml");
 
             /// android
 //            XMLParser::readPoints(pointController, location + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
@@ -510,12 +503,11 @@ void MainController::loadMapConfig(QString fileName) {
 //            PathXMLParser::save(pathController, location + QDir::separator() + "currentPaths.xml");
 
             QVector<double> new_home = pointController->getHome();
-            qDebug() << "?????????? New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
             QMap<QString, QPointer<RobotController>> robots =robotsController->getRobots();
             QMapIterator<QString, QPointer<RobotController>> it(robots);
             while(it.hasNext()){
                 it.next();
-                qDebug() << "connected robot:"<<it.key();
+//                qDebug() << "connected robot:"<<it.key();
                 sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
             }
 
@@ -537,10 +529,10 @@ void MainController::loadMapConfig(QString fileName) {
 }
 
 void MainController::saveSettings(int mapChoice, double batteryThreshold, int languageChoice){
-    qDebug() << "save settings called" << mapChoice << batteryThreshold << languageChoice;
+//    qDebug() << "save settings called" << mapChoice << batteryThreshold << languageChoice;
 
     /// desktop
-    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
+    QFile file(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "settings.txt");
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -564,7 +556,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold, int la
 
 void MainController::saveWifi(QString ip, QString wifi, QString pwd) {
 //    qDebug() << "\nWE ARE IN MAINCONTROLLER::saveWifi()";
-    qDebug() << "saveWifi called" << ip << wifi << " " << pwd;
+//    qDebug() << "saveWifi called" << ip << wifi << " " << pwd;
     QString cmd = QString("y") + QChar(31) + QString(wifi) + QChar(31) + QString(pwd);// + QChar(31) + QChar(23) + QChar(31);
     qDebug() << cmd;
     robotsController->sendCommand(ip, cmd);
@@ -588,7 +580,7 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
 void MainController::updatePathSlot(QString ip, QStringList strList){
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
     if(strList.size() > 0){
-        qDebug() << "RobotsController::updatePathSlot"<<strList.size();
+//        qDebug() << "RobotsController::updatePathSlot"<<strList.size();
         if(strList.size() % 7 == 1){
             qDebug() << "RobotsController::updatePathSlot" << ip << " updating the path";
             emit setPath(ip, strList.takeFirst());
@@ -617,7 +609,6 @@ void MainController::updateHomeSlot(QString ip, double homeX, double homeY, doub
                     mapController->getResolution(),
                     mapController->getHeight());
 
-    qDebug() << "\nMainController::set home" << homePos.x() << homePos.y() << homeOri;
     emit setHome(ip, homePos.x(), homePos.y(), homeOri);
 }
 
@@ -633,7 +624,6 @@ void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, 
                         mapController->getOrigin().y(),
                         mapController->getResolution(),
                         mapController->getHeight());
-        qDebug() << "\nMainController::sendCommandNewHome" << homeX << homeY << homePos << homeOri;
         cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
     }
     robotsController->sendCommand(ip, cmd);
@@ -657,7 +647,6 @@ void MainController::sendCommandSavePlace(QString ip, QString name, double posX,
     }
     cmd = QString("k") + QChar(31) + name + QChar(31) + QString::number(pointReal.x()) + QChar(31) + QString::number(pointReal.y()) + QChar(31) + QString::number(orientation) + QChar(31) + QString::number(homeBool);
     qDebug() << cmd;
-    qDebug() << "\nMainController::sendCommandSavePlace" << name << posX << pointReal.x() << posY << pointReal.y() << orientation << homeBool;
     robotsController->sendCommand(ip, cmd);
 //    XMLParser::save(pointController, location + "/point_command_sent.xml");
 }
@@ -706,41 +695,41 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
     /// Neither the application nor the robot has a map so we send a command to start scanning automatically
     if(mapController->getMapImage().size().width() == 0 && !mapId.compare("{00000000-0000-0000-0000-000000000000}")){
         /// opens the scan window and adds the robot with ip <ip> to the list
-        qDebug() << "NO map on either side so we start scanning automatically";
+//        qDebug() << "NO map on either side so we start scanning automatically";
         emit openScanWindowForAutomaticScan(ip);
     }
 
     /// Check if the robot has the current map
-    qDebug() << "MainController::updateMapInfo Robot" << ip << "comparing ids" << mapId << "and" << mapController->getMapId();
+//    qDebug() << "MainController::updateMapInfo Robot" << ip << "comparing ids" << mapId << "and" << mapController->getMapId();
     if(mapId.compare(mapController->getMapId().toString()) == 0){
-        qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
+//        qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
     }
     else {
-        qDebug() << "ids of app and robot " << mapController->getMapId().toString() << mapId;
+//        qDebug() << "ids of app and robot " << mapController->getMapId().toString() << mapId;
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
 
         bool robotOlder = (mapDateTime <= mapController->getDateTime());
-        qDebug() << "Robot map date:" << mapDateTime << ". Console map date:"<< mapController->getDateTime();
+//        qDebug() << "Robot map date:" << mapDateTime << ". Console map date:"<< mapController->getDateTime();
         qDebug() << robotOlder;
 
         if(robotOlder){
-            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and older map";
+//            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and older map";
         }
         else {
-            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and newer map";
+//            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and newer map";
         }
 
         ///save the current points and paths to the attached map before clearing it for new map
-        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
-        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
-        qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
+        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_paths.xml";
+        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_points.xml";
+//        qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
         PathXMLParser::save(pathController,oldfilePaths);
-        qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
+//        qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
         XMLParser::save(pointController,oldfilePoints);
 
         int mapChoice = -1;
 
-        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt"); /// desktop
+        QFile file(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "settings.txt"); /// desktop
 
         /// android
 //        QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -751,7 +740,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
             stream >> mapChoice;
             file.close();
         }
-        qDebug() << "MainController::updateMapInfo Robot" << ip << "map choice :" << mapChoice;
+//        qDebug() << "MainController::updateMapInfo Robot" << ip << "map choice :" << mapChoice;
 
         switch(mapChoice){
             case Helper::ALWAYS_NEW:
@@ -773,14 +762,14 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
                 sendNewMap(ip);
             break;
             default:
-                qDebug() << "MainController::updateMapInfo ALWAYS_ASK choice";
+//                qDebug() << "MainController::updateMapInfo ALWAYS_ASK choice";
                 /// if there is no map on the application side, no need to ask, just take the robot's one
                 if(mapController->getMapImage().size().width() != 0){
-                    qDebug() << "MainController::checkMapInfoSlot There is a map on the application's side so the choice is offered to the user";
+//                    qDebug() << "MainController::checkMapInfoSlot There is a map on the application's side so the choice is offered to the user";
                     emit openMapChoiceMessageDialog(ip, robotOlder);
                 }
                 else {
-                    qDebug() << "MainController::checkMapInfoSlot There is no map on the application side so we take the robot's one";
+//                    qDebug() << "MainController::checkMapInfoSlot There is no map on the application side so we take the robot's one";
                     robotsController->requestMap(ip);
                 }
             break;
@@ -795,12 +784,12 @@ void MainController::sendNewMap(QString ip){
 
     QString date = mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    qDebug() << "MainController::sendNewMap" << mapController->getMetadataString() << mapController->getMapImage().size();
+//    qDebug() << "MainController::sendNewMap" << mapController->getMetadataString() << mapController->getMapImage().size();
 
     QString mapMetadata = mapController->getMetadataString();
 
     QVector<double> new_home = pointController->getHome();
-    qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+//    qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
     sendCommandNewHome(ip,new_home.at(0),new_home.at(1),new_home.at(2));
 
 
@@ -818,9 +807,9 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
 
     /// desktop
     pointController->clearPoints();
-    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
+    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPoints.xml");
     pathController->clearPaths();
-    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPaths.xml");
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -836,12 +825,12 @@ void MainController::requestOrSendMap(QString ip, bool request){
         robotsController->requestMap(ip);
     else{
         QVector<double> new_home = pointController->getHome();
-        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+//        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
         QMap<QString, QPointer<RobotController>> robots =robotsController->getRobots();
         QMapIterator<QString, QPointer<RobotController>> it(robots);
         while(it.hasNext()){
             it.next();
-            qDebug() << "connected robot:"<<it.key();
+//            qDebug() << "connected robot:"<<it.key();
             sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
         }
 
@@ -857,7 +846,7 @@ void MainController::getMapFromRobot(QString ip){
 }
 
 void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){
-    qDebug() << "MainController::resetMapConfiguration" << file_name;
+//    qDebug() << "MainController::resetMapConfiguration" << file_name;
 
     QString cpp_file_name = file_name.mid(7);
     /// this is the position of the robot at the end of the scan
@@ -869,7 +858,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     if(scan){
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
-        qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
+//        qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
 
         /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
         /// this is used as the new origin for the scanned map
@@ -883,7 +872,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
             robotOri = robotOri-360;
         else if (robotOri<-180)
             robotOri = robotOri+360;
-        qDebug() << "MainController::resetMapConfiguration::Scan Initial pose in new map" << initPos.x()<<initPos.y()<<robotOri;
+//        qDebug() << "MainController::resetMapConfiguration::Scan Initial pose in new map" << initPos.x()<<initPos.y()<<robotOri;
     }
     pointController->clearPoints();
     pathController->clearPaths();
@@ -898,7 +887,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     saveMapConfig(cpp_file_name, 1, 0, 0, 0, false);
 
     /// desktop
-    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
+    QString currentPathFile = Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentMap.txt";
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -927,21 +916,21 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
         new_home[0] = initPos.x();
         new_home[1] = initPos.y();
         new_home[2] = robotOri;
-        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+//        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
         map_type = "SCAN";
         ///send home in scanned map to robot, SCAN+x
         QString cmd = QString("n") + QChar(31) + "S"+QString::number(new_home.at(0)) + QChar(31) + QString::number(new_home.at(1)) + QChar(31) + QString::number(new_home.at(2));
         while(it.hasNext()){
             it.next();
-            qDebug() << "connected robot:"<<it.key();
+//            qDebug() << "connected robot:"<<it.key();
             robotsController->sendCommand(it.key(), cmd);
         }
     }
     else{
-        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
+//        qDebug() << "New home: x-" << new_home.at(0) << "y-"<<new_home.at(1) << "z-"<<new_home.at(2);
         while(it.hasNext()){
             it.next();
-            qDebug() << "connected robot:"<<it.key();
+//            qDebug() << "connected robot:"<<it.key();
             sendCommandNewHome(it.key(),new_home.at(0),new_home.at(1),new_home.at(2));
         }
     }
@@ -994,8 +983,10 @@ void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString res
         mapController->updateMetadata(map_width, map_height, resolution.toDouble(), originX.toDouble(), originY.toDouble());
         QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
         mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
-    } else
-        qDebug() << "Received a map to be discardeded";
+    } else {
+
+    }
+//        qDebug() << "Received a map to be discardeded";
 }
 
 void MainController::sendTeleopSlot(QString ip, int teleop){
@@ -1019,7 +1010,7 @@ void MainController::setMessageTopSlot(int status, QString msg){
 void MainController::updateTutoFile(int index, bool visible){
 
     /// desktop
-    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
+    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "tutorial.txt");
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -1052,11 +1043,11 @@ void MainController::updateTutoFile(int index, bool visible){
 
 void MainController::clearPointsAndPathsAfterScan(){
     ///save the current points and paths to the attached map before clearing it for new map
-    QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
-    QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
-    qDebug() << "MainController::resetMapConfiguration save current map paths to old path fild:"<<oldfilePaths;
+    QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_paths.xml";
+    QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_points.xml";
+//    qDebug() << "MainController::resetMapConfiguration save current map paths to old path fild:"<<oldfilePaths;
     PathXMLParser::save(pathController,oldfilePaths);
-    qDebug() << "MainController::resetMapConfiguration save current map points to old point fild:"<<oldfilePoints;
+//    qDebug() << "MainController::resetMapConfiguration save current map points to old point fild:"<<oldfilePoints;
     XMLParser::save(pointController,oldfilePoints);
 
     /// clears the map of all paths and points

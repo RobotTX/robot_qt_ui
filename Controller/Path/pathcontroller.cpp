@@ -30,7 +30,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PathController::PathController could not find the qml point model";
+//        qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
     }
 
@@ -41,7 +41,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(this, SIGNAL(setTmpValidPositionQml(QVariant, QVariant)), tmpPathModel, SLOT(setTmpValidPosition(QVariant, QVariant)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PathController::PathController could not find the qml point model";
+//        qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
     }
 
@@ -58,7 +58,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(createPathGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PathController::PathController could not find the createPathGroupMenu";
+//        qDebug() << "PathController::PathController could not find the createPathGroupMenu";
         Q_UNREACHABLE();
     }
 
@@ -71,18 +71,18 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int, int, QString, QString, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int, int, QString, QString, int)));
     } else {
         /// NOTE can probably remove that when testing phase is over
-        qDebug() << "PathController::PathController could not find the createPathMenuFrame";
+//        qDebug() << "PathController::PathController could not find the createPathMenuFrame";
         Q_UNREACHABLE();
     }
 
     /// desktop
-    currentPathsFile = Helper::getAppPath() + QDir::separator() + "currentPaths.xml";
+    currentPathsFile = Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentPaths.xml";
 
     /// android
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    currentPathsFile = location + QDir::separator() + "currentPaths.xml";
 
-    qDebug() << "PathController::PathController" << currentPathsFile;
+//    qDebug() << "PathController::PathController" << currentPathsFile;
     loadPaths(currentPathsFile);
 }
 
@@ -98,13 +98,13 @@ void PathController::addGroup(const QString groupName, const bool saveXML){
         if(saveXML)
             PathXMLParser::save(this, currentPathsFile);
     }
-    qDebug() << "we are in pathcontroller::addGroup";
+//    qDebug() << "we are in pathcontroller::addGroup";
 }
 
 void PathController::deleteGroup(const QString groupName){
     paths->deleteGroup(groupName);
     PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we are in pathcontroller::deleteGroup";
+//    qDebug() << "we are in pathcontroller::deleteGroup";
 }
 
 void PathController::addPath(const QString groupName, const QString name, const bool saveXML){
@@ -112,13 +112,13 @@ void PathController::addPath(const QString groupName, const QString name, const 
     emit addPathQml(name, groupName);
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we are in pathcontroller::addPath";
+//    qDebug() << "we are in pathcontroller::addPath";
 }
 
 void PathController::deletePath(const QString groupName, const QString name){
     paths->deletePath(groupName, name);
     PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we are in pathcontroller::deletePath";
+//    qDebug() << "we are in pathcontroller::deletePath";
 }
 
 void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const int orientation, const QString speechName, const QString speechContent, const int speechTime, const bool saveXML){
@@ -129,13 +129,13 @@ void PathController::addPathPoint(const QString groupName, const QString pathNam
 
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we are in pathcontroller::addPathPoint";
+//    qDebug() << "we are in pathcontroller::addPathPoint";
 }
 
 void PathController::deletePathPoint(const QString groupName, const QString pathName, const QString name){
     paths->deletePathPoint(groupName, pathName, name);
     PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we are in pathcontroller::deletePathPoint";
+//    qDebug() << "we are in pathcontroller::deletePathPoint";
 }
 
 void PathController::renameGroup(const QString newName, const QString oldName){
@@ -152,11 +152,11 @@ void PathController::checkGroup(const QString name){
 void PathController::moveTo(const QString name, const QString oldGroup, const QString newGroup){
     paths->movePath(name, oldGroup, newGroup);
     PathXMLParser::save(this, currentPathsFile);
-    qDebug() << "we ar ein pathcontroller::moveto";
+//    qDebug() << "we ar ein pathcontroller::moveto";
 }
 
 void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
-    qDebug() << "PathController::checkPosition" << x << y << mapImage.pixelColor(x, y).red();
+//    qDebug() << "PathController::checkPosition" << x << y << mapImage.pixelColor(x, y).red();
     emit setTmpValidPositionQml(index, mapImage.pixelColor(x, y).red() >= 254);
 }
 
