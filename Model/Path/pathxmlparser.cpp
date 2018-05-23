@@ -17,7 +17,7 @@ PathXMLParser::PathXMLParser(){
 void PathXMLParser::save(PathController *pathController, const QString fileName) {
 
     try {
-        qDebug() << "PathXMLParser::save the paths in" << fileName;
+//        qDebug() << "PathXMLParser::save the paths in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 
@@ -248,9 +248,11 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
     } else {
         clear(pathController, fileName);
     }
-    qDebug() << "load paths finished with " << pathController->getPaths()->getGroups().size() ;
-    if(pathController->getPaths()->getGroups().size() == 1)
-        qDebug() << "group containing " << pathController->getPaths()->getGroups().begin().value()->getPaths().size();
+//    qDebug() << "load paths finished with " << pathController->getPaths()->getGroups().size() ;
+    if(pathController->getPaths()->getGroups().size() == 1) {
+
+    }
+//        qDebug() << "group containing " << pathController->getPaths()->getGroups().begin().value()->getPaths().size();
 }
 
 int PathXMLParser::readIntElement(QXmlStreamReader &xmlReader){

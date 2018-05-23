@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     // authentification window
     QQmlApplicationEngine auth;
     auth.load(QUrl("qrc:/auth.qml"));
-    qDebug("auth loading page");
+//    qDebug("auth loading page");
     QQuickWindow *applicationWindowAuth = qobject_cast<QQuickWindow*>(auth.rootObjects().at(0));
     if (!applicationWindowAuth) {
        qFatal("Error: Your root item has to be a window.");

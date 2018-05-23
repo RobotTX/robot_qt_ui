@@ -19,7 +19,7 @@ ListModel {
     property string langue
 
     function addGroup(name){
-        console.log("paths adding group " + name)
+//        console.log("paths adding group " + name)
         append({
            "groupName": name,
            "groupIsOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
@@ -33,7 +33,7 @@ ListModel {
         } else {
             langue = "English";
         }
-        console.log("language in paths = " + langue);
+//        console.log("language in paths = " + langue);
     }
 
     function addPath(name, groupName){
@@ -133,7 +133,6 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName) {
                 setProperty(i, "groupIsOpen", !get(i).groupIsOpen);
-                console.log("groupName = " + groupName +" groupIsOpen = " + !get(i).groupIsOpen);
             }
     }
 
@@ -177,7 +176,7 @@ ListModel {
     }
 
     function moveTo(name, oldGroup, newGroup){
-        console.log("moveTo " + name + " " + oldGroup + " " + newGroup);
+//        console.log("moveTo " + name + " " + oldGroup + " " + newGroup);
         var path = {};
         var pathPoints = [];
         for(var i = 0; i < count; i++){

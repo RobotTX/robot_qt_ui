@@ -71,7 +71,6 @@ ListModel {
     }
 
     function hideMessage(_feature){
-        console.log("hiding feature " + _feature)
         for(var i = 0; i < count; i++)
             if(get(i).feature === _feature){
                 get(i).show = false
@@ -80,7 +79,6 @@ ListModel {
     }
 
     function showMessage(_feature){
-        console.log("showing feature " + _feature)
         for(var i = 0; i < count; i++){
             if(get(i).feature === _feature){
                 get(i).show = true

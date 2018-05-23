@@ -24,11 +24,8 @@ Column {
     /// The item displaying the name of the point/group
     Label {
         text: if (name !== "") {
-                  console.log("name robot in robotPointListItem.qml = " + name);
                   pointModel.addGroup("Robot - " + name);
-                  console.log("----- before pointModel.createGroup(name) in robotPointListItem.qml");
                   createGroup(name);
-                  console.log("----- after pointModel.createGroup(name) in robotPointListItem.qml");
                   qsTr("")
               }
         visible: false

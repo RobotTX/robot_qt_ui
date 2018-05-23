@@ -34,7 +34,7 @@ Window {
             scanMapLeftMenu.reset();
             scanMapLeftMenu.resetScanMaps();
             discardMap(false);
-            console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height);
+//            console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height);
             closeOnSave = false;
         } else {
             scanMapLeftMenu.stopAllScans(!closeOnSave);
@@ -127,7 +127,7 @@ Window {
 
             // when new metadata arrive the width and the height or adjusted
             function adjustSize(_width, _height){
-                console.log("adjusting scan size to " + _width + " " + _height);
+//                console.log("adjusting scan size to " + _width + " " + _height);
 //                width = _width;
 //                height = _height;
                 /// Change the position of scanMap so that we see the received map in the middle of the screen
@@ -135,7 +135,7 @@ Window {
 //                y = -_height/2 + scanFrame.height/2
                 x = -width/2 + scanFrame.width/2
                 y = -height/2 + scanFrame.height/2
-                console.log("x = " + x + " y = " + y)
+//                console.log("x = " + x + " y = " + y)
             }
 
 //            color: "#cdcdcd"
@@ -148,7 +148,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log("scan map " + scanMap.x + " "  + scanMap.y + " " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
+//                onClicked: console.log("scan map " + scanMap.x + " "  + scanMap.y + " " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
@@ -203,13 +203,18 @@ Window {
     }
 
     function grabScannedMap(file_name){
-        console.log("scan: grabbed called " + file_name.substring(7));
+//        console.log("scan: grabbed called " + file_name.substring(7));
 
         if(file_name.toString().lastIndexOf(".pgm") === -1)
             file_name += ".pgm";
 
         scanMap.grabToImage(function(result) {
-            result.saveToFile(file_name.substring(7));
+            if (Qt.platform.os === "windows") {
+                result.saveToFile(file_name.substring(10));
+            } else {
+                result.saveToFile(file_name.substring(7));
+            }
+
             scanWindow.resetMapConfiguration(file_name, true);
             scanWindow.close();
         });

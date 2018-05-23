@@ -13,7 +13,7 @@ XMLParser::XMLParser(){
 
 void XMLParser::save(PointController *pointController, const QString fileName) {
     try {
-        qDebug() << "XMLParser::save the points in" << fileName;
+//        qDebug() << "XMLParser::save the points in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 

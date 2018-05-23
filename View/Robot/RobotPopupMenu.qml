@@ -100,7 +100,6 @@ Menu {
         }
         onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
         onTriggered: {
-            console.log("clicked clicked clicked clicked clicked");
         }
 //        onClicked: if(visible) currentMenuIndex = 1 /// android
 

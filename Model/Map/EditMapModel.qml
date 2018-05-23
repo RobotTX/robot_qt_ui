@@ -5,7 +5,7 @@ ListModel {
     function addItem(shape, thickness, color, points, update){
 
         if(!update){
-            console.log("Add Item " + shape + " number points " + points.length / 2);
+//            console.log("Add Item " + shape + " number points " + points.length / 2);
             append({
                "shape": shape,
                "thickness": thickness,

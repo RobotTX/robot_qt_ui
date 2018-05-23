@@ -66,7 +66,7 @@ void ScanMapWorker::readTcpDataSlot(){
 //        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
 //            who = 2;
 
-        qDebug() << "(ScanMapWorker) Who :" << who;
+//        qDebug() << "(ScanMapWorker) Who :" << who;
 
         QString mapInfo("");
         if(who == 0){
@@ -84,7 +84,7 @@ void ScanMapWorker::readTcpDataSlot(){
 
             data.remove(0, mapInfo.size() + 5);
 
-            qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
+//            qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
             if(strList.size() > 4){
                 map_width = QString(strList.at(0)).toInt();
@@ -111,7 +111,7 @@ void ScanMapWorker::readTcpDataSlot(){
 
             data.remove(0, mapInfo.size() + 5);
 
-            qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
+//            qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
             if(strList.size() > 6){
                 mapId = strList.at(0);

@@ -116,9 +116,8 @@ ApplicationWindow {
                 checkLog();
                 if (loginOk) {
                     checkLogin()
-                    console.log("login ok")
                 } else {
-                    console.log("login wrong")
+
                 }
 
 
@@ -132,7 +131,7 @@ ApplicationWindow {
         var pwdObj = Helper.formatName(pwdTextField.text);
 
         if (userIdObj !== "" && userIdObj === "admin" && pwdObj !== "" && pwdObj === "admin") {
-            console.log("authentification success")
+//            console.log("authentification success")
             loginOk = true;
         } else {
             console.log("error authentification")

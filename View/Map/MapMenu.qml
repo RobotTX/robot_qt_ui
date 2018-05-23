@@ -31,7 +31,7 @@ Page {
         onSavePosition: page.savePosition()
         // originally comes from saveButton being clicked
         onSaveMap: {
-            console.log("saving map " + file_name)
+//            console.log("saving map " + file_name)
             page.saveMap(file_name)
         }
     }

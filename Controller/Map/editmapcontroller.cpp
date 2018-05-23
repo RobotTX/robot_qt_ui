@@ -33,7 +33,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
     } else {
         /// NOTE prob can remove that when testing phase over
         Q_UNREACHABLE();
-        qDebug() << "could not find the mouse area within the edit map widget";
+//        qDebug() << "could not find the mouse area within the edit map widget";
     }
 }
 

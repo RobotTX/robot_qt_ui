@@ -92,9 +92,7 @@ Page {
                 bottom: parent.bottom
             }
             onBackToMenu: {
-                console.log("onBackToMenu");
                 page.menuIndex = 0;
-                console.log(page.menuIndex);
             }
             onSetMessageTop: page.setMessageTop(status, msg)
         }
@@ -133,20 +131,11 @@ Page {
     Connections {
         target: pathModel
         onSaveCurrentPath: {
-//            console.log("We are in PathMenu - onSaveCurrentPath");
-            console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
             createPathMenuContent.robotPathName = pathName;
             createPathMenuContent.robotPathPoints = pathPoints;
-            console.log("pathPoints = " + pathPoints);
-
             page.menuIndex = 1;
-            console.log("menu = " + page.menuIndex);
         }
 
     }
-
-//    function saveCurrentPath(pathName, pathPoints) {
-//        console.log("pathname = " + pathName + " no pathPoints = " + pathPoints.count)
-//    }
 }
 

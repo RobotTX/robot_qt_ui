@@ -88,7 +88,6 @@ Menu {
         height: Style.menuItemHeight
         onHoveredChanged: if (visible) { currentMenuIndex = 1}
         onTriggered: {
-            console.log("button edit pressed");
             editSpeech()
         }
     }

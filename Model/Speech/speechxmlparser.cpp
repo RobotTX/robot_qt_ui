@@ -13,7 +13,7 @@ SpeechXMLParser::SpeechXMLParser(){
 
 void SpeechXMLParser::save(SpeechController *speechController, const QString fileName) {
     try {
-        qDebug() << "SpeechXMLParser::save the speechs in" << fileName;
+//        qDebug() << "SpeechXMLParser::save the speechs in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 

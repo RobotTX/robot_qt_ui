@@ -50,10 +50,10 @@ ApplicationWindow {
     property bool useTmpPathModel: false
     property bool useRobotPathModel: false
     property real batteryWarningThreshold: 20
-//    property string langue: _robotModel.langue
     property string langue: {
         _pathModel.langue
     }
+
 
     title:langue == "English" ? qsTr("小Go去哪儿") : qsTr("Go Anywhere")
 
@@ -335,8 +335,7 @@ ApplicationWindow {
             message = "Saved the map to \"" + file_name + "\""
         }
 
-        console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
-        console.log("map config");
+//        console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY, mapView.getMapRotation());
         mapView.setMessageTop(3, message);
     }
