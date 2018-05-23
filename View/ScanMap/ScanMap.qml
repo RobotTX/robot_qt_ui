@@ -209,7 +209,12 @@ Window {
             file_name += ".pgm";
 
         scanMap.grabToImage(function(result) {
-            result.saveToFile(file_name.substring(7));
+            if (Qt.platform.os === "windows") {
+                result.saveToFile(file_name.substring(10));
+            } else {
+                result.saveToFile(file_name.substring(7));
+            }
+
             scanWindow.resetMapConfiguration(file_name, true);
             scanWindow.close();
         });

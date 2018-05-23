@@ -262,8 +262,10 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
 
         file.close();
         return true;
-    } else
+    } else {
+        qDebug() << "MaoController::saveMapConfig - no file";
         return false;
+    }
 }
 
 void MapController::saveMapToFile(const QString fileName) const {
@@ -503,6 +505,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
 }
 
 bool MapController::setMapFile(const QString file) {
+    qDebug() << "file in setMapFile = " << file;
     if(QFile(file).exists()){
 //        qDebug() << "MapController::setMapFile to" << file;
         map->setMapFile(file);
@@ -512,8 +515,10 @@ bool MapController::setMapFile(const QString file) {
         /// so that the qml side can load the map
         emit setMap(file);
         return true;
-    } else
+    } else {
+        qDebug() << "MapController::setMapFile -> file = "<< file << "does not exist";
         return false;
+    }
 }
 
 QString MapController::getMetadataString(void) const {
