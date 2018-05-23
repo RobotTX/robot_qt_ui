@@ -121,11 +121,10 @@ ListModel {
         for (var i = 0; i < count; i++) {
             if (get(i).groupName === groupName) {
                 for (var j = 0; j < get(i).points.count; j++) {
-                    console.log("point point point = " + get(i).points.get(j).name);
+//                    console.log("point point point = " + get(i).points.get(j).name);
                 }
             }
         }
-        console.log("---------------------------------------------------------------getting the points")
     }
 
     // moves the point <name> from <oldGroup> to <newGroup>

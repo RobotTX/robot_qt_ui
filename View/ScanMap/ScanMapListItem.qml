@@ -48,19 +48,16 @@ Frame {
                 if(timer.elapsed_time === 0 || timer.elapsed_time > 300){
                     if(timer.elapsed_time === 0)
                         timer.start();
-                    console.log("select event called");
                     scanMapListItemFrame.select();
                     if(timer.elapsed_time > 300)
                         timer.elapsed_time = 0
                 } else {
-                    console.log("reset time elapse");
                     timer.elapsed_time = 0;
                 }
             }
             onDoubleClicked: {
                 if(!selected)
                     scanMapListItemFrame.select();
-                console.log("double clicked ");
                 scanMapListItemFrame.centerOnRobot(ip);
             }
         }

@@ -454,7 +454,6 @@ Window {
             onClicked: {
                 dialog.hide();
                 dialog.saveImage(imgSource.substring(6));
-                console.log("imgSource.substring = " + imgSource.substring(6));
             }
         }
     }
@@ -473,7 +472,7 @@ Window {
 
             smooth: false
             source: imgSource
-            onSourceChanged: console.log("edit map source changed " + image.source)
+//            onSourceChanged: console.log("edit map source changed " + image.source)
             fillMode: Image.PreserveAspectFit
 
             x: - width / 2 + parent.width / 2
@@ -493,7 +492,7 @@ Window {
                 onClicked: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true);
-                    console.log("clicked the map" + mouseX + " " + mouseY);
+//                    console.log("clicked the map" + mouseX + " " + mouseY);
                 }
 
                 // when we drag we don't want to create a new item, we want to add more points to the last item (so that undo and redo functions erase or repaint the whole acceptedButtons

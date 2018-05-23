@@ -126,11 +126,9 @@ Frame {
             }
 
             if(oldName === ""){
-                console.log("oldName === empty");
                 createGroup(newName);
                 setMessageTop(3, creationGroup + newName + "\"");
             } else {
-                console.log("oldName !== empty");
                 renameGroup(newName, oldName);
                 setMessageTop(3, renameGroupLabel);
             }

@@ -75,7 +75,6 @@ ListModel {
             "batteryLevel": 0,
         });
         robotConnection(ip);
-        console.log("language in robots.qml = " + langue);
         if (langue == "English") {
             message = "The robot \"" + name + "\" just connected";
         } else {
@@ -280,10 +279,9 @@ ListModel {
     }
 
     function display(){
-        console.log("Displaying the robots :\n");
-        for(var i = 0; i < count; i++)
-            console.log(get(i).name + " : " + get(i).ip + " : " + get(i).posX + " : " +  get(i).posY + " : "
-                        +  get(i).pathName + " : " +  get(i).playingPath + " : " +  get(i).stage + " : " +  get(i).pathPoints.count);
+//        for(var i = 0; i < count; i++)
+//            console.log(get(i).name + " : " + get(i).ip + " : " + get(i).posX + " : " +  get(i).posY + " : "
+//                        +  get(i).pathName + " : " +  get(i).playingPath + " : " +  get(i).stage + " : " +  get(i).pathPoints.count);
     }
 
     function hideShowPathOnMap(ip){

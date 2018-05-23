@@ -7,7 +7,7 @@ void BackupRobotWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    qDebug() << "\n\n====\nnread socket from backup = " << socket->readAll() << " \n======nn";
+//    qDebug() << "\n\n====\nnread socket from backup = " << socket->readAll() << " \n======nn";
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
@@ -46,7 +46,7 @@ void BackupRobotWorker::disconnectedSlot(){
 }
 
 void BackupRobotWorker::callForReboot(){
-    qDebug() << "Calling for reboot of robot at address" << ipAddress;
+//    qDebug() << "Calling for reboot of robot at address" << ipAddress;
     int nbDataSend = socket->write("reboot");
 
     socket->waitForBytesWritten(100);

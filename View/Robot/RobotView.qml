@@ -80,8 +80,8 @@ Image {
 //                console.log("right button on robot");
 //                robotPopupMenu.open();
             } else if (mouse.button === Qt.LeftButton) {
-                console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
-                            + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
+//                console.log("Clicked on robot " + _name + " at ip " + _ip + " with an orientation of "
+//                            + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
             }
         }
 

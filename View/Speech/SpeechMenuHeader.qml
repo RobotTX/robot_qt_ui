@@ -80,7 +80,6 @@ Frame {
             x: createButton.width
             langue: menuHeader.langue
             onOpenCreateSpeechMenu:{
-                console.log("onOpenCreateSpeech in speechmenuheader");
                 menuHeader.openCreateSpeechMenu()
             }
             onOpenCreateGroupMenu: menuHeader.openCreateGroupMenu()

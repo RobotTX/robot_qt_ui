@@ -74,7 +74,7 @@ namespace Helper {
                 }
             }
 
-            qDebug() << "cropping with values" << top << left << bottom << right;
+//            qDebug() << "cropping with values" << top << left << bottom << right;
 
             /// We crop the image
             QImage copy = image.copy(QRect(QPoint(left, bottom), QPoint(right, top)));
@@ -95,7 +95,7 @@ namespace Helper {
                         new_image.setPixel(i, j, qRgba(255, 255, 255, 170));
                 }
             }
-            qDebug() << "cropped to size" << new_image.size();
+//            qDebug() << "cropped to size" << new_image.size();
             return QPair<QImage, QPoint> (new_image, QPoint(left, bottom));
         }
     }
@@ -116,7 +116,7 @@ namespace Helper {
                 QRegExp regex("[-\n%]");
                 QString content = fileInfo.readAll();
                 QStringList l = content.split(regex, QString::SkipEmptyParts);
-                qDebug() << "path QStringlist" << l;
+//                qDebug() << "path QStringlist" << l;
                 if(l.size() == 8){
                     for(int i = 0; i < 6; i++)
                         pathInfo.second.push_back(l.at(i));
@@ -129,7 +129,7 @@ namespace Helper {
         }
 
         void updateHomeFile(const QString robotName, const QPointF& robot_home_position, const QStringList date){
-            qDebug() << "updatehomefile" << robotName << date.size();
+//            qDebug() << "updatehomefile" << robotName << date.size();
             /// desktop
             QFile fileWriteHome(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             /// android
@@ -142,8 +142,10 @@ namespace Helper {
                     out << date.at(i) << "-";
                 out << date.at(date.size()-1);
                 fileWriteHome.close();
-            } else
-                qDebug() << "could not update the home of" << robotName;
+            } else {
+
+            }
+//                qDebug() << "could not update the home of" << robotName;
         }
 
         QPair<QPointF, QStringList> getHomeFromFile(const QString robotName){
@@ -162,7 +164,7 @@ namespace Helper {
                     content = "0-0-1970-01-01-00-00-00";
                 content.replace("\n", " ");
                 QStringList l = content.split(regex, QString::SkipEmptyParts);
-                qDebug() << "app list" << l;
+//                qDebug() << "app list" << l;
                 if(l.size() > 0){
                     p.setX(l.at(0).toDouble());
                     p.setY(l.at(1).toDouble());

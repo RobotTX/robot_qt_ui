@@ -865,10 +865,8 @@ Frame {
         if(dockStatus != -2){
             if(dockStatus == 3){
                 frame.stopDockingRobot(ip);
-                console.log("Stop docking");
             } else {
                 frame.startDockingRobot(ip);
-                console.log("Start docking");
             }
         }
     }

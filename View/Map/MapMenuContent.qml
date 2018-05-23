@@ -105,11 +105,11 @@ Frame {
         onAccepted: {
             var fileStr = fileUrl.toString();
             if (fileStr.indexOf(" ") >= 0) {
-                console.log("space in the name not authorized");
+//                console.log("space in the name not authorized");
                 warningDialog.open()
             } else {
                 /// TODO need to check for mac
-                console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://") + " or " + fileStr.indexOf("file:"));
+//                console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://") + " or " + fileStr.indexOf("file:"));
                 /// file:// for linux, file: for windows
                 if(fileStr.indexOf("file://") === 0)
                     fileStr = fileStr.slice(7);
@@ -125,8 +125,11 @@ Frame {
                 // depending on whether we try to upload a map or not we open the corresponding dialog
                 if(mapMenuFrame.haveToUploadAfterSaveMap)
                     loadFileDialog.open()
-                else
-                    console.log("NO need to open load dialog");
+                else {
+
+                }
+
+//                    console.log("NO need to open load dialog");
             }
 
         }
@@ -153,10 +156,10 @@ Frame {
         title: langue == "English" ? "导入地图" : "Import a map"
         selectMultiple: false
         onRejected: {
-            console.log("Canceled the save of a map")
+//            console.log("Canceled the save of a map")
         }
         onAccepted: {
-            console.log("gonna send file " << fileUrl);
+//            console.log("gonna send file " << fileUrl);
             mapMenuFrame.importMap(fileUrl);
         }
     }

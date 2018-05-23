@@ -82,7 +82,7 @@ Frame {
                 maximumX: mapImage.width
                 maximumY: mapImage.height
             }
-            onClicked: console.log("This is the temporary point")
+//            onClicked: console.log("This is the temporary point")
             onPositionChanged: if(drag.active) parent.tmpPointViewPosChanged();
         }
     }
@@ -101,6 +101,7 @@ Frame {
             objectName: "topView"
             // qml got a path of this format : file://path_understood_by_Qt for linux or file:C:/path_understood_by_Qt
             langue: mapViewFrame.langue
+            mapSrc: mapViewFrame.mapSrc
             onSavePosition: emitPosition()
             onZoomInMap: {
                 var oldPos = mapToItem(mapImage, width / 2, height / 2);
@@ -144,9 +145,7 @@ Frame {
             }
 
             onCenterMapTopView: {
-                console.log("center mapSignal before");
                 mapViewFrame.centerMapSignal()
-                console.log("center map signal after");
             }
             /// If we have a map, the mapImage is visible
             /// so we enable the buttons to save/load the state of the map
@@ -226,7 +225,6 @@ Frame {
                         /// Zoom into the image
                         if(newScale > Style.minZoom && newScale < Style.maxZoom) {
                             zoomScale.xScale = newScale;
-                            console.log("scale zoom = " + zoomScale.xScale);
                         }
 
                         var newPos = mapToItem(mapImage, width / 2, height / 2);
@@ -247,7 +245,7 @@ Frame {
                 objectName: "mapImage"
                 clip: true
                 visible: false
-                onSourceChanged: console.log("new source " + mapSrc)
+//                onSourceChanged: console.log("new source " + mapSrc)
                 source: mapSrc
                 fillMode: Image.PreserveAspectFit // For not stretching image
                 // because the map could change (through the edit map function) it is not useful to cache it
@@ -321,7 +319,6 @@ Frame {
                     onDoubleClicked: doubleClickedOnMap(mouseX, mouseY)
 
                     onClicked: {
-                        console.log("pos image " + mapImage.x + " " + mapImage.y + " " + item.mapToItem(mapImage, item.width/2, item.height/2) + " " + mouseX + " " + mouseY)
                         if (mouse.button === Qt.LeftButton) {
                             if(tmpPointView.visible){
                                 tmpPointView.x = mouseX;
@@ -329,8 +326,7 @@ Frame {
                                 tmpPointView.tmpPointViewPosChanged()
                             }
                             if(robotModel.count > 0){
-                                console.log("robot 0 pos " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
-                                console.log("robot 0 home pos " + robotModel.get(0).homeX + " " + robotModel.get(0).homeY + " " + robotModel.get(0).homeOri  + useRobotPathModel)
+
                             }
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
@@ -339,7 +335,6 @@ Frame {
                             }
                         } else if (mouse.button === Qt.RightButton){
                             posClicked(Math.round(mouseX), Math.round(mouseY));
-                            console.log("Qt.RightButton");
                             if (tmpPointView.visible) {
 
                             }
@@ -372,7 +367,7 @@ Frame {
                                 height: parent.image.height
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: {
-                                    console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+//                                    console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
                                         tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                         tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -383,7 +378,6 @@ Frame {
                                         editPointPopupMenu.open();
 
                                     } else if (mouse.button === Qt.LeftButton) {
-                                        console.log("clicked on left button on the point");
                                     }
                                 }
 
@@ -400,7 +394,6 @@ Frame {
                                     }
                                     onMoveTo: pointModel.moveTo(name, groupName, newGroup)
                                     onEditPoint: {
-                                        console.log("onEditPoint clicked before pointModel.editPointB");
                                         pointModel.editPointB(name, groupName);
                                     }
                                 }
@@ -434,7 +427,7 @@ Frame {
                                     width: parent.image.width
                                     height: parent.image.height
                                     onClicked: {
-                                        console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+//                                        console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                         if(useTmpPathModel){
                                             tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                             tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -561,7 +554,7 @@ Frame {
         if(Qt.platform.os === "ios" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
 
-        console.log("setMap source : " + _mapSrc);
+//        console.log("setMap source : " + _mapSrc);
         mapSrc = _mapSrc;
         emptyMap.visible = false;
         mapImage.visible = true;

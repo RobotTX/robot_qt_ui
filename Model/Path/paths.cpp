@@ -61,16 +61,13 @@ void Paths::clearGroups(void){
 }
 
 void Paths::display(void){
-    qDebug() << "\nPaths :";
     QMapIterator<QString, QPointer<PathGroup>> i(groups);
     while (i.hasNext()) {
         i.next();
-        qDebug() << "\nGroup :" << i.key();
 
         QMapIterator<QString, QPointer<Path>> j(i.value()->getPaths());
         while (j.hasNext()) {
             j.next();
-            qDebug() << "\nPath :" << j.key();
             for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
                 qDebug() << j.value()->getPathPointVector().at(k)->getPoint()->getName()
                          << j.value()->getPathPointVector().at(k)->getPoint()->getPos().x()
