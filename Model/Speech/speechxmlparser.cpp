@@ -13,7 +13,7 @@ SpeechXMLParser::SpeechXMLParser(){
 
 void SpeechXMLParser::save(SpeechController *speechController, const QString fileName) {
     try {
-//        qDebug() << "SpeechXMLParser::save the speechs in" << fileName;
+//        // qDebug() << "SpeechXMLParser::save the speechs in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 
@@ -61,7 +61,7 @@ void SpeechXMLParser::save(SpeechController *speechController, const QString fil
         file.close();
 
     } catch(std::exception e) {
-        qDebug() << "SpeechXMLParser::save" << e.what();
+        // qDebug() << "SpeechXMLParser::save" << e.what();
     }
 }
 
@@ -175,6 +175,6 @@ void SpeechXMLParser::clear(SpeechController* speechController, const QString fi
         file.close();
 
     } catch(std::exception e) {
-        qDebug() << e.what();
+        // qDebug() << e.what();
     }
 }

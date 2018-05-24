@@ -44,20 +44,20 @@ void CmdRobotWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    qDebug() << "(Robot" << ipAddress << ") connectSocket done";
+    // qDebug() << "(Robot" << ipAddress << ") connectSocket done";
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-    qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;
+    // qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;
 
     int nbDataSend = socket->write(QString(cmd + QChar(31) + QChar(23) + QChar(31)).toUtf8());
 
     socket->waitForBytesWritten(100);
 
     if(nbDataSend == -1)
-        qDebug() << "(Robot" << ipAddress << ") An error occured while sending data";
-    else
-        qDebug() << "(Robot" << ipAddress << ") " << nbDataSend << " bytes sent";
+        // qDebug() << "(Robot" << ipAddress << ") An error occured while sending data";
+    {} else {}
+        // qDebug() << "(Robot" << ipAddress << ") " << nbDataSend << " bytes sent";
 }
 
 void CmdRobotWorker::readTcpDataSlot(){
@@ -77,7 +77,7 @@ void CmdRobotWorker::connectedSlot(){
 }
 
 void CmdRobotWorker::disconnectedSlot(){
-    qDebug() << "(Robot" << ipAddress << ") Disconnected";
+    // qDebug() << "(Robot" << ipAddress << ") Disconnected";
     /// Upon disconnection, we want to tell the MainWindow that we disconnected
     /// and close the socket
     timer->stop();
@@ -98,7 +98,7 @@ void CmdRobotWorker::timerSlot(void){
     timeCounter++;
 
     if(timeCounter > 5)
-        qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+        // qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
     /// ROBOT_TIMER = 15
@@ -117,79 +117,79 @@ void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         socket->connectToHost(ipAddress, port);
         break;
     case(QAbstractSocket::RemoteHostClosedError):
-        qDebug() << "(CmdRobotWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        // qDebug() << "(CmdRobotWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
         emit robotIsDead();
         break;
     case(QAbstractSocket::HostNotFoundError):
-        qDebug() << "(CmdRobotWorker) The host address was not found.";
+        // qDebug() << "(CmdRobotWorker) The host address was not found.";
         break;
     case(QAbstractSocket::SocketAccessError):
-        qDebug() << "(CmdRobotWorker) The socket operation failed because the application lacked the required privileges.";
+        // qDebug() << "(CmdRobotWorker) The socket operation failed because the application lacked the required privileges.";
         break;
     case(QAbstractSocket::SocketResourceError):
-        qDebug() << "(CmdRobotWorker) The local system ran out of resources (e.g., too many sockets).";
+        // qDebug() << "(CmdRobotWorker) The local system ran out of resources (e.g., too many sockets).";
         break;
     case(QAbstractSocket::SocketTimeoutError):
-        qDebug() << "(CmdRobotWorker) The socket operation timed out.";
+        // qDebug() << "(CmdRobotWorker) The socket operation timed out.";
         break;
     case(QAbstractSocket::DatagramTooLargeError):
-        qDebug() << "(CmdRobotWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
+        // qDebug() << "(CmdRobotWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
         break;
     case(QAbstractSocket::NetworkError):
-        qDebug() << "(CmdRobotWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
+        // qDebug() << "(CmdRobotWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
         break;
     case(QAbstractSocket::AddressInUseError):
-        qDebug() << "(CmdRobotWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
+        // qDebug() << "(CmdRobotWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
         break;
     case(QAbstractSocket::SocketAddressNotAvailableError):
-        qDebug() << "(CmdRobotWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
+        // qDebug() << "(CmdRobotWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
         break;
     case(QAbstractSocket::UnsupportedSocketOperationError):
-        qDebug() << "(CmdRobotWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
+        // qDebug() << "(CmdRobotWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
         break;
     case(QAbstractSocket::ProxyAuthenticationRequiredError):
-        qDebug() << "(CmdRobotWorker) The socket is using a proxy, and the proxy requires authentication.";
+        // qDebug() << "(CmdRobotWorker) The socket is using a proxy, and the proxy requires authentication.";
         break;
     case(QAbstractSocket::SslHandshakeFailedError):
-        qDebug() << "(CmdRobotWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
+        // qDebug() << "(CmdRobotWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
         break;
     case(QAbstractSocket::UnfinishedSocketOperationError):
-        qDebug() << "(CmdRobotWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
+        // qDebug() << "(CmdRobotWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
         break;
     case(QAbstractSocket::ProxyConnectionRefusedError):
-        qDebug() << "(CmdRobotWorker) Could not contact the proxy server because the connection to that server was denied";
+        // qDebug() << "(CmdRobotWorker) Could not contact the proxy server because the connection to that server was denied";
         break;
     case(QAbstractSocket::ProxyConnectionClosedError):
-        qDebug() << "(CmdRobotWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
+        // qDebug() << "(CmdRobotWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
         break;
     case(QAbstractSocket::ProxyConnectionTimeoutError):
-        qDebug() << "(CmdRobotWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
+        // qDebug() << "(CmdRobotWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
         break;
     case(QAbstractSocket::ProxyNotFoundError):
-        qDebug() << "(CmdRobotWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
+        // qDebug() << "(CmdRobotWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
         break;
     case(QAbstractSocket::ProxyProtocolError):
-        qDebug() << "(CmdRobotWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
+        // qDebug() << "(CmdRobotWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
         break;
     case(QAbstractSocket::OperationError):
-        qDebug() << "(CmdRobotWorker) An operation was attempted while the socket was in a state that did not permit it.";
+        // qDebug() << "(CmdRobotWorker) An operation was attempted while the socket was in a state that did not permit it.";
         break;
     case(QAbstractSocket::SslInternalError):
-        qDebug() << "(CmdRobotWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
+        // qDebug() << "(CmdRobotWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
         break;
     case(QAbstractSocket::SslInvalidUserDataError):
-        qDebug() << "(CmdRobotWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
+        // qDebug() << "(CmdRobotWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
         break;
     case(QAbstractSocket::TemporaryError):
-        qDebug() << "(CmdRobotWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
+        // qDebug() << "(CmdRobotWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
         break;
     case(QAbstractSocket::UnknownSocketError):
-        qDebug() << "(CmdRobotWorker) An unidentified error occurred.";
+        // qDebug() << "(CmdRobotWorker) An unidentified error occurred.";
         break;
     default:
         /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
-        qDebug() << "(CmdRobotWorker) Not supposed to be here.";
+        // qDebug() << "(CmdRobotWorker) Not supposed to be here.";
         break;
     }
 }

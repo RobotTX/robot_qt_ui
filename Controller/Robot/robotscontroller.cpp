@@ -71,7 +71,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
     } else {
         /// NOTE can probably remove that when testing phase is over
-//        qDebug() << "RobotsController::RobotsController could not find the qml robot model";
+//        // qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
     }
 
@@ -108,7 +108,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
         connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
     } else {
-//        qDebug() << "could not find robot menu frame";
+//        // qDebug() << "could not find robot menu frame";
         Q_UNREACHABLE();
     }
 
@@ -150,12 +150,12 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         emit setBattery(ip, battery, charging);
         emit updateDockStatus(ip, dockStatus);
         emit updateSound(ip, charging);
-//        qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus;
+//        // qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus;
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
         robots.insert(ip, robotController);
-        //qDebug() << "find new robot called" << name;
+        //// qDebug() << "find new robot called" << name;
         emit addRobot(name, ip, stage, battery);
     }
 /*
@@ -195,16 +195,16 @@ void RobotsController::shortcutAddRobot(void){
 void RobotsController::shortcutDeleteRobot(void){
     if(robots.size() > 0)
         robotIsDeadSlot(QString::number(robots.size() - 1));
-    else
-        qDebug() << "You already have no robot";
+    else {}
+        // qDebug() << "You already have no robot";
 }
 
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
     if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
-//        qDebug() << "cmd in robotscontroller = " << cmd;
+//        // qDebug() << "cmd in robotscontroller = " << cmd;
     } else {
-        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+        // qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
         return false;
     }
 
@@ -237,7 +237,7 @@ void RobotsController::stoppedDeletedPathSlot(const QString ip){
 }
 
 //void RobotsController::changeLanguageSlot(const QString language) {
-//    qDebug() << "language in robotsController = " << language;
+//    // qDebug() << "language in robotsController = " << language;
 //    langue = language;
 //}
 
@@ -268,7 +268,7 @@ void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray ma
 }
 
 void RobotsController::requestMap(const QString ip){
-//    qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
+//    // qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
     if(!receivingMap){
         if(sendCommand(ip, QString("s") + QChar(31) + QString::number(1))){
             receivingMap = true;
@@ -276,7 +276,7 @@ void RobotsController::requestMap(const QString ip){
         }
     } else {
         /// TODO some queue to request the map ?
-        qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
+        // qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
     }
 }
 
@@ -290,16 +290,16 @@ void RobotsController::sendNewMapToAllExcept(const QString ip, const QString map
 }
 
 void RobotsController::sendMapTimerSlot(void){
-//    qDebug() << "RobotsController::sendMapTimerSlot should have sent all the map already";
+//    // qDebug() << "RobotsController::sendMapTimerSlot should have sent all the map already";
     sendMapTimer->stop();
 }
 
 void RobotsController::requestMapTimerSlot(void){
-//    qDebug() << "RobotsController::requestMapTimerSlot should have received the map already";
+//    // qDebug() << "RobotsController::requestMapTimerSlot should have received the map already";
 }
 
 void RobotsController::requestMapForMerging(const QString ip){
-    qDebug() << "RobotsController::requestMapForMerging Requesting the map for merging from robot at ip" << ip;
+    // qDebug() << "RobotsController::requestMapForMerging Requesting the map for merging from robot at ip" << ip;
     if(!receivingMap){
         if(sendCommand(ip, QString("s") + QChar(31) + QString::number(2))){
             receivingMap = true;
@@ -307,12 +307,12 @@ void RobotsController::requestMapForMerging(const QString ip){
         }
     } else {
         /// TODO some queue to request the map ?
-        qDebug() << "RobotsController::requestMapForMerging Already receiving a map, please wait";
+        // qDebug() << "RobotsController::requestMapForMerging Already receiving a map, please wait";
     }
 }
 
 //void RobotsController::processMapForMerge(const QByteArray map, const QString resolution){
-//    qDebug() << "RobotsController::processMapForMerge";
+//    // qDebug() << "RobotsController::processMapForMerge";
 //    emit sendMapToProcessForMerge(map, resolution);
 //    receivingMap = false;
 //    requestMapTimer->stop();
@@ -346,12 +346,12 @@ void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray ma
 void RobotsController::sendTeleop(const QString ip, const int teleop){
     if(robots.contains(ip))
         robots.value(ip)->sendTeleop(teleop);
-    else
-        qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
+    else {}
+        // qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
 
 void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
-//    qDebug() << "send map to all robots called" << date << mapMetadata;
+//    // qDebug() << "send map to all robots called" << date << mapMetadata;
     QMapIterator<QString, QPointer<RobotController>> it(robots);
     while(it.hasNext()){
         it.next();
@@ -378,10 +378,10 @@ void RobotsController::updateRobotPos(QString ip, double x, double y, double ori
     try {
         if(robots.contains(ip))
             robots.value(ip)->updateRobotPosition(x, y, orientation);
-        else
-            qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << "which is disconnected";
+        else {}
+            // qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << "which is disconnected";
     } catch (std::exception& e) {
-        qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << ":" << e.what();
+        // qDebug() << "RobotsController::updateRobotPos Trying to update the position of" << ip << ":" << e.what();
     }
 }
 
@@ -403,17 +403,17 @@ void RobotsController::callForRebootRobot(QString ip){
 }
 
 void RobotsController::soundOn(QString ip) {
-//    qDebug() << "\nWE ARE IN RobotsController::soundOn()";
+//    // qDebug() << "\nWE ARE IN RobotsController::soundOn()";
     sendCommand(ip, QString("w"));
 }
 
 void RobotsController::soundOff(QString ip) {
-//    qDebug() << "\nWE ARE IN RobotsController::soundOff()";
+//    // qDebug() << "\nWE ARE IN RobotsController::soundOff()";
     sendCommand(ip, QString("x"));
 }
 
 void RobotsController::backupSystemIsDownSlot(QString ip){
-    qDebug() << "RobotController::backup System is down at ip" << ip;
+    // qDebug() << "RobotController::backup System is down at ip" << ip;
     //backupControllers.remove(ip);
 }
 
@@ -426,7 +426,7 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
     /// TODO use timer
     QThread::sleep(1);
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
-//    qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
+//    // qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
 
     if(strList.size() > 8){
         /// Remove the "Connected" in the list
@@ -452,7 +452,7 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         if(homeX >= -100 && homeY >= -100){
             updateHomeSlot(ip, homeX, homeY, homeOri);
         }
-//        qDebug() << "RobotsController::updateRobotInfoSlot" << ip << "home :" << homeX << homeY << homeOri;
+//        // qDebug() << "RobotsController::updateRobotInfoSlot" << ip << "home :" << homeX << homeY << homeOri;
 
         emit checkMapInfo(ip, mapId, mapDate);
 
@@ -481,7 +481,7 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
 
     } else {
         /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
-        qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
+        // qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
 //        Q_UNREACHABLE();
     }
 }

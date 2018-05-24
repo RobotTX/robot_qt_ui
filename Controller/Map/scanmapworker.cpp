@@ -17,7 +17,7 @@ void ScanMapWorker::stopWorker(){
 }
 
 void ScanMapWorker::connectSocket(){
-    qDebug() << "(ScanMapWorker) Trying to connect to" << ipAddress << "at port" << port;
+    // qDebug() << "(ScanMapWorker) Trying to connect to" << ipAddress << "at port" << port;
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
@@ -31,12 +31,12 @@ void ScanMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    qDebug() << "(ScanMapWorker) connectSocket done";
+    // qDebug() << "(ScanMapWorker) connectSocket done";
 }
 
 void ScanMapWorker::readTcpDataSlot(){
     data.append(socket->readAll());
-    qDebug() << "(ScanMapWorker) Received data" << data.size();
+    // qDebug() << "(ScanMapWorker) Received data" << data.size();
 
     QString mapId("");
     QString mapDate("");
@@ -66,7 +66,7 @@ void ScanMapWorker::readTcpDataSlot(){
 //        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
 //            who = 2;
 
-//        qDebug() << "(ScanMapWorker) Who :" << who;
+//        // qDebug() << "(ScanMapWorker) Who :" << who;
 
         QString mapInfo("");
         if(who == 0){
@@ -84,7 +84,7 @@ void ScanMapWorker::readTcpDataSlot(){
 
             data.remove(0, mapInfo.size() + 5);
 
-//            qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
+//            // qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
             if(strList.size() > 4){
                 map_width = QString(strList.at(0)).toInt();
@@ -92,8 +92,8 @@ void ScanMapWorker::readTcpDataSlot(){
                 resolution = strList.at(2);
                 originX = strList.at(3);
                 originY = strList.at(4);
-            } else
-                qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
+            } else {}
+                // qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
         } else if(who == 1 || who == 2){
             /// If the map comes from a pgm, we get the mapId and mapDate associated to it
@@ -111,7 +111,7 @@ void ScanMapWorker::readTcpDataSlot(){
 
             data.remove(0, mapInfo.size() + 5);
 
-//            qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
+//            // qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
             if(strList.size() > 6){
                 mapId = strList.at(0);
@@ -121,8 +121,8 @@ void ScanMapWorker::readTcpDataSlot(){
                 resolution = strList.at(4);
                 originX = strList.at(5);
                 originY = strList.at(6);
-            } else
-                qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
+            } else {}
+                // qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
         }
 
@@ -144,79 +144,79 @@ void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         socket->connectToHost(ipAddress, port);
         break;
     case(QAbstractSocket::RemoteHostClosedError):
-        qDebug() << "(ScanMapWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        // qDebug() << "(ScanMapWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
         emit robotIsDead();
         break;
     case(QAbstractSocket::HostNotFoundError):
-        qDebug() << "(ScanMapWorker) The host address was not found.";
+        // qDebug() << "(ScanMapWorker) The host address was not found.";
         break;
     case(QAbstractSocket::SocketAccessError):
-        qDebug() << "(ScanMapWorker) The socket operation failed because the application lacked the required privileges.";
+        // qDebug() << "(ScanMapWorker) The socket operation failed because the application lacked the required privileges.";
         break;
     case(QAbstractSocket::SocketResourceError):
-        qDebug() << "(ScanMapWorker) The local system ran out of resources (e.g., too many sockets).";
+        // qDebug() << "(ScanMapWorker) The local system ran out of resources (e.g., too many sockets).";
         break;
     case(QAbstractSocket::SocketTimeoutError):
-        qDebug() << "(ScanMapWorker) The socket operation timed out.";
+        // qDebug() << "(ScanMapWorker) The socket operation timed out.";
         break;
     case(QAbstractSocket::DatagramTooLargeError):
-        qDebug() << "(ScanMapWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
+        // qDebug() << "(ScanMapWorker) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
         break;
     case(QAbstractSocket::NetworkError):
-        qDebug() << "(ScanMapWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
+        // qDebug() << "(ScanMapWorker) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
         break;
     case(QAbstractSocket::AddressInUseError):
-        qDebug() << "(ScanMapWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
+        // qDebug() << "(ScanMapWorker) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
         break;
     case(QAbstractSocket::SocketAddressNotAvailableError):
-        qDebug() << "(ScanMapWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
+        // qDebug() << "(ScanMapWorker) The address specified to QAbstractSocket::bind() does not belong to the host.";
         break;
     case(QAbstractSocket::UnsupportedSocketOperationError):
-        qDebug() << "(ScanMapWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
+        // qDebug() << "(ScanMapWorker) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
         break;
     case(QAbstractSocket::ProxyAuthenticationRequiredError):
-        qDebug() << "(ScanMapWorker) The socket is using a proxy, and the proxy requires authentication.";
+        // qDebug() << "(ScanMapWorker) The socket is using a proxy, and the proxy requires authentication.";
         break;
     case(QAbstractSocket::SslHandshakeFailedError):
-        qDebug() << "(ScanMapWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
+        // qDebug() << "(ScanMapWorker) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
         break;
     case(QAbstractSocket::UnfinishedSocketOperationError):
-        qDebug() << "(ScanMapWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
+        // qDebug() << "(ScanMapWorker) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
         break;
     case(QAbstractSocket::ProxyConnectionRefusedError):
-        qDebug() << "(ScanMapWorker) Could not contact the proxy server because the connection to that server was denied";
+        // qDebug() << "(ScanMapWorker) Could not contact the proxy server because the connection to that server was denied";
         break;
     case(QAbstractSocket::ProxyConnectionClosedError):
-        qDebug() << "(ScanMapWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
+        // qDebug() << "(ScanMapWorker) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
         break;
     case(QAbstractSocket::ProxyConnectionTimeoutError):
-        qDebug() << "(ScanMapWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
+        // qDebug() << "(ScanMapWorker) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
         break;
     case(QAbstractSocket::ProxyNotFoundError):
-        qDebug() << "(ScanMapWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
+        // qDebug() << "(ScanMapWorker) The proxy address set with setProxy() (or the application proxy) was not found.";
         break;
     case(QAbstractSocket::ProxyProtocolError):
-        qDebug() << "(ScanMapWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
+        // qDebug() << "(ScanMapWorker) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
         break;
     case(QAbstractSocket::OperationError):
-        qDebug() << "(ScanMapWorker) An operation was attempted while the socket was in a state that did not permit it.";
+        // qDebug() << "(ScanMapWorker) An operation was attempted while the socket was in a state that did not permit it.";
         break;
     case(QAbstractSocket::SslInternalError):
-        qDebug() << "(ScanMapWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
+        // qDebug() << "(ScanMapWorker) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
         break;
     case(QAbstractSocket::SslInvalidUserDataError):
-        qDebug() << "(ScanMapWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
+        // qDebug() << "(ScanMapWorker) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
         break;
     case(QAbstractSocket::TemporaryError):
-        qDebug() << "(ScanMapWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
+        // qDebug() << "(ScanMapWorker) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
         break;
     case(QAbstractSocket::UnknownSocketError):
-        qDebug() << "(ScanMapWorker) An unidentified error occurred.";
+        // qDebug() << "(ScanMapWorker) An unidentified error occurred.";
         break;
     default:
         /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
-        qDebug() << "(ScanMapWorker) Not supposed to be here.";
+        // qDebug() << "(ScanMapWorker) Not supposed to be here.";
         break;
     }
 }

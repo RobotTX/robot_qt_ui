@@ -13,7 +13,7 @@ XMLParser::XMLParser(){
 
 void XMLParser::save(PointController *pointController, const QString fileName) {
     try {
-//        qDebug() << "XMLParser::save the points in" << fileName;
+//        // qDebug() << "XMLParser::save the points in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 
@@ -69,7 +69,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
         file.close();
 
     } catch(std::exception e) {
-        qDebug() << "XMLParser::save" << e.what();
+        // qDebug() << "XMLParser::save" << e.what();
     }
 }
 
@@ -199,6 +199,6 @@ void XMLParser::clear(PointController* pointController, const QString fileName){
         file.close();
 
     } catch(std::exception e) {
-        qDebug() << e.what();
+        // qDebug() << e.what();
     }
 }
