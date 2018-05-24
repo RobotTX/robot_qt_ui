@@ -98,12 +98,17 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
-        onHoveredChanged: if(visible){ currentMenuIndex = 1 } /// desktop
+        onHoveredChanged: if(visible) {
+                            pathListInPopup.open();
+                            currentMenuIndex = 1 ;
+                          } /// desktop
         onTriggered: {
+            doNothing();
         }
 //        onClicked: if(visible) currentMenuIndex = 1 /// android
 
         PathListInPopup {
+            id: pathListInPopup
             x: assignPath.width
             visible: robotMenu.currentMenuIndex === 1
             pathModel: robotMenu.pathModel

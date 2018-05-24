@@ -311,7 +311,7 @@ Frame {
         }
 
         // apply button to save the changes but keep the window open
-           SaveButton {
+        SaveButton {
                id: applyButtonWifi
                langue: settingsPage.langue
                txt: langue == "English" ? "应用" : "Apply"
@@ -342,7 +342,6 @@ Frame {
                 topMargin: 10
             }
         }
-
 
         Label {
             id: velocityLabel

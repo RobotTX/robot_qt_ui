@@ -164,7 +164,13 @@ Frame {
     CustomLabel {
         id: mapName
         text: {
-            var indexLastSlash = mapFileName.lastIndexOf("/");
+            var indexLastSlash = "";
+            if (Qt.platform.os === "windows") {
+                indexLastSlash = mapFileName.lastIndexOf("\\");
+            } else {
+                indexLastSlash = mapFileName.lastIndexOf("/");
+            }
+
             qsTr(mapFileName.substring(indexLastSlash + 1));
         }
         anchors {
