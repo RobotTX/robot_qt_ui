@@ -186,11 +186,11 @@ Column {
                     column.selectedGroup = groupName
                     column.selectedPoint = name
                     groupListItem.menuIndex = -1;
-                    editPointPopupMenu.open();
+                    editPointPopupMenu1.open();
                 }
 
                 EditPointPopupMenu {
-                    id: editPointPopupMenu
+                    id: editPointPopupMenu1
                     x: rightButton.width
                     currentMenuIndex: groupListItem.menuIndex
                     pointModel: groupListItem.pointModel
@@ -203,6 +203,34 @@ Column {
                     }
                     onMoveTo: pointModel.moveTo(name, groupName, newGroup)
                     onEditPoint: groupListItem.editPoint(name, groupName)
+                    onDoNothing: {
+                        column.selectedGroup = groupName
+                        column.selectedPoint = name
+                        groupListItem.menuIndex = -1;
+                        editPointPopupMenu2.open();
+                    }
+                }
+
+                EditPointPopupMenu {
+                    id: editPointPopupMenu2
+                    x: rightButton.width
+                    currentMenuIndex: groupListItem.menuIndex
+                    pointModel: groupListItem.pointModel
+                    robotModel: groupListItem.robotModel
+                    langue: groupListItem.langue
+                    myGroup: groupName
+                    onDeletePoint: {
+                        pointModel.deletePoint(myGroup, name);
+                        pointModel.deletePointSignal(myGroup, name);
+                    }
+                    onMoveTo: pointModel.moveTo(name, groupName, newGroup)
+                    onEditPoint: groupListItem.editPoint(name, groupName)
+                    onDoNothing: {
+                        column.selectedGroup = groupName
+                        column.selectedPoint = name
+                        groupListItem.menuIndex = -1;
+                        editPointPopupMenu1.open();
+                    }
                 }
             }
         }

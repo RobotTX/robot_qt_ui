@@ -25,6 +25,7 @@ Menu {
     signal deletePath()
     signal moveTo(string newGroup)
     signal robotSelected(string robot)
+    signal doNothing()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -50,9 +51,11 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible){
-                            robotListInPopup.open()
-                            menu.currentMenuIndex = 0
+                            robotListInPopup.open();
+                            menu.currentMenuIndex = 0;
                           } /// destkop
+        onTriggered: doNothing()
+
 //        onClicked: if(visible){ currentMenuIndex = 0 } /// android
 
         RobotListInPopup {
@@ -113,10 +116,15 @@ Menu {
             anchors.rightMargin: 12
         }
 
-        onHoveredChanged: if (visible) menu.currentMenuIndex = 2 /// desktop
+        onHoveredChanged: if (visible) {
+                              menuGroup.open();
+                              menu.currentMenuIndex = 2
+                          }/// desktop
+        onTriggered: doNothing()
 //        onClicked: if(visible){ currentMenuIndex = 2 } /// android
 
         Menu {
+            id: menuGroup
             x: parent.width
             visible: menu.currentMenuIndex === 2
             padding: 0

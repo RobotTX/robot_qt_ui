@@ -195,11 +195,11 @@ Column {
                         column.selectedGroup = groupName;
                         column.selectedPath = pathName;
                         groupListItem.menuIndex = -1;
-                        editPathPopupMenu.open();
+                        editPathPopupMenu1.open();
                     }
 
                     EditPathPopupMenu {
-                        id: editPathPopupMenu
+                        id: editPathPopupMenu1
                         x: rightButton.width
                         currentMenuIndex: groupListItem.menuIndex
                         pathModel: groupListItem.pathModel
@@ -209,6 +209,29 @@ Column {
                         onDeletePath: pathModel.deletePath(groupName, pathName)
                         onMoveTo: pathModel.moveTo(pathName, groupName, newGroup)
                         onEditPath: groupListItem.editPath(pathName, groupName)
+                        onDoNothing: {
+                            menuIndex = -1;
+                            editPathPopupMenu2.open();
+                        }
+                    }
+
+                    /// we duplicate EditPathPopupMenu in order to do nothing
+                    /// when the user click on one item
+                    EditPathPopupMenu {
+                        id: editPathPopupMenu2
+                        x: rightButton.width
+                        currentMenuIndex: groupListItem.menuIndex
+                        pathModel: groupListItem.pathModel
+                        robotModel: groupListItem.robotModel
+                        langue: groupListItem.langue
+                        myGroup: groupName
+                        onDeletePath: pathModel.deletePath(groupName, pathName)
+                        onMoveTo: pathModel.moveTo(pathName, groupName, newGroup)
+                        onEditPath: groupListItem.editPath(pathName, groupName)
+                        onDoNothing: {
+                            menuIndex = -1;
+                            editPathPopupMenu1.open();
+                        }
                     }
                 }
             }

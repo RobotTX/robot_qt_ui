@@ -23,6 +23,7 @@ Menu {
     signal editSpeech()
     signal deleteSpeech(string name)
     signal moveTo(string newGroup)
+    signal doNothing()
 
     visible: _isVisible
 
@@ -57,6 +58,8 @@ Menu {
 //        onClicked: if (visible) {
 //                       currentMenuIndex = 0
 //                   } /// android
+
+        onTriggered: doNothing()
 
         property string nameSpeech: name
         property string ttsSpeech: tts
@@ -113,9 +116,12 @@ Menu {
             anchors.rightMargin: 12
         }
 //        onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
-        onHoveredChanged: if (visible) { currentMenuIndex = 2} /// desktop
+        onHoveredChanged: if (visible) {
+                              moveToMenu.open();
+                              currentMenuIndex = 2
+                          } /// desktop
 //        onClicked: if (visible) { currentMenuIndex = 1} /// android
-
+        onTriggered: doNothing()
 
         Menu {
             id: moveToMenu

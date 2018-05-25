@@ -66,7 +66,9 @@ Frame {
             anchors.left: flickPoint.right
             anchors.leftMargin: 3
         }
-        contentHeight: contentItem.childrenRect.height
+
+        contentHeight: 1082
+
         anchors.fill: parent
         anchors.topMargin: 10
 
@@ -311,7 +313,7 @@ Frame {
         }
 
         // apply button to save the changes but keep the window open
-           SaveButton {
+        SaveButton {
                id: applyButtonWifi
                langue: settingsPage.langue
                txt: langue == "English" ? "应用" : "Apply"
@@ -342,7 +344,6 @@ Frame {
                 topMargin: 10
             }
         }
-
 
         Label {
             id: velocityLabel

@@ -286,16 +286,12 @@ Frame {
 
         onClicked: {
             menuIndex = -1;
-            robotPopupMenu.open();
+            robotPopupMenu1.open();
 
-        }
-
-        function openMenu() {
-            robotPopupMenu.open();
         }
 
         RobotPopupMenu {
-            id: robotPopupMenu
+            id: robotPopupMenu1
             x: rightButton.width
             currentMenuIndex: frame.menuIndex
             pointModel: frame.pointModel
@@ -304,7 +300,128 @@ Frame {
             langue: frame.langue
             onDoNothing: {
                 menuIndex = -1;
-                rightButton.openMenu();
+                robotPopupMenu2.open();
+            }
+
+            onPointSelected: {
+                var homeLabel=""
+                if (langue == "English") {
+                  homeLabel="新充电站"
+                } else {
+                  homeLabel="New home"
+                }
+                setMessageTop(2, homeLabel);
+                robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + homeLabel+ "\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+                }
+            onPathSelected: {
+                var actionLabel=""
+                var assignLabel=""
+                if (langue == "English") {
+                    actionLabel = "路径"
+                    assignLabel = "分配给机器"
+                } else {
+                    actionLabel = "Path"
+                    assignLabel = "assigned to robot"
+                }
+
+                setMessageTop(2, actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\""  + name +"\"");
+                robotModel.newPathSignal(ip, _groupName, _pathName)
+                frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " +actionLabel+ "\"" + _pathName + "\n\"" + assignLabel + "\"" + name +"\"\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
+            onRenameRobot: {
+                nameLabel.visible = false;
+                nameField.focus = true;
+            }
+            onDeletePath: {
+                var pathLabel=""
+                if (langue == "English") {
+                  pathLabel="删除路径"
+                } else {
+                  pathLabel="Path deleted"
+                }
+                setMessageTop(2, pathLabel);
+                robotModel.deletePathSignal(ip)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + pathLabel + "\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
+            onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
+            onSaveCurrentPath: {
+                var pathLabel=""
+                var savelabel=""
+                if (langue == "English") {
+                    pathLabel="当前的路径"
+                    savelabel="保存了"
+                } else {
+                    pathLabel="Current path"
+                    savelabel="saved"
+                }
+
+                setMessageTop(2, pathLabel + " " + pathName + " " + savelabel)
+                pathModel.saveCurrentPath(pathName,pathPoints)
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + pathLabel + "\"" + pathName + "\"\n"+ savelabel + "\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
+            onSaveCurrentHome: {
+                if (homeOri < 0) {
+                    homeOri = homeOri + 360;
+                }
+                var homeLabel=""
+                if (langue == "English") {
+                  homeLabel="当前的充电站保存了"
+                } else {
+                  homeLabel="Current home saved"
+
+                }
+
+                setMessageTop(2, homeLabel)
+                pointModel.saveCurrentHome("CS", homeX, homeY, homeOri);
+                consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + homeLabel + "\n");
+
+                if (consoleWhole.length === 20) {
+                    consoleWhole.splice(0,1);
+                }
+                robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
+                consoleString = consoleWholeReverse.join('');
+            }
+        }
+
+        /// we actually duplicate previous RobotPopupMenu in order to open again the popup
+        /// when clicking on one item. this is a little ugly but for now only solution found
+        RobotPopupMenu {
+            id: robotPopupMenu2
+            x: rightButton.width
+            currentMenuIndex: frame.menuIndex
+            pointModel: frame.pointModel
+            pathModel: frame.pathModel
+            robotModel: frame.robotModel
+            langue: frame.langue
+            onDoNothing: {
+                menuIndex = -1;
+                robotPopupMenu1.open();
             }
 
             onPointSelected: {
@@ -573,7 +690,7 @@ Frame {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
 //                    leftMargin: langue === "English" ? -5 : 10
-                    leftMargin: 10
+                    leftMargin: 5
                     topMargin: 3
                 }
             }

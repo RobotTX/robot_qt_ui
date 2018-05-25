@@ -51,7 +51,7 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
     if(!paintedItems.contains(ip)){
 
         emit updateSize(map.width(), map.height());
-//        qDebug() << "map.width = " << map.width() << " map.height = " << map.height();
+//        // qDebug() << "map.width = " << map.width() << " map.height = " << map.height();
 
         QQmlComponent component(engine, QUrl("qrc:/View/ScanMap/ScanMapsPaintedItem.qml"));
         ScanMapPaintedItem* paintedItem = qobject_cast<ScanMapPaintedItem*>(component.create());
@@ -76,7 +76,7 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         QMetaObject::invokeMethod(applicationWindow->findChild<QObject*>("robotModel"), "getName",
                 Q_RETURN_ARG(QVariant, name),
                 Q_ARG(QVariant, ip));
-//        qDebug() << "Mah name" << name;
+//        // qDebug() << "Mah name" << name;
 
         paintedItem->setProperty("name", name.toString());
         paintedItem->setProperty("width", paintedItem->getImage().width());
@@ -103,7 +103,7 @@ void ScanMapController::updateRobotPos(QString ip, double x, double y, double or
 }
 
 void ScanMapController::removeMap(QString ip){
-//    qDebug() << "ScanMapController::removeMap called with ip" << ip;
+//    // qDebug() << "ScanMapController::removeMap called with ip" << ip;
     if(paintedItems.contains(ip)){
         paintedItems[ip]->setVisible(false);
         paintedItems.remove(ip);
@@ -111,7 +111,7 @@ void ScanMapController::removeMap(QString ip){
 }
 
 void ScanMapController::resetScanMaps(){
-//    qDebug() << "ScanMapController::resetScanMaps called";
+//    // qDebug() << "ScanMapController::resetScanMaps called";
     QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
     while(it.hasNext()){
         it.next();
@@ -125,14 +125,14 @@ void ScanMapController::saveScanSlot(QString file_name){
     /// before grab
     emit discardMap(true);
 
-//    qDebug() << "paintedItems.size = " << paintedItems.size();
+//    // qDebug() << "paintedItems.size = " << paintedItems.size();
 
     if(paintedItems.size() > 0){
         QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
         while(it.hasNext()){
             it.next();
             QImage& image = it.value()->getImage();
-//            qDebug() << "image.width = " << image.width() << "image.height = " << image.height();
+//            // qDebug() << "image.width = " << image.width() << "image.height = " << image.height();
             for(int i = 0; i < image.width(); i++){
                 for(int j = 0; j < image.height(); j++){
                     QColor color = image.pixelColor(i, j);
@@ -149,7 +149,7 @@ void ScanMapController::saveScanSlot(QString file_name){
         }
 
         /// notify qml that map ready to be saved in file_name
-//        qDebug() << "Filename in scanmapcontroller for readyToBeGrabbed : " << file_name;
+//        // qDebug() << "Filename in scanmapcontroller for readyToBeGrabbed : " << file_name;
         emit readyToBeGrabbed(file_name);
         emit setMessageTop(2, "Finished to scan the new map");
         emit clearPointsAndPaths();
@@ -157,7 +157,7 @@ void ScanMapController::saveScanSlot(QString file_name){
 }
 
 void ScanMapController::sendGoalSlot(QString ip, double x, double y){
-//    qDebug() << "ScanMapController::sendGoalSlot called" << ip << x + paintedItems[ip]->getLeft() << y + paintedItems[ip]->getTop();
+//    // qDebug() << "ScanMapController::sendGoalSlot called" << ip << x + paintedItems[ip]->getLeft() << y + paintedItems[ip]->getTop();
     if(paintedItems.contains(ip)){
         /// it is an empty area of the map
         if(paintedItems[ip]->getImage().pixelColor(x, y).red() > 250)
@@ -170,7 +170,7 @@ void ScanMapController::sendGoalSlot(QString ip, double x, double y){
 void ScanMapController::sendCoordinatesRobotAndScanMapItem(QString ip){
     if(paintedItems.contains(ip)){
         ScanMapPaintedItem* item = paintedItems.value(ip);
-//        qDebug() << "To center scan map sending robot and scan map pos" <<
+//        // qDebug() << "To center scan map sending robot and scan map pos" <<
 //                    item->robotX() << item->robotY() << item->x() << item->y();
         emit coordinatesRobotAndScanMapItem(item->robotX(), item->robotY(), item->x(), item->y());
     } else

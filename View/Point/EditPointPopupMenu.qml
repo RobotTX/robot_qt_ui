@@ -24,6 +24,7 @@ Menu {
     signal editPoint()
     signal deletePoint(string name)
     signal moveTo(string newGroup)
+    signal doNothing()
 
     visible: _isVisible
 
@@ -57,6 +58,8 @@ Menu {
                 currentMenuIndex = 0;
             } /// desktop
         }
+
+        onTriggered: doNothing()
 //        onClicked: if (visible) { currentMenuIndex = 0} /// android
 
         RobotListInPopup {
@@ -100,7 +103,6 @@ Menu {
         labelText: langue == "English" ? "移动到" : "Move To Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
-        onHoveredChanged: if (visible) { currentMenuIndex = 2}
         height: Style.menuItemHeight
 
         Image {
@@ -111,6 +113,12 @@ Menu {
             anchors.right: parent.right
             anchors.rightMargin: 12
         }
+
+        onHoveredChanged: if (visible) {
+                              moveToMenu.open();
+                              currentMenuIndex = 2;
+                          }
+        onTriggered: doNothing()
 //        onClicked: if (visible) { currentMenuIndex = 1} /// android
 
 
