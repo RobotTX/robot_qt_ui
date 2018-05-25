@@ -43,6 +43,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(this, SIGNAL(setMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(centerPosition(QVariant,QVariant)), mapViewFrame, SLOT(centerMap(QVariant, QVariant)));
+        connect(this, SIGNAL(saveCenterMapPos()), mapViewFrame, SLOT(emitPosition()));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, int, QString)), this, SLOT(savePositionSlot(double, double, double, int, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
@@ -568,4 +569,8 @@ void MapController::centerMapSlot(){
         }
     }
     emit centerPosition(left + (right-left)/2, top + (bottom - top)/2);
+}
+
+void MapController::saveCenterMapPosSlot(){
+    emit saveCenterMapPos();
 }

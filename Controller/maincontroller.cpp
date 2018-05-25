@@ -803,6 +803,7 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
     QString mapMetadata = mapController->getMetadataString();
     ///Update center of map
     mapController->centerMapSlot();
+    mapController->saveCenterMapPosSlot();
     /// When we receive a map from a robot, we send it to all the other robots
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
 
@@ -929,6 +930,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     if (scan){
         mapController->centerMapSlot();
+        mapController->saveCenterMapPosSlot();
         new_home[0] = initPos.x();
         new_home[1] = initPos.y();
         new_home[2] = robotOri;

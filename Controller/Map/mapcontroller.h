@@ -143,6 +143,12 @@ public slots:
     void centerMapSlot();
 
     /**
+     * @brief SaveCenterMapSlot
+     * Emits the adequate position for recording in currentMap.txt
+     */
+    void saveCenterMapPosSlot();
+
+    /**
      * @brief savePositionSlot
      * @param posX
      * @param posY
@@ -193,6 +199,12 @@ signals:
      * The position of the center of the image in image coordinates
      */
     void centerPosition(QVariant, QVariant);
+
+    /**
+     * @brief saveCenterMapPos
+     * Save center map position to local file
+     */
+    void saveCenterMapPos();
 
  private:
     QPointer<Map> map;

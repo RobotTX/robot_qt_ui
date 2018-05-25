@@ -590,6 +590,6 @@ Frame {
         var pos_finale = item.mapToItem(mapImage, item.width/2, item.height/2);
         mapImage.x += (pos_finale.x - posX) * zoomScale.xScale;
         mapImage.y += (pos_finale.y - posY) * zoomScale.xScale;
-        emitPosition();
+        //emitPosition();
     }
 }
