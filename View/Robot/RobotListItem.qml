@@ -675,7 +675,7 @@ Frame {
                 source: "qrc:/icons/speed_linear"
                 anchors {
                     left: parent.left
-                    leftMargin: 30
+                    leftMargin: 35
                 }
             }
 
@@ -690,7 +690,7 @@ Frame {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
 //                    leftMargin: langue === "English" ? -5 : 10
-                    leftMargin: 5
+                    leftMargin: 0
                     topMargin: 3
                 }
             }
@@ -701,10 +701,8 @@ Frame {
                 fillMode: Image.Pad
                 source: "qrc:/icons/speed_angular"
                 anchors {
-                    left: linearSpeedLabel.left
-                    leftMargin: 100
                     right: parent.right
-                    rightMargin: 30
+                    rightMargin: 35
                 }
             }
 
@@ -719,7 +717,7 @@ Frame {
                     top: linearSpeed.top
                     left:angularSpeedLabel.left
 //                    leftMargin: langue === "English" ? -10 : 15
-                    leftMargin: 12
+                    leftMargin: 0
                 }
             }
         }
