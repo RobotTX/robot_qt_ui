@@ -66,7 +66,9 @@ Frame {
             anchors.left: flickPoint.right
             anchors.leftMargin: 3
         }
-        contentHeight: contentItem.childrenRect.height
+
+        contentHeight: 1082
+
         anchors.fill: parent
         anchors.topMargin: 10
 
