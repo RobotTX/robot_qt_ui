@@ -179,11 +179,11 @@ Column {
                         column.selectedGroup = groupName;
                         column.selectedSpeech = name;
                         menuIndex = -1;
-                        editSpeechPopupMenu.open();
+                        editSpeechPopupMenu1.open();
                     }
 
                     EditSpeechPopupMenu {
-                        id: editSpeechPopupMenu
+                        id: editSpeechPopupMenu1
                         x: rightButton.width
                         currentMenuIndex: groupListItem.menuIndex
                         speechModel: groupListItem.speechModel
@@ -196,7 +196,30 @@ Column {
                         }
                         onMoveTo: speechModel.moveTo(name, groupName, newGroup)
                         onEditSpeech: groupListItem.editSpeech(name, groupName)
+                        onDoNothing: {
+                            menuIndex = -1;
+                            editSpeechPopupMenu2.open();
+                        }
+                    }
 
+                    EditSpeechPopupMenu {
+                        id: editSpeechPopupMenu2
+                        x: rightButton.width
+                        currentMenuIndex: groupListItem.menuIndex
+                        speechModel: groupListItem.speechModel
+                        robotModel: groupListItem.robotModel
+                        langue: groupListItem.langue
+                        myGroup: groupName
+                        onDeleteSpeech: {
+                            speechModel.deleteSpeech(myGroup, name);
+                            speechModel.deleteSpeechSignal(myGroup, name);
+                        }
+                        onMoveTo: speechModel.moveTo(name, groupName, newGroup)
+                        onEditSpeech: groupListItem.editSpeech(name, groupName)
+                        onDoNothing: {
+                            menuIndex = -1;
+                            editSpeechPopupMenu1.open();
+                        }
                     }
                 }
             }

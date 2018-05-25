@@ -50,7 +50,7 @@ bool Paths::checkGroupName(const QString name){
 //    } else if (name.length() == 0) {
 //        checkGroup = false;
 //    }
-//    qDebug() << "checkGroup = " << checkGroup << ;
+//    // qDebug() << "checkGroup = " << checkGroup << ;
     return (name.isEmpty()) || (groups.find(name) != groups.end()) || (name.length() == 0);
 //    return checkGroup;
 }
@@ -69,9 +69,9 @@ void Paths::display(void){
         while (j.hasNext()) {
             j.next();
             for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
-                qDebug() << j.value()->getPathPointVector().at(k)->getPoint()->getName()
-                         << j.value()->getPathPointVector().at(k)->getPoint()->getPos().x()
-                         << j.value()->getPathPointVector().at(k)->getPoint()->getPos().y();
+                // qDebug() << j.value()->getPathPointVector().at(k)->getPoint()->getName()
+//                         << j.value()->getPathPointVector().at(k)->getPoint()->getPos().x()
+//                         << j.value()->getPathPointVector().at(k)->getPoint()->getPos().y();
             }
         }
     }

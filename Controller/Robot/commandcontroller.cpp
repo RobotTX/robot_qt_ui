@@ -15,7 +15,7 @@ void CommandController::sendCommand(const QString cmd){
         emit sendCommandSignal(cmd);
 //        timer.start(15000);
     } else {
-//        qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+//        // qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
 
@@ -67,7 +67,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;*/
                 case 'i':
                     /// Sent a new path to the robot
-//                    qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
+//                    // qDebug() << "\nWE ARE IN commandcontroller.cpp FOR CASE 'i'";
                     list.removeFirst();
                     list.removeFirst();
 //                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
@@ -172,21 +172,21 @@ void CommandController::cmdAnswerSlot(QString answer){
             break;
                 default:
                     /// Unknown/unused command
-                    qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
+                    // qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
                     Q_UNREACHABLE();
                 break;
             }
         } else {
-            qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
+            // qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
             /// TODO debug or handle the busy case
             //Q_UNREACHABLE();
         }
     } else {
-        qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
+        // qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
         Q_UNREACHABLE();
     }
 
-    qDebug() << "CommandController::cmdAnswerSlot in" << 15000 - timer.remainingTime();
+    // qDebug() << "CommandController::cmdAnswerSlot in" << 15000 - timer.remainingTime();
 
     timer.stop();
     cmdFinished();
