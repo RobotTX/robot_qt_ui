@@ -81,7 +81,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 12
+            font.pointSize: 11
             text: langue === "English" ? qsTr("机器人设置") : qsTr("Robot Setting")
         }
 
@@ -189,7 +189,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 12
+            font.pointSize: 11
             text: langue === "English" ? qsTr("无线网设置") : qsTr("WiFi Setting")
         }
 
@@ -354,7 +354,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 12
+            font.pointSize: 11
             text: langue === "English" ? qsTr("速度设置") : qsTr("Velocity Setting")
         }
 
@@ -632,7 +632,7 @@ Frame {
                 }
 
                 color: Style.darkSkyBlue
-                font.pointSize: 12
+                font.pointSize: 11
                 text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Setting")
             }
 
@@ -769,7 +769,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 12
+            font.pointSize: 11
             text: langue === "English" ? qsTr("地图同步设置") : qsTr("Map Sync. Setting")
         }
 
@@ -887,7 +887,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 12
+            font.pointSize: 11
             text: langue === "English" ? qsTr("语言设置") : qsTr("Language Setting")
         }
 
@@ -1012,11 +1012,12 @@ Frame {
 
             CustomLabel {
                 text: langue == "English" ? "退出程序" : "Exit Application"
+                font.pointSize: 11
                 color: Style.darkSkyBlue
                 verticalAlignment: Text.AlignVCenter
                 anchors {
                     left: parent.left
-                    leftMargin: 8
+                    leftMargin: 0
                 }
             }
 
