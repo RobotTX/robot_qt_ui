@@ -394,7 +394,7 @@ Frame {
                     verticalCenter: linearVelocityHelp.verticalCenter
                 }
 
-                tooltipText: langue === "English" ? "推荐 0.4 m/s" : "Recommend 0.4 m/s"
+                tooltipText: langue === "English" ? "推荐值: 0.4 m/s" : "Recommend value: 0.4 m/s"
             }
         }
 
@@ -494,7 +494,7 @@ Frame {
                     verticalCenter: angularVelocityHelp.verticalCenter
                 }
 
-                tooltipText: langue === "English" ? "推荐 40 deg/s" : "Recommend 40 deg/s"
+                tooltipText: langue === "English" ? "推荐值: 40 deg/s" : "Recommend value: 40 deg/s"
             }
         }
 
@@ -633,7 +633,7 @@ Frame {
 
                 color: Style.darkSkyBlue
                 font.pointSize: 11
-                text: langue === "English" ? qsTr("低电量设置") : qsTr("Battery Level Setting")
+                text: langue === "English" ? qsTr("低电量设置") : qsTr("Low Battery Setting")
             }
 
             HelpButton {
@@ -647,7 +647,7 @@ Frame {
                     verticalCenter: batteryHelp.verticalCenter
                 }
 
-                tooltipText: langue === "English" ? "电池低于多少百分比将发出警告" : "Level of battery under which you receive a warning"
+                tooltipText: langue === "English" ? "当电池低于设置值,机器人开始自动充电" : "When battery is lower than this value, Robot starts auto docking"
             }
         }
 

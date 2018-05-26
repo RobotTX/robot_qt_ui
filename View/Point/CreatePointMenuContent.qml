@@ -126,7 +126,7 @@ Frame {
     TextField {
         id: pointTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("偷入目标点名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("输入目标点名称") : qsTr("Enter name")
 
         text: oldName
         height: 28
@@ -210,7 +210,7 @@ Frame {
 
     Label {
         id: homeLabel
-        text: langue == "English" ? qsTr("充电站") : qsTr("Charging station")
+        text: langue == "English" ? qsTr("充电站") : qsTr("Charging Station")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -228,7 +228,7 @@ Frame {
             right: parent.right
             topMargin: 10
         }
-        text: langue == "English" ? "设置当前目标点为充电站" : "This point is a charging station"
+        text: langue == "English" ? "设置为充电站" : "Set to charging station"
         onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
     }
 

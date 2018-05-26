@@ -19,14 +19,14 @@ ListModel {
     }
 
     ListElement {
-        feature: "修改地图"
-        message: " 请阅读以下信息以便修改地图:\n\t
+        feature: "编辑地图"
+        message: " 请阅读以下信息以便编辑地图:\n\t
 * 选择颜色 \n\t
 * 选择形状 \n\t
 * 选择尺寸 \n\t
 * 撤销 (Ctrl+Z) 或者 恢复 (Ctrl+Y) 操作 \n\t
 * 单击重置来撤销所有修改 \n\t
-* 选择取消或者保存结束修改地图 \n"
+* 选择取消或者保存结束编辑地图 \n"
         show: true
     }
 

@@ -34,7 +34,7 @@ Frame {
 
     NormalButton {
         id: scanButton
-        txt: langue == "English" ? "扫描地图" : "Scan New Map"
+        txt: langue == "English" ? "扫描新地图" : "Scan New Map"
         imgSrc: "qrc:/icons/scan_map"
         anchors.top: parent.top
         anchors.topMargin: 12
@@ -43,7 +43,7 @@ Frame {
 
     NormalButton {
         id: saveMapButton
-        txt: langue == "English" ? "保存地图到本地" : "Save Map To Local"
+        txt: langue == "English" ? "导出地图到本地" : "Export Map to Local"
         imgSrc: "qrc:/icons/save_map"
         anchors.top: scanButton.bottom
         onClicked: saveFileDialog.open()
@@ -51,7 +51,7 @@ Frame {
 
     NormalButton {
         id: loadButton
-        txt: langue == "English" ? "从本地导入地图" : "Load Map From Local"
+        txt: langue == "English" ? "从本地导入地图" : "Import Map from Local"
         imgSrc: "qrc:/icons/load_map"
         anchors.top: saveMapButton.bottom
         onClicked: messageDialog.open()
@@ -59,7 +59,7 @@ Frame {
 
     NormalButton {
         id: editButton
-        txt: langue == "English" ? "修改地图" : "Edit Current Map"
+        txt: langue == "English" ? "编辑当前地图" : "Edit Current Map"
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
         onClicked: editMap.show();
@@ -85,7 +85,7 @@ Frame {
 
     NormalButton {
         id: recenterButton
-        txt: langue == "English" ? "地图中心" : "Center Map"
+        txt: langue == "English" ? "地图中心位置" : "Map Center Position"
         imgSrc: "qrc:/icons/centerMap"
         anchors.top: loadPositionButton.bottom
         // if the map has become unreachable for the user because of a false manipulation

@@ -33,7 +33,7 @@ Frame {
     EmptyMenu {
         /// Only the invisible "Default left and it's empty
         visible: (pointModel.count === 1 && pointModel.get(0).points.count === 0) || pointModel.count === 0
-        txt: langue == "English" ? "没有任何目标点，点击"+"按钮或者双击地图，创建目标点" : "You don't have any points yet, click the '+' button or double click the map to create a point."
+        txt: langue == "English" ? "没有任何目标点，请点击 + 按钮或者双击地图，创建目标点" : "You don't have any point yet, please click + button or double click the map to create a point."
         imgSrc: "qrc:/icons/big_point"
 
     }

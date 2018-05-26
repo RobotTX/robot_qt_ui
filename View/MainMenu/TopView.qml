@@ -147,7 +147,7 @@ Frame {
     /// Center map button
     SmallButton {
         id: centerMapButton
-        tooltip:  langue == "English" ? "地图中心" : "Center map"
+        tooltip:  langue == "English" ? "地图中心位置" : "Map Center Position"
         imgSrc: "qrc:/icons/centerMap"
         anchors {
             top: parent.top

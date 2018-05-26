@@ -475,7 +475,7 @@ Frame {
                             type: Helper.PointViewType.HOME_ORANGE
                             x: homeX
                             y: homeY
-                            tooltipText: langue == "English" ? "充电桩 " + name : "Home of " + name
+                            tooltipText: langue == "English" ? "充电站 " + name : "Home of " + name
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: homeOri
                         }

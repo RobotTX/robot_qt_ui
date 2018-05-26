@@ -385,12 +385,12 @@ ListModel {
             if(get(i).ip === ip && get(i).dockStatus !== dockStatus){
                 setProperty(i, "dockStatus", dockStatus);
                 if (langue == "English") {
-                    message1 = "机器人 " + get(i).name + " 不能到达充电桩"
-                    message2 = "有障碍阻挡机器人 " + get(i).name + " 到达充电桩"
-                    message3 = "机器人 " + get(i).name + " 失去充电桩的信号因此不能到达充电桩"
-                    message4 = "机器人 " + get(i).name + " 到达充电桩"
-                    message5 = "机器人 " + get(i).name + " 到达充电桩，但可能没有完全对准充电桩"
-                    message6 = "机器人 " + get(i).name +" 正在前往充电桩"
+                    message1 = "机器人 " + get(i).name + " 不能到达充电站"
+                    message2 = "有障碍阻挡机器人 " + get(i).name + " 到达充电站"
+                    message3 = "机器人 " + get(i).name + " 失去充电站的信号因此不能到达充电站"
+                    message4 = "机器人 " + get(i).name + " 到达充电站"
+                    message5 = "机器人 " + get(i).name + " 到达充电站，但可能没有完全对准充电站"
+                    message6 = "机器人 " + get(i).name +" 正在前往充电站"
                 } else {
                     message1 = "Robot \"" + get(i).name + "\" could not reach home"
                     message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its home"

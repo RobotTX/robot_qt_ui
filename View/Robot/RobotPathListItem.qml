@@ -823,7 +823,7 @@ Frame {
                         break;
                     }
                 }
-//                tooltip: langue == "English" ? "让机器人去充电桩" : "Send the robot to its docking station"
+//                tooltip: langue == "English" ? "让机器人去充电站" : "Send the robot to its docking station"
 //                tooltip: (dockStatus === 3) ? langue == "English" ?"停止自动充电":"Stop auto docking" : langue == "English" ?"自动充电":"Auto docking"
                 tooltip: {
                     if (langue === "English") {

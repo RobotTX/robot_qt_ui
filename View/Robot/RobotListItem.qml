@@ -391,9 +391,9 @@ Frame {
                 }
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="当前的充电站保存了"
+                  homeLabel="已保存当前充电站"
                 } else {
-                  homeLabel="Current home saved"
+                  homeLabel="Saved current home"
 
                 }
 
@@ -512,9 +512,9 @@ Frame {
                 }
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="当前的充电站保存了"
+                  homeLabel="已保存当前充电站"
                 } else {
-                  homeLabel="Current home saved"
+                  homeLabel="Saved current home"
 
                 }
 

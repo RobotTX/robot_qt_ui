@@ -12,7 +12,7 @@ import "../Tutorial"
 Window {
 
     id: dialog
-    title: langue == "English" ? "修改地图" : "Edit Map"
+    title: langue == "English" ? "编辑地图" : "Edit Map"
     objectName: "editMapWindow"
 
     width: 1000
@@ -529,9 +529,9 @@ Window {
         height: 500
         x: dialog.width / 2 - width / 2
         y: dialog.height / 2 - height / 2
-        feature: "修改地图"
+        feature: "编辑地图"
         tutorial: dialog.tutorial
         langue: dialog.langue
-        Component.onCompleted: tutoMessage = tutorial.getMessage("修改地图")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("编辑地图")
     }
 }

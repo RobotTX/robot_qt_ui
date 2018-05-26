@@ -192,17 +192,17 @@ Frame {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
-                leftMargin: 20
+                leftMargin: 15
             }
         }
 
         CustomLabel {
-            text: langue == "English" ? qsTr("加入新的扫描") : qsTr("Add a scan")
+            text: langue == "English" ? qsTr("选择机器人") : qsTr("Select Robot")
             color: "#262626"
             anchors{
                 verticalCenter: parent.verticalCenter
                 left: icon.right
-                leftMargin: 7
+                leftMargin: 5
             }
             font.pointSize: 11
         }

@@ -33,7 +33,7 @@ Frame {
 
     EmptyMenu {
         visible: robotModel.count === 0
-        txt: langue == "English" ? "未链接机器人，请确保机器人和电脑在同一个WIFI网络" : "No robot connected. Make sure that the robot and your computer are connected to the same WIFI network."
+        txt: langue == "English" ? "未连接机器人，请确保机器人和电脑在同一个WIFI网络" : "No robot connected. Make sure that the robot and your computer are connected to the same WIFI network."
         imgSrc: "qrc:/icons/big_robot"
     }
 
