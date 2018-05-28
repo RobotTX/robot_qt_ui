@@ -55,7 +55,7 @@ ApplicationWindow {
     }
 
 
-    title:langue == "English" ? qsTr("小Go去哪儿") : qsTr("Go Anywhere")
+    title:langue == "English" ? qsTr("小Go去哪儿") : qsTr("Mobot Studio")
 
     onClosing: {
         scanMap.close();
