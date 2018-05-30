@@ -286,11 +286,18 @@ ListModel {
 
     function hideShowPathOnMap(ip){
         for(var i = 0; i < count; i++){
-            if(get(i).ip === ip)
+            /// to show one by one the path
+//            if(get(i).ip === ip) {
+//                setProperty(i, "pathIsVisible", !get(i).pathIsVisible);
+//            } else {
+//                setProperty(i, "pathIsVisible", false);
+
+//            }
+            if(get(i).ip === ip) {
                 setProperty(i, "pathIsVisible", !get(i).pathIsVisible);
-            else
-                setProperty(i, "pathIsVisible", false);
+            }
         }
+
     }
 
     function openPath(ip){

@@ -1051,7 +1051,7 @@ Frame {
 
         Label {
             id: versionApp
-            text: "Version 1.0 updated on 18/05/2018"
+            text: "Version 1.01 updated on 28/05/2018"
             color: Style.midGrey
             font.italic: true
             font.pointSize: 8

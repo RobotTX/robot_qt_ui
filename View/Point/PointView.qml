@@ -12,6 +12,7 @@ Item {
     property string tooltipText
     property int pointOrientation: 0
     property int mapOrientation: 0
+    property int sizePointView: 10
 
     visible: _isVisible
 
@@ -40,7 +41,7 @@ Item {
         id: tooltip
 
         visible: img
-        font.pointSize: 10
+        font.pointSize: sizePointView
         text: tooltipText
 
         anchors {

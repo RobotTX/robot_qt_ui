@@ -488,6 +488,7 @@ Frame {
                                 _name: pathPointName
                                 _isVisible: useRobotPathModel ? pathIsVisible : false
                                 _groupName: pathName
+                                sizePointView: 8
                                 type: {
                                         if (stage === 0) {
                                             if (index === 0) {
@@ -513,7 +514,7 @@ Frame {
                                 }
                                 x: pathPointPosX
                                 y: pathPointPosY
-                                tooltipText: pathPointName
+                                tooltipText: name + "\n" + pathPointName
                                 mapOrientation: -topViewId.mapRotation
                                 pointOrientation: orientation
 
