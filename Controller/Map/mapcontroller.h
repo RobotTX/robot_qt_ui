@@ -164,7 +164,7 @@ public slots:
      * @param location
      * Save the edited image and change it on the main window
      */
-    void saveEditedImage(const QString location);
+    void saveEditedImage(const QString location, int mapRotation);
 
 signals:
     /**
@@ -182,6 +182,8 @@ signals:
      * Notifies qml to center the map on posX, posY with a zoom coefficient of <zoom>
      */
     void setMapPosition(QVariant posX, QVariant posY, QVariant zoom, QVariant mapRotation);
+
+    void setRotation(QVariant mapRotation);
 
     /**
      * @brief requestReloadMap

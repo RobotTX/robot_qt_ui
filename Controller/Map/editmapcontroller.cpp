@@ -28,7 +28,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
         /// to redo the last action
         connect(editMapWindow, SIGNAL(redo()), paintedItem, SLOT(redo()));
         /// to save the result
-        connect(editMapWindow, SIGNAL(saveImage(QString)), parent, SLOT(saveEditedImage(QString)));
+        connect(editMapWindow, SIGNAL(saveImage(QString, int)), parent, SLOT(saveEditedImage(QString, int)));
 
     } else {
         /// NOTE prob can remove that when testing phase over

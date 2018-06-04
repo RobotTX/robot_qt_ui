@@ -32,12 +32,14 @@ Window {
     property int shape: 0
     property int thickness: 1
 
+    property int mapRotation: Math.round(slider.valueAt(slider.position))
+
     signal clicked(int shape, color color, int thickness, int x, int y, bool update)
     signal resetMap()
     signal undo()
     signal redo()
-    signal saveImage(string location)
-
+    signal saveImage(string location, int mapRot)
+    signal savePosition(double posX, double posY, double zoom, int mapRotation, string mapSrc)
     // to clear the map of its items everytime we show the window
     onVisibleChanged: {
         // to reset the map on c++ side
@@ -92,7 +94,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: dialog.undo()
@@ -114,7 +116,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: undo.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: dialog.redo()
@@ -131,7 +133,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: redo.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: dialog.resetMap()
@@ -150,7 +152,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: reset.right
-                leftMargin: 10
+                leftMargin: 7
             }
             onClicked: shape = -1
         }
@@ -160,7 +162,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: selectButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
         }
 
@@ -179,7 +181,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: verticalSpaceBar1.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: color = "#ffffff" // white
@@ -199,7 +201,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: whiteButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: color = Style.mapGrey
@@ -219,7 +221,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: greyButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: color = "#000000" // black
@@ -230,7 +232,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: blackButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
         }
 
@@ -249,7 +251,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: verticalSpaceBar2.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: shape = 0
@@ -269,7 +271,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: dotButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: shape = 1
@@ -289,7 +291,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: lineButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: shape = 2
@@ -309,7 +311,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: outlineButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: shape = 3
@@ -320,7 +322,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: solidButton.right
-                leftMargin: 10
+                leftMargin: 7
             }
         }
 
@@ -335,7 +337,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: verticalSpaceBar3.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: {
@@ -353,7 +355,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: decrease.right
-                leftMargin: 10
+                leftMargin: 7
             }
         }
 
@@ -368,7 +370,7 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: thicknessImage.right
-                leftMargin: 10
+                leftMargin: 7
             }
 
             onClicked: {
@@ -382,7 +384,34 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: increaseButton.right
-                leftMargin: 10
+                leftMargin: 7
+            }
+        }
+
+        CustomSlider {
+            id: slider
+
+            from: 0
+            to: 359
+            stepSize: 1
+
+            width: 100
+
+            anchors {
+                left: verticalSpaceBar4.right
+                leftMargin: 7
+                verticalCenter: parent.verticalCenter
+            }
+
+            onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
+        }
+
+        ToolSeparator {
+            id: verticalSpaceBar5
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: slider.right
+                leftMargin: 7
             }
         }
 
@@ -400,8 +429,8 @@ Window {
             }
 
             anchors {
-                left: verticalSpaceBar4.right
-                leftMargin: 10
+                left: verticalSpaceBar5.right
+                leftMargin: 7
                 verticalCenter: parent.verticalCenter
             }
 
@@ -448,12 +477,16 @@ Window {
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
-                rightMargin: 10
+                rightMargin: 7
             }
 
             onClicked: {
                 dialog.hide();
-                dialog.saveImage(imgSource.substring(6));
+                dialog.saveImage(imgSource.substring(6), mapRotation);
+                console.log("we are in editmap");
+                console.log("mapRotation = " + mapRotation);
+                mapRotation = 0;
+                console.log("mapRotation = " + mapRotation);
             }
         }
     }
@@ -477,6 +510,8 @@ Window {
 
             x: - width / 2 + parent.width / 2
             y: - height / 2 + parent.height / 2
+
+            rotation: dialog.mapRotation
 
             MouseArea {
 
@@ -534,4 +569,5 @@ Window {
         langue: dialog.langue
         Component.onCompleted: tutoMessage = tutorial.getMessage("编辑地图")
     }
+
 }

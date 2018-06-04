@@ -572,6 +572,10 @@ Frame {
         topViewId.setMapRotation(mapRotation);
     }
 
+    function setRotation(mapRotation) {
+        topViewId.setMapRotation(mapRotation);
+    }
+
     function setMessageTop(status, msg){
         topViewId.setMessageTop(status, msg);
     }

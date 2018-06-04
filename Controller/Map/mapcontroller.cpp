@@ -42,6 +42,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     if (mapViewFrame){
         connect(this, SIGNAL(setMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(setRotation(QVariant)), mapViewFrame, SLOT(setRotation(QVariant)));
         connect(this, SIGNAL(centerPosition(QVariant,QVariant)), mapViewFrame, SLOT(centerMap(QVariant, QVariant)));
         connect(this, SIGNAL(saveCenterMapPos()), mapViewFrame, SLOT(emitPosition()));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, int, QString)), this, SLOT(savePositionSlot(double, double, double, int, QString)));
@@ -330,13 +331,17 @@ void MapController::centerMap(const double centerX, const double centerY, const 
     emit setMapPosition(centerX, centerY, zoom, mapRotation);
 }
 
-void MapController::saveEditedImage(const QString locationD){
+void MapController::saveEditedImage(const QString locationD, int mapRotation){
     /// modifies the map id so that when a robot reconnects you get asked which map to choose
     map->setMapId(QUuid::createUuid());
     double centerX = 0;
     double centerY = 0;
     double zoom = 0;
-    int mapRotation = 0;
+    qDebug() << "mapRotation saveEditedImage = " << mapRotation;
+
+    emit setRotation(mapRotation);
+
+//    emit setMapPosition(centerX, centerY, zoom, mapRotation);
 
     /// desktop
     QFile file(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentMap.txt");
@@ -346,6 +351,7 @@ void MapController::saveEditedImage(const QString locationD){
 //    QFile file(location + QDir::separator() + "currentMap.txt");
 
     if(file.open(QFile::ReadWrite)){
+        qDebug() << "mapRotation saveEditedImage = " << mapRotation;
         QTextStream stream(&file);
         QString osef;
         stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> osef;
@@ -355,9 +361,13 @@ void MapController::saveEditedImage(const QString locationD){
     /// desktop
     QFile file2(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + + "currentMap.txt");
 
+    int mapRot = mapRotation;
+
     /// android
 //    QFile file2(location + QDir::separator() + "currentMap.txt");
     if(file2.open(QFile::WriteOnly|QFile::Truncate)){
+        qDebug() << "we are in file2";
+        qDebug() << "mapRotation mapcontroller.cpp = " << mapRot;
         QTextStream stream(&file2);
         stream << map->getMapFile() << endl
              << map->getWidth() << " " << map->getHeight() << endl
@@ -368,6 +378,7 @@ void MapController::saveEditedImage(const QString locationD){
              << map->getMapId().toString();
         file.close();
     }
+
     saveMapConfig(map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
 
     /// to save the image being edited in the edit map window
