@@ -731,17 +731,10 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         }
 
         ///save the current points and paths to the attached map before clearing it for new map
-<<<<<<< HEAD
-        QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_paths.xml";
-        QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_points.xml";
-        qDebug() << "CheckMapInfoSlot " << oldfilePaths;
-
-//        // qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
-=======
         QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
         QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
 //         qDebug() << "MainController::loadMapConfig save current map paths to old path file:"<<oldfilePaths;
->>>>>>> d64c765704207aaa8aceabcce5bd849f1f773e1a
+
         PathXMLParser::save(pathController,oldfilePaths);
 //         qDebug() << "MainController::loadMapConfig save current map points to old point file:"<<oldfilePoints;
         XMLParser::save(pointController,oldfilePoints);
@@ -1079,14 +1072,9 @@ void MainController::updateTutoFile(int index, bool visible){
 
 void MainController::clearPointsAndPathsAfterScan(){
     ///save the current points and paths to the attached map before clearing it for new map
-<<<<<<< HEAD
-    QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_paths.xml";
-    QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "data" + QDir::separator() + "_points.xml";
-    qDebug() << "oldFilePaths " << oldfilePaths;
-=======
     QString oldfilePaths = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_paths.xml";
     QString oldfilePoints = mapController->getMapFile().mid(0, mapController->getMapFile().length()-4) + "_points.xml";
->>>>>>> d64c765704207aaa8aceabcce5bd849f1f773e1a
+
 //    // qDebug() << "MainController::resetMapConfiguration save current map paths to old path fild:"<<oldfilePaths;
     PathXMLParser::save(pathController,oldfilePaths);
 //    // qDebug() << "MainController::resetMapConfiguration save current map points to old point fild:"<<oldfilePoints;
