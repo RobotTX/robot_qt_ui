@@ -113,6 +113,7 @@ void MapController::initializeMap(void){
 //            // // qDebug() << "Map::initializeMap config path :" << configPath;
             /// We get the map informations from the map config file
             std::ifstream pathFile(configPath.toStdString(), std::ios::in);
+//            qDebug() << "pathFile = " << pathFile << " - configPath.toStdString() = " << configPath.toStdString();
             if(pathFile){
                 double originX, originY, resolution;
                 std::string _mapId;
@@ -156,7 +157,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
     std::ofstream configfile(fileConfigPath.toStdString(), std::ios::out | std::ios::trunc);
     /// saves the current configuration into the directed configuration file
     if(configfile){
-//        // // qDebug() << "Map::savePositionSlot config file"<<fileConfigPath;
+//          qDebug() << "Map::savePositionSlot config file"<<fileConfigPath;
 
         configfile << filePath.toStdString() << std::endl
              << map->getWidth() << " " << map->getHeight() << std::endl
@@ -199,6 +200,7 @@ void MapController::savePositionSlot2(const double posX, const double posY, cons
     /// destkop
     QFileInfo mapFileInfo(static_cast<QDir> (mapSrc.mid(0, mapSrc.length()-4)), "");
     QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
     QString fileConfigPath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
     /// android
@@ -211,7 +213,6 @@ void MapController::savePositionSlot2(const double posX, const double posY, cons
     /// saves the current configuration into the directed configuration file
     if(configfile){
 //        // // qDebug() << "Map::savePositionSlot config file"<<fileConfigPath;
-
         configfile << filePath.toStdString() << std::endl
              << map->getWidth() << " " << map->getHeight() << std::endl
              << posX << " " << posY << std::endl
@@ -249,10 +250,10 @@ void MapController::loadPositionSlot(){
 }
 
 bool MapController::saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom, const int mapRotation) const {
-//    // // qDebug() << "MapController::saveMapConfig saving map to " << fileName;
+//      qDebug() << "MapController::saveMapConfig saving map to " << fileName;
     std::ofstream file(fileName.toStdString(), std::ios::out | std::ios::trunc);
     if(file){
-//        // // qDebug() << "saving map with file " << map->getMapFile();
+//          qDebug() << "saving map with file " << map->getMapFile();
 
         file << map->getMapFile().toStdString() << " " << std::endl
              << map->getWidth() << " " << map->getHeight() << std::endl
@@ -517,9 +518,9 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
 }
 
 bool MapController::setMapFile(const QString file) {
-    // // qDebug() << "file in setMapFile = " << file;
+//      qDebug() << "file in setMapFile = " << file;
     if(QFile(file).exists()){
-//        // // qDebug() << "MapController::setMapFile to" << file;
+//          qDebug() << "MapController::setMapFile to" << file;
         map->setMapFile(file);
 //        QImage img(map->getMapFile(), "PGM");
 //        // // qDebug() << "imported a map of size " << img.size();
@@ -528,7 +529,7 @@ bool MapController::setMapFile(const QString file) {
         emit setMap(file);
         return true;
     } else {
-        // // qDebug() << "MapController::setMapFile -> file = "<< file << "does not exist";
+          qDebug() << "MapController::setMapFile -> file = "<< file << "does not exist";
         return false;
     }
 }

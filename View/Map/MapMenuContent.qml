@@ -43,7 +43,7 @@ Frame {
 
     NormalButton {
         id: saveMapButton
-        txt: langue == "English" ? "导出地图到本地" : "Export Map to Local"
+        txt: langue == "English" ? "导出地图到本地" : "Export Map"
         imgSrc: "qrc:/icons/save_map"
         anchors.top: scanButton.bottom
         onClicked: saveFileDialog.open()
@@ -51,7 +51,7 @@ Frame {
 
     NormalButton {
         id: loadButton
-        txt: langue == "English" ? "从本地导入地图" : "Import Map from Local"
+        txt: langue == "English" ? "从本地导入地图" : "Import Map"
         imgSrc: "qrc:/icons/load_map"
         anchors.top: saveMapButton.bottom
         onClicked: messageDialog.open()
@@ -104,6 +104,7 @@ Frame {
 
         onAccepted: {
             var fileStr = fileUrl.toString();
+            console.log("fileStr = " + fileStr);
             if (fileStr.indexOf(" ") >= 0) {
 //                console.log("space in the name not authorized");
                 warningDialog.open()
@@ -159,7 +160,7 @@ Frame {
 //            console.log("Canceled the save of a map")
         }
         onAccepted: {
-//            console.log("gonna send file " << fileUrl);
+            console.log("gonna send file " + fileUrl);
             mapMenuFrame.importMap(fileUrl);
         }
     }
