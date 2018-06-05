@@ -21,7 +21,6 @@ public:
 
     /// Getters
     QPointer<ScanMapController> getScanMapController(void) const { return scanMapController; }
-
     QString getMapFile(void) const { return map->getMapFile(); }
     QImage getMapImage(void) const { return map->getMapImage(); }
     QUuid getMapId(void) const { return map->getMapId(); }
@@ -183,6 +182,11 @@ signals:
      */
     void setMapPosition(QVariant posX, QVariant posY, QVariant zoom, QVariant mapRotation);
 
+    /**
+     * @brief setRotation
+     * @param mapRotation
+     * Notifies qml to rotate the map
+     */
     void setRotation(QVariant mapRotation);
 
     /**

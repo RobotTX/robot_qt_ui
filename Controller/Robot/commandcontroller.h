@@ -56,6 +56,14 @@ signals:
      */
     void updateHome(QString ip, double homeX, double homeY, double homeOri);
 
+
+    /**
+     * @brief updateLinearVelocity
+     * @param ip
+     * @param linear
+     * signal propagated to the qml side where the linear velocity of the robot
+     * at ip <ip> is updated
+     */
     void updateLinearVelocity(QString ip, double linear);
 
     /**
@@ -170,8 +178,21 @@ signals:
      */
     void setLooping(QString ip, bool looping);
 
+    /**
+     * @brief setVelocity
+     * @param ip
+     * @param linear
+     * @param angular
+     * Tell the robot model that the robot is changing its velocity
+     */
     void setVelocity(QString ip, double linear, double angular);
 
+    /**
+     * @brief setBatteryWarning
+     * @param ip
+     * @param batteryLevel
+     * Tell the robot model that the robot is changing its battery warning
+     */
     void setBatteryWarning(QString ip, double batteryLevel);
 
 private:

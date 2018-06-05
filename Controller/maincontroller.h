@@ -286,17 +286,51 @@ private slots:
     void sendMapToAllRobots(QString id, QString date, QString metadata, QImage img);
 
     void testSlot();
-
+    /**
+     * @brief deconnexionSlot
+     * Deconnect the user from the application interface
+     */
     void deconnexionSlot();
-
+    /**
+     * @brief saveWifi
+     * @param ip
+     * @param wifi
+     * @param pwd
+     * Save the name of the wifi and its password on the computer
+     */
     void saveWifi(QString ip, QString wifi, QString pwd);
-
-    void sendCommandSavePlace(QString, QString, double, double, double, bool);
-
+    /**
+     * @brief sendCommandSavePlace
+     * @param ip
+     * @param wifi
+     * @param posX
+     * @param posY
+     * @param orientation
+     * @param home
+     * Save robot's home
+     */
+    void sendCommandSavePlace(QString ip, QString name, double posX, double posY, double orientation, bool home);
+    /**
+     * @brief sendCommandTtsToRobot
+     * @param ip
+     * @param tts
+     * Save the speech that the robot should say
+     */
     void sendCommandTtsToRobot(QString ip, QString tts);
-
+    /**
+     * @brief saveVelocity
+     * @param ip
+     * @param linearVelocity
+     * @param angularVelocity
+     * Save velocities
+     */
     void saveVelocity(QString ip, double linearVelocity, double angularVelocity);
-
+    /**
+     * @brief saveBattery
+     * @param ip
+     * @param battery
+     * Save battery
+     */
     void saveBattery(QString ip, double battery);
 
 //    void changeLanguage(QString language);

@@ -365,7 +365,7 @@ Window {
 
             CustomToolTip { text: langue == "English" ? "增大画笔尺寸" : "Increase the size of your brush" }
 
-            src: "qrc:/icons/add"
+            src: "qrc:/icons/increase_brush"
 
             anchors {
                 verticalCenter: parent.verticalCenter
