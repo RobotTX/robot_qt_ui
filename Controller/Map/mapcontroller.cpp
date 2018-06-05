@@ -92,6 +92,7 @@ void MapController::initializeMap(void){
         double centerX, centerY, zoom;
         int mapRotation;
         file >> stdMapFile >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> _dateTime >> osef;
+        qDebug() << "mapRotation in initializeMap " << mapRotation;
         file.close();
 
         /// our map file as a QString
@@ -189,6 +190,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
              << map->getResolution() << std::endl
              << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
              << map->getMapId().toString().toStdString();
+        qDebug() << mapRotation;
         file.close();
     }
     else {}
@@ -244,6 +246,7 @@ void MapController::loadPositionSlot(){
         int mapRotation;
         file >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation;
         file.close();
+        qDebug() << "mapRotation in loadPositionSlot " << mapRotation;
         emit setMapPosition(centerX, centerY, zoom, mapRotation);
     } else {}
         // // qDebug() << "Map::loadStateSlot could not find the currentMap file at :" << currentPathFile;
@@ -316,6 +319,7 @@ bool MapController::loadMapConfig(const QString fileName) {
 
             /// saves the configuration contained in the file <fileName> as the current configuration desktop
             saveMapConfig(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + "currentMap.txt", centerX, centerY, zoom, mapRotation); /// desktop
+            qDebug() << "mapRotation in loadMapConfig" << mapRotation;
 
             /// android
 //            QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
@@ -332,13 +336,12 @@ void MapController::centerMap(const double centerX, const double centerY, const 
     emit setMapPosition(centerX, centerY, zoom, mapRotation);
 }
 
-void MapController::saveEditedImage(const QString locationD, int mapRotation){
+void MapController::saveEditedImage(const QString locationD, int mapRotation) {
     /// modifies the map id so that when a robot reconnects you get asked which map to choose
     map->setMapId(QUuid::createUuid());
     double centerX = 0;
     double centerY = 0;
     double zoom = 0;
-    qDebug() << "mapRotation saveEditedImage = " << mapRotation;
 
     emit setRotation(mapRotation);
 
@@ -351,36 +354,44 @@ void MapController::saveEditedImage(const QString locationD, int mapRotation){
 //    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
 //    QFile file(location + QDir::separator() + "currentMap.txt");
 
+    int mapRot = mapRotation;
+
     if(file.open(QFile::ReadWrite)){
         qDebug() << "mapRotation saveEditedImage = " << mapRotation;
         QTextStream stream(&file);
         QString osef;
         stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> osef;
+        qDebug() << "mapRotation tututu = " << mapRotation;
         file.close();
     }
+
+    qDebug() << "mapRotation tototo = " << mapRotation;
+
+    qDebug() << "mapRot = " << mapRot;
 
     /// desktop
     QFile file2(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + + "currentMap.txt");
 
-    int mapRot = mapRotation;
-
     /// android
 //    QFile file2(location + QDir::separator() + "currentMap.txt");
     if(file2.open(QFile::WriteOnly|QFile::Truncate)){
-        qDebug() << "we are in file2";
-        qDebug() << "mapRotation mapcontroller.cpp = " << mapRot;
+        qDebug() << "we are in file2 and mapRotation = " << mapRotation;
         QTextStream stream(&file2);
         stream << map->getMapFile() << endl
              << map->getWidth() << " " << map->getHeight() << endl
              << centerX << " " << centerY << endl
-             << zoom << " " << mapRotation << endl
+             << zoom << " " << mapRot << endl
              << map->getOrigin().x() << " " << map->getOrigin().y() << endl
              << map->getResolution() << endl
              << map->getMapId().toString();
         file.close();
     }
 
+    qDebug() << "mapRot mapcontroller.cpp = " << mapRotation;
+
     saveMapConfig(map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
+
+    qDebug() << "mapRot mapcontroller.cpp tototo = " << mapRot;
 
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), locationD);
@@ -495,6 +506,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
         if(file.open(QFile::ReadWrite)){
             QTextStream stream(&file);
             QString osef;
+            qDebug() << "mapRotation in newMapFromRobot " << mapRotation;
             stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> osef;
             file.close();
         }

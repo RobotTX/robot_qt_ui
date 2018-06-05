@@ -485,8 +485,8 @@ Window {
                 dialog.saveImage(imgSource.substring(6), mapRotation);
                 console.log("we are in editmap");
                 console.log("mapRotation = " + mapRotation);
-                mapRotation = 0;
-                console.log("mapRotation = " + mapRotation);
+//                mapRotation = 0;
+//                console.log("mapRotation = " + mapRotation);
             }
         }
     }
