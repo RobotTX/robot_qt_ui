@@ -449,6 +449,7 @@ Frame {
                                     }
 
                                     if (playingPath === false) { // if robot not playingPath
+//                                        console.log("playingPath false");
                                         elapsedTimer.elapsed = 0;
                                         elapsedTimer2.elapsed = 0;
                                         customLabelWaitTime.humanActionClicked = false;
@@ -459,15 +460,22 @@ Frame {
                                             waitTimeText = waitTimeLabel+"" + waitTime +""+SecondsLabel;
                                         }
                                     } else {
+//                                        console.log("playingPath true");
+//                                        elapsedTimer.elapsed = 0;
                                         if (stage === index + 1) { /// if robot has reached point[index]
                                             if (waitTime === -1) { /// if human action case
                                                 waitTimeText = humanActionLabel+"";
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
-                                                elapsedTimer.restart();
+//                                                console.log("elapsedTimer.elapsed = " + elapsedTimer.elapsed);
+//                                                elapsedTimer.restart();
+                                                elapsedTimer.start();
                                                 elapsedTime = waitTime - elapsedTimer.elapsed/1000;
+//                                                console.log("elapsedTime = " + elapsedTime + " -- waitTime = " + waitTime + " -- elapsedTimer.elapsed/1000 = " + elapsedTimer.elapsed/1000);
                                                 if (elapsedTime <= 0) { /// if delay time is finished
                                                    waitTimeText = waitTimeLabel+"" + waitTime + ""+SecondsLabel;
+//                                                   console.log("delay time is finished");
                                                 } else { /// if delay time is still running
+//                                                    console.log("delay time is not finished");
                                                     waitTimeText = waitTimeLabel+"" + elapsedTime + ""+SecondsLabel;
                                                 }
                                             }
@@ -553,7 +561,14 @@ Frame {
                                                         elapsedTimer.elapsed = 0;
                                                         lastPointLoop = false;
                                                     } else {
-                                                        elapsedTimer.elapsed = 1000000;
+                                                        if (playingPath === true) {
+                                                            elapsedTimer.elapsed = 0;
+                                                            lastPointLoop = false;
+                                                        } else {
+                                                            elapsedTimer.elapsed = 1000000;
+                                                        }
+
+
                                                     }
                                                     frame.clickPausePlay = false;
                                                 }

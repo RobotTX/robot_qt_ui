@@ -522,12 +522,16 @@ Window {
                 onPressed: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, false);
+
+                    console.log("we are onpressed");
                 }
 
                 onClicked: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true);
 //                    console.log("clicked the map" + mouseX + " " + mouseY);
+
+                    console.log("we are onclicked");
                 }
 
                 // when we drag we don't want to create a new item, we want to add more points to the last item (so that undo and redo functions erase or repaint the whole acceptedButtons
@@ -537,7 +541,11 @@ Window {
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true)
                 }
 
-                drag.target: selectButton.checked ? parent: undefined
+                drag.target: {
+
+                    selectButton.checked ? parent: undefined
+                    console.log("drag target");
+                }
 
                 onWheel: {
                     var newScale = image.scale + image.scale * wheel.angleDelta.y / 120 / 10;
