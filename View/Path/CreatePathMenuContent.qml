@@ -160,7 +160,7 @@ Frame {
             id: pathTextField
             selectByMouse: true
             placeholderText: langue == "English" ? "输入路径名称" : qsTr("Enter name")
-            height: 28
+            height: langue === "English" ? 35 : 28
             anchors {
                 left: parent.left
                 top: pathLabel.bottom
@@ -175,6 +175,7 @@ Frame {
                     saveButton.released()
             }
 */
+            wrapMode: Text.WordWrap
             background: Rectangle {
                 radius: 2
                 border.color: nameError ? Style.errorColor : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
@@ -242,7 +243,7 @@ Frame {
                 left: parent.left
                 top: pathPointsLabel.bottom
                 right: parent.right
-                topMargin: 5
+                topMargin: 0
             }
             onClicked: {
                 pointList.open()
@@ -269,7 +270,7 @@ Frame {
                 left: parent.left
                 top: addSavedPoint.bottom
                 right: parent.right
-                topMargin: langue === "English" ? 20 : 5
+                topMargin: langue === "English" ? -12 : 5
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -385,7 +386,7 @@ Frame {
                             right: closeBtn.left
                             leftMargin: 6
                         }
-                        height: 20
+                        height: langue === "English" ? 28 : 20
                         background: Rectangle {
                             radius: 2
                             border.color: nameId.activeFocus ? Style.lightBlue : Style.lightGreyBorder
@@ -839,7 +840,7 @@ Frame {
                         left: parent.let
                         right: parent.right
                         top: content.bottom
-                        topMargin: langue === "English" ? 20 : 10
+                        topMargin: langue === "English" ? 15 : 10
                     }
                 }
             }

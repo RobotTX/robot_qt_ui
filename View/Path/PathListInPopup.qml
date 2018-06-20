@@ -14,6 +14,7 @@ Menu {
     property int currentMenuIndex: -1
     property int menuIndex: -1
     signal pathSelected(string pathName, string groupName)
+    signal pathHovered(string pathName, string groupName)
 
     background: Rectangle {
         implicitWidth: parent.width
@@ -52,6 +53,7 @@ Menu {
                     if (visible) {
                         pathMenu.open();
                         currentMenuIndex = index;
+                        console.log("currentMenuIndex = " + currentMenuIndex);
                     } /// desktop
                 }
 //                onClicked: if(visible && !pathMenu.visible) currentMenuIndex = index /// android
@@ -61,7 +63,10 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-                    visible: (currentMenuIndex === index && menuIndex === 1)
+                    visible: {
+                        console.log("index = " + index)
+                        (currentMenuIndex === index && menuIndex === 1)
+                    }
 
                     background: Rectangle {
                         implicitWidth: parent.width
@@ -89,6 +94,13 @@ Menu {
                                 Layout.preferredHeight: 1 + Style.menuItemHeight
                                 Layout.preferredWidth: parent.width
                                 labelText:  pathName
+                                onHoveredChanged: {
+                                    pathModel.hideShowPathOnMap(groupName, pathName);
+                                    console.log("pathName = " + pathName);
+                                    console.log("pathIsVisible " + pathIsVisible);
+//                                    selectPathMenu.pathSelected(pathName, groupName);
+
+                                }
 
                                 onTriggered: {
                                     selectPathMenu.pathSelected(pathName, groupName);

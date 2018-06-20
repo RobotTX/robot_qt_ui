@@ -146,7 +146,10 @@ Column {
                         leftMargin: groupName === Helper.noGroup ? 20 : 45
                     }
 
-                    onClicked: pathModel.hideShowPathOnMap(groupName, pathName);
+                    onClicked: {
+                        console.log("hide show");
+                        pathModel.hideShowPathOnMap(groupName, pathName);
+                    }
                 }
 
                 /// The item displaying the name of the path/group

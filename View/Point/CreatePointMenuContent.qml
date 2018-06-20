@@ -129,7 +129,7 @@ Frame {
         placeholderText: langue == "English" ? qsTr("输入目标点名称") : qsTr("Enter name")
 
         text: oldName
-        height: 28
+        height: langue === "English" ? 35 : 28
         anchors {
             left: parent.left
             top: pointLabel.bottom

@@ -90,7 +90,7 @@ Frame {
         placeholderText: langue == "English" ? qsTr("输入语音名称") : qsTr("Enter label")
 
         text: oldName
-        height: 28
+        height: langue === "English" ? 35 : 28
         anchors {
             left: parent.left
             top: speechLabel.bottom

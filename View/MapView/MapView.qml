@@ -412,7 +412,8 @@ Frame {
                             delegate: PointView {
                                 id: pathPointView
                                 _name: name
-                                _isVisible: useRobotPathModel ? false : pathIsVisible
+//                                _isVisible: useRobotPathModel ? false : pathIsVisible
+                                _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName
                                 _groupName: pathName
                                 type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
                                 x: posX

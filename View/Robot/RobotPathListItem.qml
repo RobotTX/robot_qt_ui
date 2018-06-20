@@ -558,17 +558,11 @@ Frame {
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
+                                                        console.log("laspointloop = true");
                                                         elapsedTimer.elapsed = 0;
                                                         lastPointLoop = false;
                                                     } else {
-                                                        if (playingPath === true) {
-                                                            elapsedTimer.elapsed = 0;
-                                                            lastPointLoop = false;
-                                                        } else {
-                                                            elapsedTimer.elapsed = 1000000;
-                                                        }
-
-
+                                                        elapsedTimer.elapsed = 1000000;
                                                     }
                                                     frame.clickPausePlay = false;
                                                 }

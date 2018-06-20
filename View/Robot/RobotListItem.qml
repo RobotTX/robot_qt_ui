@@ -152,7 +152,7 @@ Frame {
             id: nameField
             selectByMouse: true
             placeholderText: qsTr(name)
-            height: 28
+            height: langue === "English" ? 35 : 28
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left

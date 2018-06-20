@@ -294,6 +294,7 @@ ListModel {
 
 //            }
             if(get(i).ip === ip) {
+                console.log("we are in hideShowPathOnMap(ip)");
                 setProperty(i, "pathIsVisible", !get(i).pathIsVisible);
             }
         }

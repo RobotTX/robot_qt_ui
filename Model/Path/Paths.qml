@@ -160,10 +160,12 @@ ListModel {
     function hideShowPathOnMap(groupName, name){
         for(var i = 0; i < count; i++)
             for(var j = 0; j < get(i).paths.count; j++){
-                if(get(i).groupName === groupName && get(i).paths.get(j).pathName === name)
+                if(get(i).groupName === groupName && get(i).paths.get(j).pathName === name) {
                     get(i).paths.setProperty(j, "pathIsVisible", !get(i).paths.get(j).pathIsVisible);
-                else
+
+                } else {
                     get(i).paths.setProperty(j, "pathIsVisible", false);
+                }
                 visiblePathChanged();
             }
      }
