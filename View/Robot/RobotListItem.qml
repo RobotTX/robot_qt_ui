@@ -152,7 +152,8 @@ Frame {
             id: nameField
             selectByMouse: true
             placeholderText: qsTr(name)
-            height: langue === "English" ? 35 : 28
+//            height: langue === "English" ? 35 : 28
+            verticalAlignment: TextInput.AlignVCenter
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left

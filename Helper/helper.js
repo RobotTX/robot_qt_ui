@@ -10,7 +10,9 @@ var PointViewType = {
     PATHPOINT_NEXT : 8,
     PATHPOINT_START_RED : 9,
     PATHPOINT_START_YELLOW : 10,
-    HOME_ORANGE: 11
+    PATHPOINT_RED : 11,
+    PATHPOINT_RED_START : 12,
+    HOME_ORANGE: 13
 };
 
 var noGroup = "Default";

@@ -53,7 +53,6 @@ Menu {
                     if (visible) {
                         pathMenu.open();
                         currentMenuIndex = index;
-                        console.log("currentMenuIndex = " + currentMenuIndex);
                     } /// desktop
                 }
 //                onClicked: if(visible && !pathMenu.visible) currentMenuIndex = index /// android
@@ -96,10 +95,6 @@ Menu {
                                 labelText:  pathName
                                 onHoveredChanged: {
                                     pathModel.hideShowPathOnMap(groupName, pathName);
-                                    console.log("pathName = " + pathName);
-                                    console.log("pathIsVisible " + pathIsVisible);
-//                                    selectPathMenu.pathSelected(pathName, groupName);
-
                                 }
 
                                 onTriggered: {

@@ -53,7 +53,7 @@ Frame {
         id: groupTextField
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("输入组名称") : qsTr("Enter name")
-        height: langue === "English" ? 35 : 28
+        verticalAlignment: TextInput.AlignVCenter
         anchors {
             left: parent.left
             top: groupLabel.bottom

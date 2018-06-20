@@ -127,9 +127,8 @@ Frame {
         id: pointTextField
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("输入目标点名称") : qsTr("Enter name")
-
         text: oldName
-        height: langue === "English" ? 35 : 28
+        verticalAlignment: TextInput.AlignVCenter
         anchors {
             left: parent.left
             top: pointLabel.bottom

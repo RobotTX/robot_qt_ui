@@ -160,7 +160,7 @@ Frame {
             id: pathTextField
             selectByMouse: true
             placeholderText: langue == "English" ? "输入路径名称" : qsTr("Enter name")
-            height: langue === "English" ? 35 : 28
+            verticalAlignment: TextInput.AlignVCenter
             anchors {
                 left: parent.left
                 top: pathLabel.bottom
@@ -228,7 +228,7 @@ Frame {
                 left: parent.left
                 top: groupComboBox.bottom
                 right: parent.right
-                topMargin: 20
+                topMargin: langue == "English" ? 13 : 20
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -270,7 +270,7 @@ Frame {
                 left: parent.left
                 top: addSavedPoint.bottom
                 right: parent.right
-                topMargin: langue === "English" ? -12 : 5
+                topMargin: langue === "English" ? -10 : 5
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -284,14 +284,16 @@ Frame {
         anchors {
             left: parent.left
             top: topFrame.bottom
-            topMargin: langue === "English" ? 20 : 0
+//            topMargin: langue === "English" ? 40 : 0
+//            topMargin: 0
             right: parent.right
             bottom: bottomFrame.top
         }
         padding: 0
         background: Rectangle {
             anchors.fill: parent
-            color: Style.lightGreyBackground
+//            color: Style.lightGreyBackground
+            color: "transparent"
             border.width: 0
         }
 

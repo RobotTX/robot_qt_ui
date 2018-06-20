@@ -274,6 +274,7 @@ Frame {
                         ctx.beginPath();
                         var _spacing = 5;
                         if(useTmpPathModel){
+                            console.log("we are here 1");
                             for(var i = 0; i < tmpPathModel.count; i++)
                                 for(var j = 0; j < tmpPathModel.get(i).paths.count; j++)
                                     if(tmpPathModel.get(i).paths.get(j).pathIsVisible && tmpPathModel.get(i).paths.get(j).pathPoints.count > 1)
@@ -285,16 +286,31 @@ Frame {
                                                              [ctx.lineWidth, _spacing]);
                         } else {
                             if(useRobotPathModel){
-                                for(var i = 0; i < robotModel.count; i++)
-                                    if(robotModel.get(i).pathIsVisible && robotModel.get(i).pathPoints.count > 1)
+                                console.log("we are here 2");
+                                for(var i = 0; i < robotModel.count; i++) {
+                                    if(robotModel.get(i).pathIsVisible && robotModel.get(i).pathPoints.count > 1) {
+                                        console.log("2****");
                                         for(var j = 1; j < robotModel.get(i).pathPoints.count; j++){
+                                            console.log("point = " + robotModel.get(i).pathPoints.count);
                                             Helper.dashLine(ctx, robotModel.get(i).pathPoints.get(j-1).pathPointPosX,
                                                              robotModel.get(i).pathPoints.get(j-1).pathPointPosY,
                                                              robotModel.get(i).pathPoints.get(j).pathPointPosX,
                                                              robotModel.get(i).pathPoints.get(j).pathPointPosY,
                                                              [ctx.lineWidth, _spacing]);
                                         }
+                                    }
+                                }
+                                for(var i = 0; i < pathModel.count; i++)
+                                    for(var j = 0; j < pathModel.get(i).paths.count; j++)
+                                        if(pathModel.get(i).paths.get(j).pathIsVisible && pathModel.get(i).paths.get(j).pathPoints.count > 1)
+                                            for(var k = 1; k < pathModel.get(i).paths.get(j).pathPoints.count; k++)
+                                                Helper.dashLine(ctx, pathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
+                                                                 pathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
+                                                                 pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
+                                                                 pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                                                                 [ctx.lineWidth, _spacing]);
                             } else {
+                                console.log("we are here 3");
                                 for(var i = 0; i < pathModel.count; i++)
                                     for(var j = 0; j < pathModel.get(i).paths.count; j++)
                                         if(pathModel.get(i).paths.get(j).pathIsVisible && pathModel.get(i).paths.get(j).pathPoints.count > 1)
@@ -415,7 +431,23 @@ Frame {
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName
                                 _groupName: pathName
-                                type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+//                                type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+                                type: {
+                                    if (useRobotPathModel) {
+                                        if (index === 0) {
+                                            Helper.PointViewType.PATHPOINT_RED_START;
+                                        } else {
+                                            Helper.PointViewType.PATHPOINT_RED;
+                                        }
+                                    } else {
+                                        if (index === 0) {
+                                            Helper.PointViewType.PATHPOINT_START;
+                                        } else {
+                                            Helper.PointViewType.PATHPOINT;
+                                        }
+                                    }
+                                }
+
                                 x: posX
                                 y: posY
                                 tooltipText: name
