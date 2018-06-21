@@ -61,6 +61,7 @@ Menu {
                     width: 140
                     x: parent.width
                     visible: (currentMenuIndex === index && menuIndex === 0)
+//                    visible: currentMenuIndex === index
                     background: Rectangle {
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder

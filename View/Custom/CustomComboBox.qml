@@ -6,7 +6,7 @@ import "../../Helper/helper.js" as Helper
 
 ComboBox {
     id: groupComboBox
-    height: 25
+    height: 30
     currentIndex: 0
 
     property string langue

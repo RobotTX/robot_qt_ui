@@ -53,6 +53,7 @@ Menu {
                     if (visible) {
                         pathMenu.open();
                         currentMenuIndex = index;
+                        console.log("currentMenuIndex = " + currentMenuIndex);
                     } /// desktop
                 }
 //                onClicked: if(visible && !pathMenu.visible) currentMenuIndex = index /// android
@@ -62,10 +63,8 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-                    visible: {
-                        console.log("index = " + index)
-                        (currentMenuIndex === index && menuIndex === 1)
-                    }
+                    visible: (currentMenuIndex === index && menuIndex === 1)
+//                    visible: currentMenuIndex === index
 
                     background: Rectangle {
                         implicitWidth: parent.width

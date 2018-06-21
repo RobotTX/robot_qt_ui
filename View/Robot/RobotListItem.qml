@@ -109,10 +109,8 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
-            topMarginLabel: langue === "English" ? 5 : 10;
-            bottomMarginLabel: langue === "English" ? 20 : 10;
-            leftMarginLabel: langue === "English" ? 100 : 40;
-            rightMarginLabel: langue === "English" ? 100 : 40
+            topMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 40;
             title: langue == "English" ? "警告"  : "Warning"
             message: langue == "English" ? "\你想关闭机器人 " + name + " 吗?" : "\nDo you want to power off robot " + name + " ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"

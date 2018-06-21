@@ -24,7 +24,7 @@ Frame {
     /// This frame is displayed when there is no path
     EmptyMenu {
         visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
-        txt: langue == "English" ? "没有任何路径，请点击 + 按钮，创建路径" : "You don't have any path yet, please click + button to create a path."
+        txt: langue == "English" ? "没有任何路径.\n请点击 + 按钮，创建路径" : "No path created.\nPlease click + button to create a path."
         imgSrc: "qrc:/icons/big_path"
     }
 
