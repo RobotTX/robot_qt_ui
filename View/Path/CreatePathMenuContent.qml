@@ -388,7 +388,8 @@ Frame {
                             right: closeBtn.left
                             leftMargin: 6
                         }
-                        height: langue === "English" ? 28 : 20
+//                        height: langue === "English" ? 28 : 20
+                        verticalAlignment: TextInput.AlignVCenter
                         background: Rectangle {
                             radius: 2
                             border.color: nameId.activeFocus ? Style.lightBlue : Style.lightGreyBorder

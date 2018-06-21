@@ -170,6 +170,13 @@ ListModel {
             }
      }
 
+    function setPathVisible() {
+        for(var i = 0; i < count; i++)
+            for(var j = 0; j < get(i).paths.count; j++){
+                    get(i).paths.setProperty(j, "pathIsVisible", false);
+            }
+    }
+
     function renameGroup(newName, oldName){
         for(var i = 0; i < count; i++){
             if(get(i).groupName === oldName)

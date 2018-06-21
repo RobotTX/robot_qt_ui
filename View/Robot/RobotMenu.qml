@@ -22,6 +22,7 @@ Page {
     onVisibleChanged: {
         if(visible){
             useRobotPathModel(true);
+            pathModel.setPathVisible(); /// setPathIsVisible to false so in RobotView we don't see them
             pathModel.visiblePathChanged();
         } else {
             useRobotPathModel(false);

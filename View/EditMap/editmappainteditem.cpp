@@ -42,10 +42,14 @@ void EditMapPaintedItem::paint(QPainter *painter){
             qDebug() << "points.size() = " << it.points.size();
             if(it.points.size() > 1){
                 QPainterPath path;
-                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),
-                                           QPoint(it.points.at(1).x(), it.points.at(1).y())), 0, 0);
+//                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),
+//                                           QPoint(it.points.at(1).x(), it.points.at(1).y())), 0, 0);
+                qDebug() << "point top left : " << it.points.at(0).x() << it.points.at(0).y();
+                qDebug() << "point bottom right : " << it.points.at(1).x() << it.points.at(1).y();
 
-                painter->fillPath(path, pen.brush());
+//                painter->drawRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),                                                                                    QPoint(it.points.at(1).x(), it.points.at(1).y())));
+                painter->drawRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),                                                                                    QPoint(0,0)));
+//                painter->fillPath(path, pen.brush());
                 qDebug() << "painting";
             }
             break;
