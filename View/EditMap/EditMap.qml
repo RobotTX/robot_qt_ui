@@ -403,7 +403,7 @@ Window {
                 verticalCenter: parent.verticalCenter
             }
 
-            onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
+            onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)));
         }
 
         ToolSeparator {
@@ -522,14 +522,14 @@ Window {
                 onPressed: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, false);
-
+                    console.log("clicked the map" + mouseX + " " + mouseY);
                     console.log("we are onpressed");
                 }
 
                 onClicked: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true);
-//                    console.log("clicked the map" + mouseX + " " + mouseY);
+                    console.log("clicked the map" + mouseX + " " + mouseY);
 
                     console.log("we are onclicked");
                 }

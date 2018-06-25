@@ -342,7 +342,7 @@ Frame {
                                 tmpPointView.tmpPointViewPosChanged()
                             }
                             if(robotModel.count > 0){
-
+                            console.log("mouseX = " + mouseX + " mouse Y = " + mouseY);
                             }
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
@@ -427,7 +427,8 @@ Frame {
                             model: pathPoints
                             delegate: PointView {
                                 id: pathPointView
-                                _name: name
+                                property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
+                                _name: name === nameCoordinates ? "P"+(index+1) : name
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName
                                 _groupName: pathName
@@ -450,7 +451,7 @@ Frame {
 
                                 x: posX
                                 y: posY
-                                tooltipText: name
+                                tooltipText: name === nameCoordinates ? "P"+(index+1) : name
                                 mapOrientation: -topViewId.mapRotation
                                 pointOrientation: orientation
 

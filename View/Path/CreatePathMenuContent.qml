@@ -128,7 +128,7 @@ Frame {
         id: topFrame
         z: 2
         padding: 0
-        height: 242
+        height: 250
 
         anchors {
             left: parent.left
@@ -292,8 +292,8 @@ Frame {
         padding: 0
         background: Rectangle {
             anchors.fill: parent
-//            color: Style.lightGreyBackground
-            color: "transparent"
+            color: Style.lightGreyBackground
+//            color: "transparent"
             border.width: 0
         }
 
@@ -379,6 +379,7 @@ Frame {
                         property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
                         text: name === nameCoordinates ? "P"+(index+1) : name
+
                         selectByMouse: true
                         color: "#262626"
                         padding: 2

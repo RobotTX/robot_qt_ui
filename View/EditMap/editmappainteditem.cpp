@@ -11,8 +11,7 @@ EditMapPaintedItem::EditMapPaintedItem(QQuickItem *parent): QQuickPaintedItem(pa
 
 void EditMapPaintedItem::paint(QPainter *painter){
     QPen pen;
-
-    qDebug() << "items.size() = " << items.size();
+//    painter->rotate(-10);
     for(int i = 0; i < items.size(); i++){
         pen.setColor(items.at(i).color);
         pen.setWidth(items.at(i).thickness);
@@ -30,28 +29,32 @@ void EditMapPaintedItem::paint(QPainter *painter){
                 painter->drawLine(it.points.at(0), it.points.last());
             break;
         case OUTLINE:
+            painter->save();
             painter->setPen(QPen(items.at(i).color, items.at(i).thickness, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
             if(it.points.size() > 1) {
 
                 painter->drawRect(QRect(QPoint(it.points.at(0).x(), it.points.at(0).y()),
                                  QPoint(it.points.at(1).x(), it.points.at(1).y())));
             }
+            painter->rotate(10);
+            painter->restore();
             break;
         case SOLID:
         {
-            qDebug() << "points.size() = " << it.points.size();
+            painter->save();
             if(it.points.size() > 1){
                 QPainterPath path;
-//                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),
-//                                           QPoint(it.points.at(1).x(), it.points.at(1).y())), 0, 0);
+                painter->rotate(20);
+                path.translate(50,50);
+                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x() + 178, it.points.at(0).y() - 300),
+                                           QPoint(it.points.at(1).x() + 178, it.points.at(1).y() - 300)), 0, 0);
                 qDebug() << "point top left : " << it.points.at(0).x() << it.points.at(0).y();
                 qDebug() << "point bottom right : " << it.points.at(1).x() << it.points.at(1).y();
+                qDebug() << "currentPosition = " << path.currentPosition();
 
-//                painter->drawRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),                                                                                    QPoint(it.points.at(1).x(), it.points.at(1).y())));
-                painter->drawRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),                                                                                    QPoint(0,0)));
-//                painter->fillPath(path, pen.brush());
-                qDebug() << "painting";
+                painter->fillPath(path, pen.brush());
             }
+            painter->restore();
             break;
         }
         default:

@@ -592,9 +592,6 @@ Frame {
                                                     } else {
                                                         elapsedTimer2.elapsed = 100000;
                                                     }
-
-
-//                                                    elapsedTimer2.stop();
                                                 }
 
                                                 elapsedTimer2.restart();
