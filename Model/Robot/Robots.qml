@@ -8,6 +8,7 @@ ListModel {
     property variant msgs: []
     property variant inverseMsg: []
     property variant tmp: []
+    property bool assignPathClicked
 
     property string msg: ""
     property string test: ""

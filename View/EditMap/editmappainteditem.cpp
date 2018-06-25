@@ -12,6 +12,7 @@ EditMapPaintedItem::EditMapPaintedItem(QQuickItem *parent): QQuickPaintedItem(pa
 void EditMapPaintedItem::paint(QPainter *painter){
     QPen pen;
 //    painter->rotate(-10);
+    qDebug() << "viewport = " << painter->viewport();
     for(int i = 0; i < items.size(); i++){
         pen.setColor(items.at(i).color);
         pen.setWidth(items.at(i).thickness);
@@ -42,12 +43,14 @@ void EditMapPaintedItem::paint(QPainter *painter){
         case SOLID:
         {
             painter->save();
+            painter->translate(-180,290);
             if(it.points.size() > 1){
                 QPainterPath path;
-                painter->rotate(20);
-                path.translate(50,50);
-                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x() + 178, it.points.at(0).y() - 300),
-                                           QPoint(it.points.at(1).x() + 178, it.points.at(1).y() - 300)), 0, 0);
+                painter->rotate(-20);
+//                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x() + 178, it.points.at(0).y() - 300),
+//                                           QPoint(it.points.at(1).x() + 178, it.points.at(1).y() - 300)), 0, 0);
+                path.addRoundedRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),
+                                           QPoint(it.points.at(1).x(), it.points.at(1).y())), 0, 0);
                 qDebug() << "point top left : " << it.points.at(0).x() << it.points.at(0).y();
                 qDebug() << "point bottom right : " << it.points.at(1).x() << it.points.at(1).y();
                 qDebug() << "currentPosition = " << path.currentPosition();
@@ -93,10 +96,13 @@ void EditMapPaintedItem::addItem(const SHAPE shape, const QColor color, const in
             break;
         case SOLID:
             qDebug() << "solid";
-            if(items.last().points.size() > 1)
+            if(items.last().points.size() > 1) {
                 items.last().points[1] = QPoint(x, y);
-            else
+                qDebug() << "x = " << x << " y = " << y;
+            } else {
                 items.last().points.push_back(QPoint(x, y));
+                qDebug() << "x = " << x << " y = " << y;
+            }
             break;
         default:
             break;

@@ -509,13 +509,16 @@ Frame {
                                     var elapsedTime = "";
                                     var elapsedTime2 = "";
                                     if (playingPath === false) { // if robot not playingPath
+                                        console.log("playingPath = false");
                                         color = Style.lightGreyBackground;
                                         if (stage === pathPoints.count) { //&& looping === true) {
                                             if (looping === true) {
                                                 lastPointLoop = true;
+                                                console.log("lastpointloop = true");
                                             }
                                         }
                                     } else {
+                                        console.log("playingPath = true");
                                         if ((stage === 0) && (looping === false)) {
                                             clickPausePlay = false;
                                         }
@@ -533,6 +536,7 @@ Frame {
 
                                         /// reset timer
                                         if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
+                                            console.log("we reset timer");
                                             elapsedTimer.elapsed = 0;
                                             customLabelWaitTime.humanActionClicked = false;
                                         }
@@ -556,13 +560,23 @@ Frame {
                                                     lastPointLoop = false;
                                                 }
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
+
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
                                                         console.log("laspointloop = true");
                                                         elapsedTimer.elapsed = 0;
                                                         lastPointLoop = false;
                                                     } else {
-                                                        elapsedTimer.elapsed = 1000000;
+                                                        if (robotModel.assignPathClicked === true) {
+                                                            elapsedTimer.elapsed = 0;
+                                                            console.log("assign click");
+                                                            robotModel.assignPathClicked = false;
+                                                        } else {
+                                                            elapsedTimer.elapsed = 1000000;
+                                                            console.log("we set elapsedTime1 to 1000000 lastpointloop == false");
+                                                        }
+
+
                                                     }
                                                     frame.clickPausePlay = false;
                                                 }
@@ -588,9 +602,10 @@ Frame {
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 if (robotModel.sendPointToRobot === true) {
                                                     if (lastPointLoop === true) {
-
+                                                        console.log("11111111111111111111111111111111111111");
                                                     } else {
                                                         elapsedTimer2.elapsed = 100000;
+                                                        console.log("fnkldsfkldfklsdf;lsdf;lsdf;kldf");
                                                     }
                                                 }
 
@@ -632,6 +647,7 @@ Frame {
 //                                                    console.log("Case looping = false : time elapsed finished, do nothing");
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
+                                                    console.log("we set elapsedTime1 to 1000000");
                                                     /// now we need to interrupt the time running / make the button non clickable
                                                     elapsedTimer.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
                                                 }
@@ -654,6 +670,7 @@ Frame {
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
                                                     /// now we need to interrupt the time running / make the button non clickable
+                                                    console.log("we set elapsedTime2 to 1000000");
                                                     elapsedTimer2.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
                                                 }
                                             }

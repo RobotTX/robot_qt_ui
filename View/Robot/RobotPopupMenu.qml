@@ -116,6 +116,7 @@ Menu {
             onPathSelected: {
                 robotMenu.pathSelected(pathName, groupName);
                 robotMenu.currentMenuIndex = -1;
+                robotModel.assignPathClicked = true;
                 robotMenu.close();
             }
         }
