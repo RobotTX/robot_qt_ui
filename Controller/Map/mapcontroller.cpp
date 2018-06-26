@@ -92,7 +92,6 @@ void MapController::initializeMap(void){
         double centerX, centerY, zoom;
         int mapRotation;
         file >> stdMapFile >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> _dateTime >> osef;
-        qDebug() << "mapRotation in initializeMap " << mapRotation;
         file.close();
 
         /// our map file as a QString

@@ -40,6 +40,7 @@ Window {
     signal redo()
     signal saveImage(string location, int mapRot)
     signal savePosition(double posX, double posY, double zoom, int mapRotation, string mapSrc)
+    signal orientationMap(int orientationMap)
     // to clear the map of its items everytime we show the window
     onVisibleChanged: {
         // to reset the map on c++ side
@@ -403,7 +404,9 @@ Window {
                 verticalCenter: parent.verticalCenter
             }
 
-            onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)));
+            onPositionChanged: {
+                orientationMap(Math.round(slider.valueAt(slider.position)));
+            }
         }
 
         ToolSeparator {
@@ -522,16 +525,11 @@ Window {
                 onPressed: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, false);
-                    console.log("clicked the map" + mouseX + " " + mouseY);
-                    console.log("we are onpressed");
                 }
 
                 onClicked: {
                     if(!selectButton.checked)
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true);
-                    console.log("clicked the map" + mouseX + " " + mouseY);
-
-                    console.log("we are onclicked");
                 }
 
                 // when we drag we don't want to create a new item, we want to add more points to the last item (so that undo and redo functions erase or repaint the whole acceptedButtons
@@ -544,7 +542,6 @@ Window {
                 drag.target: {
 
                     selectButton.checked ? parent: undefined
-                    console.log("drag target");
                 }
 
                 onWheel: {

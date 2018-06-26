@@ -30,6 +30,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
         /// to save the result
         connect(editMapWindow, SIGNAL(saveImage(QString, int)), parent, SLOT(saveEditedImage(QString, int)));
 
+        connect(editMapWindow, SIGNAL(orientationMap(int)), paintedItem, SLOT(orientationMap(int)));
     } else {
         /// NOTE prob can remove that when testing phase over
         Q_UNREACHABLE();

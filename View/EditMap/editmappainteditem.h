@@ -36,10 +36,12 @@ public slots:
     void undo();
     void redo();
     void saveImage(QImage image, QString location);
+    void orientationMap(int orientation);
 
 private:
     QVector<Item> items;
     QVector<Item> undoItems;
+    int orientationMapValue;
 };
 
 #endif /// EDITMAPPAINTEDITEM_H
