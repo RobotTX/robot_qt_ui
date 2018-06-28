@@ -74,6 +74,7 @@ ListModel {
             "charging": false,
             "looping": false,
             "batteryLevel": 0,
+            "robotMode" : 0,
         });
         robotConnection(ip);
         if (langue == "English") {
@@ -250,7 +251,6 @@ ListModel {
     function setBattery(ip, battery, charging){
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
-//                setProperty(i, "battery", battery);
                 setProperty(i, "battery", battery);
                 setProperty(i, "charging", charging);
             }
@@ -447,6 +447,15 @@ ListModel {
 
 //        console.log("we are in setSound in Robot.qml file mute = " + mute)
     }
+
+    function setRobotMode(ip, robotMode) {
+        for (var i = 0; i < count; i++) {
+            if (get(i).ip === ip) {
+                setProperty(i, "robotMode", robotMode);
+            }
+        }
+
+}
 
     function reverse(arr1, arr2, len) {
         for (var i = len-1; i >=0; i--) {

@@ -509,16 +509,16 @@ Frame {
                                     var elapsedTime = "";
                                     var elapsedTime2 = "";
                                     if (playingPath === false) { // if robot not playingPath
-                                        console.log("playingPath = false");
+//                                        console.log("playingPath = false");
                                         color = Style.lightGreyBackground;
                                         if (stage === pathPoints.count) { //&& looping === true) {
                                             if (looping === true) {
                                                 lastPointLoop = true;
-                                                console.log("lastpointloop = true");
+//                                                console.log("lastpointloop = true");
                                             }
                                         }
                                     } else {
-                                        console.log("playingPath = true");
+//                                        console.log("playingPath = true");
                                         if ((stage === 0) && (looping === false)) {
                                             clickPausePlay = false;
                                         }
@@ -536,7 +536,7 @@ Frame {
 
                                         /// reset timer
                                         if ((stage === 0) && (looping === true)) { /// if we are between the last point and the first point, then reset the timer
-                                            console.log("we reset timer");
+//                                            console.log("we reset timer");
                                             elapsedTimer.elapsed = 0;
                                             customLabelWaitTime.humanActionClicked = false;
                                         }
@@ -563,17 +563,17 @@ Frame {
 
                                                 if (frame.clickPausePlay === true) { /// case if we pressed the button pause
                                                     if (lastPointLoop === true) {
-                                                        console.log("laspointloop = true");
+//                                                        console.log("laspointloop = true");
                                                         elapsedTimer.elapsed = 0;
                                                         lastPointLoop = false;
                                                     } else {
                                                         if (robotModel.assignPathClicked === true) {
                                                             elapsedTimer.elapsed = 0;
-                                                            console.log("assign click");
+//                                                            console.log("assign click");
                                                             robotModel.assignPathClicked = false;
                                                         } else {
                                                             elapsedTimer.elapsed = 1000000;
-                                                            console.log("we set elapsedTime1 to 1000000 lastpointloop == false");
+//                                                            console.log("we set elapsedTime1 to 1000000 lastpointloop == false");
                                                         }
 
 
@@ -602,10 +602,9 @@ Frame {
                                             } else if (waitTime >= 0) { /// if robot has a delay time before processing to next point
                                                 if (robotModel.sendPointToRobot === true) {
                                                     if (lastPointLoop === true) {
-                                                        console.log("11111111111111111111111111111111111111");
+
                                                     } else {
                                                         elapsedTimer2.elapsed = 100000;
-                                                        console.log("fnkldsfkldfklsdf;lsdf;lsdf;kldf");
                                                     }
                                                 }
 
@@ -647,7 +646,6 @@ Frame {
 //                                                    console.log("Case looping = false : time elapsed finished, do nothing");
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
-                                                    console.log("we set elapsedTime1 to 1000000");
                                                     /// now we need to interrupt the time running / make the button non clickable
                                                     elapsedTimer.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
                                                 }
@@ -670,7 +668,7 @@ Frame {
                                                 } else { /// if delay time is still running
                                                     interruptDelay(ip);
                                                     /// now we need to interrupt the time running / make the button non clickable
-                                                    console.log("we set elapsedTime2 to 1000000");
+
                                                     elapsedTimer2.elapsed = 1000000; /// we set elapsedTimer to be very big, so that (waitTime - elapsedTimer.elapsed/1000) < 0
                                                 }
                                             }
@@ -709,6 +707,7 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
+                visible: robotMode === 0 ? true : false
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                 tooltip: { if(playingPath) {
@@ -751,6 +750,7 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
+                visible: robotMode === 0 ? true : false
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/stop"
                 tooltip: langue == "English" ? "停止机器人" : "Stop robot"
@@ -782,6 +782,7 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
+                visible: robotMode === 0 ? true : false
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
 //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
@@ -813,6 +814,7 @@ Frame {
                 // prevents the icon from occasionally disappearing for no apparent reason
                 backColor: "white"
                 height: parent.height - 2
+                visible: robotMode === 0 ? true : false
                 width: playPausePathButton.width
                 padding: 0
                 imgSrc: {
@@ -880,6 +882,16 @@ Frame {
                     dockClicked()
                     dockButtonClicked = true;
                 }
+            }
+
+            Image {
+                id: manualControlImage
+                asynchronous: true
+                visible: robotMode === 0 ? false : true
+                source: "qrc:/icons/manual_control"
+                fillMode: Image.Pad
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.fill: parent
             }
         }
     }

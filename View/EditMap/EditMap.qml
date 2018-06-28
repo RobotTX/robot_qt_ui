@@ -406,6 +406,7 @@ Window {
 
             onPositionChanged: {
                 orientationMap(Math.round(slider.valueAt(slider.position)));
+                console.log("orientation = " + Math.round(slider.valueAt(slider.position)));
             }
         }
 

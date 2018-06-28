@@ -6,12 +6,14 @@
 #include <QVariant>
 #include <QImage>
 #include <QGuiApplication>
+#include <QStandardPaths>
 #include <QtQuick/QQuickView>
 #include "Controller/maincontroller.h"
 #include "Controller/authentification.h"
 #include "View/EditMap/editmappainteditem.h"
 #include "View/Robot/scanmappainteditem.h"
 #include "View/Robot/obstaclespainteditem.h"
+
 
 Authentification::Authentification(QQmlApplicationEngine *engine, QQuickWindow* _window, QObject* parent) : QObject(parent), window(_window)
 {
@@ -42,6 +44,7 @@ void Authentification::checkLoginSlot() {
     mainEngine.load(QUrl("qrc:/main.qml"));
 //    qDebug("mainEngine from mainController opening");
     QQuickWindow *applicationWindow = qobject_cast<QQuickWindow*>(mainEngine.rootObjects().at(0));
+
     if (!applicationWindow) {
         qFatal("Error: Your root item has to be a window.");
         Q_UNREACHABLE();

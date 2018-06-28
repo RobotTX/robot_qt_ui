@@ -40,6 +40,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(setLooping(QVariant, QVariant)), robotModel, SLOT(setLooping(QVariant, QVariant)));
         connect(this, SIGNAL(setVelocity(QVariant, QVariant, QVariant)), robotModel, SLOT(setVelocity(QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(updateSound(QVariant, QVariant)), robotModel, SLOT(setSound(QVariant, QVariant)));
+        connect(this, SIGNAL(updateRobotMode(QVariant,QVariant)), robotModel, SLOT(setRobotMode(QVariant, QVariant)));
         connect(this, SIGNAL(setBatteryWarning(QVariant,QVariant)), robotModel, SLOT(setBatteryWarning(QVariant, QVariant)));
 
         /// Signals from qml to the controller
@@ -137,20 +138,21 @@ RobotsController::~RobotsController(){
 
 void RobotsController::launchServer(void){
     robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, int, int, bool, int)), this, SLOT(robotIsAliveSlot(QString, QString, int, int, bool, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, int, int, bool, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, int, int, bool, int, int)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
 }
 
-void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus){
+void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus, const int robotMode) {
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
         emit setBattery(ip, battery, charging);
         emit updateDockStatus(ip, dockStatus);
         emit updateSound(ip, charging);
-//        // qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus;
+        emit updateRobotMode(ip, robotMode);
+//         qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus << " robotMode = " << robotMode;
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
@@ -175,7 +177,7 @@ void RobotsController::shortcutAddRobot(void){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, 0, (robots.size()*10)%100, false, 0);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, 0, (robots.size()*10)%100, false, 0, 0);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
@@ -426,7 +428,7 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
     /// TODO use timer
     QThread::sleep(1);
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
-//    // qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
+     qDebug() << "RobotsController::updateRobotInfoSlot ip" << ip << " : " << strList;
 
     if(strList.size() > 8){
         /// Remove the "Connected" in the list
@@ -481,8 +483,8 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
 
     } else {
         /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
-        // qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
-//        Q_UNREACHABLE();
+         qDebug() << "RobotsController::updateRobotInfoSlot Connected received without enough parameters :" << strList;
+        Q_UNREACHABLE();
     }
 }
 

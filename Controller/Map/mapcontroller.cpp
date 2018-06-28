@@ -356,17 +356,11 @@ void MapController::saveEditedImage(const QString locationD, int mapRotation) {
     int mapRot = mapRotation;
 
     if(file.open(QFile::ReadWrite)){
-        qDebug() << "mapRotation saveEditedImage = " << mapRotation;
         QTextStream stream(&file);
         QString osef;
         stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> osef;
-        qDebug() << "mapRotation tututu = " << mapRotation;
         file.close();
     }
-
-    qDebug() << "mapRotation tototo = " << mapRotation;
-
-    qDebug() << "mapRot = " << mapRot;
 
     /// desktop
     QFile file2(Helper::getAppPath() + QDir::separator() + "data" + QDir::separator() + + "currentMap.txt");
@@ -374,7 +368,6 @@ void MapController::saveEditedImage(const QString locationD, int mapRotation) {
     /// android
 //    QFile file2(location + QDir::separator() + "currentMap.txt");
     if(file2.open(QFile::WriteOnly|QFile::Truncate)){
-        qDebug() << "we are in file2 and mapRotation = " << mapRotation;
         QTextStream stream(&file2);
         stream << map->getMapFile() << endl
              << map->getWidth() << " " << map->getHeight() << endl
@@ -386,11 +379,7 @@ void MapController::saveEditedImage(const QString locationD, int mapRotation) {
         file.close();
     }
 
-    qDebug() << "mapRot mapcontroller.cpp = " << mapRotation;
-
     saveMapConfig(map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
-
-    qDebug() << "mapRot mapcontroller.cpp tototo = " << mapRot;
 
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), locationD);

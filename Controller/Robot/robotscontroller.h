@@ -113,7 +113,7 @@ private slots:
      * is still connected with the robot, carries useful information such as path stage and battery level
      * along the way
      */
-    void robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus);
+    void robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus, const int robotMode);
     /**
      * @brief robotIsDeadSlot
      * @param ip
@@ -224,6 +224,7 @@ signals:
     void setVelocity(QVariant ip, QVariant linear, QVariant angular);
     void playingPathSlot(QVariant ip, QVariant playing);
     void updateSound(QVariant ip, QVariant activate);
+    void updateRobotMode(QVariant ip, QVariant robotMode);
     void setBatteryWarning(QVariant ip, QVariant batteryLevelWarning);
 
 private:

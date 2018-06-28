@@ -41,6 +41,8 @@
         <file alias="speech">icons/icSpeech_normal.png</file>
         <file alias="big_speech">icons/Img_Speech.png</file>
 
+        <file alias="manual_control">icons/manual_control.png</file>
+
         <file alias="point_checked">icons/icPoint_checked.png</file>
         <file alias="point_checked_2020">icons/icPoint_checked_2020.png</file>
         <file alias="point_checked_2525">icons/icPoint_checked_2525.png</file>

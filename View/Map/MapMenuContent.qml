@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Window 2.0
+import Qt.labs.platform 1.0
 import "../../Helper/style.js" as Style
 import "../Custom"
 
@@ -99,7 +100,8 @@ Frame {
         // format of files is pgm
         nameFilters: "*.pgm"
         // won't let you choose a file name if selectExisting is true
-        selectExisting: false
+//        selectExisting: false
+//        folder: StandardPaths.writableLocation(StandardPaths.AppDataLocation)
         title: langue == "English" ? "请选择一个路径" : "Please choose a location for your map"
 
         onAccepted: {
@@ -155,7 +157,7 @@ Frame {
         // allow only pgm files to be selected
         nameFilters: "*.pgm"
         title: langue == "English" ? "导入地图" : "Import a map"
-        selectMultiple: false
+//        selectMultiple: false
         onRejected: {
 //            console.log("Canceled the save of a map")
         }

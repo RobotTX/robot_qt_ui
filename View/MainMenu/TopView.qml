@@ -110,8 +110,8 @@ Frame {
             rightMargin: 15
         }
 
-//        onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
-        onPositionChanged: {}
+        onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
+//        onPositionChanged: {}
     }
 
     /// Zoom in button

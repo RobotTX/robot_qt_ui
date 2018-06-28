@@ -6,7 +6,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QtMath>
 
-EditMapPaintedItem::EditMapPaintedItem(QQuickItem *parent): QQuickPaintedItem(parent) {
+EditMapPaintedItem::EditMapPaintedItem(QQuickItem *parent): QQuickPaintedItem(parent), orientationMapValue(0) {
     setFlag(QQuickItem::ItemHasContents, true);
 }
 

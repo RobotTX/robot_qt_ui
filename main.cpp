@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QtQuick/QQuickView>
 #include <QQmlApplicationEngine>
+#include <QStandardPaths>
 #include "Controller/maincontroller.h"
 #include "Controller/authentification.h"
 #include "View/EditMap/editmappainteditem.h"
