@@ -342,10 +342,13 @@ Frame {
                 warningDialog.open()
             } else {
                 /// file:// for linux, file: for windows
-                if(fileStr.indexOf("file://") === 0)
+                if(fileStr.indexOf("file://") === 0) {
                     fileStr = fileStr.slice(7);
-                else if(fileStr.indexOf("file:") === 0)
+                } else if(fileStr.indexOf("file:") === 0) {
                     fileStr = fileStr.slice(5);
+                }
+
+                console.log("fileStr = " + fileStr);
 
                 scanLeftMenuFrame.saveScan(fileStr)
             }

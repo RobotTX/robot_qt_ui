@@ -369,6 +369,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 //        // qDebug() << "New config is wrong " << !new_config;
         if(fileName != (Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName())){
             ///saves the image to the user given directory
+            qDebug() << "filename = " << fileName;
             mapController->saveMapToFile(fileName + ".pgm");
         }
 
@@ -866,7 +867,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     #endif
 
     #if defined(Q_OS_LINUX)
-        QString cpp_file_name = file_name.mid(7);
+        QString cpp_file_name = file_name.mid(0);
     #endif
 
     #if defined(Q_OS_MAC)

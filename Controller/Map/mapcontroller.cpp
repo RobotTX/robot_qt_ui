@@ -518,7 +518,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
 }
 
 bool MapController::setMapFile(const QString file) {
-//      qDebug() << "file in setMapFile = " << file;
+    qDebug() << "file in setMapFile = " << file;
     if(QFile(file).exists()){
 //          qDebug() << "MapController::setMapFile to" << file;
         map->setMapFile(file);
