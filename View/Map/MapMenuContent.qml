@@ -3,7 +3,6 @@ import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Window 2.0
-import Qt.labs.platform 1.0
 import "../../Helper/style.js" as Style
 import "../Custom"
 
@@ -100,19 +99,16 @@ Frame {
         // format of files is pgm
         nameFilters: "*.pgm"
         // won't let you choose a file name if selectExisting is true
-//        selectExisting: false
-//        folder: StandardPaths.writableLocation(StandardPaths.AppDataLocation)
+        selectExisting: false
         title: langue == "English" ? "请选择一个路径" : "Please choose a location for your map"
 
         onAccepted: {
             var fileStr = fileUrl.toString();
-            console.log("fileStr = " + fileStr);
             if (fileStr.indexOf(" ") >= 0) {
-//                console.log("space in the name not authorized");
+                console.log("space in the name not authorized");
                 warningDialog.open()
             } else {
-                /// TODO need to check for mac
-//                console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://") + " or " + fileStr.indexOf("file:"));
+            // TODO need to check for mac
                 /// file:// for linux, file: for windows
                 if(fileStr.indexOf("file://") === 0)
                     fileStr = fileStr.slice(7);
@@ -131,12 +127,8 @@ Frame {
                 else {
 
                 }
-
-//                    console.log("NO need to open load dialog");
             }
-
         }
-
         onRejected: {
             console.log("Canceled the save of a map")
         }

@@ -118,6 +118,7 @@ DISTFILES += \
     android/gradlew.bat \
     View/Settings/SliderLineMeasurement \
     View/Custom/RoundButton \
-    wifiScript.sh
+    wifiScript.sh \
+    View/Custom/CustomStopDockingDialog
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

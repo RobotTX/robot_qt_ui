@@ -47,6 +47,7 @@ void EditMapPaintedItem::paint(QPainter *painter){
         {
             float xPoint, yPoint;
             painter->save();
+            qDebug() << "it.points.size = " << it.points.size();
             if(it.points.size() > 1){
                 QPainterPath path;
                 painter->translate(it.points.at(0).x(), it.points.at(0).y());
