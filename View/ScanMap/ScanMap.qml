@@ -209,11 +209,12 @@ Window {
             file_name += ".pgm";
 
         scanMap.grabToImage(function(result) {
+            console.log("saveToFile = " + file_name.substring(0));
             if (Qt.platform.os === "windows") {
                 result.saveToFile(file_name.substring(10));
                 console.log("windows in gravscanned = " + file_name.substring(10));
             } else {
-                result.saveToFile(file_name.substring(7));
+                result.saveToFile(file_name.substring(0));
             }
 
             scanWindow.resetMapConfiguration(file_name, true);

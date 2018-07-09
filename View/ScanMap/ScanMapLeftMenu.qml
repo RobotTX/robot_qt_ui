@@ -342,7 +342,6 @@ Frame {
             if (fileStr.indexOf(" ") >= 0) {
                 warningDialog.open()
             } else {
-
                 scanLeftMenuFrame.saveScan(fileStr)
             }
         }
