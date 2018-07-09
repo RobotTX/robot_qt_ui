@@ -130,7 +130,7 @@ void EditMapPaintedItem::orientationMap(int orientation) {
 }
 
 void EditMapPaintedItem::saveImage(QImage image, QString location){
-//    qDebug() << "EditMapController::saveImage saving the image called" << image.size() << location;
+    qDebug() << "EditMapController::saveImage saving the image called" << image.size() << location;
     QPainter painter;
     painter.begin(&image);
     paint(&painter);

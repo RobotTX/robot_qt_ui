@@ -203,7 +203,7 @@ Window {
     }
 
     function grabScannedMap(file_name){
-//        console.log("scan: grabbed called " + file_name.substring(7));
+        console.log("scan: grabbed called file_name" + file_name.substring(0));
 
         if(file_name.toString().lastIndexOf(".pgm") === -1)
             file_name += ".pgm";
@@ -211,6 +211,7 @@ Window {
         scanMap.grabToImage(function(result) {
             if (Qt.platform.os === "windows") {
                 result.saveToFile(file_name.substring(10));
+                console.log("windows in gravscanned = " + file_name.substring(10));
             } else {
                 result.saveToFile(file_name.substring(7));
             }

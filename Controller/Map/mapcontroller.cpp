@@ -518,15 +518,16 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
 }
 
 bool MapController::setMapFile(const QString file) {
-//      qDebug() << "file in setMapFile = " << file;
+      qDebug() << "file in setMapFile = " << file;
     if(QFile(file).exists()){
 //          qDebug() << "MapController::setMapFile to" << file;
         map->setMapFile(file);
 //        QImage img(map->getMapFile(), "PGM");
 //        // // qDebug() << "imported a map of size " << img.size();
         map->setMapImage(QImage(map->getMapFile(), "PGM"));
+        qDebug() << map->getMapFile();
         /// so that the qml side can load the map
-        emit setMap(file);
+        emit setMap(file); /// qml side
         return true;
     } else {
           qDebug() << "MapController::setMapFile -> file = "<< file << "does not exist";
@@ -542,7 +543,7 @@ QString MapController::getMetadataString(void) const {
 }
 
 void MapController::saveNewMap(const QString file_name){
-//    // // qDebug() << "MapController::saveNewMap " << file_name;
+      qDebug() << "MapController::saveNewMap " << file_name;
     map->setMapFile(file_name);
     emit setMap(file_name);
 }

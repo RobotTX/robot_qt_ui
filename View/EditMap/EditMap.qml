@@ -486,9 +486,40 @@ Window {
 
             onClicked: {
                 dialog.hide();
-                dialog.saveImage(imgSource.substring(6), mapRotation);
-                console.log("we are in editmap");
-                console.log("mapRotation = " + mapRotation);
+                var toto = "";
+                var sub0 = imgSource.substring(0);
+                var i = 6;
+                console.log("imgSource.substring(0) = " + imgSource.substring(0));
+                console.log("imgSource.substring(1) = " + imgSource.substring(1));
+                console.log("imgSource.substring(2) = " + imgSource.substring(2));
+                console.log("imgSource.substring(3) = " + imgSource.substring(3));
+                console.log("imgSource.substring(5) = " + imgSource.substring(5));
+                console.log("imgSource.substring("+ i +") = " + imgSource.substring(i) + "<--- the one using right now");
+//                var toto = imgSource.substring(0);
+//                if (imgSource.substring(0).indexOf("file:/")) {
+//                    toto = toto.split("file:").join(":");
+//                    console.log("toto = " + toto);
+//                } else if (imgSource.substring(0).indexOf("file:C:")) {
+//                    toto = toto.split("file:C:").join(":");
+//                    console.log("toto = " + toto);
+//                }
+                if (Qt.platform.os === "windows") {
+                    if (sub0.indexOf("file:/") !== -1) {
+                        toto = imgSource.substring(5);
+                        console.log("we are in first case, substring 5");
+                    } else if (sub0.indexOf("file:C:") !== -1) {
+                        toto = imgSource.substring(6);
+                        console.log("we are in second case, susbtring 6");
+                    }
+                } else {
+                    toto = imgSource.substring(6);
+                }
+
+                console.log("toto = " + toto);
+//                toto = imgSource.substring(i);
+//                dialog.saveImage(imgSource.substring(4), mapRotation);
+                dialog.saveImage(toto, mapRotation);
+//                console.log("mapRotation = " + mapRotation);
 //                mapRotation = 0;
 //                console.log("mapRotation = " + mapRotation);
             }

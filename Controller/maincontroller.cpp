@@ -859,10 +859,11 @@ void MainController::getMapFromRobot(QString ip){
 }
 
 void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){
-//    // qDebug() << "MainController::resetMapConfiguration" << file_name;
+     qDebug() << "MainController::resetMapConfiguration" << file_name;
 
     #if defined(Q_OS_WIN)
         QString cpp_file_name = file_name.mid(10);
+        qDebug() << "cpp_file_name = " << cpp_file_name;
     #endif
 
     #if defined(Q_OS_LINUX)
@@ -922,6 +923,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 //    QString currentPathFile = location + QDir::separator() + "currentMap.txt";
 
     //change current map to new map
+    qDebug() << "currentPathFile === " << currentPathFile;
     mapController->saveMapConfig(currentPathFile, 0, 0, 1, 0);
 
     /// we send this information to the robot, init pos is used to determine the position of the robot directly after gobot move

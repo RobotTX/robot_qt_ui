@@ -165,12 +165,11 @@ Frame {
         id: mapName
         text: {
             var indexLastSlash = "";
-            if (Qt.platform.os === "windows") {
-                indexLastSlash = mapFileName.lastIndexOf("\\");
-            } else {
-                indexLastSlash = mapFileName.lastIndexOf("/");
-            }
-
+            if (mapFileName.indexOf("/") !== -1) {
+                    indexLastSlash = mapFileName.lastIndexOf("/");
+              } else {
+                  indexLastSlash = mapFileName.lastIndexOf("\\");
+              }
             qsTr(mapFileName.substring(indexLastSlash + 1));
         }
         anchors {
