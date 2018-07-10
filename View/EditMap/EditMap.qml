@@ -504,14 +504,16 @@ Window {
 //                    console.log("toto = " + toto);
 //                }
                 if (Qt.platform.os === "windows") {
+                    console.log("windows platform");
                     if (sub0.indexOf("file:/") !== -1) {
-                        toto = imgSource.substring(5);
-                        console.log("we are in first case, substring 5");
+                        toto = imgSource.substring(4);
+                        console.log("+++++ we are in first case, substring 5");
                     } else if (sub0.indexOf("file:C:") !== -1) {
                         toto = imgSource.substring(6);
-                        console.log("we are in second case, susbtring 6");
+                        console.log("+++++ we are in second case, susbtring 6");
                     }
                 } else {
+                    console.log("other platforms");
                     toto = imgSource.substring(6);
                 }
 
