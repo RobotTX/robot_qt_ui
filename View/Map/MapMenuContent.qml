@@ -110,10 +110,13 @@ Frame {
             } else {
             // TODO need to check for mac
                 /// file:// for linux, file: for windows
-                if(fileStr.indexOf("file://") === 0)
+                if(fileStr.indexOf("file://") === 0) {
                     fileStr = fileStr.slice(7);
-                else if(fileStr.indexOf("file:") === 0)
+                } else if(fileStr.indexOf("file:") === 0) {
                     fileStr = fileStr.slice(5);
+                }
+
+                console.log("fileStr in mapMenuContent while saving map = " + fileStr);
 
                 // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
                 if(fileStr.lastIndexOf(".pgm") == -1)

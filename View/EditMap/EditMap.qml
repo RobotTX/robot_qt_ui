@@ -488,13 +488,8 @@ Window {
                 dialog.hide();
                 var toto = "";
                 var sub0 = imgSource.substring(0);
-                var i = 6;
-                console.log("imgSource.substring(0) = " + imgSource.substring(0));
-                console.log("imgSource.substring(1) = " + imgSource.substring(1));
-                console.log("imgSource.substring(2) = " + imgSource.substring(2));
-                console.log("imgSource.substring(3) = " + imgSource.substring(3));
-                console.log("imgSource.substring(5) = " + imgSource.substring(5));
-                console.log("imgSource.substring("+ i +") = " + imgSource.substring(i) + "<--- the one using right now");
+//                var i = 6;
+//                console.log("imgSource.substring("+ i +") = " + imgSource.substring(i) + "<--- the one using right now");
 //                var toto = imgSource.substring(0);
 //                if (imgSource.substring(0).indexOf("file:/")) {
 //                    toto = toto.split("file:").join(":");

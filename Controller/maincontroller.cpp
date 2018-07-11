@@ -210,7 +210,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                     QString line = ssidIn.readLine();
                     if (line.contains("SSID")) {
                     } else {
-//                        // qDebug() << "line = " << line;
+                         qDebug() << "line = " << line;
                         line_count++;
                         emitWifiList(line, line_count);
                     }
@@ -872,7 +872,9 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     #endif
 
     #if defined(Q_OS_MAC)
-        QString cpp_file_name = file_name.mid(7);
+        QString cpp_file_name = file_name.mid(0);
+//        QString cpp_file_name = file_name.mid(0);
+        qDebug() << "+++ cpp_file_name = " << cpp_file_name;
     #endif
 
     #if defined(Q_OS_ANDROID)

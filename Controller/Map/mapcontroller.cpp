@@ -252,10 +252,10 @@ void MapController::loadPositionSlot(){
 }
 
 bool MapController::saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom, const int mapRotation) const {
-//      qDebug() << "MapController::saveMapConfig saving map to " << fileName;
+      qDebug() << "MapController::saveMapConfig saving map to " << fileName;
     std::ofstream file(fileName.toStdString(), std::ios::out | std::ios::trunc);
     if(file){
-//          qDebug() << "saving map with file " << map->getMapFile();
+          qDebug() << "saving map with file " << map->getMapFile();
 
         file << map->getMapFile().toStdString() << " " << std::endl
              << map->getWidth() << " " << map->getHeight() << std::endl
@@ -268,7 +268,7 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
         file.close();
         return true;
     } else {
-        // // qDebug() << "MaoController::saveMapConfig - no file";
+          qDebug() << "MaoController::saveMapConfig - no file";
         return false;
     }
 }

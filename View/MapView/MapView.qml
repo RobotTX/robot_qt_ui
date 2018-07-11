@@ -583,7 +583,7 @@ Frame {
         if(Qt.platform.os === "ios" && _mapSrc.indexOf("file://") !== 0)
             _mapSrc = "file://" + _mapSrc;
 
-//        console.log("setMap source : " + _mapSrc);
+        console.log("setMap source : " + _mapSrc);
         mapSrc = _mapSrc;
         emptyMap.visible = false;
         mapImage.visible = true;

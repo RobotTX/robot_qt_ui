@@ -175,8 +175,8 @@ Frame {
 
         anchors {
             top: parent.top
-//            topMargin: 5
-            topMargin: 50
+            topMargin: 5
+//            topMargin: 50
             left: parent.left
             right: parent.right
         }
@@ -342,6 +342,13 @@ Frame {
             if (fileStr.indexOf(" ") >= 0) {
                 warningDialog.open()
             } else {
+                /// file:// for linux, file: for windows
+                if(fileStr.indexOf("file://") === 0) {
+                    fileStr = fileStr.slice(7);
+                } else if(fileStr.indexOf("file:") === 0) {
+                    fileStr = fileStr.slice(5);
+                }
+
                 scanLeftMenuFrame.saveScan(fileStr)
             }
         }
