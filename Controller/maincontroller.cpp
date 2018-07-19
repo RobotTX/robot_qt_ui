@@ -722,7 +722,7 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                 #endif
 //                mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7) + "!@#$.mp3";
 
-                mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
+//                mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
             }
         }
     }
