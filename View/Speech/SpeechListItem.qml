@@ -107,13 +107,14 @@ Column {
         id: delegateSpeechs
         Column {
             Frame {
-                visible: isOpen
+                visible: isOpen && name.indexOf("file:") !== -1 ? false : true
                 height: visible ? 37 : 0
                 width : groupListItem.width
                 padding: 0
 
                 /// The blue rectangle on the selected item
                 background: Rectangle {
+                    visible: name.indexOf("file:") !== -1 ? false : true
                     anchors.verticalCenter: parent.verticalCenter
                     height: parent.height - 10
                     anchors.left: parent.left
@@ -132,6 +133,7 @@ Column {
                 /// The item displaying the name of the speech/group
                 CustomLabel {
                     text: qsTr(name)
+                    visible: name.indexOf("file:") !== -1 ? false : true
                     color: Style.blackMenuTextColor
                     anchors {
                         verticalCenter: parent.verticalCenter
@@ -144,6 +146,7 @@ Column {
 
                 SmallButton {
                     id: rightOpenSpeech
+                    visible: name.indexOf("file:") !== -1 ? false : true
                     imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (descriptionIsOpen) {
                                langue == "English" ? "隐藏语音细节" : "Hide speech detail"
@@ -167,6 +170,7 @@ Column {
 
                 SmallButton {
                     id: rightMenuButton
+                    visible: name.indexOf("file:") !== -1 ? false : true
                     imgSrc: "qrc:/icons/more"
                     anchors {
                         top: parent.top

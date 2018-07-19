@@ -16,6 +16,7 @@
 #define PORT_NEW_MAP 5601
 #define PORT_TELEOP 5602
 #define PORT_LASER 5605
+#define PORT_MP3 5603
 //#define PORT_BACKUP_SYSTEM 6498
 
 namespace Helper {

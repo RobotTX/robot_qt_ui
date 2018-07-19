@@ -121,17 +121,27 @@ void RobotController::launchWorkers(void){
 
 //    // qDebug() << "RobotController at ip" << ip << " launching its cmd thread";
 
-    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LASER));
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LASER, PORT_MP3));
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(connected()), this, SLOT(connectedSlot()));
     connect(cmdRobotWorker, SIGNAL(newConnection(QString)), this, SLOT(updateRobotInfoSlot(QString)));
     connect(commandController, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
+//    connect(commandController, SIGNAL(sendMP3Signal(QString)), cmdRobotWorker, SLOT(writeTcpDataMP3Slot(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
     connect(&cmdThread, SIGNAL(finished()), cmdRobotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startCmdRobotWorker()), cmdRobotWorker, SLOT(connectSocket()));
     cmdRobotWorker->moveToThread(&cmdThread);
+    cmdThread.start();
+
+    cmdMP3Worker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_MP3, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LASER));
+    connect(commandController, SIGNAL(sendMP3Signal(QString, bool)), cmdMP3Worker, SLOT(writeTcpDataMP3Slot(QString, bool)));
+    connect(this, SIGNAL(pingSignal()), cmdMP3Worker, SLOT(pingSlot()));
+    connect(this, SIGNAL(stopCmdRobotWorker()), cmdMP3Worker, SLOT(stopWorker()));
+    connect(&cmdThread, SIGNAL(finished()), cmdMP3Worker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startCmdRobotWorker()), cmdMP3Worker, SLOT(connectSocket()));
+    cmdMP3Worker->moveToThread(&cmdThread);
     cmdThread.start();
 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
@@ -144,15 +154,22 @@ void RobotController::launchWorkers(void){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
-    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
-    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
-    connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
-    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
-    newMapWorker->moveToThread(&newMapThread);
-    newMapThread.start();
+//    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
+////    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker("192.168.1.19", PORT_MP3));
+//    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
+//    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
+//    connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
+//    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
+//    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
+//    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
+//    newMapWorker->moveToThread(&newMapThread);
+//    newMapThread.start();
+
+    /// testing loading mp3 file
+//    newMP3Worker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_MP3));
+//    connect(this, SIGNAL(sendMP3Signal(QString)), newMP3Worker, SLOT(writeTcpDataMP3Slot(QString)));
+//    connect(this, SIGNAL(startNewMapWorker()), newMP3Worker, SLOT(connectSocket()));
+//    connect(this, SIGNAL(stopNewMapWorker()), newMP3Worker, SLOT(stopWorker()));
 
 //    laserWorker = QPointer<LaserWorker>(new LaserWorker(ip, PORT_LASER));
 //    connect(laserWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
@@ -238,6 +255,12 @@ void RobotController::updateRobotInfoSlot(const QString robotInfo){
 void RobotController::sendCommand(const QString cmd){
     // qDebug() << "(RobotController) Send command called" << cmd;
     commandController->sendCommand(cmd);
+}
+
+void RobotController::sendMP3(const QString fileName, const bool isLastMP3File) {
+    qDebug() << "RobotController::sendMP3 fileName = " << fileName;
+    commandController->sendMP3Command(fileName, isLastMP3File);
+
 }
 
 

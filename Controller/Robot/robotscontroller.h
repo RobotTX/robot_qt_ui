@@ -49,6 +49,8 @@ public:
      */
     bool sendCommand(const QString ip, const QString cmd);
 
+    bool sendMP3(const QString ip, const QString cmd, const bool isLastMp3File);
+
     /**
      * @brief sendNewMap
      * @param ip
@@ -97,6 +99,8 @@ public:
      * sends the map to all robots
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
+
+    void sendMP3ToRobot(QString fileName, bool isLastMP3File);
 
 //    void changeLanguageSlot(const QString language);
 private:

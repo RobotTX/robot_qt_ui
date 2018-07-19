@@ -27,7 +27,7 @@ void TeleopWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(Teleop) connectSocket done";
+     qDebug() << "(Teleop) connectSocket done" << port;
 }
 
 void TeleopWorker::writeTcpDataSlot(int cmd){

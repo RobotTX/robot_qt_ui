@@ -25,7 +25,7 @@ void BackupRobotWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "backup system robot" << ipAddress << " connectSocket done";
+     qDebug() << "backup system robot" << ipAddress << " connectSocket done" << port;
 }
 
 BackupRobotWorker::~BackupRobotWorker(){

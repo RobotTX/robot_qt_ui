@@ -4,8 +4,8 @@
 #include <fstream>
 #include "Helper/helper.h"
 
-CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _robotPort, const int _mapPort, const int _laserPort):
-    ipAddress(_ipAddress), port(cmdPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), timeCounter(0)
+CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _robotPort, const int _mapPort, const int _laserPort, const int _mp3Port):
+    ipAddress(_ipAddress), port(cmdPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), mp3Port(_mp3Port), timeCounter(0)
 {}
 
 CmdRobotWorker::~CmdRobotWorker(){
@@ -44,8 +44,91 @@ void CmdRobotWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(Robot" << ipAddress << ") connectSocket done";
+    qDebug() << "ipAddress in cmdrobotworker.cpp = " << ipAddress << port;
+
+     qDebug() << "(Robot" << ipAddress << ") connectSocket done" << port;
 }
+
+void CmdRobotWorker::writeTcpDataMP3Slot(QString path, bool isLastMP3File) {
+    QVector<char> send_msg = readSoundFile(path);
+    qDebug() << "audio size = " << send_msg.size() << endl;
+    QByteArray byteArray;
+//    qDebug() << "send size " << send_msg.size() << endl;
+
+    QByteArray toSend = QByteArray().append(static_cast<char*>(send_msg.data()), send_msg.size());
+
+    qDebug() << "isLastMP3File " << isLastMP3File;
+
+    if (isLastMP3File == true) {
+        toSend.push_back("!");
+        toSend.push_back("!");
+        toSend.push_back("!");
+        toSend.push_back("!");
+    } else {
+        toSend.push_back("!");
+        toSend.push_back("@");
+        toSend.push_back("#");
+        toSend.push_back("$");
+    }
+
+    byteArray.append(toSend);
+
+    qDebug() << "byteArray.size() = " << byteArray.size();
+
+    qDebug() << "ipAdress = " << ipAddress;
+
+    if(socket && socket->isOpen()){
+        int nbDataSend = socket->write(byteArray);
+
+        socket->waitForBytesWritten();
+
+        qDebug() << "ipAdress = " << ipAddress;
+        qDebug() << "nbDataSend = " << nbDataSend;
+
+        if(nbDataSend == -1)
+             qDebug() << "(MP3) An error occured while sending data" << ipAddress;
+        else
+             qDebug() << "(MP3) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
+    } else {
+        /// NOTE: what to do if the socket is closed ? can it happen ?
+         qDebug() << "(MP3) Trying to write on a socket that is not created or connected yet" << ipAddress;
+        Q_UNREACHABLE();
+    }
+
+}
+
+QVector<char> CmdRobotWorker::readSoundFile(QString path){
+    std::ifstream sourcestr(path.toStdString(), std::ios::in | std::ios::binary);
+    long size;
+    char * buffer;
+
+    if(!sourcestr){
+        qDebug() <<"can not open "<< path << endl;
+        return {};
+    }
+
+    // get file size using buffer's members
+    size=sourcestr.rdbuf()->pubseekoff (0,std::ios::end,std::ios::in);
+    sourcestr.rdbuf()->pubseekpos (0,std::ios::in);
+
+    // allocate memory to contain file data
+    buffer=new char[size];
+
+    // get file data
+    sourcestr.rdbuf()->sgetn (buffer,size);
+
+    //close mp3 file
+    sourcestr.close();
+
+    //save the data in vector
+    QVector<char> result;
+    for(int i=0;i<size;i++)
+        result.push_back(buffer[i]);
+
+    //return mp3 data
+    return result;
+}
+
 
 void CmdRobotWorker::sendCommand(const QString cmd){
     // qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;

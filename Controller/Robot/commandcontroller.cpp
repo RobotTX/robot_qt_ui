@@ -23,6 +23,11 @@ void CommandController::sendCommand(const QString cmd){
     emit processingCmd(ip, waitingForAnswer);
 }
 
+void CommandController::sendMP3Command(const QString fileName, const bool isLastMP3File){
+    qDebug() << "CommandController::sendMP3Command" << fileName;
+    emit sendMP3Signal(fileName, isLastMP3File);
+}
+
 void CommandController::cmdAnswerSlot(QString answer){
     QList<QString> list = answer.split(QChar(31), QString::SkipEmptyParts);
 
@@ -73,6 +78,7 @@ void CommandController::cmdAnswerSlot(QString answer){
 //                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
                     emit updatePath(ip, QStringList(list));
                     emit updatePlayingPath(ip, false);
+                    //start audio transfert
                 break;
                 case 'j':
                     /// Played the path of the robot
@@ -172,17 +178,17 @@ void CommandController::cmdAnswerSlot(QString answer){
             break;
                 default:
                     /// Unknown/unused command
-                    // qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
+                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
                     Q_UNREACHABLE();
                 break;
             }
         } else {
-            // qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
+             qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
             /// TODO debug or handle the busy case
-            //Q_UNREACHABLE();
+            Q_UNREACHABLE();
         }
     } else {
-        // qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
+         qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
         Q_UNREACHABLE();
     }
 

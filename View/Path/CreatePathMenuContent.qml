@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Dialogs 1.2
 import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
@@ -25,12 +26,14 @@ Frame {
     property Speechs speechModel
     property string langue
     property int menuIndex: 0
+    property string mp3FileName: ""
 
     signal backToMenu()
     signal createPath(string groupName, string name)
     signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation, string speechName, string speechContent, int speechTime)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
+    signal createSpeech(string name, string groupName, string tts, string oldName, string oldGroup)
 
     Connections {
         target: tmpPathModel
@@ -327,7 +330,7 @@ Frame {
                         verticalCenter: parent.verticalCenter
                     }
                     width: dragArea.width
-                    height: 230
+                    height: 270
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
@@ -676,15 +679,42 @@ Frame {
                         }
                     }
 
+                    NormalButton {
+                        id: addMP3
+                        txt: langue == "English" ? "加入已有语音" : "Load Audio"
+                        imgSrc: "qrc:/icons/add_mp3"
+                        anchors {
+                            left: parent.left
+                            top: addSpeech.bottom
+                            right: parent.right
+//                            topMargin: 8
+                        }
+                        font.pointSize: 11
+                        onClicked: loadMP3FileDialog.open()
+                    }
+
+                    FileDialog {
+                        id: loadMP3FileDialog
+                        // allow only mp3 and wav files to be selected
+                        nameFilters: "*.mp3 *.wav"
+                        title: langue == "English" ? "导入地图" : "Import an audio file"
+                        onRejected: {
+                        }
+                        onAccepted: {
+                            speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
+                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
+                        }
+                    }
+
                     Label {
                         id: speechLabel
-                        visible: speechName !== ""
+                        visible: (speechName !== "")
                         text: langue == "English" ? "名称 : " : "Name : "
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
                             left: waitFor.left
-                            top: addSpeech.bottom
+                            top: addMP3.bottom
                             topMargin: 8
                         }
                     }
@@ -692,7 +722,21 @@ Frame {
                     Label {
                         id: speechNameLabel
                         visible: speechName !== ""
-                        text: speechName
+                        text: {
+                            var indexLastSlash = "";
+//                            if (loadMP3FileDialog.fileUrl.toString().indexOf("/") !== -1) {
+//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
+//                            } /*else {
+//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
+//                            }*/
+
+//                            qsTr(loadMP3FileDialog.fileUrl.toString().substring(indexLastSlash + 1))
+                            if (speechName.indexOf("/") !== -1) {
+                                qsTr(speechName.substring(speechName.lastIndexOf("/") + 1));
+                            } else {
+                                qsTr(speechName);
+                            }
+                        }
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {

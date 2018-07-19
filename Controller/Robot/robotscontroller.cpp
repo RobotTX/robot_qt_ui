@@ -213,6 +213,19 @@ bool RobotsController::sendCommand(const QString ip, const QString cmd){
     return true;
 }
 
+bool RobotsController::sendMP3(const QString ip, const QString mp3Str, const bool isLastMp3File){
+    qDebug() << "fileName song = " << mp3Str;
+    if(robots.contains(ip)) {
+        robots.value(ip)->sendMP3(mp3Str, isLastMp3File);
+        qDebug() << "cmd in robotscontroller = " << mp3Str << ip;
+    } else {
+        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+        return false;
+    }
+
+    return true;
+}
+
 void RobotsController::newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori){
     emit newRobotPos(ip, posX, posY, ori);
 }
@@ -352,6 +365,16 @@ void RobotsController::sendTeleop(const QString ip, const int teleop){
         // qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
 
+void RobotsController::sendMP3ToRobot(QString fileName, bool isLastMP3File) {
+    QMapIterator<QString, QPointer<RobotController>> it(robots);
+    qDebug() << "RobotsController::sendMP3ToRobot fileName = " << fileName;
+    while(it.hasNext()){
+        it.next();
+        robots.value(it.key())->sendMP3(fileName, isLastMP3File);
+    }
+
+}
+
 void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
      qDebug() << "send map to all robots called" << mapMetadata;
     QMapIterator<QString, QPointer<RobotController>> it(robots);
@@ -360,6 +383,8 @@ void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString m
         robots.value(it.key())->sendNewMap(mapId, date, mapMetadata, img);
     }
 }
+
+
 
 void RobotsController::processingCmdSlot(QString ip, bool processing){
     emit processingCmd(ip, processing);

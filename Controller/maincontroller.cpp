@@ -82,6 +82,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
         if(mapMenuFrame){
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
+//            connect(mapMenuFrame, SIGNAL(importMP3(QString)), this, SLOT(loadMP3(QString)));
         } else {
             /// NOTE can probably remove that when testing phase is over
 //            // qDebug() << "MapController::MapController could not find the mapMenuFrame";
@@ -455,6 +456,11 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     ///mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 }
 
+void MainController::loadMP3(QString fileName, bool isLastMP3File) {
+    qDebug() << "MainController::loadMP3 called with file" << fileName;
+    robotsController->sendMP3ToRobot(fileName, isLastMP3File);
+}
+
 void MainController::loadMapConfig(QString fileName) {
      qDebug() << "MainController::loadMapConfig called with file" << fileName;
 
@@ -670,6 +676,8 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
 //    // qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
     QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
     QString pathStr("");
+    QStringList mp3Str;
+    int counterMP3File = 0;
     for(int i = 0; i < pathPointVector.size(); i++){
         QPointF pathPointPos = Helper::Convert::pixelCoordToRobotCoord(
                         pathPointVector.at(i)->getPoint()->getPos(),
@@ -689,17 +697,42 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                     + QChar(31) + "\" \""
                     + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
         } else {
+            QString toto = pathPointVector.at(i)->getSpeechContent();
+            qDebug() << "toto = " << toto;
+            if (toto.indexOf(".mp3") != -1 || toto.indexOf(".wav") != -1) {
+                toto = "!@#$.mp3";
+                counterMP3File = counterMP3File + 1;
+            }
             pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
                     + QChar(31) + QString::number(pathPointPos.x())
                     + QChar(31) + QString::number(pathPointPos.y())
                     + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime())
                     + QChar(31) + QString::number(pathPointVector.at(i)->getPoint()->getOrientation())
-                    + QChar(31) + pathPointVector.at(i)->getSpeechContent()
+//                    + QChar(31) + pathPointVector.at(i)->getSpeechContent()
+                    + QChar(31) + toto
                     + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
+//            mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7); /// format /home/....
+            if (toto.indexOf(".mp3") != -1) {
+//                mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7) + "!@#$.mp3";
+                mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
+            }
         }
     }
+
     QString cmd = QString("i") + QChar(31) + pathName + pathStr;
+    qDebug() << "cmd sendCommandNewPath = " << cmd << " mp3Str = " << mp3Str;
     robotsController->sendCommand(ip, cmd);
+    qDebug() << "maincontroller sending MP3 with ip and mp3Str" << ip << mp3Str;
+    for (int j = 0; j < mp3Str.length(); j++) {
+        qDebug() << "mp3Str[" << j << "] = " << mp3Str.at(j);
+        if (j == mp3Str.length() - 1) {
+//            robotsController->sendMP3(ip, mp3Str.at(j), "!", "!", "!", "!");
+            robotsController->sendMP3(ip, mp3Str.at(j), true);
+        } else {
+            robotsController->sendMP3(ip, mp3Str.at(j), false);
+        }
+
+    }
 }
 
 void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){

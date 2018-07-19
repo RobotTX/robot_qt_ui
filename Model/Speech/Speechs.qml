@@ -11,6 +11,7 @@ ListModel {
     signal moveToSignal(string name, string oldGroup, string newGroup)
     signal setMessageTop(int status, string msg)
     signal createGroup(string name)
+    signal createSpeech(string name, string groupName, string tts, string oldName, string oldGroup)
 
     property string langue
     property bool openGroup

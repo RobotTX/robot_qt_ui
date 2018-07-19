@@ -30,6 +30,7 @@ SpeechController::SpeechController(QObject *applicationWindow, MainController *p
         connect(speechModel, SIGNAL(deleteSpeechSignal(QString, QString)), this, SLOT(deleteSpeech(QString, QString)));
         connect(speechModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(speechModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+        connect(speechModel, SIGNAL(createSpeech(QString, QString, QString, QString, QString)), this, SLOT(addSpeech(QString,QString,QString,QString, QString)));
 
     } else {
         /// NOTE can probably remove that when testing phase is over

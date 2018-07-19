@@ -31,7 +31,7 @@ void ScanMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(ScanMapWorker) connectSocket done";
+     qDebug() << "(ScanMapWorker) connectSocket done port " << port;
 }
 
 void ScanMapWorker::readTcpDataSlot(){

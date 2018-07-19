@@ -21,7 +21,7 @@ void LaserWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(Local Map Thread) connectSocket done";
+     qDebug() << "(Local Map Thread) connectSocket done";
 }
 
 void LaserWorker::stopWorker(){
