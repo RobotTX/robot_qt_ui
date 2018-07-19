@@ -714,7 +714,7 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
 //            mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7); /// format /home/....
             if (toto.indexOf(".mp3") != -1) {
                 #if defined(Q_OS_WIN)
-                    mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
+                    mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(10));
                 #endif
 
                 #if defined(Q_OS_LINUX)
