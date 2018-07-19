@@ -713,7 +713,15 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                     + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
 //            mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7); /// format /home/....
             if (toto.indexOf(".mp3") != -1) {
+                #if defined(Q_OS_WIN)
+                    mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
+                #endif
+
+                #if defined(Q_OS_LINUX)
+                    mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
+                #endif
 //                mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7) + "!@#$.mp3";
+
                 mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
             }
         }
