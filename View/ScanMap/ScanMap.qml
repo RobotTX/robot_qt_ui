@@ -183,7 +183,7 @@ Window {
             titleChange = "Do you wish to restart the scan ?";
             messageChange = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
             cancelChange = "Cancel";
-            okChange = "Ok";
+            okChange = "OK";
         }
 
         if(!dualChoiceMessageDialog.visible){

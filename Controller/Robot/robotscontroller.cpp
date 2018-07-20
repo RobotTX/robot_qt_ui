@@ -204,26 +204,45 @@ void RobotsController::shortcutDeleteRobot(void){
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
     if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
-//        // qDebug() << "cmd in robotscontroller = " << cmd;
+//         qDebug() << "cmd in robotscontroller = " << cmd;
     } else {
-        // qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
         return false;
     }
 
     return true;
 }
 
-bool RobotsController::sendMP3(const QString ip, const QString mp3Str, const bool isLastMp3File){
-    qDebug() << "fileName song = " << mp3Str;
-    if(robots.contains(ip)) {
-        robots.value(ip)->sendMP3(mp3Str, isLastMp3File);
-        qDebug() << "cmd in robotscontroller = " << mp3Str << ip;
-    } else {
-        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
-        return false;
-    }
+bool RobotsController::sendMP3(const QString ip, const QStringList mp3Str){
+//    qDebug() << "fileName song = " << mp3Str;
+//    if(robots.contains(ip)) {
+//        robots.value(ip)->sendMP3(mp3Str, isLastMp3File);
+////        qDebug() << "cmd in robotscontroller = " << mp3Str << ip;
+//    } else {
+//        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+//        return false;
+//    }
+    _ipRobot = ip;
+    _mp3Str = mp3Str;
 
     return true;
+}
+
+void RobotsController::startAudioTransfertSlot() {
+    qDebug() << "start audio transfert slot" << _ipRobot << _mp3Str;
+    if(robots.contains(_ipRobot)) {
+        for (int j = 0; j < _mp3Str.length(); j++) {
+            if (j == _mp3Str.length() - 1) {
+                robots.value(_ipRobot)->sendMP3(_mp3Str.at(j), true);
+            } else {
+                robots.value(_ipRobot)->sendMP3(_mp3Str.at(j), false);
+
+            }
+        }
+
+    } else {
+        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+    }
 }
 
 void RobotsController::newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori){
@@ -367,7 +386,7 @@ void RobotsController::sendTeleop(const QString ip, const int teleop){
 
 void RobotsController::sendMP3ToRobot(QString fileName, bool isLastMP3File) {
     QMapIterator<QString, QPointer<RobotController>> it(robots);
-    qDebug() << "RobotsController::sendMP3ToRobot fileName = " << fileName;
+    qDebug() << "---------- RobotsController::sendMP3ToRobot fileName = " << fileName;
     while(it.hasNext()){
         it.next();
         robots.value(it.key())->sendMP3(fileName, isLastMP3File);

@@ -681,7 +681,7 @@ Frame {
 
                     NormalButton {
                         id: addMP3
-                        txt: langue == "English" ? "加入已有语音" : "Load Audio"
+                        txt: langue == "English" ? "加载MP3文件" : "Load Audio File"
                         imgSrc: "qrc:/icons/add_mp3"
                         anchors {
                             left: parent.left

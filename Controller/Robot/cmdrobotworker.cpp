@@ -50,6 +50,7 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::writeTcpDataMP3Slot(QString path, bool isLastMP3File) {
+    qDebug() << "mp3Done = " << mp3Done;
     QVector<char> send_msg = readSoundFile(path);
     qDebug() << "audio size = " << send_msg.size() << endl;
     QByteArray byteArray;
@@ -86,15 +87,16 @@ void CmdRobotWorker::writeTcpDataMP3Slot(QString path, bool isLastMP3File) {
         qDebug() << "nbDataSend = " << nbDataSend;
 
         if(nbDataSend == -1)
-             qDebug() << "(MP3) An error occured while sending data" << ipAddress;
-        else
-             qDebug() << "(MP3) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
+            qDebug() << "(MP3) An error occured while sending data" << ipAddress;
+        else {
+            qDebug() << "(MP3) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
+        }
+        socket->waitForReadyRead(5000);
     } else {
         /// NOTE: what to do if the socket is closed ? can it happen ?
          qDebug() << "(MP3) Trying to write on a socket that is not created or connected yet" << ipAddress;
         Q_UNREACHABLE();
     }
-
 }
 
 QVector<char> CmdRobotWorker::readSoundFile(QString path){
@@ -103,7 +105,7 @@ QVector<char> CmdRobotWorker::readSoundFile(QString path){
     char * buffer;
 
     if(!sourcestr){
-        qDebug() <<"can not open "<< path << endl;
+        qDebug() <<"cannot open "<< path << endl;
         return {};
     }
 
@@ -145,12 +147,18 @@ void CmdRobotWorker::sendCommand(const QString cmd){
 
 void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
+    qDebug() << "++++++++++ commandAnswer = " << commandAnswer;
 
     /// if the command contains "Connected" it means the robot has just connected in which case
     /// we proceed a little differently (need to exchange home and path, modify settings page)
     if(commandAnswer.contains("Connected")) {
         emit newConnection(commandAnswer);
     } else {
+        if (commandAnswer.compare("done\u001Fmp3") == 0) {
+            qDebug() << "readTcpDataSlot contains mp3";
+//            emit mp3Sent();
+            mp3Done = true;
+        }
         emit cmdAnswer(commandAnswer);
     }
 }

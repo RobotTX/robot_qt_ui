@@ -673,7 +673,7 @@ void MainController::sendCommandTtsToRobot(QString ip, QString tts) {
 }
 
 void MainController::sendCommandNewPath(QString ip, QString groupName, QString pathName){
-//    // qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
+//     qDebug() << "\nWE ARE IN maincontroller.cpp for sendCommandNewPath";
     QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
     QString pathStr("");
     QStringList mp3Str;
@@ -698,7 +698,6 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                     + QChar(31) + QString::number(pathPointVector.at(i)->getSpeechTime());
         } else {
             QString toto = pathPointVector.at(i)->getSpeechContent();
-            qDebug() << "toto = " << toto;
             if (toto.indexOf(".mp3") != -1 || toto.indexOf(".wav") != -1) {
                 toto = "!@#$.mp3";
                 counterMP3File = counterMP3File + 1;
@@ -720,28 +719,28 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
                 #if defined(Q_OS_LINUX)
                     mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
                 #endif
-//                mp3Str += pathPointVector.at(i)->getSpeechContent().mid(7) + "!@#$.mp3";
-
-//                mp3Str.push_back(pathPointVector.at(i)->getSpeechContent().mid(7));
             }
         }
     }
 
-    QString cmd = QString("i") + QChar(31) + pathName + pathStr;
-    qDebug() << "cmd sendCommandNewPath = " << cmd << " mp3Str = " << mp3Str;
-    robotsController->sendCommand(ip, cmd);
-    qDebug() << "maincontroller sending MP3 with ip and mp3Str" << ip << mp3Str;
-    for (int j = 0; j < mp3Str.length(); j++) {
-        qDebug() << "mp3Str[" << j << "] = " << mp3Str.at(j);
-        if (j == mp3Str.length() - 1) {
-//            robotsController->sendMP3(ip, mp3Str.at(j), "!", "!", "!", "!");
-            robotsController->sendMP3(ip, mp3Str.at(j), true);
-        } else {
-            robotsController->sendMP3(ip, mp3Str.at(j), false);
-        }
+        qDebug() << " mp3Str = " << mp3Str;
 
-    }
+    QString cmd = QString("i") + QChar(31) + pathName + pathStr;
+    robotsController->sendCommand(ip, cmd); /// send path
+
+    robotsController->sendMP3(ip, mp3Str);
+
+//    for (int j = 0; j < mp3Str.length(); j++) {
+////        qDebug() << "mp3Str[" << j << "] = " << mp3Str.at(j);
+//        if (j == mp3Str.length() - 1) {
+//            robotsController->sendMP3(ip, mp3Str.at(j), true);
+//        } else {
+//            robotsController->sendMP3(ip, mp3Str.at(j), false);
+//        }
+//    }
 }
+
+
 
 void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
     //emit openScanWindowForAutomaticScan(ip);

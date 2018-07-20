@@ -111,7 +111,7 @@ Frame {
             height: 130
             topMarginLabel: langue === "English" ? 20 : 10;
             leftMarginLabel: langue === "English" ? 80 : 40;
-            title: langue == "English" ? "警告"  : "Warning"
+            title: langue == "English" ? "警告"  : "WARNING"
             message: langue == "English" ? "\你想关闭机器人 " + name + " 吗?" : "\nDo you want to power off robot " + name + " ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"

@@ -50,7 +50,7 @@ void SendNewMapWorker::readTcpDataSlot(){
 
 void SendNewMapWorker::writeTcpDataMP3Slot(QString fileName) {
     QVector<char> send_msg = readSoundFile(fileName);
-    qDebug() << "audio size = " << send_msg.size() << endl;
+//    qDebug() << "audio size = " << send_msg.size() << endl;
     QByteArray byteArray;
 //    qDebug() << "send size " << send_msg.size() << endl;
 
@@ -63,9 +63,9 @@ void SendNewMapWorker::writeTcpDataMP3Slot(QString fileName) {
 
     byteArray.append(toSend);
 
-    qDebug() << "byteArray.size() = " << byteArray.size();
+//    qDebug() << "byteArray.size() = " << byteArray.size();
 
-    qDebug() << "ipAdress = " << ipAddress;
+//    qDebug() << "Adress = " << ipAddress;
 
     if(socket && socket->isOpen()){
         int nbDataSend = socket->write(byteArray);
@@ -74,8 +74,6 @@ void SendNewMapWorker::writeTcpDataMP3Slot(QString fileName) {
 
         qDebug() << "ipAdress = " << ipAddress;
         qDebug() << "nbDataSend = " << nbDataSend;
-
-
 
         if(nbDataSend == -1)
              qDebug() << "(MP3) An error occured while sending data" << ipAddress;

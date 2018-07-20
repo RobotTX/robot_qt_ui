@@ -323,7 +323,7 @@ ApplicationWindow {
     function openWarningDialog(title, msg){
         warningDialog.title = title;
         warningDialog.message = msg;
-        warningDialog.acceptMessage = "Ok";
+        warningDialog.acceptMessage = "OK";
         warningDialog.open();
     }
 

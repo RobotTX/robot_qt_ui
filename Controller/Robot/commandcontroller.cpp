@@ -15,7 +15,7 @@ void CommandController::sendCommand(const QString cmd){
         emit sendCommandSignal(cmd);
 //        timer.start(15000);
     } else {
-//        // qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+         qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
 
@@ -30,6 +30,8 @@ void CommandController::sendMP3Command(const QString fileName, const bool isLast
 
 void CommandController::cmdAnswerSlot(QString answer){
     QList<QString> list = answer.split(QChar(31), QString::SkipEmptyParts);
+
+    qDebug() << "list" << list;
 
     if(list.size() > 1){
         if(list.at(0).compare("done") == 0){
@@ -78,7 +80,12 @@ void CommandController::cmdAnswerSlot(QString answer){
 //                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
                     emit updatePath(ip, QStringList(list));
                     emit updatePlayingPath(ip, false);
+
                     //start audio transfert
+                    qDebug() << "now we can proceed to send the audio file";
+                    emit startAudioTransfert();
+//                    qDebug() << "list" << list;
+
                 break;
                 case 'j':
                     /// Played the path of the robot

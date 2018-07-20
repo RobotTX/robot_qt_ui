@@ -79,6 +79,8 @@ signals:
      */
     void updatePath(QString ip, QStringList strList);
 
+    void startAudioTransfert();
+
     /**
      * @brief stoppedDeletedPath
      * @param ip

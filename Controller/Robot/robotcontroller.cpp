@@ -27,6 +27,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
     connect(commandController, SIGNAL(updateLinearVelocity(QString, double)), parent, SLOT(updateLinearVelocitySlot(QString, double)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
+    connect(commandController, SIGNAL(startAudioTransfert()), parent, SLOT(startAudioTransfertSlot()));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
 //    connect(commandController, SIGNAL(changeLanguage(QString)), parent, SLOT(changeLanguageSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
@@ -253,12 +254,12 @@ void RobotController::updateRobotInfoSlot(const QString robotInfo){
 }
 
 void RobotController::sendCommand(const QString cmd){
-    // qDebug() << "(RobotController) Send command called" << cmd;
+     qDebug() << "(RobotController) Send command called" << cmd;
     commandController->sendCommand(cmd);
 }
 
 void RobotController::sendMP3(const QString fileName, const bool isLastMP3File) {
-    qDebug() << "RobotController::sendMP3 fileName = " << fileName;
+//    qDebug() << "RobotController::sendMP3 fileName = " << fileName;
     commandController->sendMP3Command(fileName, isLastMP3File);
 
 }

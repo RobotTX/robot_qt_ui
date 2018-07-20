@@ -49,7 +49,7 @@ public:
      */
     bool sendCommand(const QString ip, const QString cmd);
 
-    bool sendMP3(const QString ip, const QString cmd, const bool isLastMp3File);
+    bool sendMP3(const QString ip, const QStringList mp3Str);
 
     /**
      * @brief sendNewMap
@@ -174,6 +174,8 @@ private slots:
 
     void updatePathSlot(const QString ip, const QStringList strList);
 
+    void startAudioTransfertSlot();
+
     void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
 
      void updateLinearVelocitySlot(QString ip, double linear);
@@ -241,6 +243,8 @@ private:
     QPointer<QTimer> sendMapTimer;
     QPointer<QTimer> requestMapTimer;
     QString langue;
+    QString _ipRobot;
+    QStringList _mp3Str;
 };
 
 #endif /// ROBOTSCONTROLLER_H

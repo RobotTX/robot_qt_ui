@@ -132,6 +132,7 @@ private :
     /// We need a QPointer because we can not initialize a QTimer in 1 thread then move the worker to another thread
     QPointer<QTimer> timer;
     int timeCounter;
+    bool mp3Done;
 };
 
 #endif /// CMDROBOTWORKER_H
