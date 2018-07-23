@@ -157,7 +157,7 @@ Frame {
         x: (mapMenuFrame.width - width) / 2
         y: (mapMenuFrame.height - height) / 2
         height: 60
-        title: langue == "English" ? "警告窗口" : "Warning dialog"
+        title: langue == "English" ? "警告窗口" : "WARNING"
         acceptMessage: langue == "English" ? "\n地图名称不能包含空格" : "\nSpace are not allowed"
     }
 

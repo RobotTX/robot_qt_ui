@@ -48,6 +48,10 @@ private slots:
      */
     void disconnectedSlot();
 
+    /**
+     * @brief readTcpDataSlot
+     * read the feedback from robot side (done, fail ...)
+     */
     void readTcpDataSlot(void);
 
     /**

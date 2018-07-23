@@ -39,6 +39,7 @@ private slots:
      */
     void writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map);
 
+    /// this function is not used at all - this function was for testing
     void writeTcpDataMP3Slot(QString fileName);
 
     /**

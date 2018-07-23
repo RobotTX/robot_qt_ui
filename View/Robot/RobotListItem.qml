@@ -28,6 +28,8 @@ Frame {
 
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal soundIncrease(string ip)
+    signal soundDecrease(string ip)
 
     height: 260 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
@@ -271,6 +273,37 @@ Frame {
             }
             robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
             consoleString = consoleWholeReverse.join('');
+        }
+    }
+
+    SmallButton {
+        id: decreaseSound
+        objectName: "decreaseSound"
+        imgSrc: "qrc:/icons/decrease10"
+        tooltip: "Decrease"
+
+        anchors {
+            top: muteButton.bottom
+            left: muteButton.left
+        }
+        onReleased:  {
+            console.log("decrease");
+            frame.soundDecrease(ip);
+        }
+    }
+
+    SmallButton {
+        id: increaseSound
+        objectName: "increaseSound"
+        imgSrc: "qrc:/icons/increase10"
+        tooltip: "Increase"
+        anchors {
+            top: muteButton.bottom
+            left: muteButton.right
+        }
+        onReleased:  {
+            console.log("increase");
+            frame.soundIncrease(ip);
         }
     }
 
@@ -561,10 +594,11 @@ Frame {
         value: battery / 100
 
         anchors {
-            top: nameLabel.bottom
+//            top: nameLabel.bottom
+            top: increaseSound.bottom
             left: parent.left
             right: parent.right
-            topMargin: 9
+//            topMargin: 9
             leftMargin: 20
             rightMargin: 20
         }
@@ -879,7 +913,7 @@ Frame {
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
         height: 60
-        title: "Warning dialog"
+        title: "WARNING"
     }
 
 

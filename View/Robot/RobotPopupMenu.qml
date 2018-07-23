@@ -37,53 +37,6 @@ Menu {
     }
 
     PopupMenuItem {
-        id: assignHome
-        height: Style.menuItemHeight
-        width: parent.width
-        labelText: langue == "English" ? "设置充电站" : "Assign Home"
-        leftPadding: Style.menuItemLeftPadding
-
-        Image {
-            asynchronous: true
-            source: "qrc:/icons/arrow"
-            fillMode: Image.Pad // For not stretching image
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 12
-        }
-        onHoveredChanged: if(visible) {
-                            pointListInPopup.open();
-                            currentMenuIndex = 0;
-                          }/// desktop
-
-        onTriggered: {
-            doNothing();
-        }
-//        onClicked: if(visible) currentMenuIndex = 0 /// android
-
-        PointListInPopup {
-            id: pointListInPopup
-            x: assignHome.width
-            visible: robotMenu.currentMenuIndex === 0
-            pointModel: robotMenu.pointModel
-            homeOnly: true
-            menuIndex: robotMenu.currentMenuIndex
-            onPointSelected: {
-                robotMenu.pointSelected(posX, posY, orientation)
-                currentMenuIndex = -1;
-                robotMenu.currentMenuIndex = -1;
-                robotMenu.close();
-            }
-        }
-    }
-
-    Rectangle {
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 1
-    }
-
-    PopupMenuItem {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
@@ -141,12 +94,61 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前充电站" : "Save My Home"
+        labelText: langue == "English" ? "保存当前路径" : "Save My Path"
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 2
-//        onClicked: if(visible) currentMenuIndex = 2
-        onTriggered: robotMenu.saveCurrentHome()
+        onHoveredChanged: if(visible) currentMenuIndex = 3
+//        onClicked: if(visible) currentMenuIndex = 3
+        onTriggered: {
+            robotMenu.saveCurrentPath();
+        }
+    }
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
+    PopupMenuItem {
+        id: assignHome
+        height: Style.menuItemHeight
+        width: parent.width
+        labelText: langue == "English" ? "设置充电站" : "Assign Home"
+        leftPadding: Style.menuItemLeftPadding
+
+        Image {
+            asynchronous: true
+            source: "qrc:/icons/arrow"
+            fillMode: Image.Pad // For not stretching image
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+        }
+        onHoveredChanged: if(visible) {
+                            pointListInPopup.open();
+                            currentMenuIndex = 0;
+                          }/// desktop
+
+        onTriggered: {
+            doNothing();
+        }
+//        onClicked: if(visible) currentMenuIndex = 0 /// android
+
+        PointListInPopup {
+            id: pointListInPopup
+            x: assignHome.width
+            visible: robotMenu.currentMenuIndex === 0
+            pointModel: robotMenu.pointModel
+            homeOnly: true
+            menuIndex: robotMenu.currentMenuIndex
+            onPointSelected: {
+                robotMenu.pointSelected(posX, posY, orientation)
+                currentMenuIndex = -1;
+                robotMenu.currentMenuIndex = -1;
+                robotMenu.close();
+            }
+        }
     }
 
     Rectangle {
@@ -158,14 +160,12 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前路径" : "Save My Path"
+        labelText: langue == "English" ? "保存当前充电站" : "Save My Home"
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 3
-//        onClicked: if(visible) currentMenuIndex = 3
-        onTriggered: {
-            robotMenu.saveCurrentPath();
-        }
+        onHoveredChanged: if(visible) currentMenuIndex = 2
+//        onClicked: if(visible) currentMenuIndex = 2
+        onTriggered: robotMenu.saveCurrentHome()
     }
 
     Rectangle {

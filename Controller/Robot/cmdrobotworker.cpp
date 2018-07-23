@@ -154,7 +154,7 @@ void CmdRobotWorker::readTcpDataSlot(){
     if(commandAnswer.contains("Connected")) {
         emit newConnection(commandAnswer);
     } else {
-        if (commandAnswer.compare("done\u001Fmp3") == 0) {
+        if (commandAnswer.compare("done.mp3") == 0) {
             qDebug() << "readTcpDataSlot contains mp3";
 //            emit mp3Sent();
             mp3Done = true;

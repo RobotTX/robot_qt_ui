@@ -260,6 +260,7 @@ Frame {
             y: addSavedPoint.y
             menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
+                console.log("name pointListInPopup = " + name);
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
@@ -447,18 +448,17 @@ Frame {
                         }
                     }
 
-
-
                     TextField {
                         id: waitTextField
                         selectByMouse: true
                         text: waitTime
                         height: 20
-                        width: 40
+                        width: 45
                         padding: 2
+                        font.pointSize: 10
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 999;}
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: waitFor.right
                             verticalCenter: waitFor.verticalCenter
@@ -567,7 +567,7 @@ Frame {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: TextInput.AlignRight
                         placeholderText: "0"
-
+                        font.pointSize: 10
                         text: orientation
                         Component.onCompleted: slider.value = orientation
 
@@ -780,11 +780,12 @@ Frame {
                         selectByMouse: true
                         text: speechTime
                         height: 20
-                        width: 40
+                        width: 45
+                        font.pointSize: 10
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 999;}
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: speechTimeLabel.right
                             verticalCenter: speechTimeLabel.verticalCenter
@@ -988,6 +989,7 @@ Frame {
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
+                    console.log("tmpPathModel.name = " + tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name);
                     createPathPoint(groupComboBox.displayText,
                                     newName,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,

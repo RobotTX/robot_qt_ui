@@ -164,6 +164,9 @@ private slots:
 
     void soundOn(QString ip);
     void soundOff(QString ip);
+
+    void soundIncrease(QString ip);
+    void soundDecrease(QString ip);
     /**
      * @brief updateRobotInfoSlot
      * @param ip

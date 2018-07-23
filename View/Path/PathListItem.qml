@@ -283,7 +283,10 @@ Column {
 
                     /// The item displaying the name of the path/group
                     CustomLabel {
-                        text: qsTr(name)
+                        text: {
+                            console.log("name = " + name)
+                            qsTr(name)
+                        }
                         font.pixelSize: 14
                         color: Style.midGrey2
                         anchors.verticalCenter: parent.verticalCenter

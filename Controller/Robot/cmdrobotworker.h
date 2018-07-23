@@ -90,8 +90,20 @@ private slots:
      */
     void sendCommand(const QString cmd);
 
+    /**
+     * @brief writeTcpDataMP3Slot
+     * @param path
+     * @param isLastMP3File
+     * Slot called when we sent an audio file to the robot
+     */
     void writeTcpDataMP3Slot(const QString path, bool isLastMP3File);
 
+    /**
+     * @brief readSoundFile
+     * @param path
+     * @return
+     * Conversion of an audio file into a qvector char
+     */
     QVector<char> readSoundFile(QString path);
 
     /**

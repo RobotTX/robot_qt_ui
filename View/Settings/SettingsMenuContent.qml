@@ -1074,7 +1074,7 @@ Frame {
             bottomMarginLabel: langue === "English" ? 20 : 10;
             leftMarginLabel: langue === "English" ? 120 : 40;
             rightMarginLabel: langue === "English" ? 120 : 40
-            title: langue == "English" ? "警告"  : "Warning"
+            title: langue == "English" ? "警告"  : "WARNING"
             message: langue == "English" ? "\n你想退出应用程序吗？" : "\nDo you want to exit the application ?"
             acceptMessage: langue == "English" ? "确认" : "Yes"
             rejectMessage: langue == "English" ? "取消" : "Cancel"
@@ -1111,7 +1111,7 @@ Frame {
             bottomMarginLabel: langue === "English" ? 20 : 10;
             leftMarginLabel: langue === "English" ? 80 : 20;
             rightMarginLabel: langue === "English" ? 80 : 20;
-            title: langue == "English" ? "警告"  : "Warning"
+            title: langue == "English" ? "警告"  : "WARNING"
             message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot or fill the WiFi name"
             acceptMessage: langue == "English" ? "是" : "OK"
         }
@@ -1126,7 +1126,7 @@ Frame {
             bottomMarginLabel: langue === "English" ? 20 : 10;
             leftMarginLabel: langue === "English" ? 80 : 100;
             rightMarginLabel: langue === "English" ? 80 : 100
-            title: langue == "English" ? "警告"  : "Warning";
+            title: langue == "English" ? "警告"  : "WARNING";
             message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot"
             acceptMessage: langue == "English" ? "是" : "OK"
 

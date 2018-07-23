@@ -127,8 +127,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateLaser(ip, true);
                 break;
                 case 'r':
-                    /// Stopped the laser of the robot
-                    emit updateLaser(ip, false);
+                    /// Increase or decrease sound level
+
                 break;
                 case 's':
                     /// Received the map from the robot
