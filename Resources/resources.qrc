@@ -28,6 +28,8 @@
         <file alias="restart">icons/restart.png</file>
         <file alias="muteOn">icons/muteBtnOn.png</file>
         <file alias="muteOff">icons/muteBtnOff.png</file>
+        <file alias="increaseBtn">icons/Btn_Increase_10.png</file>
+        <file alias="decreaseBtn">icons/Btn_Decrease_10.png</file>
         <file alias="battery">icons/battery.png</file>
 
         <file alias="speed_linear">icons/Speed_linear.png</file>

@@ -31,7 +31,7 @@ Page {
 
     MenuHeader {
         id: robotMenuHeader
-        txt: langue == "English" ? "机器人" : "Robot"
+        txt: langue == "English" ? "Robot" : "机器人"
         langue: page.langue
         onCloseMenu: page.closeMenu()
     }

@@ -33,7 +33,7 @@ Frame {
     EmptyMenu {
         /// Only the invisible "Default left and it's empty
         visible: (pointModel.count === 1 && pointModel.get(0).points.count === 0) || pointModel.count === 0
-        txt: langue == "English" ? "没有任何目标点.\n请点击 + 按钮或者双击地图，创建目标点" : "No point created.\nPlease click + button or double click the map to create a point."
+        txt: langue == "English" ? "No point created.\n Please click + buton or double click the map to create a point." : "没有任何目标点.\n请点击 + 按钮或者双击地图，创建目标点"
         imgSrc: "qrc:/icons/big_point"
 
     }
@@ -79,7 +79,7 @@ Frame {
 
         Column {
             id: columnId
-            property string selectedGroup: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+            property string selectedGroup: langue == "English" ? Helper.noGroup : Helper.noGroupChinese
             property string selectedPoint: (pointModel.count > 0) ? pointModel.get(0).points.count > 0 ? pointModel.get(0).points.get(0).name : "" : ""
             /// The list containing both the graphical and model of the points in the menu
             Repeater {

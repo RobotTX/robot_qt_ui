@@ -32,7 +32,7 @@ Menu {
 
     PopupMenuItem {
         id: assignPointTo
-        labelText: langue == "English" ? "发送目标点给" : "Send Point To"
+        labelText: langue == "English" ? "Send Point To" : "发送目标点给"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -80,7 +80,7 @@ Menu {
 
     PopupMenuItem {
         labelText: { namePoint = name
-            langue == "English" ? "修改目标点" : "Edit Point"
+            langue == "English" ? "Edit Point" : "修改目标点"
         }
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
@@ -98,7 +98,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "隐藏目标点" : "Hide point"
+        labelText: langue == "English" ? "Hide Point" : "隐藏目标点"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -113,7 +113,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "删除目标点" : "Delete Point"
+        labelText: langue == "English" ? "Delete Point" : "删除目标点"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

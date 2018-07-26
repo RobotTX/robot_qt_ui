@@ -95,7 +95,7 @@ ApplicationWindow {
                 text: loginBtn.text
                 font: loginBtn.font
                 verticalAlignment: Text.AlignVCenter
-                color: "Grey"
+                color: Style.loginBlue
             }
 
             width: 50

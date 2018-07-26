@@ -6,7 +6,7 @@ Button {
 
     id: btn
     property string langue
-    property string txt: langue == "English" ? "取消" : "Cancel"
+    property string txt: langue == "English" ? "Cancel" : "取消"
     height: 23
 
     CustomLabel {

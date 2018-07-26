@@ -37,7 +37,7 @@ Menu {
         id: assignPathBis
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "发送路径给" :"Send Path To"
+        labelText: langue == "English" ? "Send Path To" :"发送路径给"
         leftPadding: Style.menuItemLeftPadding
         visible: true
         enabled: true
@@ -84,7 +84,7 @@ Menu {
 
     // first item
     PopupMenuItem {
-        labelText: langue == "English" ? "修改路径" : "Edit Path"
+        labelText: langue == "English" ? "Edit Path" : "修改路径"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -102,7 +102,7 @@ Menu {
     // third item
     PopupMenuItem {
         id: moveToMenu
-        labelText: langue == "English" ? "移动到" : "Move To Group"
+        labelText: langue == "English" ? "Move To Group" : "移动到"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -138,7 +138,7 @@ Menu {
 
             PopupMenuItem {
                 height: Style.menuItemHeight
-                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                labelText: langue == "English" ? Helper.noGroup : Helper.noGroupChinese
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
                 /// Disable the group in which the path already is so we can't move it in
@@ -187,7 +187,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "删除路径" : "Delete Path"
+        labelText: langue == "English" ? "Delete Path" : "删除路径"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

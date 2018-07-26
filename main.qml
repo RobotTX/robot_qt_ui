@@ -55,7 +55,7 @@ ApplicationWindow {
     }
 
 
-    title:langue == "English" ? qsTr("小Go去哪儿") : qsTr("Mobot Studio")
+    title:langue == "English" ? qsTr("Mobot Studio") : qsTr("小Go去哪儿")
 
     onClosing: {
         scanMap.close();
@@ -297,18 +297,18 @@ ApplicationWindow {
             console.log("We are already choosing a map for the robot, try again later");
         } else {
             if (langue == "English") {
-                title_ = "选择使用哪一个地图"
-                message1 = "机器人 " + _robotModel.getName(ip) +  " 有一个旧地图"
-                message2 = "机器人 " + _robotModel.getName(ip) + " 有一个新地图"
-                rejectMessage_ = "机器人"
-                acceptMessage_ = "应用"
-            } else {
                 title_ = "Choose which map to use"
                 message1 = "The robot " +  _robotModel.getName(ip) + " has an old map"
                 message2 = "The robot " +  _robotModel.getName(ip) + " has a new map.\n\n\tWhich map do you want to use ?"
                 rejectMessage_ = "Robot"
                 acceptMessage_ = "Application"
-            }
+             } else {
+                title_ = "选择使用哪一个地图"
+                message1 = "机器人 " + _robotModel.getName(ip) +  " 有一个旧地图"
+                message2 = "机器人 " + _robotModel.getName(ip) + " 有一个新地图"
+                rejectMessage_ = "机器人"
+                acceptMessage_ = "应用"
+             }
 
 
             dialog.title = title_;
@@ -330,9 +330,9 @@ ApplicationWindow {
     function emitMapConfig(file_name){
         var message = ''
         if (langue == "English") {
-            message = "保存地图到 \"" + file_name + "\""
+           message = "Saved the map to \"" + file_name + "\""
         } else {
-            message = "Saved the map to \"" + file_name + "\""
+             message = "保存地图到 \"" + file_name + "\""
         }
 
 //        console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);

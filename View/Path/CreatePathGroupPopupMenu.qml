@@ -18,7 +18,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "创建路径" : "New Path"
+        labelText: langue == "English" ? "New Path" : "创建路径"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -32,7 +32,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "创建组" : "New Group"
+        labelText: langue == "English" ? "New Group" : "创建组"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

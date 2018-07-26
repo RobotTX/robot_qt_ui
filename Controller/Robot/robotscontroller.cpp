@@ -106,6 +106,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(stopDockingRobot(QString)), this, SLOT(stopDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
         connect(robotMenuFrame, SIGNAL(soundOn(QString)), this, SLOT(soundOn(QString)));
+        connect(robotMenuFrame, SIGNAL(decreaseSound(QString)), this, SLOT(decreaseSound(QString)));
+        connect(robotMenuFrame, SIGNAL(increaseSound(QString)),this, SLOT(increaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
         connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
     } else {
@@ -408,7 +410,12 @@ void RobotsController::soundOn(QString ip) {
 //    // qDebug() << "\nWE ARE IN RobotsController::soundOn()";
     sendCommand(ip, QString("w"));
 }
-
+void RobotsController::decreaseSound(QString ip){
+    sendCommand(ip, QString("r") + QChar(31) + QString("0"));
+}
+void RobotsController::increaseSound(QString ip){
+     sendCommand(ip, QString("r") + QChar(31) + QString("1"));
+}
 void RobotsController::soundOff(QString ip) {
 //    // qDebug() << "\nWE ARE IN RobotsController::soundOff()";
     sendCommand(ip, QString("x"));

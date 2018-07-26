@@ -527,9 +527,9 @@ void MainController::loadMapConfig(QString fileName) {
                                                  mapController->getMapImage());
             QString message = "";
             if (langue == "English") {
-                message = "Loaded the map chinese: ";
-            } else {
                 message = "Loaded the map: ";
+            } else {
+                message = "Loaded the map chinese: ";
             }
 //            setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
             setMessageTopSlot(2, message + mapFileInfo.fileName());
@@ -556,9 +556,9 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold, int la
     }
     QString message = "";
     if (langue == "English") {
-        message = "Settings save chinese";
-    } else {
         message = "Settings save";
+    } else {
+        message = "Settings save chinese";
     }
 //    setMessageTopSlot(2, "Settings saved");
     setMessageTopSlot(2, message);

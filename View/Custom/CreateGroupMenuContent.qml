@@ -40,7 +40,7 @@ Frame {
 
     Label {
         id: groupLabel
-        text: langue == "English" ? qsTr("组名称") : qsTr("Group Name")
+        text: langue == "English" ? qsTr("Group Name") : qsTr("组名称")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -52,7 +52,7 @@ Frame {
     TextField {
         id: groupTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("输入组名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("Enter name") : qsTr("输入组名称")
         verticalAlignment: TextInput.AlignVCenter
         anchors {
             left: parent.left
@@ -118,11 +118,11 @@ Frame {
             var creationGroup = "";
             var renameGroupLabel = "";
             if (langue === "English") {
-                creationGroup = "已创建分组";
-                renameGroupLabel = "已重命名分组 \"" +  oldName + "\" 为 " + "\"" + newName + "\"";
-            } else {
                 creationGroup = "Created the group \"";
                 renameGroupLabel = "Renamed the group \"" + oldName + "\" to \"" + newName + "\"";
+            } else {
+                creationGroup = "已创建分组";
+                renameGroupLabel = "已重命名分组 \"" +  oldName + "\" 为 " + "\"" + newName + "\"";
             }
 
             if(oldName === ""){
@@ -141,11 +141,11 @@ Frame {
         var msg1 = "";
         var msg2 = "";
         if (langue === "English") {
-            msg1 = "组名称不可以为空";
-            msg2 = "\"" + groupTextField.text + "\" 已经被占用";
-        } else {
             msg1 = "The name of the group cannot be empty";
             msg2 = "\"" + groupTextField.text + "\" is already taken";
+        } else {
+            msg1 = "组名称不可以为空";
+            msg2 = "\"" + groupTextField.text + "\" 已经被占用";
         }
 
         errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? msg1 : msg2;

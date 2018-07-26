@@ -36,7 +36,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: langue == "English" ? qsTr("创建组") : qsTr("New Group")
+        text: langue == "English" ? qsTr("New Group") : qsTr("创建组")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

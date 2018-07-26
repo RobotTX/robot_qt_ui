@@ -72,7 +72,7 @@ Page {
             id: createPointMenuHeader
             onBackToMenu: menuIndex = 0;
             langue: page.langue
-            txt: langue == "English" ? "语音" : "Speech"
+            txt: langue == "English" ? "Speech" : "语音"
         }
 
         CreateSpeechMenuContent {

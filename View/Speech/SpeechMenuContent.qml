@@ -30,7 +30,7 @@ Frame {
     EmptyMenu {
         /// Only the invisible "Default" left and it's empty
         visible: (speechModel.count === 1 && speechModel.get(0).speechs.count === 0) || speechModel.count === 0
-        txt: langue == "English" ? "没有任何语音文本.\n请点击 + 按钮，创建语音文本" : "No speech created.\nPlease click + button to create a speech."
+        txt: langue == "English" ? "No speech created.\nPlease click + button to create a speech.": "没有任何语音文本.\n请点击 + 按钮，创建语音文本"
         imgSrc: "qrc:/icons/big_speech"
 
     }
@@ -57,7 +57,7 @@ Frame {
 
         Column {
             id: columnId
-            property string selectedGroup: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+            property string selectedGroup: langue == "English" ? Helper.noGroup : Helper.noGroupChinese
             property string selectedSpeech: (speechModel.count > 0) ? speechModel.get(0).speechs.count > 0 ? speechModel.get(0).speechs.get(0).name : "" : ""
             /// The list containing both the graphical and model of the speechs in the menu
             Repeater {

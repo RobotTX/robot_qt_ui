@@ -146,9 +146,9 @@ Column {
                     id: rightOpenSpeech
                     imgSrc: descriptionIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (descriptionIsOpen) {
-                               langue == "English" ? "隐藏语音细节" : "Hide speech detail"
+                               langue == "English" ? "Hide Speech Detail" : "隐藏语音细节"
                                 } else {
-                               langue == "English" ? "查看语音细节" : "Show speech detail"
+                               langue == "English" ? "Show Speech Detail" : "查看语音细节"
                             }
                     }
                     anchors {
@@ -239,7 +239,7 @@ Column {
                 }
 
                 CustomLabel {
-                    text:langue == "English" ? "正文： " +tts :"text: " + tts
+                    text:langue == "English" ? "text " +tts :"正文：: " + tts
                     height: 15
                     font.pixelSize: 14
                     wrapMode: Label.WordWrap

@@ -10,9 +10,14 @@ Frame {
 
     readonly property string txt: "Path"
     property string langue
+    property bool test1 : false
     signal closeMenu(string txt)
     signal openCreatePathMenu()
     signal openCreateGroupMenu()
+
+        QtObject{
+            property bool test : false;
+        }
 
     height: Style.menuHeaderHeight
     anchors {
@@ -39,7 +44,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: langue === "English" ? "管理 路径" : qsTr("Manage " + txt)
+        text: langue === "English" ? qsTr("Manage " + txt) : "管理 路径"
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11
@@ -74,8 +79,7 @@ Frame {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
-        onClicked: createMenu.open()
-
+        onClicked: createMenu.open();
         CreatePathGroupPopupMenu {
             id: createMenu
             x: createButton.width

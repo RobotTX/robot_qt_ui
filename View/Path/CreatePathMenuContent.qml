@@ -15,10 +15,14 @@ Frame {
     objectName: "createPathMenuFrame"
     property string oldName // when editing
     property string oldGroup // when editing
+   // property bool test1 : true
     property string errorMsg
+//    property string hello1234 : "P1"
+//    property string codingProblem : "P1"
     property string robotPathName // when creating a new path from robot
     property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
+    property bool testinghello   : true
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
@@ -49,9 +53,9 @@ Frame {
             robotPathName = "";
             var displayTextChange = "";
             if (langue == "English") {
-                displayTextChange = Helper.noGroupChinese;
-            } else {
                 displayTextChange = Helper.noGroup;
+            } else {
+                displayTextChange = Helper.noGroupChinese;
             }
 
 //            if (robotPathPoints)
@@ -144,7 +148,7 @@ Frame {
 
         Label {
             id: pathLabel
-            text: langue == "English" ? "路径名称" : qsTr("Path Name")
+            text: langue == "English" ? "Path Name" : qsTr("路径名称")
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -159,8 +163,9 @@ Frame {
         TextField {
             id: pathTextField
             selectByMouse: true
-            placeholderText: langue == "English" ? "输入路径名称" : qsTr("Enter name")
+            placeholderText: langue == "English" ? "Enter Name" : qsTr("输入路径名称")
             verticalAlignment: TextInput.AlignVCenter
+            activeFocusOnPress: true
             anchors {
                 left: parent.left
                 top: pathLabel.bottom
@@ -186,7 +191,7 @@ Frame {
 
         Label {
             id: groupLabel
-            text: langue == "English" ? "选择分组" : qsTr("Choose Group")
+            text: langue == "English" ? "Choose Group" : qsTr("选择分组")
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -206,7 +211,7 @@ Frame {
                 if (oldname) {
                     oldGroup
                 } else {
-                    langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                    langue == "English" ? Helper.noGroup : Helper.noGroupChinese
                 }
             }
             anchors {
@@ -221,14 +226,14 @@ Frame {
 
         Label {
             id: pathPointsLabel
-            text: langue == "English" ? qsTr("路径目标点") : qsTr("Path Points")
+            text: langue == "English" ? qsTr("Path Points") : qsTr("路径目标点")
             font.pointSize: 12
             color: Style.midGrey2
             anchors {
                 left: parent.left
                 top: groupComboBox.bottom
                 right: parent.right
-                topMargin: langue == "English" ? 13 : 20
+                topMargin: langue == "English" ? 20 : 13
                 leftMargin: 20
                 rightMargin: 20
             }
@@ -236,7 +241,7 @@ Frame {
 
         NormalButton {
             id: addSavedPoint
-            txt: langue == "English" ? "加入已有目标点" : "Add Saved Point"
+            txt: langue == "English" ? "Add Saved Point" : "加入已有目标点"
             sizeTxt: "11"
             imgSrc: "qrc:/icons/point_checked_2525"
             anchors {
@@ -245,8 +250,13 @@ Frame {
                 right: parent.right
                 topMargin: 0
             }
+
             onClicked: {
-                pointList.open()
+
+                    pointList.open()
+
+
+
             }
         }
 
@@ -375,11 +385,25 @@ Frame {
                         height: 20
                     }
 
+
                     TextField {
+
                         property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
-                        text: name === nameCoordinates ? "P"+(index+1) : name
+                        text: {
+                            if (name === nameCoordinates) {
+                                pointModel.hello1234 = "P"+(index+1);
 
+                                qsTr("P"+(index+1));
+                            } else {
+                                pointModel.hello1234 = name;
+
+                                qsTr(name);
+                            }
+
+//                            name === nameCoordinates ?  "P"+(index+1)  :  name
+                        }
+                        //validator: RegExpValidator { regExp:  /^(?:[0-9]+[a-z]|[a-z]+[0-9])[a-z0-9]*$/i }
                         selectByMouse: true
                         color: "#262626"
                         padding: 2
@@ -390,13 +414,34 @@ Frame {
                             leftMargin: 6
                         }
 //                        height: langue === "English" ? 28 : 20
-                        verticalAlignment: TextInput.AlignVCenter
+                        verticalAlignment:
+                            TextInput.AlignVCenter
                         background: Rectangle {
                             radius: 2
                             border.color: nameId.activeFocus ? Style.lightBlue : Style.lightGreyBorder
                             border.width: nameId.activeFocus ? 3 : 1
                         }
-                        onTextChanged: name = text
+                        //Overhere create function that sends false if name == empty
+                        onTextChanged:
+                        {
+
+                            name = text
+                            pointModel.codingProblem = name
+                            //hello1234 = ""
+                            console.log("Why never change " + name)
+                            if(name === "")
+                            {
+                                testinghello = false
+                               //codingProblem = ""
+                                console.log("New text = " + pointModel.codingProblem)
+                            }
+
+
+                            enableSave();
+                            //CreatePathMenuContent.test1 = true;
+                        }
+                                               //onSelectByMouseChanged: hello1234 = name
+
                     }
 
                     SmallButton {
@@ -415,7 +460,7 @@ Frame {
 
                     RoundCheckBox {
                         id: humanAction
-                        text: langue == "English" ? qsTr("人为干预") : qsTr("Human Action")
+                        text: langue == "English" ? qsTr("Human Action") : qsTr("人为干预")
                         checked: waitTime < 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -430,7 +475,7 @@ Frame {
 
                     RoundCheckBox {
                         id: waitFor
-                        text: langue == "English" ? qsTr("等待") : qsTr("Wait for")
+                        text: langue == "English" ? qsTr("Wait for") : qsTr("等待")
                         checked: waitTime >= 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -455,7 +500,7 @@ Frame {
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 999;}
+                        validator: IntValidator{bottom: 0; top: 20;}
                         anchors {
                             left: waitFor.right
                             verticalCenter: waitFor.verticalCenter
@@ -521,7 +566,7 @@ Frame {
 
                     Label {
                         id: minText
-                        text: langue == "English" ? "秒" : "sec(s)"
+                        text: langue == "English" ? "sec(s)" : "秒"
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -535,7 +580,7 @@ Frame {
 
                     Label {
                         id: oriLabel
-                        text: langue == "English" ? qsTr("方向") : qsTr("Orientation")
+                        text: langue == "English" ? qsTr("Orientation") : qsTr("方向")
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -653,7 +698,7 @@ Frame {
 
                     NormalButton {
                         id: addSpeech
-                        txt: langue == "English" ? "加入已有语音" : "Add Speech"
+                        txt: langue == "English" ? "Add Speech" : "加入已有语音"
                         imgSrc: "qrc:/icons/add_speech"
                         anchors {
                             left: parent.left
@@ -679,7 +724,7 @@ Frame {
                     Label {
                         id: speechLabel
                         visible: speechName !== ""
-                        text: langue == "English" ? "名称 : " : "Name : "
+                        text: langue == "English" ? "Name : " : "名称 : "
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -721,7 +766,7 @@ Frame {
                     Label {
                         id: speechTimeLabel
                         visible: speechName !== ""
-                        text: langue == "English" ? "等待" : "Wait for"
+                        text: langue == "English" ? "Wait for" : "等待"
                         anchors {
                             top: speechLabel.bottom
                             left: speechLabel.left
@@ -739,7 +784,7 @@ Frame {
                         width: 40
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
-
+                        // change back
                         validator: IntValidator{bottom: 0; top: 999;}
                         anchors {
                             left: speechTimeLabel.right
@@ -808,7 +853,7 @@ Frame {
                     Label {
                         id: secText
                         visible: speechName !== ""
-                        text: langue == "English" ? "秒" : "sec(s)"
+                        text: langue == "English" ? "sec(s)" : "秒"
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -936,10 +981,10 @@ Frame {
                 var mess1 = ''
                 var mess2 = ''
                 if (langue == "English") {
-                    mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\""
+                    mess1 = "Created the path \"" + newName + "\" in \"" + groupName + "\""
 //                    mess2 = "编辑路径 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
                 } else {
-                    mess1 = "Created the path \"" + newName + "\" in \"" + groupName + "\""
+                     mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\""
 //                    mess2 = "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
                 }
 
@@ -972,9 +1017,9 @@ Frame {
         var error = (newName === "");
         var mess1 = ''
         if (langue == "English") {
-            mess1 = "路径名不能为空"
-        } else {
             mess1 = "The path name cannot be empty"
+        } else {
+            mess1 = "路径名不能为空"
         }
 
         if(error)
@@ -982,10 +1027,11 @@ Frame {
 
         if(newName !== "" && newName !== oldName) {
             var mess2 = ''
+
             if (langue == "English") {
-                mess2 = "路径名" + newName + "已经被使用"
-            } else {
                 mess2  ="The path name \"" + newName + "\" is already taken"
+            } else {
+                mess2 = "路径名" + newName + "已经被使用"
             }
 
         // This is available in all editors.
@@ -999,11 +1045,12 @@ Frame {
         }
         nameError = error;
 
+
         var mess3 = ''
         if (langue == "English") {
-            mess3 = "至少需要一个目标点来创建路径"
-        } else {
             mess3 = "You need at least 1 point to create a path"
+        } else {
+            mess3 = "至少需要一个目标点来创建路径"
         }
 
         if(tmpPathModel.get(0).paths.get(0).pathPoints.count < 1){
@@ -1015,16 +1062,52 @@ Frame {
         for(var k = 0; k < tmpPathModel.get(0).paths.get(0).pathPoints.count; k++){
             if(!tmpPathModel.get(0).paths.get(0).pathPoints.get(k).validPos){
                 if (langue == "English") {
-                    mess3 =  "目标点 " + (k+1) + " 在错误的位置，机器人无法去到那里"
+                    mess4 =  "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there"
                 } else {
-                    mess3 =  "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there"
+                    mess4 =  "目标点 " + (k+1) + " 在错误的位置，机器人无法去到那里"
                 }
-                errorMsg += (errorMsg !== "" ? "\n" : "") + mess3;
+                errorMsg += (errorMsg !== "" ? "\n" : "") + mess4;
                 error = true;
             }
         }
 
+
+
+
+        // take here out if boolean == false, then save == false
+        if(testinghello == false){
+            error = true;
+            //testinghello = true
+        }
+
+        /*
+        var checkName = pointModel.hello1234;
+        var checkName1 = pointModel.codingProblem;
+        console.log("checkName = " + checkName);
+        console.log("checkName1 = " + checkName1);
+        var mess5 = ''
+       var error1 = ((checkName === "" && checkName1 === "") || checkName1 === "");
+        //var error1 = (checkName === "")
+        console.log("error 1 = " + error1);
+            if (langue == "English") {
+                mess5 = "The path point name cannot be empty"
+            } else {
+               mess5 = "路径名不能为空"
+            }
+            if(error1) {
+                console.log("error 1 is true");
+                //CreatePathMenuContent.test1 = false;
+               errorMsg = mess5
+               error = true
+            }
+ */
         setMessageTop(1, errorMsg);
+        console.log("testingHello = " + testinghello);
+        console.log("!error = " + !error);
         saveButton.canSave = !error;
+
+
+
     }
+
 }

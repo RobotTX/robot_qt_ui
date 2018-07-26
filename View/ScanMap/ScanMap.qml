@@ -175,15 +175,16 @@ Window {
         var cancelChange = "";
         var okChange = "";
         if (langue == "English") {
-            titleChange = "是否要重启扫描 ?";
-            messageChange = "机器人已经重启，是否重启扫描（之前的扫描将被移除）?";
-            cancelChange = "取消";
-            okChange = "是";
+          titleChange = "Do you wish to restart the scan ?";
+          messageChange = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
+          cancelChange = "Cancel";
+          okChange = "Ok";
         } else {
-            titleChange = "Do you wish to restart the scan ?";
-            messageChange = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
-            cancelChange = "Cancel";
-            okChange = "Ok";
+         titleChange = "是否要重启扫描 ?";
+         messageChange = "机器人已经重启，是否重启扫描（之前的扫描将被移除）?";
+         cancelChange = "取消";
+         okChange = "是";
+
         }
 
         if(!dualChoiceMessageDialog.visible){

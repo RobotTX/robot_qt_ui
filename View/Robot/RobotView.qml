@@ -20,6 +20,8 @@ Image {
 
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal decreaseSound(string ip)
+    signal increaseSound(string ip)
 
     transform: Rotation {
         origin.x: width / 2

@@ -117,7 +117,7 @@ Frame {
     /// Zoom in button
     SmallButton {
         id: zoomInButton
-        tooltip: langue == "English" ? "地图放大" : "Zoom in"
+        tooltip: langue == "English" ? "Zoom in" : "地图放大"
         imgSrc: "qrc:/icons/zoomIn"
         anchors {
             top: parent.top
@@ -132,7 +132,7 @@ Frame {
     /// Zoom out button
     SmallButton {
         id: zoomOutButton
-        tooltip: langue == "English" ? "地图缩小" : "Zoom out"
+        tooltip: langue == "English" ? "Zoom out" : "地图缩小"
         imgSrc: "qrc:/icons/zoomOut"
         anchors {
             top: parent.top
@@ -147,7 +147,7 @@ Frame {
     /// Center map button
     SmallButton {
         id: centerMapButton
-        tooltip:  langue == "English" ? "地图中心位置" : "Map Center Position"
+        tooltip:  langue == "English" ? "Map Center Position" : "地图中心位置"
         imgSrc: "qrc:/icons/centerMap"
         anchors {
             top: parent.top

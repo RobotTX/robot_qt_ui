@@ -16,7 +16,7 @@ Page {
     MenuHeader {
         langue: page.langue
         id: mapMenuHeader
-        txt: langue == "English" ? "地图" :  "Map"
+        txt: langue == "English" ? "Map" :  "地图"
         onCloseMenu: page.closeMenu()
     }
 

@@ -65,7 +65,7 @@ Frame {
         _name: "tmpPointView"
         _groupName: "tmpGroup"
         _isVisible: false
-        tooltipText: langue == "English" ? "拖拽或点击地图来改变位置" : "Drag me or click the map to modify my position"
+        tooltipText: langue == "English" ? "Drag me or click the map to modify my position" : "拖拽或点击地图来改变位置"
         signal tmpPointViewPosChanged()
 
         mapOrientation: -topViewId.mapRotation
@@ -338,8 +338,9 @@ Frame {
                             }
                             if(robotModel.count > 0){
                             }
+                            // change here
                             if(useTmpPathModel){
-                                tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
+                                tmpPathModel.addPathPoint(Math.round(mouseX) + " " + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
                                 canvas.requestPaint();
                             }
@@ -503,7 +504,7 @@ Frame {
                             type: Helper.PointViewType.HOME_ORANGE
                             x: homeX
                             y: homeY
-                            tooltipText: langue == "English" ? "充电站 " + name : "Home of " + name
+                            tooltipText: langue == "English" ? "Home of " + name : "充电站" + name
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: homeOri
                         }

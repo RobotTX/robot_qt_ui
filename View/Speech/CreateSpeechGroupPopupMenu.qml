@@ -18,12 +18,12 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "创建语音" : "New Speech"
+        labelText: langue == "English" ? "New Speech" : "创建语音"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onTriggered: {
-            openCreateSpeechMenu()
+            openCreateSpeechMenu() // called here
         }
     }
 
@@ -34,10 +34,10 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "创建组" : "New Group"
+        labelText: langue == "English" ? "New Group" : "创建语音"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: openCreateGroupMenu()
+        onTriggered: openCreateGroupMenu() // called here
     }
 }

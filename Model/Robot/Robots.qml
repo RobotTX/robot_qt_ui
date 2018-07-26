@@ -46,6 +46,8 @@ ListModel {
     signal saveWifiConnection(string ip, string wifi_name, string pwd_wifi)
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal decreaseSound(string ip)
+    signal increaseSound(string ip)
 
     function addRobot(name, ip, stage, battery){
         var message = ''
@@ -91,9 +93,9 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 if (langue == "English") {
-                    message = "机器人 \"" + get(i).name + "\" 失去连接"
-                } else {
                     message = "The robot \"" + get(i).name + "\" just disconnected"
+                } else {
+                    message = "机器人 \"" + get(i).name + "\" 失去连接"
                 }
 
                 setMessageTop(0, message);
@@ -235,9 +237,9 @@ ListModel {
                 } else if(get(i).stage >= 0 && stage < 0) {
                     robotStuck = true;
                     if (langue == "English") {
-                        message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"";
-                    } else {
                         message ="The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"";
+                    } else {
+                        message = "机器人 " + get(i).name + " 被阻挡在当前路径 " + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"";
                     }
                 } else {
 
@@ -394,19 +396,18 @@ ListModel {
             if(get(i).ip === ip && get(i).dockStatus !== dockStatus){
                 setProperty(i, "dockStatus", dockStatus);
                 if (langue == "English") {
+                    message1 = "Robot \"" + get(i).name + "\" could not reach home"
+                    message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its home"
+                    message3 = "Robot \"" + get(i).name + "\" lost the signal of its home and could not reach it"
+                    message4 = "Robot \"" + get(i).name + "\" successfully reached its home"
+                    message5 = "Robot \"" + get(i).name + "\" successfully reached its home but might not be properly aligned"
+                } else {
                     message1 = "机器人 " + get(i).name + " 不能到达充电站"
                     message2 = "有障碍阻挡机器人 " + get(i).name + " 到达充电站"
                     message3 = "机器人 " + get(i).name + " 失去充电站的信号因此不能到达充电站"
                     message4 = "机器人 " + get(i).name + " 到达充电站"
                     message5 = "机器人 " + get(i).name + " 到达充电站，但可能没有完全对准充电站"
                     message6 = "机器人 " + get(i).name +" 正在前往充电站"
-                } else {
-                    message1 = "Robot \"" + get(i).name + "\" could not reach home"
-                    message2 = "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its home"
-                    message3 = "Robot \"" + get(i).name + "\" lost the signal of its home and could not reach it"
-                    message4 = "Robot \"" + get(i).name + "\" successfully reached its home"
-                    message5 = "Robot \"" + get(i).name + "\" successfully reached its home but might not be properly aligned"
-//                    message6 = "Robot \"" + get(i).name + "\" heading to home"
                 }
 
 

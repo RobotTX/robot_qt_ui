@@ -20,9 +20,9 @@ void SpeechXMLParser::save(SpeechController *speechController, const QString fil
         QXmlStreamWriter xmlWriter(&file);
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();
-
+        //first element
         xmlWriter.writeStartElement("speechs");
-
+        // second element
         /// We write the "Default" first
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
