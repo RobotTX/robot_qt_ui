@@ -20,7 +20,6 @@ Column {
 
     Rectangle {
         id: groupItem
-//        visible: true //!(groupName === Helper.noGroup)
         height: 70
         anchors {
             left: parent.left

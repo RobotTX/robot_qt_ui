@@ -15,7 +15,7 @@ void CommandController::sendCommand(const QString cmd){
         emit sendCommandSignal(cmd);
 //        timer.start(15000);
     } else {
-//        // qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+         qDebug() << "++++++++++++CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
 
@@ -23,8 +23,15 @@ void CommandController::sendCommand(const QString cmd){
     emit processingCmd(ip, waitingForAnswer);
 }
 
+void CommandController::sendMP3Command(const QString fileName, const bool isLastMP3File){
+    qDebug() << "CommandController::sendMP3Command" << fileName;
+    emit sendMP3Signal(fileName, isLastMP3File);
+}
+
 void CommandController::cmdAnswerSlot(QString answer){
     QList<QString> list = answer.split(QChar(31), QString::SkipEmptyParts);
+
+    qDebug() << "list" << list;
 
     if(list.size() > 1){
         if(list.at(0).compare("done") == 0){
@@ -73,6 +80,12 @@ void CommandController::cmdAnswerSlot(QString answer){
 //                    emit setMessageTop(2, "Updated robot \"" + robotName + "\" path");
                     emit updatePath(ip, QStringList(list));
                     emit updatePlayingPath(ip, false);
+
+                    //start audio transfert
+                    qDebug() << "now we can proceed to send the audio file";
+                    emit startAudioTransfert();
+//                    qDebug() << "list" << list;
+
                 break;
                 case 'j':
                     /// Played the path of the robot
@@ -114,8 +127,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateLaser(ip, true);
                 break;
                 case 'r':
-                    /// Stopped the laser of the robot
-                    emit updateLaser(ip, false);
+                    /// Increase or decrease sound level
+
                 break;
                 case 's':
                     /// Received the map from the robot
@@ -172,17 +185,17 @@ void CommandController::cmdAnswerSlot(QString answer){
             break;
                 default:
                     /// Unknown/unused command
-                    // qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
+                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
                     Q_UNREACHABLE();
                 break;
             }
         } else {
-            // qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
+             qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
             /// TODO debug or handle the busy case
-            //Q_UNREACHABLE();
+            Q_UNREACHABLE();
         }
     } else {
-        // qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
+         qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
         Q_UNREACHABLE();
     }
 

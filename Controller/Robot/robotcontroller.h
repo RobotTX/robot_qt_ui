@@ -50,6 +50,8 @@ public:
      */
     void sendNewMap(const QString mapId, const QString date, const QString mapMetadata, const QImage &mapImage);
 
+    void sendMP3(const QString fileName, const bool isLastMP3File);
+
     /**
      * @brief ping
      * End a ping to the robotsController to tell that the robot is still alive
@@ -176,6 +178,8 @@ signals:
      */
     void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
 
+//    void sendMP3Signal(QString fileName);
+
     /**
      * @brief teleopCmd
      * Send the teleop command to the worker
@@ -271,8 +275,10 @@ private:
     QPointer<CommandController> commandController;
 
     QPointer<CmdRobotWorker> cmdRobotWorker;
+    QPointer<CmdRobotWorker> cmdMP3Worker;
     QPointer<RobotPositionWorker> robotWorker;
     QPointer<SendNewMapWorker> newMapWorker;
+    QPointer<SendNewMapWorker> newMP3Worker;
 //    QPointer<LaserWorker> laserWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;

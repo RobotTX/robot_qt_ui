@@ -39,6 +39,9 @@ private slots:
      */
     void writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map);
 
+    /// this function is not used at all - this function was for testing
+    void writeTcpDataMP3Slot(QString fileName);
+
     /**
      * @brief connectSocket
      * Called to start the connection with the robot
@@ -59,6 +62,8 @@ private slots:
      * we'll try to connect again in this slot
      */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
+
+    QVector<char> readSoundFile(QString path);
 
 signals:
     /**

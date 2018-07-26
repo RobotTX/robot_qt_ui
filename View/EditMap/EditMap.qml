@@ -513,12 +513,8 @@ Window {
                 }
 
                 console.log("toto = " + toto);
-//                toto = imgSource.substring(i);
-//                dialog.saveImage(imgSource.substring(4), mapRotation);
                 dialog.saveImage(toto, mapRotation);
-//                console.log("mapRotation = " + mapRotation);
-//                mapRotation = 0;
-//                console.log("mapRotation = " + mapRotation);
+
             }
         }
     }

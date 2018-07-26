@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Dialogs 1.2
 import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
@@ -29,12 +30,14 @@ Frame {
     property Speechs speechModel
     property string langue
     property int menuIndex: 0
+    property string mp3FileName: ""
 
     signal backToMenu()
     signal createPath(string groupName, string name)
     signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation, string speechName, string speechContent, int speechTime)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
+    signal createSpeech(string name, string groupName, string tts, string oldName, string oldGroup)
 
     Connections {
         target: tmpPathModel
@@ -267,6 +270,7 @@ Frame {
             y: addSavedPoint.y
             menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
+                console.log("name pointListInPopup = " + name);
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
@@ -337,7 +341,7 @@ Frame {
                         verticalCenter: parent.verticalCenter
                     }
                     width: dragArea.width
-                    height: 230
+                    height: 270
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
@@ -489,18 +493,17 @@ Frame {
                         }
                     }
 
-
-
                     TextField {
                         id: waitTextField
                         selectByMouse: true
                         text: waitTime
                         height: 20
-                        width: 40
+                        width: 45
                         padding: 2
+                        font.pointSize: 10
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 20;}
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: waitFor.right
                             verticalCenter: waitFor.verticalCenter
@@ -609,7 +612,7 @@ Frame {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: TextInput.AlignRight
                         placeholderText: "0"
-
+                        font.pointSize: 10
                         text: orientation
                         Component.onCompleted: slider.value = orientation
 
@@ -721,6 +724,33 @@ Frame {
                         }
                     }
 
+                    NormalButton {
+                        id: addMP3
+                        txt: langue == "English" ? "加载MP3文件" : "Load Audio File"
+                        imgSrc: "qrc:/icons/add_mp3"
+                        anchors {
+                            left: parent.left
+                            top: addSpeech.bottom
+                            right: parent.right
+//                            topMargin: 8
+                        }
+                        font.pointSize: 11
+                        onClicked: loadMP3FileDialog.open()
+                    }
+
+                    FileDialog {
+                        id: loadMP3FileDialog
+                        // allow only mp3 and wav files to be selected
+                        nameFilters: "*.mp3 *.wav"
+                        title: langue == "English" ? "导入地图" : "Import an audio file"
+                        onRejected: {
+                        }
+                        onAccepted: {
+                            speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
+                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
+                        }
+                    }
+
                     Label {
                         id: speechLabel
                         visible: speechName !== ""
@@ -729,7 +759,7 @@ Frame {
                         color: Style.greyText
                         anchors {
                             left: waitFor.left
-                            top: addSpeech.bottom
+                            top: addMP3.bottom
                             topMargin: 8
                         }
                     }
@@ -737,7 +767,21 @@ Frame {
                     Label {
                         id: speechNameLabel
                         visible: speechName !== ""
-                        text: speechName
+                        text: {
+                            var indexLastSlash = "";
+//                            if (loadMP3FileDialog.fileUrl.toString().indexOf("/") !== -1) {
+//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
+//                            } /*else {
+//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
+//                            }*/
+
+//                            qsTr(loadMP3FileDialog.fileUrl.toString().substring(indexLastSlash + 1))
+                            if (speechName.indexOf("/") !== -1) {
+                                qsTr(speechName.substring(speechName.lastIndexOf("/") + 1));
+                            } else {
+                                qsTr(speechName);
+                            }
+                        }
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -781,11 +825,12 @@ Frame {
                         selectByMouse: true
                         text: speechTime
                         height: 20
-                        width: 40
+                        width: 45
+                        font.pointSize: 10
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
-                        // change back
-                        validator: IntValidator{bottom: 0; top: 999;}
+
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: speechTimeLabel.right
                             verticalCenter: speechTimeLabel.verticalCenter
@@ -989,6 +1034,7 @@ Frame {
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
+                    console.log("tmpPathModel.name = " + tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name);
                     createPathPoint(groupComboBox.displayText,
                                     newName,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,

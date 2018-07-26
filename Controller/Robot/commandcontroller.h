@@ -19,6 +19,8 @@ public:
      */
     void sendCommand(const QString cmd);
 
+    void sendMP3Command(const QString fileName, const bool isLastMP3File);
+
 private slots:
     /**
      * @brief cmdAnswerSlot
@@ -45,6 +47,8 @@ signals:
 
     /// Signals sent to update the model and view when we've executed a command
     void updateName(QString ip, QString newName);
+
+    void sendMP3Signal(QString fileName, bool isLastMP3File);
 
     /**
      * @brief updateHome
@@ -74,6 +78,8 @@ signals:
      * update the model
      */
     void updatePath(QString ip, QStringList strList);
+
+    void startAudioTransfert();
 
     /**
      * @brief stoppedDeletedPath

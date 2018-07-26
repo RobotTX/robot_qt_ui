@@ -1107,6 +1107,7 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+<<<<<<< HEAD
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 0;
             leftMarginLabel: langue === "English" ? 20 : 80;
@@ -1114,6 +1115,15 @@ Frame {
             title: langue == "English" ? "Warning"  : "警告"
             message: langue == "English" ? "\nPlease select a robot or fill the WiFi name" : "\n请选择机器人或输入WiFi名称"
             acceptMessage: langue == "English" ? "Ok" : "是"
+=======
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 20;
+            rightMarginLabel: langue === "English" ? 80 : 20;
+            title: langue == "English" ? "警告"  : "WARNING"
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot or fill the WiFi name"
+            acceptMessage: langue == "English" ? "是" : "OK"
+>>>>>>> 84f1796795111d6d34d80574fba201dfad531215
         }
 
         CustomDialog {
@@ -1122,6 +1132,7 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+<<<<<<< HEAD
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 20;
             leftMarginLabel: langue === "English" ? 100 : 80;
@@ -1129,6 +1140,15 @@ Frame {
             title: langue == "English" ? "Warning"  : "警告";
             message: langue == "English" ? "\nPlease select a robot" : "\n请选择机器人或输入WiFi名称"
             acceptMessage: langue == "English" ? "Ok" : "是"
+=======
+            topMarginLabel: langue === "English" ? 5 : 10;
+            bottomMarginLabel: langue === "English" ? 20 : 10;
+            leftMarginLabel: langue === "English" ? 80 : 100;
+            rightMarginLabel: langue === "English" ? 80 : 100
+            title: langue == "English" ? "警告"  : "WARNING";
+            message: langue == "English" ? "\n请选择机器人或输入WiFi名称" : "\nPlease select a robot"
+            acceptMessage: langue == "English" ? "是" : "OK"
+>>>>>>> 84f1796795111d6d34d80574fba201dfad531215
 
         }
     }

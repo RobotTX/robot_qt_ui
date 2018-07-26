@@ -86,6 +86,7 @@
         <file alias="add">icons/Btn_Add.png</file>
         <file alias="increase_brush">icons/Btn_Increase.png</file>
         <file alias="add_speech">icons/Btn_Add_Sph.png</file>
+        <file alias="add_mp3">icons/Btn_Add_mp3.png</file>
         <file alias="back">icons/Btn_Back.png</file>
         <file alias="white_stepper">icons/White_Stepper.png</file>
         <file alias="stepper">icons/Stepper.png</file>
@@ -133,7 +134,9 @@
         <file alias="outline">icons/Btn_Outline.png</file>
         <file alias="solid">icons/Btn_Solid.png</file>
         <file alias="decrease">icons/Btn_Decrease.png</file>
-        <file alias="increase">icons/Btn_Add.png</file>
+        <file alias="increase">icons/Btn_Increase.png</file>
+        <file alias="decrease10">icons/Btn_Decrease_10.png</file>
+        <file alias="increase10">icons/Btn_Increase_10.png</file>
         <file alias="save">icons/Btn_Save.png</file>
         <file alias="line1">icons/Line_1.png</file>
         <file alias="line2">icons/Line_2.png</file>

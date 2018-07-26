@@ -1,6 +1,11 @@
 #include "sendnewmapworker.h"
 #include <QThread>
 #include <assert.h>
+#include <fstream>
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 SendNewMapWorker::SendNewMapWorker(const QString _ipAddress, const int _port): ipAddress(_ipAddress), port(_port) {}
 
@@ -9,12 +14,14 @@ SendNewMapWorker::~SendNewMapWorker(){
 }
 
 void SendNewMapWorker::stopWorker(){
-    if(socket && socket->isOpen())
+    if(socket && socket->isOpen()) {
         socket->close();
+        qDebug() << "socket is close";
+    }
 }
 
 void SendNewMapWorker::connectSocket(){
-    // qDebug() << "(Robot new map thread" << ipAddress << ") Running";
+     qDebug() << "(Robot new map thread" << ipAddress << ") Running";
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
@@ -27,8 +34,9 @@ void SendNewMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(New Map) connectSocket done" << ipAddress;
+     qDebug() << "(New Map) connectSocket done" << ipAddress << port;
 }
+
 
 void SendNewMapWorker::readTcpDataSlot(){
     QString dataStr = socket->readAll();
@@ -38,6 +46,77 @@ void SendNewMapWorker::readTcpDataSlot(){
     if(strList.size() == 2)
         deleteHomePath = QString(strList.at(1)).toInt();
     emit doneSendingNewMapSignal(deleteHomePath);
+}
+
+void SendNewMapWorker::writeTcpDataMP3Slot(QString fileName) {
+    QVector<char> send_msg = readSoundFile(fileName);
+//    qDebug() << "audio size = " << send_msg.size() << endl;
+    QByteArray byteArray;
+//    qDebug() << "send size " << send_msg.size() << endl;
+
+    QByteArray toSend = QByteArray().append(static_cast<char*>(send_msg.data()), send_msg.size());
+
+    toSend.push_back('!');
+    toSend.push_back('@');
+    toSend.push_back('#');
+    toSend.push_back('$');
+
+    byteArray.append(toSend);
+
+//    qDebug() << "byteArray.size() = " << byteArray.size();
+
+//    qDebug() << "Adress = " << ipAddress;
+
+    if(socket && socket->isOpen()){
+        int nbDataSend = socket->write(byteArray);
+
+        socket->waitForBytesWritten();
+
+        qDebug() << "ipAdress = " << ipAddress;
+        qDebug() << "nbDataSend = " << nbDataSend;
+
+        if(nbDataSend == -1)
+             qDebug() << "(MP3) An error occured while sending data" << ipAddress;
+        else
+             qDebug() << "(MP3) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
+    } else {
+        /// NOTE: what to do if the socket is closed ? can it happen ?
+         qDebug() << "(MP3) Trying to write on a socket that is not created or connected yet" << ipAddress;
+        Q_UNREACHABLE();
+    }
+
+}
+
+QVector<char> SendNewMapWorker::readSoundFile(QString path){
+    std::ifstream sourcestr(path.toStdString(), std::ios::in | std::ios::binary);
+    long size;
+    char * buffer;
+
+    if(!sourcestr){
+        qDebug() <<"can not open "<< path << endl;
+        return {};
+    }
+
+    // get file size using buffer's members
+    size=sourcestr.rdbuf()->pubseekoff (0,ios::end,ios::in);
+    sourcestr.rdbuf()->pubseekpos (0,ios::in);
+
+    // allocate memory to contain file data
+    buffer=new char[size];
+
+    // get file data
+    sourcestr.rdbuf()->sgetn (buffer,size);
+
+    //close mp3 file
+    sourcestr.close();
+
+    //save the data in vector
+    QVector<char> result;
+    for(int i=0;i<size;i++)
+        result.push_back(buffer[i]);
+
+    //return mp3 data
+    return result;
 }
 
 void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map){
@@ -100,6 +179,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
         int nbDataSend = socket->write(byteArray);
 
         socket->waitForBytesWritten();
+        qDebug() << "ipAdress = " << ipAddress;
 
         if(nbDataSend == -1)
             // qDebug() << "(New Map) An error occured while sending data" << ipAddress;
@@ -107,7 +187,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
             // qDebug() << "(New Map) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
     } else {
         /// NOTE: what to do if the socket is closed ? can it happen ?
-        // qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet" << ipAddress;
+         qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet" << ipAddress;
         Q_UNREACHABLE();
     }
 }

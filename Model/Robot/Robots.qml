@@ -46,8 +46,10 @@ ListModel {
     signal saveWifiConnection(string ip, string wifi_name, string pwd_wifi)
     signal soundOn(string ip)
     signal soundOff(string ip)
+
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
+
 
     function addRobot(name, ip, stage, battery){
         var message = ''

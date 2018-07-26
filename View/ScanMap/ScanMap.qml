@@ -180,11 +180,11 @@ Window {
           cancelChange = "Cancel";
           okChange = "Ok";
         } else {
+
          titleChange = "是否要重启扫描 ?";
          messageChange = "机器人已经重启，是否重启扫描（之前的扫描将被移除）?";
          cancelChange = "取消";
          okChange = "是";
-
         }
 
         if(!dualChoiceMessageDialog.visible){

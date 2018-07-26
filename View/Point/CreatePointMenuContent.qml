@@ -251,6 +251,7 @@ Frame {
             border.width: 2
         }
 
+        font.pointSize: 10
         width: 40
         height: 21
 //        visible: homeCheckBox.checked
@@ -264,7 +265,6 @@ Frame {
         horizontalAlignment: Text.AlignLeft
         placeholderText: "0"
         color: Style.darkSkyBlue
-        font.pointSize: 10
         anchors {
             left: oriLabel.right
             leftMargin: 15

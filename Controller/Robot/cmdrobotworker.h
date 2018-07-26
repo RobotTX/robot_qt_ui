@@ -22,7 +22,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int robotPort, const int mapPort, const int _laserPort);
+    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int robotPort, const int mapPort, const int _laserPort, const int _mp3Port);
     ~CmdRobotWorker();
 
 signals:
@@ -91,6 +91,22 @@ private slots:
     void sendCommand(const QString cmd);
 
     /**
+     * @brief writeTcpDataMP3Slot
+     * @param path
+     * @param isLastMP3File
+     * Slot called when we sent an audio file to the robot
+     */
+    void writeTcpDataMP3Slot(const QString path, bool isLastMP3File);
+
+    /**
+     * @brief readSoundFile
+     * @param path
+     * @return
+     * Conversion of an audio file into a qvector char
+     */
+    QVector<char> readSoundFile(QString path);
+
+    /**
      * @brief pingSlot
      * When we receive a ping from the robot, we reset the timer
      */
@@ -124,9 +140,11 @@ private :
     int robotPort;
     int mapPort;
     int laserPort;
+    int mp3Port;
     /// We need a QPointer because we can not initialize a QTimer in 1 thread then move the worker to another thread
     QPointer<QTimer> timer;
     int timeCounter;
+    bool mp3Done;
 };
 
 #endif /// CMDROBOTWORKER_H

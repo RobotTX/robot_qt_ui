@@ -81,6 +81,7 @@ Menu {
                                 leftPadding: Style.menuItemLeftPadding
                                 Layout.preferredHeight: Style.menuItemHeight+1
                                 Layout.preferredWidth: parent.width
+                                visible: name.indexOf("file:") !== -1 ? false : true
                                 labelText: name
                                 onTriggered: {
                                     selectSpeechMenu.speechSelected(name, tts);

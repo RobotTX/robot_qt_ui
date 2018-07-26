@@ -27,7 +27,7 @@ void RobotPositionWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    // qDebug() << "(Robot pos thread" << ipAddress << ") connectSocket done";
+     qDebug() << "(Robot pos thread" << ipAddress << ") connectSocket done" << port;
 }
 
 void RobotPositionWorker::readTcpDataSlot(){

@@ -24,6 +24,9 @@ Frame {
     signal saveMap(string file_name)
     signal importMap(string file_name)
 
+    /// test mp3
+    signal importMP3(string file_name)
+
     padding: 0
 
     background: Rectangle {
@@ -94,6 +97,17 @@ Frame {
         onClicked: mapMenuFrame.centerMap()
     }
 
+//    NormalButton {
+//        id: loadMp3
+//        txt: langue == "English" ? "地图中心位置" : "Load Audio"
+//        imgSrc: "qrc:/icons/centerMap"
+//        anchors.top: recenterButton.bottom
+//        // if the map has become unreachable for the user because of a false manipulation
+//        // (typically because he dragged the map out of the frame and saved this Positioner
+//        // then this button can be used to recenter the map
+//        onClicked: mapMenuFrame.importMP3("/home/oogyvai/Downloads/shape_of_you.mp3");
+//    }
+
     FileDialog {
         id: saveFileDialog
         // format of files is pgm
@@ -143,8 +157,10 @@ Frame {
         x: (mapMenuFrame.width - width) / 2
         y: (mapMenuFrame.height - height) / 2
         height: 60
+
         title: langue == "English" ? "Warning dialog" : "警告窗口"
         acceptMessage: langue == "English" ? "\nSpace are not allowed" : "\nn地图名称不能包含空格"
+
     }
 
     FileDialog {

@@ -70,6 +70,8 @@ private slots:
      * To import a map inside the application (along with its points, configuration and paths)
      */
     void loadMapConfig(QString fileName);
+
+    void loadMP3(QString fileName, bool isLastMP3File);
     /**
      * @brief checkTmpPosition
      * @param index

@@ -26,6 +26,7 @@ Frame {
 
     property string mapSrc
     property string langue
+    property int _index: 0
 
     property Points pointModel
     property Paths pathModel
@@ -378,7 +379,7 @@ Frame {
                                 height: parent.image.height
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: {
-//                                    console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                    console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
                                         tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                         tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -423,7 +424,13 @@ Frame {
                             delegate: PointView {
                                 id: pathPointView
                                 property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
-                                _name: name === nameCoordinates ? "P"+(index+1) : name
+
+                                _name: {
+                                    _index = index;
+                                    console.log("index = " + index + " _index = " + _index);
+//                                    name === nameCoordinates ? "P"+(index+1) : name;
+                                    "P" + (_index + 1)
+                                }
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName
                                 _groupName: pathName
@@ -456,7 +463,7 @@ Frame {
                                     width: parent.image.width
                                     height: parent.image.height
                                     onClicked: {
-//                                        console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                        console.log("Clicked on point " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                         if(useTmpPathModel){
                                             tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                                             tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
@@ -477,7 +484,8 @@ Frame {
                                             var _posY = pathPointView.y;
 
                                             if(Math.round(posX) + ' ' + Math.round(posY) === name)
-                                                name = Math.round(_posX) + ' ' + Math.round(_posY)
+//                                                name = Math.round(_posX) + ' ' + Math.round(_posY)
+                                                name = "P"+(index+1)
 
                                             posX = _posX;
                                             posY = _posY;

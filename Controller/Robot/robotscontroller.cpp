@@ -109,6 +109,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(decreaseSound(QString)), this, SLOT(decreaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(increaseSound(QString)),this, SLOT(increaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
+        connect(robotMenuFrame, SIGNAL(soundIncrease(QString)), this, SLOT(soundIncrease(QString)));
+        connect(robotMenuFrame, SIGNAL(soundDecrease(QString)), this, SLOT(soundDecrease(QString)));
         connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
     } else {
 //        // qDebug() << "could not find robot menu frame";
@@ -206,13 +208,45 @@ void RobotsController::shortcutDeleteRobot(void){
 bool RobotsController::sendCommand(const QString ip, const QString cmd){
     if(robots.contains(ip)) {
         robots.value(ip)->sendCommand(cmd);
-//        // qDebug() << "cmd in robotscontroller = " << cmd;
+//         qDebug() << "cmd in robotscontroller = " << cmd;
     } else {
-        // qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
         return false;
     }
 
     return true;
+}
+
+bool RobotsController::sendMP3(const QString ip, const QStringList mp3Str){
+//    qDebug() << "fileName song = " << mp3Str;
+//    if(robots.contains(ip)) {
+//        robots.value(ip)->sendMP3(mp3Str, isLastMp3File);
+////        qDebug() << "cmd in robotscontroller = " << mp3Str << ip;
+//    } else {
+//        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+//        return false;
+//    }
+    _ipRobot = ip;
+    _mp3Str = mp3Str;
+
+    return true;
+}
+
+void RobotsController::startAudioTransfertSlot() {
+    qDebug() << "start audio transfert slot" << _ipRobot << _mp3Str;
+    if(robots.contains(_ipRobot)) {
+        for (int j = 0; j < _mp3Str.length(); j++) {
+            if (j == _mp3Str.length() - 1) {
+                robots.value(_ipRobot)->sendMP3(_mp3Str.at(j), true);
+            } else {
+                robots.value(_ipRobot)->sendMP3(_mp3Str.at(j), false);
+
+            }
+        }
+
+    } else {
+        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
+    }
 }
 
 void RobotsController::newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori){
@@ -354,6 +388,16 @@ void RobotsController::sendTeleop(const QString ip, const int teleop){
         // qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
 
+void RobotsController::sendMP3ToRobot(QString fileName, bool isLastMP3File) {
+    QMapIterator<QString, QPointer<RobotController>> it(robots);
+    qDebug() << "---------- RobotsController::sendMP3ToRobot fileName = " << fileName;
+    while(it.hasNext()){
+        it.next();
+        robots.value(it.key())->sendMP3(fileName, isLastMP3File);
+    }
+
+}
+
 void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
      qDebug() << "send map to all robots called" << mapMetadata;
     QMapIterator<QString, QPointer<RobotController>> it(robots);
@@ -362,6 +406,8 @@ void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString m
         robots.value(it.key())->sendNewMap(mapId, date, mapMetadata, img);
     }
 }
+
+
 
 void RobotsController::processingCmdSlot(QString ip, bool processing){
     emit processingCmd(ip, processing);
@@ -410,12 +456,14 @@ void RobotsController::soundOn(QString ip) {
 //    // qDebug() << "\nWE ARE IN RobotsController::soundOn()";
     sendCommand(ip, QString("w"));
 }
+
 void RobotsController::decreaseSound(QString ip){
     sendCommand(ip, QString("r") + QChar(31) + QString("0"));
 }
 void RobotsController::increaseSound(QString ip){
      sendCommand(ip, QString("r") + QChar(31) + QString("1"));
 }
+
 void RobotsController::soundOff(QString ip) {
 //    // qDebug() << "\nWE ARE IN RobotsController::soundOff()";
     sendCommand(ip, QString("x"));

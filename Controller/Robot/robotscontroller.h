@@ -49,6 +49,8 @@ public:
      */
     bool sendCommand(const QString ip, const QString cmd);
 
+    bool sendMP3(const QString ip, const QStringList mp3Str);
+
     /**
      * @brief sendNewMap
      * @param ip
@@ -97,6 +99,8 @@ public:
      * sends the map to all robots
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
+
+    void sendMP3ToRobot(QString fileName, bool isLastMP3File);
 
 //    void changeLanguageSlot(const QString language);
 private:
@@ -160,8 +164,10 @@ private slots:
 
     void soundOn(QString ip);
     void soundOff(QString ip);
+
     void decreaseSound(QString ip);
     void increaseSound(QString ip);
+
     /**
      * @brief updateRobotInfoSlot
      * @param ip
@@ -171,6 +177,8 @@ private slots:
     void updateRobotInfoSlot(QString ip, QString robotInfo);
 
     void updatePathSlot(const QString ip, const QStringList strList);
+
+    void startAudioTransfertSlot();
 
     void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
 
@@ -239,6 +247,8 @@ private:
     QPointer<QTimer> sendMapTimer;
     QPointer<QTimer> requestMapTimer;
     QString langue;
+    QString _ipRobot;
+    QStringList _mp3Str;
 };
 
 #endif /// ROBOTSCONTROLLER_H
