@@ -40,9 +40,9 @@ Frame {
             oldGroup = "";
             var displayTextChange = "";
             if (langue == "English") {
-                displayTextChange = Helper.noGroupChinese;
-            } else {
                 displayTextChange = Helper.noGroup;
+            } else {
+                displayTextChange = Helper.noGroupChinese;
             }
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = displayTextChange;
@@ -76,7 +76,7 @@ Frame {
 
     Label {
         id: speechLabel
-        text: langue == "English" ? qsTr("语音名称") : qsTr("Speech Label")
+        text: langue == "English" ? qsTr("Speech Label") : qsTr("语音名称")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -87,7 +87,7 @@ Frame {
     TextField {
         id: speechTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("输入语音名称") : qsTr("Enter label")
+        placeholderText: langue == "English" ? qsTr("Enter Label") : qsTr("输入语音名称")
 
         text: oldName
         verticalAlignment: TextInput.AlignVCenter
@@ -109,7 +109,7 @@ Frame {
 
     Label {
         id: groupLabel
-        text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Group")
+        text: langue == "English" ? qsTr("Choose Group") : qsTr("选择分组")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -126,7 +126,7 @@ Frame {
             if (oldName) {
                 oldGroup
             } else {
-                langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                langue == "English" ? Helper.noGroup : Helper.noGroupChinese
             }
         }
         langue: createSpeechMenuFrame.langue
@@ -140,7 +140,7 @@ Frame {
 
     Label {
         id: ttsLabel
-        text: langue == "English" ? qsTr("正文") : qsTr("Text")
+        text: langue == "English" ? qsTr("Text") : qsTr("正文")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -187,7 +187,7 @@ Frame {
     TextField {
         id: ttsTextField
 //        anchors.fill: parent
-        placeholderText: langue == "English" ? "输入正文" : "Enter text"
+        placeholderText: langue == "English" ? "Enter Text" : "输入正文"
         wrapMode: "WrapAtWordBoundaryOrAnywhere"
         text: tts
         selectByMouse: true
@@ -246,10 +246,10 @@ Frame {
             var mess1 = ''
             var mess2 = ''
             if (langue == "English") {
-                mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\"";
+                 mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
 //                mess2 = "已修改 \"" + oldGroup + "\" 中的语音 \"" + oldName + "\" ，并保存为 \"" + groupName + "\" 的语音 \"" + newName + "\"";
             } else {
-                mess1 = "Created the speech \"" + newName + "\" in \"" + groupName + "\""
+                mess1 = "已创建路径 \"" + newName + "\" 在 \"" + groupName + "\"";
 //                mess2 = "Created the speech \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
@@ -266,12 +266,12 @@ Frame {
         var mess1 = ''
         var mess2 = ''
         if (langue == "English") {
-            mess1 = "语音名称不可以为空";
-            mess2 = "语音名 \"" + Helper.formatName(speechTextField.text) + "\" 已经被占用";
+              mess1 = "The speech label cannot be empty";
+              mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken";
         } else {
-            mess1 = "The speech label cannot be empty";
-            mess2 = "The speech name \"" + Helper.formatName(speechTextField.text) + "\" is already taken";
-        }
+              mess1 = "语音名称不可以为空";
+              mess2 = "语音名 \"" + Helper.formatName(speechTextField.text) + "\" 已经被占用";
+       }
 
         if(!saveButton.canSave){
             if(Helper.formatName(speechTextField.text) === "")

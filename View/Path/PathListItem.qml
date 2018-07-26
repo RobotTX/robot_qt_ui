@@ -133,9 +133,9 @@ Column {
                 SmallButton {
                     id: leftButton2
                     tooltip: { if (pathIsVisible) {
-                               langue == "English" ? "隐藏地图上该路径" : "Hide path on map"
+                               langue == "English" ? "Hide path on map" : "隐藏地图上该路径"
                                 } else {
-                               langue == "English" ? "显示地图上该路径" : "Show path on map"
+                               langue == "English" ? "Show path on map" : "显示地图上该路径"
                             }
                     }
                     imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
@@ -169,9 +169,9 @@ Column {
                     id: rightOpenPath
                     imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     tooltip: { if (pathIsOpen) {
-                               langue == "English" ? "隐藏路径细节" : "Hide path detail"
+                               langue == "English" ? "Hide path detail" : "隐藏路径细节"
                                 } else {
-                               langue == "English" ? "查看路径细节" : "Show path detail"
+                               langue == "English" ? "Show path detail" : "查看路径细节"
                             }
                     }
                     anchors {
@@ -298,7 +298,7 @@ Column {
 
                     CustomLabel {
                         id: customLabelWaitTime
-                        text: waitTime === -1 ? qsTr(langue == "English" ? "人为干预" : "Human Action") : qsTr(langue == "English" ? "等待: " + waitTime + "秒" :  "Delay : "+ waitTime + "s")
+                        text: waitTime === -1 ? qsTr(langue == "English" ? "Human Action" : "人为干预") : qsTr(langue == "English" ? "Delay: " + waitTime + "s" :  "等待 : "+ waitTime + "秒")
                         horizontalAlignment: Text.AlignRight
                         font.pixelSize: 14
                         color: Style.midGrey2

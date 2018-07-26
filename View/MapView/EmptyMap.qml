@@ -4,7 +4,7 @@ import "../../Helper/style.js" as Style
 
 Frame {
     property string langue
-    readonly property string txt: langue == "English" ? "你还没有地图。请前往'地图'项扫描地图，或者从电脑下载地图" : "You don’t have any map yet. Go to the ‘Map’ tab to scan a map or load a map from your computer."
+    readonly property string txt: langue == "English" ? "You don't have any map yet. Go to 'Map' tab to scan a map or load a map from your computer." : "你还没有地图。请前往'地图'项扫描地图，或者从电脑下载地图"
 
     background: Rectangle {
         color: Style.midGrey3

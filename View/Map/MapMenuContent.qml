@@ -37,7 +37,7 @@ Frame {
 
     NormalButton {
         id: scanButton
-        txt: langue == "English" ? "扫描新地图" : "Scan New Map"
+        txt: langue == "English" ? "Scan New Map" : "扫描新地图"
         imgSrc: "qrc:/icons/scan_map"
         anchors.top: parent.top
         anchors.topMargin: 12
@@ -46,7 +46,7 @@ Frame {
 
     NormalButton {
         id: saveMapButton
-        txt: langue == "English" ? "导出地图到本地" : "Export Map"
+        txt: langue == "English" ? "Export Map" : "导出地图到本地"
         imgSrc: "qrc:/icons/save_map"
         anchors.top: scanButton.bottom
         onClicked: saveFileDialog.open()
@@ -54,7 +54,7 @@ Frame {
 
     NormalButton {
         id: loadButton
-        txt: langue == "English" ? "从本地导入地图" : "Import Map"
+        txt: langue == "English" ? "Import Map" : "从本地导入地图"
         imgSrc: "qrc:/icons/load_map"
         anchors.top: saveMapButton.bottom
         onClicked: messageDialog.open()
@@ -62,7 +62,7 @@ Frame {
 
     NormalButton {
         id: editButton
-        txt: langue == "English" ? "编辑当前地图" : "Edit Current Map"
+        txt: langue == "English" ? "Edit Current Map" : "编辑当前地图"
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
         onClicked: editMap.show();
@@ -71,7 +71,7 @@ Frame {
 
     NormalButton {
         id: savePositionButton
-        txt: langue == "English" ? "保存地图当前位置" : "Save Map Current Position"
+        txt: langue == "English" ? "Save Map Current Position" : "保存地图当前位置"
         imgSrc: "qrc:/icons/saveState"
         anchors.top: editButton.bottom
         onClicked: mapMenuFrame.savePosition()
@@ -79,7 +79,7 @@ Frame {
 
     NormalButton {
         id: loadPositionButton
-        txt: langue == "English" ? "定位地图保存位置" : "Locate Map Saved Position"
+        txt: langue == "English" ? "Locate Map Saved Position" : "定位地图保存位置"
         imgSrc: "qrc:/icons/loadState"
         anchors.top: savePositionButton.bottom
         // the signal needs to be relayed in order to call the function that is in mapView
@@ -88,7 +88,7 @@ Frame {
 
     NormalButton {
         id: recenterButton
-        txt: langue == "English" ? "地图中心位置" : "Map Center Position"
+        txt: langue == "English" ? "Map Center Position" : "地图中心位置"
         imgSrc: "qrc:/icons/centerMap"
         anchors.top: loadPositionButton.bottom
         // if the map has become unreachable for the user because of a false manipulation
@@ -114,7 +114,7 @@ Frame {
         nameFilters: "*.pgm"
         // won't let you choose a file name if selectExisting is true
         selectExisting: false
-        title: langue == "English" ? "请选择一个路径" : "Please choose a location for your map"
+        title: langue == "English" ? "Please choose a location for your map" : "请选择一个路径"
 
         onAccepted: {
             var fileStr = fileUrl.toString();
@@ -157,15 +157,17 @@ Frame {
         x: (mapMenuFrame.width - width) / 2
         y: (mapMenuFrame.height - height) / 2
         height: 60
-        title: langue == "English" ? "警告窗口" : "WARNING"
-        acceptMessage: langue == "English" ? "\n地图名称不能包含空格" : "\nSpace are not allowed"
+
+        title: langue == "English" ? "Warning dialog" : "警告窗口"
+        acceptMessage: langue == "English" ? "\nSpace are not allowed" : "\nn地图名称不能包含空格"
+
     }
 
     FileDialog {
         id: loadFileDialog
         // allow only pgm files to be selected
         nameFilters: "*.pgm"
-        title: langue == "English" ? "导入地图" : "Import a map"
+        title: langue == "English" ? "Import a map" : "导入地图"
 //        selectMultiple: false
         onRejected: {
 //            console.log("Canceled the save of a map")
@@ -178,11 +180,11 @@ Frame {
 
     CustomDialog {
         id: messageDialog
-        title: langue == "English" ? "导入已经存在的地图" : "Importing an existing map"
-        message: langue == "English" ? "\n在读取新地图之前，是否保存当前地图?" : "\nDo you wish to save the current map before importing a new one ?"
-        rejectMessage: langue == "English" ? "取消" : "Cancel"
-        acceptMessage: langue == "English" ? "读取" : "Load"
-        yesMessage: langue == "English" ? "保存&读取" : "Save & Load"
+        title: langue == "English" ? "Importing an existing map" : "导入已经存在的地图"
+        message: langue == "English" ? "\nDo you wish to save the current map before importing a new one ?" : "\n在读取新地图之前，是否保存当前地图 ?"
+        rejectMessage: langue == "English" ? "Cancel" : "取消"
+        acceptMessage: langue == "English" ? "Load" : "读取"
+        yesMessage: langue == "English" ? "Save & Load" : "保存&读取"
         height: 170
 
 //        x: mapMenuFrame.width

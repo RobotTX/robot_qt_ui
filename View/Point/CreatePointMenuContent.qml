@@ -66,9 +66,9 @@ Frame {
 
             var displayTextChange = "";
             if (langue == "English") {
-                displayTextChange = Helper.noGroupChinese;
-            } else {
                 displayTextChange = Helper.noGroup;
+            } else {
+                displayTextChange = Helper.noGroupChinese;
             }
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = displayTextChange;
@@ -115,7 +115,7 @@ Frame {
 
     Label {
         id: pointLabel
-        text: langue == "English" ? qsTr("目标点名称") : qsTr("Point Name")
+        text: langue == "English" ? qsTr("Point Name") : qsTr("目标点名称")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -126,7 +126,7 @@ Frame {
     TextField {
         id: pointTextField
         selectByMouse: true
-        placeholderText: langue == "English" ? qsTr("输入目标点名称") : qsTr("Enter name")
+        placeholderText: langue == "English" ? qsTr("Enter name") : qsTr("输入目标点名称")
         text: oldName
         verticalAlignment: TextInput.AlignVCenter
         anchors {
@@ -154,7 +154,7 @@ Frame {
 
     Label {
         id: groupLabel
-        text: langue == "English" ? qsTr("选择分组") : qsTr("Choose Group")
+        text: langue == "English" ? qsTr("Choose Group") : qsTr("选择分组")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -209,7 +209,7 @@ Frame {
 
     Label {
         id: homeLabel
-        text: langue == "English" ? qsTr("充电站") : qsTr("Charging Station")
+        text: langue == "English" ? qsTr("Charging Station") : qsTr("充电站")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -227,13 +227,13 @@ Frame {
             right: parent.right
             topMargin: 10
         }
-        text: langue == "English" ? "设置为充电站" : "Set to charging station"
+        text: langue == "English" ? "Set to charging station" : "设置为充电站"
         onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
     }
 
     Label {
         id: oriLabel
-        text: langue == "English" ? qsTr("方向") : qsTr("Orientation")
+        text: langue == "English" ? qsTr("Orientation") : qsTr("方向")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -351,7 +351,7 @@ Frame {
 
     Label {
         id: pointLocationLabel
-        text: langue == "English" ? qsTr("目标点位置") : qsTr("Point Location")
+        text: langue == "English" ? qsTr("Point Location") : qsTr("P目标点位置")
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -433,10 +433,10 @@ Frame {
             var mess1 = ''
             var mess2 = ''
             if (langue == "English") {
-                mess1 = "已创建目标点 \"" + newName + "\" 在 \"" + groupName + "\""
+                 mess1 = "Created the point \"" + newName + "\" in \"" + groupName + "\""
 //                mess2 = "编辑目标点 \"" + oldName + "\" 从 \"" + oldGroup + "\" 到 \"" + newName + "\" 到 \"" + groupName + "\""
             } else {
-                mess1 = "Created the point \"" + newName + "\" in \"" + groupName + "\""
+                 mess1 = "已创建目标点 \"" + newName + "\" 在 \"" + groupName + "\""
 //                mess2 = "Edited the point \"" + oldName + "\" from \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\""
             }
 
@@ -454,13 +454,13 @@ Frame {
         var mess2 = ''
         var mess3 = ''
         if (langue == "English") {
-            mess1 = "无法保存目标点，因为机器人无法去到那里"
-            mess2 = "目标点名称不能为空"
-            mess3 = "目标点名 \"" + Helper.formatName(pointTextField.text) + "\" 已经被使用"
-        } else {
             mess1 = "You cannot save this point because your robot(s) would not be able to go there"
             mess2 = "The point name cannot be empty"
             mess3 = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken"
+        } else {
+            mess1 = "无法保存目标点，因为机器人无法去到那里"
+            mess2 = "目标点名称不能为空"
+            mess3 = "目标点名 \"" + Helper.formatName(pointTextField.text) + "\" 已经被使用"
         }
 
         if(!saveButton.canSave){

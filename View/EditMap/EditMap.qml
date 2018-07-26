@@ -12,7 +12,7 @@ import "../Tutorial"
 Window {
 
     id: dialog
-    title: langue == "English" ? "编辑地图" : "Edit Map"
+    title: langue == "English" ? "Edit Map" : "编辑地图"
     objectName: "editMapWindow"
 
     width: 1000
@@ -55,7 +55,7 @@ Window {
         else
 //            if(tutorial.isDisplayed("edit_map"))
 //                tutorialD.open();
-            langue == "English" ? tutorialDChinese.open() : tutorialD.open()
+            langue == "English" ? tutorialD.open() : tutorialDChinese.open()
     }
 
     Frame {
@@ -83,7 +83,7 @@ Window {
 
             id: undo
 
-            CustomToolTip { text: langue == "English" ? "撤销" : "Undo" }
+            CustomToolTip { text: langue == "English" ? "Undo" : "撤销" }
 
             Shortcut {
                 sequence: StandardKey.Undo
@@ -105,7 +105,7 @@ Window {
 
             id: redo
 
-            CustomToolTip { text: langue == "English" ? "恢复" :  "Redo" }
+            CustomToolTip { text: langue == "English" ? "Redo" :  "恢复" }
 
             Shortcut {
                 sequence: "Ctrl+Y"
@@ -127,7 +127,7 @@ Window {
 
             id: reset
 
-            CustomToolTip { text: langue == "English" ? "撤销所有修改" : "Cancel all modifications" }
+            CustomToolTip { text: langue == "English" ? "Cancel all Modifications" : "撤销所有修改" }
 
             src: "qrc:/icons/reset"
 
@@ -144,7 +144,7 @@ Window {
 
             id: selectButton
 
-            CustomToolTip { text: langue == "English" ? "拖动地图" : "Drag the map" }
+            CustomToolTip { text: langue == "English" ? "Drag the map" : "拖动地图" }
 
             //checkable: true
             checked: shape == -1
@@ -175,7 +175,7 @@ Window {
             //checkable: true
             checked: color == "#ffffff" // white
 
-            CustomToolTip { text: langue == "English" ? "加入自由区域到地图" : "Add a known area to the map" }
+            CustomToolTip { text: langue == "English" ? "Add a known area to the map" : "加入自由区域到地图" }
 
             src: "qrc:/icons/white"
 
@@ -195,7 +195,7 @@ Window {
             //checkable: true
             checked: color == Style.mapGrey
 
-            CustomToolTip { text: langue == "English" ? "加入未知区域到地图" : "Add an unknown area to the map" }
+            CustomToolTip { text: langue == "English" ? "Add an unknown area to the map" : "加入未知区域到地图" }
 
             src: "qrc:/icons/grey"
 
@@ -215,7 +215,7 @@ Window {
             //checkable: true
             checked: color == "#000000" // black
 
-            CustomToolTip { text: langue == "English" ? "加入障碍物区域到地图" : "Add an obstacle to the map" }
+            CustomToolTip { text: langue == "English" ? "Add an obstacle to the map" : "加入障碍物区域到地图" }
 
             src: "qrc:/icons/black"
 
@@ -242,7 +242,7 @@ Window {
 
             id: dotButton
 
-            CustomToolTip { text: langue == "English" ? "画点到地图" : "Draw a point on the map" }
+            CustomToolTip { text: langue == "English" ? "Draw a point on the map" : "画点到地图" }
 
             //checkable: true
             checked: shape == 0
@@ -262,7 +262,7 @@ Window {
 
             id: lineButton
 
-            CustomToolTip { text: langue == "English" ? "画线到地图" : "Draw a line on the map" }
+            CustomToolTip { text: langue == "English" ? "Draw a line on the map" : "画线到地图" }
 
             //checkable: true
             checked: shape == 1
@@ -282,7 +282,7 @@ Window {
 
             id: outlineButton
 
-            CustomToolTip { text: langue == "English" ? "画空心矩形到地图" : "Draw an empty rectangle on the map" }
+            CustomToolTip { text: langue == "English" ? "Draw an empty rectangle on the map" : "画空心矩形到地图" }
 
             //checkable: true
             checked: shape == 2
@@ -302,7 +302,7 @@ Window {
 
             id: solidButton
 
-            CustomToolTip { text: langue == "English" ? "画实心矩形到地图" : "Draw a filled rectangle on the map" }
+            CustomToolTip { text: langue == "English" ? "Draw a filled rectangle on the map" : "画实心矩形到地图" }
 
             //checkable: true
             checked: shape == 3
@@ -331,7 +331,7 @@ Window {
 
             id: decrease
 
-            CustomToolTip { text: langue == "English" ? "减小画笔尺寸" : "Decrease the size of your brush" }
+            CustomToolTip { text: langue == "English" ? "Decrease the size on your brush" : "减小画笔尺寸" }
 
             src: "qrc:/icons/decrease"
 
@@ -364,7 +364,7 @@ Window {
 
             id: increaseButton
 
-            CustomToolTip { text: langue == "English" ? "增大画笔尺寸" : "Increase the size of your brush" }
+            CustomToolTip { text: langue == "English" ? "Increase the size of your brush" : "增大画笔尺寸" }
 
             src: "qrc:/icons/increase_brush"
 
@@ -447,16 +447,16 @@ Window {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            CustomToolTip { text: langue == "English" ? "提示" : "Help" }
+            CustomToolTip { text: langue == "English" ? "Help" : "提示" }
 
-            onClicked: langue == "English" ? tutorialDChinese.open() : tutorialD.open()
+            onClicked: langue == "English" ? tutorialD.open() : tutorialDChinese.open()
         }
 
         EditMapToolButton {
 
             id: cancelButton
 
-            CustomToolTip { text: langue == "English" ? "取消修改" : "Cancel modifications" }
+            CustomToolTip { text: langue == "English" ? "Cancel Modifications" : "取消修改" }
 
             src: "qrc:/icons/closeBtn"
 
@@ -474,7 +474,7 @@ Window {
 
             id: saveButton
 
-            CustomToolTip { text: langue == "English" ? "保存修改到当前地图" : "Save your modifications to the current map and notify your robots" }
+            CustomToolTip { text: langue == "English" ? "Save your modifications to the current map and notify your robot" : "保存修改到当前地图" }
 
             src: "qrc:/icons/save"
 

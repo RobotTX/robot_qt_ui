@@ -39,7 +39,6 @@ Item {
 
     Label {
         id: tooltip
-
         visible: img
         font.pointSize: sizePointView
         text: tooltipText
@@ -77,7 +76,7 @@ Item {
         anchors.fill: img
 
         onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
-//        onClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
+//       oxnClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
     }
 
     /// To change the source file of the pointView according to its type
@@ -86,6 +85,7 @@ Item {
         switch(type){
             case Helper.PointViewType.PERM:
             break;
+
             case Helper.PointViewType.TEMP:
                 src = "qrc:/icons/addPointView";
             break;
@@ -99,7 +99,7 @@ Item {
                 src = "qrc:/icons/pathPoint";
             break;
             case Helper.PointViewType.PATHPOINT_START:
-                src = "qrc:/icons/pathPointStart";
+                //src = "qrc:/icons/pathPointStart";
             break;
             case Helper.PointViewType.PATHPOINT_START_RED:
                 src = "qrc:/icons/pathPointStartRed";

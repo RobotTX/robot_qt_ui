@@ -22,7 +22,7 @@ ListModel {
 //        console.log("paths adding group " + name)
         append({
            "groupName": name,
-           "groupIsOpen": langue == "English" ? name === Helper.noGroupChinese : name === Helper.noGroup,
+           "groupIsOpen": langue == "English" ? name === Helper.noGroup : name === Helper.noGroupChinese,
            "paths": []
         });
     }
@@ -32,6 +32,7 @@ ListModel {
             langue = "中文"
         } else {
             langue = "English";
+
         }
 //        console.log("language in paths = " + langue);
     }
@@ -94,9 +95,9 @@ ListModel {
             if(get(i).groupName === groupName){
                 remove(i);
                 if (langue == 'English') {
-                    message = "删除群组 \"" + groupName + "\""
-                } else {
                     message = "Deleted the group \"" + groupName + "\""
+                } else {
+                    message = "删除群组 \"" + groupName + "\""
                 }
                 setMessageTop(3, message);
             }
@@ -114,12 +115,13 @@ ListModel {
                         if (langue == 'English') {
 //                            message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
                             if (groupName === Helper.noGroup) {
-                                message = "在 \"" + name + "\" 删除路径 \"" + Helper.noGroupChinese + "\""
+                                message = "Deleted the path \"" + name + "\" in \"" + Helper.noGroup + "\""
+
                             } else {
-                                message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
+                                message = "Deleted the path \"" + name + "\" in \"" + groupName + "\""
                             }
                         } else {
-                            message = "Deleted the path \"" + name + "\" in \"" + groupName + "\""
+                                message = "在 \"" + name + "\" 删除路径 \"" + groupName + "\""
                         }
 
                         setMessageTop(3, message);
@@ -223,9 +225,9 @@ ListModel {
             if(get(i).groupName === newGroup) {
                 get(i).paths.append(path);
                  if (langue == 'English') {
-                    message = "移动路径 \"" + name + "\" 从 \"" + oldGroup + "\" 到 \"" + newGroup + "\""
-                } else {
                     message = "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\""
+                } else {
+                    message = "移动路径 \"" + name + "\" 从 \"" + oldGroup + "\" 到 \"" + newGroup + "\""
                 }
             }
         }

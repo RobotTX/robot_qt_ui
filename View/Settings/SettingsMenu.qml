@@ -24,7 +24,7 @@ Page {
     MenuHeader {
         langue: page.langue
         id: settingsMenuHeader
-        txt: langue == "English" ? "设置" : "Settings"
+        txt: langue == "English" ? "Settings" : "设置"
         onCloseMenu: page.closeMenu()
     }
 

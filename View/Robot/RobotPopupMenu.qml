@@ -40,7 +40,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置路径" : "Assign Path"
+        labelText: langue == "English" ? "Assign Path" : "设置路径"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -94,7 +94,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前路径" : "Save My Path"
+        labelText: langue == "English" ? "Save My Path" : "保存当前路径"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 3
@@ -114,7 +114,7 @@ Menu {
         id: assignHome
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置充电站" : "Assign Home"
+        labelText: langue == "English" ? "Assign Home" : "设置充电站"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -160,7 +160,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前充电站" : "Save My Home"
+        labelText: langue == "English" ? "Save My Home" : "保存当前充电站"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 2
@@ -177,7 +177,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "重命名" : "Rename"
+        labelText: langue == "English" ? "Rename" : "重命名"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 4
@@ -194,7 +194,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "删除当前路径" : "Delete My Path"
+        labelText: langue == "English" ? "Delete My Path" : "删除当前路径"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 5

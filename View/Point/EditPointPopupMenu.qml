@@ -36,7 +36,7 @@ Menu {
 
     PopupMenuItem {
         id: assignPointTo
-        labelText: langue == "English" ? "发送目标点给" : "Send Point To"
+        labelText: langue == "English" ? "Send Point To" : "发送目标点给"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -85,7 +85,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "修改目标点" : "Edit Point"
+        labelText: langue == "English" ? "Edit Point" : "修改目标点"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         onHoveredChanged: if (visible) { currentMenuIndex = 1}
@@ -100,7 +100,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "移动到" : "Move To Group"
+        labelText: langue == "English" ? "Move To Group" : "移动到"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -137,7 +137,7 @@ Menu {
 
             PopupMenuItem {
                 height: Style.menuItemHeight
-                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                labelText: langue == "English" ? Helper.noGroup : Helper.noGroupChinese
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
                 /// Disable the group in which the point already is so we can't move it in
@@ -185,7 +185,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "删除目标点" : "Delete Point"
+        labelText: langue == "English" ? "Delete Point" : "删除目标点"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

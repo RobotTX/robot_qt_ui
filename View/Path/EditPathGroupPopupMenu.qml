@@ -16,7 +16,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "重命名组" : "Rename Group"
+        labelText: langue == "English" ? "Rename Group" : "重命名组"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -30,7 +30,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "删除组" : "Delete Group"
+        labelText: langue == "English" ? "Delete Group" : "删除组"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

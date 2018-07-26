@@ -71,7 +71,7 @@ Frame {
                 text: { if (mapReceived) {
                             "";
                       } else {
-                            langue == "English" ? "地图还未收到" : "The map has not been received yet"
+                            langue == "English" ? "The map has not been received yet" : "地图还未收到"
                     }
                 }
             }
@@ -125,9 +125,9 @@ Frame {
         CancelButton {
             id: playScanBtn
             txt: { if (scanning) {
-                    langue == "English" ? "暂停扫描"  : "Pause"
+                    langue == "English" ? "Pause"  : "暂停扫描"
                 } else {
-                    langue == "English" ? "开始扫描"  : "Start Scanning"
+                    langue == "English" ? "Start Scanning"  : "开始扫描"
                 }
             }
             enabled: connected
@@ -146,9 +146,9 @@ Frame {
         CancelButton {
             id: autoScanBtn
             txt: { if (onAutomatic) {
-                    langue == "English" ? "停止探索" : "Stop Exploring"
+                    langue == "English" ? "Stop Exploring" : "停止探索"
                 } else {
-                    langue == "English" ? "开始自动扫描" : "Start Exploring"
+                    langue == "English" ? "Start Exploring" : "开始自动扫描"
                 }
             }
             langue: scanMapListItemFrame.langue

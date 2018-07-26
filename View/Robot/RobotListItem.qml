@@ -18,6 +18,11 @@ Frame {
     property real batteryWarningThreshold
     property string langue
     property int menuIndex: -1
+    property int positive: 0;
+    property int negative: 0;
+    property int i:-1;
+    property int j:0;
+
 
     property variant consoleWhole: []
     property variant consoleWholeReverse: []
@@ -32,6 +37,9 @@ Frame {
     signal soundOff(string ip)
     signal soundIncrease(string ip)
     signal soundDecrease(string ip)
+
+    signal decreaseSound(string ip)
+    signal increaseSound(string ip)
 
     height: 260 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
@@ -54,7 +62,7 @@ Frame {
         height: 25
 
         imgSrc: "qrc:/icons/restart"
-        tooltip: langue == "English" ? "关机" : "Shut Down Robot"
+        tooltip: langue == "English" ? "Shut Down Robot" : "关机"
 
         property int delay: 700
         onPressed: {
@@ -113,12 +121,17 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
-            topMarginLabel: langue === "English" ? 20 : 10;
-            leftMarginLabel: langue === "English" ? 80 : 40;
-            title: langue == "English" ? "警告"  : "WARNING"
-            message: langue == "English" ? "\你想关闭机器人 " + name + " 吗?" : "\nDo you want to power off robot " + name + " ?"
-            acceptMessage: langue == "English" ? "确认" : "Yes"
-            rejectMessage: langue == "English" ? "取消" : "Cancel"
+
+            topMarginLabel: langue === "English" ? 10 : 20;
+            leftMarginLabel: langue === "English" ? 40 : 80;
+            textColor : "Grey"
+            colorBackground: "white"
+            font: bold
+            title: langue == "English" ? "Warning"  : "警告"
+            message: langue == "English" ? "\nDo you want to power off robot " + name + " ?" : "\n你想关闭机器人 " + name + "吗"
+            acceptMessage: langue == "English" ? "Yes" : "确认"
+            rejectMessage: langue == "English" ? "Cancel" : "取消"
+
             onAccepted: {
                 frame.rebootRobot(timerRestartButton.ipToShutDown);
             }
@@ -137,6 +150,8 @@ Frame {
             verticalCenter: restartButton.verticalCenter
 //            right: rightButton.left
             right: muteButton.left
+
+
         }
     }
 
@@ -179,7 +194,7 @@ Frame {
 
         SmallButton {
             id: cancelName
-            tooltip: langue == "English" ? "取消" :"Cancel"
+            tooltip: langue == "English" ? "Cancel" :"取消"
             imgSrc: "qrc:/icons/closeBtn"
             anchors {
                 verticalCenter: nameField.verticalCenter
@@ -195,7 +210,7 @@ Frame {
 
         SmallButton {
             id: saveName
-            tooltip: langue == "English" ? "保存" :"Save"
+            tooltip: langue == "English" ? "Save" :"保存"
             imgSrc: "qrc:/icons/save"
             anchors {
                 verticalCenter: nameField.verticalCenter
@@ -209,9 +224,9 @@ Frame {
                     var nameLabelChange = ""
                     var msg = ""
                     if (langue == "English") {
-                      nameLabelChange ="机器名改成"
-                    } else {
                       nameLabelChange = "Robot renamed to"
+                    } else {
+                      nameLabelChange ="机器名改成"
                     }
                     nameLabel.visible = true;
                     nameField.focus = false;
@@ -243,7 +258,7 @@ Frame {
         id: muteButton
         objectName: "muteBtn"
         imgSrc: if (charging == true) { "qrc:/icons/muteOn" } else  { "qrc:/icons/muteOff" }
-        tooltip: if (charging == true) { langue == "English" ?"取消静音":"Unmute sound" } else {langue == "English" ?"静音":"Mute sound"}
+        tooltip: if (charging == true) { langue == "English" ?"Unmute sound":"取消静音" } else {langue == "English" ?"Mute sound":"静音"}
         anchors {
             verticalCenter: nameLabel.verticalCenter
             right: rightButton.left
@@ -253,11 +268,11 @@ Frame {
             var muteLabel=""
             var unmuteLabel=""
             if (langue == "English") {
-                muteLabel = "静音"
-                unmuteLabel = "取消静音"
-            } else {
                 muteLabel = "Mute"
                 unmuteLabel = "Unmute"
+            } else {
+                muteLabel = "静音"
+                unmuteLabel = "取消静音"
             }
             charging = !charging;
             if (charging !== true) {
@@ -276,6 +291,42 @@ Frame {
             robotModel.reverse(consoleWhole, consoleWholeReverse, consoleWhole.length);
             consoleString = consoleWholeReverse.join('');
         }
+    }
+    SmallButton{
+        id : increaseButton
+        imgSrc: "qrc:/icons/increaseBtn"
+            anchors{
+                top: muteButton.bottom
+                right : decreaseButton.left
+                topMargin: muteButton.bottom
+
+        }
+            onReleased: {
+                robotModel.increaseSound(ip);
+            positive = 1;
+                console.log("Decrease button is clicked and the number is " + positive);
+            }
+
+    }
+     SmallButton{
+        id : decreaseButton
+        imgSrc :"qrc:/icons/decreaseBtn"
+            anchors{
+            right: parent.right
+
+            verticalCenter: increaseButton.verticalCenter
+            //right : parent.right
+             rightMargin : 15
+            leftMargin: 1
+            //left: increaseButton.right
+
+        }
+            onClicked:{
+
+               robotModel.decreaseSound(ip);
+
+            }
+
     }
 
     SmallButton {
@@ -340,9 +391,9 @@ Frame {
             onPointSelected: {
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="新充电站"
-                } else {
                   homeLabel="New home"
+                } else {
+                  homeLabel="新充电站"
                 }
                 setMessageTop(2, homeLabel);
                 robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
@@ -358,11 +409,12 @@ Frame {
                 var actionLabel=""
                 var assignLabel=""
                 if (langue == "English") {
-                    actionLabel = "路径"
-                    assignLabel = "分配给机器"
-                } else {
                     actionLabel = "Path"
                     assignLabel = "assigned to robot"
+                } else {
+                    actionLabel = "路径"
+                    assignLabel = "分配给机器"
+
                 }
 
                 setMessageTop(2, actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\""  + name +"\"");
@@ -382,9 +434,9 @@ Frame {
             onDeletePath: {
                 var pathLabel=""
                 if (langue == "English") {
-                  pathLabel="删除路径"
+                   pathLabel="Path deleted"
                 } else {
-                  pathLabel="Path deleted"
+                  pathLabel="删除路径"
                 }
                 setMessageTop(2, pathLabel);
                 robotModel.deletePathSignal(ip)
@@ -402,11 +454,11 @@ Frame {
                 var pathLabel=""
                 var savelabel=""
                 if (langue == "English") {
-                    pathLabel="当前的路径"
-                    savelabel="保存了"
-                } else {
                     pathLabel="Current path"
                     savelabel="saved"
+                } else {
+                    pathLabel="当前的路径"
+                    savelabel="保存了"
                 }
 
                 setMessageTop(2, pathLabel + " " + pathName + " " + savelabel)
@@ -425,9 +477,10 @@ Frame {
                 }
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="已保存当前充电站"
-                } else {
                   homeLabel="Saved current home"
+
+                } else {
+                  homeLabel="已保存当前充电站"
 
                 }
 
@@ -461,9 +514,9 @@ Frame {
             onPointSelected: {
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="新充电站"
-                } else {
                   homeLabel="New home"
+                } else {
+                  homeLabel="新充电站"
                 }
                 setMessageTop(2, homeLabel);
                 robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
@@ -479,11 +532,11 @@ Frame {
                 var actionLabel=""
                 var assignLabel=""
                 if (langue == "English") {
-                    actionLabel = "路径"
-                    assignLabel = "分配给机器"
-                } else {
                     actionLabel = "Path"
                     assignLabel = "assigned to robot"
+                } else {
+                    actionLabel = "路径"
+                    assignLabel = "分配给机器"
                 }
 
                 setMessageTop(2, actionLabel+ "\"" + _pathName + "\"" + assignLabel + "\""  + name +"\"");
@@ -503,9 +556,9 @@ Frame {
             onDeletePath: {
                 var pathLabel=""
                 if (langue == "English") {
-                  pathLabel="删除路径"
-                } else {
                   pathLabel="Path deleted"
+                } else {
+                  pathLabel="删除路径"
                 }
                 setMessageTop(2, pathLabel);
                 robotModel.deletePathSignal(ip)
@@ -523,11 +576,11 @@ Frame {
                 var pathLabel=""
                 var savelabel=""
                 if (langue == "English") {
-                    pathLabel="当前的路径"
-                    savelabel="保存了"
-                } else {
                     pathLabel="Current path"
                     savelabel="saved"
+                } else {
+                    pathLabel="当前的路径"
+                    savelabel="保存了"
                 }
 
                 setMessageTop(2, pathLabel + " " + pathName + " " + savelabel)
@@ -546,10 +599,9 @@ Frame {
                 }
                 var homeLabel=""
                 if (langue == "English") {
-                  homeLabel="已保存当前充电站"
-                } else {
                   homeLabel="Saved current home"
-
+                } else {
+                  homeLabel="已保存当前充电站"
                 }
 
                 setMessageTop(2, homeLabel)
@@ -570,11 +622,11 @@ Frame {
             var actionLabel=""
             var assignLabel=""
             if (langue == "English") {
-                actionLabel = "路径"
-                assignLabel = "分配给机器"
-            } else {
                 actionLabel = "Path"
                 assignLabel = "assigned to robot"
+            } else {
+                actionLabel = "路径"
+                assignLabel = "分配给机器"
             }
 
             if (robotModel.robotSelected === true && robotModel.getRobotIP() === ip) {
@@ -596,8 +648,9 @@ Frame {
         value: battery / 100
 
         anchors {
-//            top: nameLabel.bottom
-            top: increaseSound.bottom
+
+            top: increaseButton.bottom
+
             left: parent.left
             right: parent.right
 //            topMargin: 9
@@ -773,117 +826,116 @@ Frame {
         text: {
             /// path deleted
             if (robotModel.deletePathButtonClicked) {
-                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + pathName + "\" \nhas been deleted\n");
+                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Path \"" + pathName + "\" \nhas been deleted\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                 robotModel.msg = robotModel.inverseMsg.join('');
-                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Path \"" + pathName + "\" \nhas been deleted");
+                langue == "English" ? qsTr("Path \"" + pathName + "\" \nhas been deleted") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                 robotModel.deletePathButtonClicked = false;
             }
             if (dockStatus === 3) {
-                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Auto docking\n");
+                langue == "English" ?  robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Auto docking\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                 robotModel.msg = robotModel.inverseMsg.join('');
-                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Auto docking");
+                langue == "English" ? qsTr("Auto docking") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
             } else if (dockStatus === 0) {
-                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop auto docking\n");
+                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop auto docking\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                 robotModel.msg = robotModel.inverseMsg.join('');
-                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Stop auto docking");
+                langue == "English" ? qsTr("Stop auto docking") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
             }
 
             if(pathName !== "" && pathPoints.count > 0){
                 /// looping
                 if (looping === true) {
-                    langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Looping\n");
+                    langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Looping\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                     reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                     robotModel.msg = robotModel.inverseMsg.join('');
-                    langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Looping");
+                    langue == "English" ? qsTr("Looping") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                 } else {
-                    langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Unlooping\n");
+                    langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Unlooping\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                     reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                     robotModel.msg = robotModel.inverseMsg.join('');
-                    langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Unlooping");
+                    langue == "English" ? qsTr("Unlooping") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                 }
 
                 if(stage >= 0){
                     if(stage < pathPoints.count){
                         if(playingPath) {
                             if (stage === 0) {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its \nmission" + "\n")
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Robot is starting its \nmission" + "\n"): robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n")
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("Heading to " + pathPoints.get(stage).pathPointName) : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                             } else {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n");
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Heading to " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                                langue == "English" ? qsTr("Heading to " + pathPoints.get(stage).pathPointName) : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                             }
                         } else {
                             if (robotModel.stopButtonClicked === true) {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stopped robot \"" + name + "\" \nin its mission\n");
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stopped robot \"" + name + "\" \nin its mission\n"): robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("等待移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Stopped robot in its mission");
+                                langue == "English" ? qsTr("Stopped robot in its mission") : qsTr("等待移动到 " + pathPoints.get(stage).pathPointName);
                                 robotModel.stopButtonClicked = false;
                             } else if (robotModel.pauseButtonClicked === true) {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Paused robot \"" + name + "\" \nin its mission\n");
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Paused robot \"" + name + "\" \nin its mission\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("等待移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Paused robot in its mission");
+                                langue == "English" ? qsTr("Paused robot in its mission") : qsTr("等待移动到 " + pathPoints.get(stage).pathPointName);
                                 robotModel.pauseButtonClicked = false;
                             } else if (dockStatus === 3) {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Auto docking\n");
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Auto docking\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Auto docking");
+                                langue == "English" ? qsTr("Auto docking") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                             } else if (dockStatus === 0) {
-                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop auto docking\n");
+                                langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stop auto docking\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "正在移动到 " + pathPoints.get(stage).pathPointName + "\n" + Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "机器人开始执行任务" + "\n");
                                 reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                                 robotModel.msg = robotModel.inverseMsg.join('');
-                                langue == "English" ? qsTr("正在移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Stop auto docking");
+                                langue == "English" ? qsTr("Stop auto docking") : qsTr("正在移动到 " + pathPoints.get(stage).pathPointName);
                             }
 
-                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Waiting to go to " + pathPoints.get(stage).pathPointName + "\n");
+                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Waiting to go to " + pathPoints.get(stage).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "等待移动到 " + pathPoints.get(stage).pathPointName + "\n");
                             reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                             robotModel.msg = robotModel.inverseMsg.join('');
-                            langue == "English" ? qsTr("等待移动到 " + pathPoints.get(stage).pathPointName) : qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
+                            langue == "English" ? qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName) : qsTr("等待移动到 " + pathPoints.get(stage).pathPointName);
                         }
                     } else if (stage === pathPoints.count) {
-                        langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "已完成当前路径" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current path completed" + "\n");
+                        langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Current path completed" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "已完成当前路径" + "\n");
                         reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                         robotModel.msg = robotModel.inverseMsg.join('');
-                        langue == "English" ? qsTr("已完成当前路径") : qsTr("Current path completed");
+                        langue == "English" ? qsTr("Current path completed") : qsTr("已完成当前路径");
                         robotModel.pathCompleted = true;
                     } else {
-                        langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
+                        langue == "English" ? qsTr("Stage not in the pathpoint list") : qsTr("路径目标点不存在当前状态");
                     }
                 } else {
                     if(Math.abs(stage + 1) < pathPoints.count){
 
                         if(stage == -1) {
                             playingPath = false;
-                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在到 " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "去的路上" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
+                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在到 " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "去的路上" + "\n");
                             reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                             robotModel.msg = robotModel.inverseMsg.join('');
-                            langue == "English" ? qsTr("困在到 " +  pathPoints.get(Math.abs(stage + 1)).pathPointName + " 去的路上") : qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                            qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                            langue == "English" ? qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName) : qsTr("困在到 " +  pathPoints.get(Math.abs(stage + 1)).pathPointName + " 去的路上");
 //                            warningDialog.message = "Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName;
 //                            warningDialog.open();
                         } else {
                             playingPath = false;
-                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上" + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n");
+                            langue == "English" ? robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName + "\n") : robotModel.msgs.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + "困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上" + "\n");
                             reverse(robotModel.msgs,robotModel.inverseMsg, robotModel.msgs.length, robotModel.inverseMsg.length)
                             robotModel.msg = robotModel.inverseMsg.join('');
-                            langue == "English" ? qsTr("困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上") : qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                            langue == "English" ? qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName) : qsTr("困在从 " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " 来的路上");
                             qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
                         }
                     } else {
-                        langue == "English" ? qsTr("路径目标点不存在当前状态") : qsTr("Stage not in the pathpoint list");
+                        langue == "English" ? qsTr("Stage not in the pathpoint list") : qsTr("路径目标点不存在当前状态");
                     }
                 }
             } else {
-                langue == "English" ? qsTr("尚未设置路径") : qsTr("No Path Assigned");
+                langue == "English" ? qsTr("No Path Assigned") : qsTr("尚未设置路径");
             }
         }
         font.pointSize: 10
@@ -915,7 +967,10 @@ Frame {
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
         height: 60
-        title: "WARNING"
+
+        title: "Warning dialog"
+
+
     }
 
 
@@ -941,11 +996,11 @@ Frame {
             var actionLabel=""
             var assignLabel=""
             if (langue == "English") {
-                actionLabel = "路径"
-                assignLabel = "分配给机器"
-            } else {
                 actionLabel = "Path "
                 assignLabel = "assigned to robot"
+            } else {
+                actionLabel = "路径"
+                assignLabel = "分配给机器"
             }
 
             setMessageTop(2, actionLabel + "\"" + _pathName + "\"" + assignLabel + "\"" + name);
@@ -963,11 +1018,11 @@ Frame {
             var actionLabel=""
             var autoDockingLabel=""
             if (langue == "English") {
-                actionLabel = "机器人 "
-                autoDockingLabel = "开始自动充电"
-            } else {
                 actionLabel = "Start robot "
                 autoDockingLabel = "auto docking process"
+            } else {
+                actionLabel = "机器人 "
+                autoDockingLabel = "开始自动充电"
             }
 
             setMessageTop(2, actionLabel + "\"" + name + "\""+ autoDockingLabel);
@@ -987,11 +1042,11 @@ Frame {
             var actionLabel=""
             var autoDockingLabel=""
             if (langue == "English") {
-                actionLabel = "停止机器人 "
-                autoDockingLabel = "任务"
-            } else {
                 actionLabel = "Stop robot "
                 autoDockingLabel = "auto docking process"
+            } else {
+                actionLabel = "停止机器人 "
+                autoDockingLabel = "任务"
             }
 
             setMessageTop(2, actionLabel + "\"" + name + "\""+ autoDockingLabel);
@@ -1011,11 +1066,11 @@ Frame {
             var actionLabel=""
             var missionLabel=""
             if (langue == "English") {
-                actionLabel = "停止机器人 "
-                missionLabel = "任务"
-            } else {
                 actionLabel = "Stop robot "
                 missionLabel = "mission"
+            } else {
+                actionLabel = "停止机器人 "
+                missionLabel = "任务"
             }
 
             setMessageTop(2, actionLabel + "\"" + name + "\""+ missionLabel);
@@ -1032,11 +1087,11 @@ Frame {
             var actionLabel=""
             var missionLabel=""
             if (langue == "English") {
-                actionLabel = "暂停机器人 "
-                missionLabel = "路径"
-            } else {
                 actionLabel = "Pause robot "
                 missionLabel = "mission"
+            } else {
+                actionLabel = "暂停机器人 "
+                missionLabel = "路径"
             }
             setMessageTop(2, actionLabel + "\"" + name + "\"" + missionLabel);
             frame.consoleWhole.push(Qt.formatTime(new Date(),"hh:mm:ss") + ": " + actionLabel + "\"" + name + "\"\n"+ missionLabel + "\n");
@@ -1052,11 +1107,11 @@ Frame {
             var actionLabel=""
             var missionLabel=""
             if (langue == "English") {
-                actionLabel = "开始机器人 "
-                missionLabel = "路径"
-            } else {
                 actionLabel = "Start robot "
                 missionLabel = "mission"
+            } else {
+                actionLabel = "开始机器人 "
+                missionLabel = "路径"
             }
 
             setMessageTop(2, actionLabel + "\"" + name + "\"" + missionLabel);
@@ -1072,9 +1127,9 @@ Frame {
         onLoopPath: {
             var loopLabel=""
             if (langue == "English") {
-                loopLabel = "开始循环"
-            } else {
                 loopLabel = "Looping"
+            } else {
+                loopLabel = "开始循环"
             }
 
             setMessageTop(2, loopLabel);
@@ -1091,9 +1146,9 @@ Frame {
         onUnloopPath: {
             var loopLabel=""
             if (langue == "English") {
-                loopLabel = "停止循环"
-            } else {
                 loopLabel = "Unlooping"
+            } else {
+                loopLabel = "停止循环"
             }
 
             setMessageTop(2, loopLabel);

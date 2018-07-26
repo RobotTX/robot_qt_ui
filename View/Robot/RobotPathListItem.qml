@@ -57,7 +57,7 @@ Frame {
 
         Button {
             id: assignPath
-            text: langue == "English" ? "设置路径" : "Assign Path"
+            text: langue == "English" ? "Assign Path" : "设置路径"
             height: parent.height - 2
             padding: 0
             width: 150
@@ -224,9 +224,9 @@ Frame {
                 imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                 tooltip: {
                     if (pathIsVisible) {
-                        langue == "English" ? "隐藏地图上的机器人路径" : "Hide robot path on map"
+                        langue == "English" ? "Hide robot path on map" : "隐藏地图上的机器人路径"
                     } else {
-                        langue == "English" ? "显示地图上的机器人路径" : "Show robot path on map"
+                        langue == "English" ? "Show robot path on map" : "显示地图上的机器人路径"
                     }
                 }
 
@@ -265,7 +265,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                tooltip: pathIsOpen ? langue == "English" ? "隐藏路径细节" : " Hide robot path detail" : langue == "English" ? "查看路径细节" : " Show robot path detail"
+                tooltip: pathIsOpen ? langue == "English" ? "Hide robot path detail" : " 隐藏路径细节" : langue == "English" ? "Show robot path detail" : " 查看路径细节"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -441,13 +441,13 @@ Frame {
 
 //                                    waitTimeLabel = "toto"
                                     if (langue == "English") {
-                                        waitTimeLabel = "等待 ："
-                                        humanActionLabel="人为干预"
-                                        SecondsLabel=" 秒"
-                                    } else {
                                         waitTimeLabel = "Delay : "
                                         humanActionLabel="Human Action"
                                         SecondsLabel=" s"
+                                    } else {
+                                        waitTimeLabel = "等待 ："
+                                        humanActionLabel="人为干预"
+                                        SecondsLabel=" 秒"
                                     }
 
                                     if (playingPath === false) { // if robot not playingPath
@@ -713,9 +713,9 @@ Frame {
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                 tooltip: { if(playingPath) {
-                            langue == "English" ? "暂停机器人路径" : "Pause robot path"
+                            langue == "English" ? "Puase robot path" : "暂停机器人路径"
                     } else {
-                        langue == "English" ? "开始机器人路径" : "Play robot path"
+                        langue == "English" ? "Play robot path" : "开始机器人路径"
                     }
                 }
 
@@ -755,7 +755,7 @@ Frame {
                 visible: robotMode === 0 ? true : false
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/stop"
-                tooltip: langue == "English" ? "停止机器人" : "Stop robot"
+                tooltip: langue == "English" ? "Stop robot" : "停止机器人"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -788,7 +788,7 @@ Frame {
                 width: playPausePathButton.width
                 imgSrc: "qrc:/icons/reset"
 //                tooltip: langue == "English" ? "在路径上循环" : "Loop the path"
-                tooltip: looping ? langue == "English" ?"停止循环":"Unloop": langue == "English" ?"循环":"Loop"
+                tooltip: looping ? langue == "English" ?"Unloop":"停止循环": langue == "English" ?"Loop":"循环"
                 checkable: true
                 checked: looping
 
@@ -855,19 +855,19 @@ Frame {
                 tooltip: {
                     if (langue === "English") {
                         if (dockStatus === 3) {
-                            "停止自动充电";
-                        } else if (dockStatus === 1) {
-                            "充电中";
-                        } else {
-                            "自动充电";
-                        }
-                    } else {
-                        if (dockStatus === 3) {
                             "Stop auto docking" ;
                         } else if (dockStatus === 1) {
                             "Charging";
                         } else {
                             "Auto docking";
+                        }
+                    } else {
+                        if (dockStatus === 3) {
+                            "停止自动充电";
+                        } else if (dockStatus === 1) {
+                            "充电中";
+                        } else {
+                            "自动充电";
                         }
                     }
                 }

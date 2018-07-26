@@ -48,7 +48,7 @@ Frame {
 //                tutorialDChinese.open();
 //                console.log("scanmapleftmenu = " + tutorial.isDisplayed())
 //            }
-            langue == "English" ? tutorialDChinese.open() : tutorialD.open()
+            langue == "English" ? tutorialD.open() : tutorialDChinese.open()
     }
 
     background: Rectangle {
@@ -197,7 +197,7 @@ Frame {
         }
 
         CustomLabel {
-            text: langue == "English" ? qsTr("选择机器人") : qsTr("Select Robot")
+            text: langue == "English" ? qsTr("Select Robot") : qsTr("选择机器人")
             color: "#262626"
             anchors{
                 verticalCenter: parent.verticalCenter
@@ -216,7 +216,7 @@ Frame {
                 rightMargin: 15
             }
 
-            onClicked: langue == "English" ? tutorialDChinese.open() : tutorialD.open()
+            onClicked: langue == "English" ? tutorialD.open() : tutorialDChinese.open()
 //                tutorialD.open()
         }
 
@@ -301,7 +301,7 @@ Frame {
     SaveButton {
         id: saveButton
         canSave: scanningRobotsList.count > 0
-        tooltip: langue == "English" ? "保存时需要至少一个地图" : "You need at least 1 map to save"
+        tooltip: langue == "English" ? "You need at least 1 map to save" : "保存时需要至少一个地图"
         langue: scanLeftMenuFrame.langue
         anchors {
             bottom: cancelButton.top
@@ -334,7 +334,7 @@ Frame {
         nameFilters: "*.pgm"
         // won't let you choose a file name if selectExisting is true
         selectExisting: false
-        title: langue == "English" ? "请选择一个路径" : "Please choose a location for your map"
+        title: langue == "English" ? "Pelase choose a location for your map" : "请选择一个路径"
 
         onAccepted: {
             var fileStr = fileUrl.toString();
@@ -360,8 +360,8 @@ Frame {
         x: (scanLeftMenuFrame.width - width) / 2
         y: (scanLeftMenuFrame.height - height) / 2
         height: 60
-        title: langue == "English" ? "警告窗口" : "Warning dialog"
-        acceptMessage: langue == "English" ? "\n地图名称不能包含空格" : "\nSpace are not allowed"
+        title: langue == "English" ? "Warning dialog" : "警告窗口"
+        acceptMessage: langue == "English" ? "\nSpace are not allowed" : "\nS地图名称不能包含空格"
     }
 
     TutorialDialog {

@@ -35,7 +35,7 @@ Menu {
 
     PopupMenuItem {
         id: sendTtsToRobot
-        labelText: langue == "English" ? "发送语音给" : "Send Speech To"
+        labelText: langue == "English" ? "Send Speech To" : "发送语音给"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -85,13 +85,13 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "编辑语音" : "Edit Speech"
+        labelText: langue == "English" ? "Edit Speech" : "编辑语音"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onHoveredChanged: if (visible) { currentMenuIndex = 1}
         onTriggered: {
-            editSpeech()
+            editSpeech() // called here
         }
     }
 
@@ -102,7 +102,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "移动到" : "Move to Group"
+        labelText: langue == "English" ? "Move To Group" : "移动到"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -121,7 +121,7 @@ Menu {
                               currentMenuIndex = 2
                           } /// desktop
 //        onClicked: if (visible) { currentMenuIndex = 1} /// android
-        onTriggered: doNothing()
+        onTriggered: doNothing() // called here
 
         Menu {
             id: moveToMenu
@@ -138,7 +138,7 @@ Menu {
 
             PopupMenuItem {
                 height: Style.menuItemHeight
-                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+                labelText: langue == "English" ? Helper.noGroupChinese : Helper.noGroupChinese
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
                 /// Disable the group in which the speech already is so we can't move it in
@@ -172,7 +172,7 @@ Menu {
                         enabled: !(groupName === myGroup)
                         labelText: groupName
 
-                        onTriggered: moveTo(groupName)
+                        onTriggered: moveTo(groupName) // called here
                     }
                 }
             }
@@ -186,11 +186,11 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "删除语音" : "Delete Speech"
+        labelText: langue == "English" ? "Delete Speech" : "删除语音"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onHoveredChanged: if (visible) { currentMenuIndex = 3}
-        onTriggered: deleteSpeech(name)
+        onTriggered: deleteSpeech(name) // called here
     }
 }

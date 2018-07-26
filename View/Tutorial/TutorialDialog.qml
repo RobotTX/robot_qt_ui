@@ -77,7 +77,7 @@ Dialog {
                     right: button.left
                 }
 
-                text: langue == "English" ? "不在显示此条信息" : "Do not show this message again"
+                text: langue == "English" ? "Do not show this message again" : "不在显示此条信息"
             }
 
             Button {
@@ -96,7 +96,9 @@ Dialog {
                 }
                 height: 23
                 width: 60
-                text: langue == "English" ? "是" : "OK"
+
+                text: langue == "English" ? "Ok" : "是"
+
                 onClicked: {
                     box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
                     tutorialDialog.close()

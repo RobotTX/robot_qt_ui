@@ -30,6 +30,8 @@ Menu {
     signal saveCurrentHome()
     signal soundOn(string ip)
     signal soundOff(string ip)
+    signal decreaseSound(string ip)
+    signal increaseSound(string ip)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -47,7 +49,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "设置路径" : "Assign Path"
+        labelText: langue == "English" ? "Assign Path" : "设置路径"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -93,7 +95,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "保存当前路径" : "Save My path"
+        labelText: langue == "English" ? "Save My Path" : "保存当前路径"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 3
@@ -112,7 +114,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        labelText: langue == "English" ? "删除当前路径" : "Delete My Path"
+        labelText: langue == "English" ? "Delete My Path" : "删除当前路径"
         leftPadding: Style.menuItemLeftPadding
 
 //        onHoveredChanged: if(visible) currentMenuIndex = 5

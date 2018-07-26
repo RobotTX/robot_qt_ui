@@ -54,7 +54,7 @@ Frame {
         }
 
         Grid {
-            property string selectedGroup: langue == "English" ? Helper.noGroupChinese : Helper.noGroup
+            property string selectedGroup: langue == "English" ? Helper.noGroup : Helper.noGroupChinese
             property string selectedPath: (pathModel.count > 0) ? pathModel.get(0).paths.count > 0 ? pathModel.get(0).paths.get(0).pathName : "" : ""
 
             id: columnId

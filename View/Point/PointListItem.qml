@@ -143,9 +143,9 @@ Column {
                 id: leftButton2
                 tooltip: {
                     if (isVisible) {
-                        langue == "English" ? "隐藏地图上该目标点" : "Hide point on map"
+                        langue == "English" ? "Hide point on map" : "隐藏地图上该目标点"
                     } else {
-                        langue == "English" ? "显示地图上该目标点" : "Show point on map"
+                        langue == "English" ? "Show point on map" : "显示地图上该目标点"
                     }
                 }
                 imgSrc: isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"

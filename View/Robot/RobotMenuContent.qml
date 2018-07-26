@@ -25,8 +25,10 @@ Frame {
     signal soundOff(string ip)
     signal setMessageTop(int status, string msg)
     signal interruptDelay(string ip)
-    signal soundIncrease(string ip)
-    signal soundDecrease(string ip)
+
+    signal decreaseSound(string ip)
+    signal increaseSound(string ip)
+
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -37,7 +39,7 @@ Frame {
 
     EmptyMenu {
         visible: robotModel.count === 0
-        txt: langue == "English" ? "未连接机器人.\n请确保机器人和电脑在同一个WIFI网络" : "No robot connected.\nMake sure that the robot and your computer are connected to the same WIFI network."
+        txt: langue == "English" ? "No robot connected.\nMake sure that the robot and your computer are connected to the same WIFI network." : "未连接机器人.\n请确保机器人和电脑在同一个WIFI网络"
         imgSrc: "qrc:/icons/big_robot"
     }
 
@@ -66,10 +68,12 @@ Frame {
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                     onSoundOn: robotMenuFrame.soundOn(ip)
                     onSoundOff: robotMenuFrame.soundOff(ip)
-                    onSoundDecrease: robotMenuFrame.soundDecrease(ip)
-                    onSoundIncrease: robotMenuFrame.soundIncrease(ip)
+               //     onSoundDecrease: robotMenuFrame.soundDecrease(ip)
+                 //   onSoundIncrease: robotMenuFrame.soundIncrease(ip)
                     onSetMessageTop: robotMenuFrame.setMessageTop(status, msg)
                     onInterruptDelay: robotMenuFrame.interruptDelay(ip)
+                    onDecreaseSound: robotMenuFrame.decreaseSound(ip)
+                    onIncreaseSound: robotMenuFrame.increaseSound(ip)
                 }
             }
         }
@@ -79,6 +83,8 @@ Frame {
         target: robotModel
         onSoundOn: robotMenuFrame.soundOn(ip)
         onSoundOff: robotMenuFrame.soundOff(ip)
+        onDecreaseSound : robotMenuFrame.decreaseSound(ip)
+        onIncreaseSound : robotMenuFrame.increaseSound(ip)
     }
 
     function homePosition(homeX, homeY) {

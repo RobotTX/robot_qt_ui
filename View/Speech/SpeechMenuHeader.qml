@@ -38,7 +38,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: langue == "English" ? qsTr("管理 语音") : qsTr("Manage " + txt)
+        text: langue == "English" ? qsTr("Manage " + txt) : qsTr("管理 语音")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

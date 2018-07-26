@@ -107,6 +107,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(stopDockingRobot(QString)), this, SLOT(stopDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
         connect(robotMenuFrame, SIGNAL(soundOn(QString)), this, SLOT(soundOn(QString)));
+        connect(robotMenuFrame, SIGNAL(decreaseSound(QString)), this, SLOT(decreaseSound(QString)));
+        connect(robotMenuFrame, SIGNAL(increaseSound(QString)),this, SLOT(increaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
         connect(robotMenuFrame, SIGNAL(soundIncrease(QString)), this, SLOT(soundIncrease(QString)));
         connect(robotMenuFrame, SIGNAL(soundDecrease(QString)), this, SLOT(soundDecrease(QString)));
@@ -456,12 +458,11 @@ void RobotsController::soundOn(QString ip) {
     sendCommand(ip, QString("w"));
 }
 
-void RobotsController::soundIncrease(QString ip) {
-    sendCommand(ip, QString("r") + QChar(31) + QString("1"));
-}
-
-void RobotsController::soundDecrease(QString ip) {
+void RobotsController::decreaseSound(QString ip){
     sendCommand(ip, QString("r") + QChar(31) + QString("0"));
+}
+void RobotsController::increaseSound(QString ip){
+     sendCommand(ip, QString("r") + QChar(31) + QString("1"));
 }
 
 void RobotsController::soundOff(QString ip) {
