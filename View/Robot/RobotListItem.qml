@@ -120,7 +120,7 @@ Frame {
             colorBackground: "white"
             font: bold
             title: langue == "English" ? "Warning"  : "警告"
-            message: langue == "English" ? "\nDo you want to power off robot " + name + " ?" : "\n你想关闭机器人 " + name + "吗"
+            message: langue == "English" ? "\nDo you want to power off robot " + name + "?" : "你想关闭机器人 " + name + "吗?"
             acceptMessage: langue == "English" ? "Yes" : "确认"
             rejectMessage: langue == "English" ? "Cancel" : "取消"
 
