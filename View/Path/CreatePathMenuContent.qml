@@ -18,8 +18,6 @@ Frame {
     property string oldGroup // when editing
    // property bool test1 : true
     property string errorMsg
-   property string hello1234 : "P1"
-    property string codingProblem : "P1"
     property string robotPathName // when creating a new path from robot
     property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
@@ -395,19 +393,13 @@ Frame {
                         property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
                         text: {
+                            console.log("namePoint = " + name);
                             if (name === nameCoordinates) {
-                               hello1234 = "P"+(index+1);
-
                                 qsTr("P"+(index+1));
                             } else {
-                                hello1234 = name;
-
                                 qsTr(name);
                             }
-
-                           // name === nameCoordinates ?  "P"+(index+1)  :  name
                         }
-                        //validator: RegExpValidator { regExp:  /^(?:[0-9]+[a-z]|[a-z]+[0-9])[a-z0-9]*$/i }
                         selectByMouse: true
                         color: "#262626"
                         padding: 2
@@ -428,23 +420,9 @@ Frame {
                         //Overhere create function that sends false if name == empty
                         onTextChanged:
                         {
-
                             name = text
-                            codingProblem = name
-                            hello1234 = ""
-                            console.log("Why never change " + name)
-                            if(name === "")
-                            {
-                              //  testinghello = false
-                               codingProblem = ""
-                                console.log("New text = " + codingProblem)
-                            }
-
-
                             enableSave();
-                            //CreatePathMenuContent.test1 = true;
                         }
-                                               //onSelectByMouseChanged: hello1234 = name
 
                     }
 
@@ -980,7 +958,9 @@ Frame {
                 leftMargin: 20
                 bottomMargin: 20
             }
-            onClicked: backToMenu()
+            onClicked: {
+                backToMenu();
+            }
         }
 
         SaveButton {
@@ -1034,7 +1014,7 @@ Frame {
                 }
 
 //                setMessageTop(3, oldName === "" ? mess1 : mess2)
-                setMessageTop(3, mess1)
+                setMessageTop(3, mess1);
                 backToMenu();
             }
         }
@@ -1102,40 +1082,7 @@ Frame {
             }
         }
 
-
-
-
-        // take here out if boolean == false, then save == false
-        /*
-        if(testinghello == false){
-            error = true;
-            //testinghello = true
-        }
-*/
-
-        var checkName = hello1234;
-        var checkName1 = codingProblem;
-        console.log("checkName = " + checkName);
-        console.log("checkName1 = " + checkName1);
-        var mess5 = ''
-       var error1 = ((checkName === "" && checkName1 === "") || checkName1 === "");
-        //var error1 = (checkName === "")
-        console.log("error 1 = " + error1);
-            if (langue == "English") {
-                mess5 = "The path point name cannot be empty"
-            } else {
-               mess5 = "路径名不能为空"
-            }
-            if(error1) {
-                console.log("error 1 is true");
-                //CreatePathMenuContent.test1 = false;
-               errorMsg = mess5
-               error = true
-            }
-
         setMessageTop(1, errorMsg);
-        console.log("testingHello = " + testinghello);
-        console.log("!error = " + !error);
         saveButton.canSave = !error;
 
 

@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../Custom"
+import "../../Model/Path"
 
 Menu {
     padding: 0
@@ -10,6 +11,7 @@ Menu {
     signal openCreateGroupMenu()
 
     property string langue
+    property Paths pathModel
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -22,7 +24,10 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: openCreatePathMenu()
+        onTriggered: {
+            openCreatePathMenu();
+            pathModel._index = 0;
+        }
     }
 
     Rectangle {

@@ -321,6 +321,8 @@ Frame {
                     }
                 }
 
+
+
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -330,6 +332,8 @@ Frame {
                     onDoubleClicked: doubleClickedOnMap(mouseX, mouseY)
 
                     onClicked: {
+                        pathModel._index = pathModel._index + 1;
+                        console.log("pathModel._index = " + pathModel._index);
                         if (mouse.button === Qt.LeftButton) {
                             if(tmpPointView.visible){
                                 tmpPointView.x = mouseX;
@@ -340,7 +344,8 @@ Frame {
                             }
                             // change here
                             if(useTmpPathModel){
-                                tmpPathModel.addPathPoint(Math.round(mouseX) + " " + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
+//                                tmpPathModel.addPathPoint(Math.round(mouseX) + " " + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
+                                tmpPathModel.addPathPoint("P" + pathModel._index,  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
                                 canvas.requestPaint();
                             }
@@ -423,11 +428,11 @@ Frame {
                             delegate: PointView {
                                 id: pathPointView
                                 property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
-
                                 _name: {
                                     name === nameCoordinates ? "P"+(index+1) : name;
 //                                    "P" + (_index + 1)
                                 }
+
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName
                                 _groupName: pathName

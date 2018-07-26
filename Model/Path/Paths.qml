@@ -17,6 +17,7 @@ ListModel {
     property bool openGroup: false
 
     property string langue
+    property int _index
 
     function addGroup(name){
 //        console.log("paths adding group " + name)

@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../Custom"
+import "../../Model/Path"
 
 Frame {
     id: menuHeader
@@ -9,6 +10,7 @@ Frame {
     z: 2
 
     readonly property string txt: "Path"
+    property Paths pathModel
     property string langue
     property bool test1 : false
     signal closeMenu(string txt)
@@ -84,6 +86,7 @@ Frame {
             id: createMenu
             x: createButton.width
             langue: menuHeader.langue
+            pathModel: menuHeader.pathModel
             onOpenCreatePathMenu: menuHeader.openCreatePathMenu()
             onOpenCreateGroupMenu: menuHeader.openCreateGroupMenu()
         }

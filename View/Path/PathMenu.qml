@@ -38,6 +38,7 @@ Page {
         PathMenuHeader {
             id: pathMenuHeader
             langue: page.langue
+            pathModel: page.pathModel
             onOpenCreatePathMenu: menuIndex = 1;
             onOpenCreateGroupMenu: menuIndex = 2;
             onCloseMenu: page.closeMenu()
