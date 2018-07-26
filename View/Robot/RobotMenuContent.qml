@@ -68,8 +68,6 @@ Frame {
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                     onSoundOn: robotMenuFrame.soundOn(ip)
                     onSoundOff: robotMenuFrame.soundOff(ip)
-               //     onSoundDecrease: robotMenuFrame.soundDecrease(ip)
-                 //   onSoundIncrease: robotMenuFrame.soundIncrease(ip)
                     onSetMessageTop: robotMenuFrame.setMessageTop(status, msg)
                     onInterruptDelay: robotMenuFrame.interruptDelay(ip)
                     onDecreaseSound: robotMenuFrame.decreaseSound(ip)

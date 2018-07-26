@@ -425,8 +425,6 @@ Frame {
                                 property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
 
                                 _name: {
-                                    toto._index = index + 1;
-                                    console.log("index = " + index + " _index = " + _index);
                                     name === nameCoordinates ? "P"+(index+1) : name;
 //                                    "P" + (_index + 1)
                                 }

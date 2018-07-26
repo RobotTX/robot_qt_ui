@@ -18,11 +18,6 @@ Frame {
     property real batteryWarningThreshold
     property string langue
     property int menuIndex: -1
-    property int positive: 0;
-    property int negative: 0;
-    property int i:-1;
-    property int j:0;
-
 
     property variant consoleWhole: []
     property variant consoleWholeReverse: []
@@ -35,9 +30,6 @@ Frame {
 
     signal soundOn(string ip)
     signal soundOff(string ip)
-    signal soundIncrease(string ip)
-    signal soundDecrease(string ip)
-
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
 
@@ -292,71 +284,65 @@ Frame {
             consoleString = consoleWholeReverse.join('');
         }
     }
-    SmallButton{
-        id : increaseButton
-        imgSrc: "qrc:/icons/increaseBtn"
-            anchors{
-                top: muteButton.bottom
-                right : decreaseButton.left
-                topMargin: muteButton.bottom
+//    SmallButton{
+//        id : increaseButton
+//        imgSrc: "qrc:/icons/increaseBtn"
+//            anchors{
+//                top: muteButton.bottom
+//                right : decreaseButton.left
+//                topMargin: muteButton.bottom
 
-        }
-            onReleased: {
-                robotModel.increaseSound(ip);
-            positive = 1;
-                console.log("Decrease button is clicked and the number is " + positive);
-            }
+//        }
+//            onReleased: {
+//                robotModel.increaseSound(ip);
+//            }
 
-    }
-     SmallButton{
-        id : decreaseButton
-        imgSrc :"qrc:/icons/decreaseBtn"
-            anchors{
-            right: parent.right
+//    }
+//     SmallButton{
+//        id : decreaseButton
+//        imgSrc :"qrc:/icons/decreaseBtn"
+//            anchors{
+//            right: parent.right
 
-            verticalCenter: increaseButton.verticalCenter
-            //right : parent.right
-             rightMargin : 15
-            leftMargin: 1
-            //left: increaseButton.right
+//            verticalCenter: increaseButton.verticalCenter
+//            //right : parent.right
+//             rightMargin : 15
+//            leftMargin: 1
+//            //left: increaseButton.right
 
-        }
-            onClicked:{
+//        }
+//            onClicked:{
+//               robotModel.decreaseSound(ip);
+//            }
 
-               robotModel.decreaseSound(ip);
-
-            }
-
-    }
+//    }
 
     SmallButton {
-        id: decreaseSound
+        id: increaseButton
         objectName: "decreaseSound"
-        imgSrc: "qrc:/icons/decrease10"
-        tooltip: langue === "English" ? "减小音量" : "Decrease"
+        imgSrc: "qrc:/icons/decrease"
+        tooltip: langue === "English" ? "Decrease" : "减小音量"
 
         anchors {
             top: muteButton.bottom
             left: muteButton.left
         }
         onReleased:  {
-            console.log("decrease");
-            frame.soundDecrease(ip);
+            frame.decreaseSound(ip);
         }
     }
 
     SmallButton {
-        id: increaseSound
+        id: decreaseButton
         objectName: "increaseSound"
-        imgSrc: "qrc:/icons/increase10"
-        tooltip: langue === "English" ? "增大音量" : "Increase"
+        imgSrc: "qrc:/icons/increase"
+        tooltip: langue === "English" ? "Increase" : "增大音量"
         anchors {
             top: muteButton.bottom
             left: muteButton.right
         }
         onReleased:  {
-            console.log("increase");
-            frame.soundIncrease(ip);
+            frame.increaseSound(ip);
         }
     }
 

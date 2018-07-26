@@ -110,8 +110,6 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(decreaseSound(QString)), this, SLOT(decreaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(increaseSound(QString)),this, SLOT(increaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
-        connect(robotMenuFrame, SIGNAL(soundIncrease(QString)), this, SLOT(soundIncrease(QString)));
-        connect(robotMenuFrame, SIGNAL(soundDecrease(QString)), this, SLOT(soundDecrease(QString)));
         connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
     } else {
 //        // qDebug() << "could not find robot menu frame";

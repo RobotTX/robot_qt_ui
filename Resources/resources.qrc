@@ -1,10 +1,8 @@
 <RCC>
-
     <qresource prefix="/icons">
         <file alias="map_checked">icons/icMap_checked.png</file>
         <file alias="map">icons/icMap_normal.png</file>
         <file alias="big_map">icons/Img_Map.png</file>
-
         <file alias="robot_checked">icons/icRobot_checked.png</file>
         <file alias="robot">icons/icRobot_normal.png</file>
         <file alias="big_robot">icons/Img_Robot.png</file>
@@ -28,23 +26,18 @@
         <file alias="restart">icons/restart.png</file>
         <file alias="muteOn">icons/muteBtnOn.png</file>
         <file alias="muteOff">icons/muteBtnOff.png</file>
-        <file alias="increaseBtn">icons/Btn_Increase_10.png</file>
-        <file alias="decreaseBtn">icons/Btn_Decrease_10.png</file>
+        <file alias="decrease">icons/Btn_Decrease_10.png</file>
+        <file alias="increase">icons/Btn_Increase_10.png</file>
         <file alias="battery">icons/battery.png</file>
-
         <file alias="speed_linear">icons/Speed_linear.png</file>
         <file alias="speed_angular">icons/Speed_angular.png</file>
-
         <file alias="path_checked">icons/icPath_checked.png</file>
         <file alias="path">icons/icPath_normal.png</file>
         <file alias="big_path">icons/Img_Path.png</file>
-
         <file alias="speech_checked">icons/icSpeech_checked.png</file>
         <file alias="speech">icons/icSpeech_normal.png</file>
         <file alias="big_speech">icons/Img_Speech.png</file>
-
         <file alias="manual_control">icons/manual_control.png</file>
-
         <file alias="point_checked">icons/icPoint_checked.png</file>
         <file alias="point_checked_2020">icons/icPoint_checked_2020.png</file>
         <file alias="point_checked_2525">icons/icPoint_checked_2525.png</file>
@@ -52,7 +45,6 @@
         <file alias="pointView">icons/Point_s_80.png</file>
         <file alias="big_point">icons/Img_Point.png</file>
         <file alias="addPointView">icons/Point_Add_80.png</file>
-
         <file alias="pathPoint">icons/Point_Path_80.png</file>
         <file alias="pathPointStart">icons/Point_PathStart_80.png</file>
         <file alias="pathPointStartRed">icons/Point_PathStart_80_green.png</file>
@@ -61,10 +53,8 @@
         <file alias="pathPointNext">icons/Point_Path_80_next.png</file>
         <file alias="pathPointRed">icons/Point_Path_80_red.png</file>
         <file alias="pathPointRedStart">icons/Point_PathStart_80_Red.png</file>
-
         <file alias="settings_checked">icons/icSettings_normal.png</file>
         <file alias="settings">icons/icSettings_normal.png</file>
-
         <file alias="closeBtn">icons/closeBtn.png</file>
         <file alias="loadState">icons/Ic_LoadState.png</file>
         <file alias="saveState">icons/Ic_SaveState.png</file>
@@ -73,10 +63,8 @@
         <file alias="notValid">icons/Ic_Error.png</file>
         <file alias="checkmark">icons/Checkmark_Selected.png</file>
         <file alias="disco">icons/disconnected2.png</file>
-
         <file alias="zoomIn">icons/zoom_in.png</file>
         <file alias="zoomOut">icons/zoom_out.png</file>
-
         <file alias="arrow">icons/Arrow.png</file>
         <file alias="fold">icons/Btn_Fold.png</file>
         <file alias="visible">icons/Btn_Visible.png</file>
@@ -90,38 +78,30 @@
         <file alias="back">icons/Btn_Back.png</file>
         <file alias="white_stepper">icons/White_Stepper.png</file>
         <file alias="stepper">icons/Stepper.png</file>
-
         <file alias="click">icons/click.png</file>
         <file alias="click_2424">icons/click_2424.png</file>
         <file alias="click_3232">icons/click_3232.png</file>
         <file alias="click_4848">icons/click_4848.png</file>
         <file alias="click_128128">icons/click_128128.png</file>
         <file alias="click_256256">icons/click_256256.png</file>
-
         <file alias="back_128128">icons/back_128128.png</file>
         <file alias="back_256256">icons/back_256256.png</file>
         <file alias="back_gold_128128">icons/back_gold_128128.png</file>
         <file alias="back_gold_256256">icons/back_gold_256256.png</file>
-
         <file alias="pauseDialog">icons/pause_gold.png</file>
         <file alias="playDialog">icons/play_gold.png</file>
         <file alias="stopDialog">icons/stop_gold.png</file>
-
         <file alias="pauseDialog400">icons/pause_gold_400400.png</file>
         <file alias="playDialog400">icons/play_gold_400400.png</file>
         <file alias="stopDialog400">icons/stop_gold_400400.png</file>
-
         <file alias="pauseDialog300">icons/pause_gold_300300.png</file>
         <file alias="playDialog300">icons/play_gold_300300.png</file>
         <file alias="stopDialog300">icons/stop_gold_300300.png</file>
-
         <file alias="edit_map">icons/Ic_EditMap.png</file>
         <file alias="load_map">icons/Ic_LoadMap.png</file>
         <file alias="merge_map">icons/Ic_MergeMap.png</file>
         <file alias="scan_map">icons/Ic_ScanMap.png</file>
         <file alias="save_map">icons/Ic_SaveMap.png</file>
-
-        <!-- for edit map -->
         <file alias="undo">icons/Btn_Undo.png</file>
         <file alias="redo">icons/Btn_Redo.png</file>
         <file alias="reset">icons/Btn_Reset.png</file>
@@ -133,10 +113,7 @@
         <file alias="line">icons/Btn_Line.png</file>
         <file alias="outline">icons/Btn_Outline.png</file>
         <file alias="solid">icons/Btn_Solid.png</file>
-        <file alias="decrease">icons/Btn_Decrease.png</file>
         <file alias="increase">icons/Btn_Increase.png</file>
-        <file alias="decrease10">icons/Btn_Decrease_10.png</file>
-        <file alias="increase10">icons/Btn_Increase_10.png</file>
         <file alias="save">icons/Btn_Save.png</file>
         <file alias="line1">icons/Line_1.png</file>
         <file alias="line2">icons/Line_2.png</file>
@@ -146,16 +123,10 @@
         <file alias="line6">icons/Line_6.png</file>
         <file alias="line7">icons/Line_7.png</file>
         <file alias="line8">icons/Line_8.png</file>
-
-        <!-- for settings -->
         <file alias="unchecked">icons/Btn_Stop_p.png</file>
         <file alias="question">icons/question_mark.png</file>
         <file alias="cursor">icons/slider_cursor.png</file>
-
-        <!-- for merge map -->
         <file alias="small_robot">icons/small_robot.png</file>
-
-        <!-- for teleop -->
         <file alias="down">icons/Arrow_Down.png</file>
         <file alias="left">icons/Arrow_Left.png</file>
         <file alias="right">icons/Arrow_Right.png</file>

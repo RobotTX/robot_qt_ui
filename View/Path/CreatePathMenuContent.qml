@@ -726,7 +726,7 @@ Frame {
 
                     NormalButton {
                         id: addMP3
-                        txt: langue == "English" ? "加载MP3文件" : "Load Audio File"
+                        txt: langue == "English" ? "Load Audio File" : "加载MP3文件"
                         imgSrc: "qrc:/icons/add_mp3"
                         anchors {
                             left: parent.left
@@ -742,7 +742,7 @@ Frame {
                         id: loadMP3FileDialog
                         // allow only mp3 and wav files to be selected
                         nameFilters: "*.mp3 *.wav"
-                        title: langue == "English" ? "导入地图" : "Import an audio file"
+                        title: langue == "English" ? "Import an audio file" : "导入地图"
                         onRejected: {
                         }
                         onAccepted: {
