@@ -48,6 +48,12 @@ signals:
     /// Signals sent to update the model and view when we've executed a command
     void updateName(QString ip, QString newName);
 
+    /**
+     * @brief sendMP3Signal
+     * @param fileName
+     * @param isLastMP3File
+     *
+     */
     void sendMP3Signal(QString fileName, bool isLastMP3File);
 
     /**

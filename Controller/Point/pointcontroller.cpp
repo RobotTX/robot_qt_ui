@@ -42,7 +42,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
     QObject *createPointMenuFrame = applicationWindow->findChild<QObject*>("createPointMenuFrame");
     if (createPointMenuFrame){
         /// Tell the menu where we create this that we enable the save button
-        connect(this, SIGNAL(enablePointSaveQml(QVariant, QVariant)), createPointMenuFrame, SLOT(renableSave(QVariant, QVariant)));
+        connect(this, SIGNAL(enablePointSaveQml(QVariant, QVariant)), createPointMenuFrame, SLOT(enableSave(QVariant, QVariant)));
         /// Got a modification of the name or position of the point we are creating so we check to enable or not the save button
         connect(createPointMenuFrame, SIGNAL(checkPoint(QString, QString, double, double)), parent, SLOT(checkPoint(QString, QString, double, double)));
         /// Clicked on the save button to create the given point

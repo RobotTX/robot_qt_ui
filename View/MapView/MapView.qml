@@ -26,7 +26,6 @@ Frame {
 
     property string mapSrc
     property string langue
-    property int _index: 0
 
     property Points pointModel
     property Paths pathModel
@@ -426,10 +425,8 @@ Frame {
                                 property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
 
                                 _name: {
-                                    _index = index;
-                                    console.log("index = " + index + " _index = " + _index);
-//                                    name === nameCoordinates ? "P"+(index+1) : name;
-                                    "P" + (_index + 1)
+                                    name === nameCoordinates ? "P"+(index+1) : name;
+//                                    "P" + (_index + 1)
                                 }
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName

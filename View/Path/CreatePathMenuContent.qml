@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQml.Models 2.2
+import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
@@ -721,6 +722,33 @@ Frame {
                         menuIndex: createPathMenuFrame.menuIndex
                         onSpeechSelected: {
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, nameSpeech, tts);
+                        }
+                    }
+
+                    NormalButton {
+                        id: addMP3
+                        txt: langue == "English" ? "Load Audio File" : "加载MP3文件"
+                        imgSrc: "qrc:/icons/add_mp3"
+                        anchors {
+                            left: parent.left
+                            top: addSpeech.bottom
+                            right: parent.right
+//                            topMargin: 8
+                        }
+                        font.pointSize: 11
+                        onClicked: loadMP3FileDialog.open()
+                    }
+
+                    FileDialog {
+                        id: loadMP3FileDialog
+                        // allow only mp3 and wav files to be selected
+                        nameFilters: "*.mp3 *.wav"
+                        title: langue == "English" ? "Import an audio file" : "导入地图"
+                        onRejected: {
+                        }
+                        onAccepted: {
+                            speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
+                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
                         }
                     }
 

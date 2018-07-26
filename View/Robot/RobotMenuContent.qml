@@ -13,6 +13,8 @@ Frame {
     property Robots robotModel
     property Points pointModel
     property Paths pathModel
+    property int homeXRobot
+    property int homeYRobot
     property real batteryWarningThreshold
     property string langue
 
@@ -58,14 +60,14 @@ Frame {
                     pathModel: robotMenuFrame.pathModel
                     robotModel: robotMenuFrame.robotModel
                     langue: robotMenuFrame.langue
+                    homeXRobot: robotMenuFrame.homeXRobot
+                    homeYRobot: robotMenuFrame.homeYRobot
                     width: flick.width
                     onStartDockingRobot: robotMenuFrame.startDockingRobot(ip)
                     onStopDockingRobot: robotMenuFrame.stopDockingRobot(ip)
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                     onSoundOn: robotMenuFrame.soundOn(ip)
                     onSoundOff: robotMenuFrame.soundOff(ip)
-               //     onSoundDecrease: robotMenuFrame.soundDecrease(ip)
-                 //   onSoundIncrease: robotMenuFrame.soundIncrease(ip)
                     onSetMessageTop: robotMenuFrame.setMessageTop(status, msg)
                     onInterruptDelay: robotMenuFrame.interruptDelay(ip)
                     onDecreaseSound: robotMenuFrame.decreaseSound(ip)
@@ -81,5 +83,11 @@ Frame {
         onSoundOff: robotMenuFrame.soundOff(ip)
         onDecreaseSound : robotMenuFrame.decreaseSound(ip)
         onIncreaseSound : robotMenuFrame.increaseSound(ip)
+    }
+
+    function homePosition(homeX, homeY) {
+        console.log("we are in homePosition qml = " + homeX + " " + homeY);
+        homeXRobot = homeX;
+        homeYRobot = homeY;
     }
 }
