@@ -12,6 +12,8 @@ Frame {
     property Robots robotModel
     property Paths pathModel
     property string langue
+    property string homeXRobot
+    property string homeYRobot
 
     property variant consoleWhole: []
     property variant consoleWholeReverse: []
@@ -879,9 +881,26 @@ Frame {
                 enabled: dockStatus != -2
                 property bool dockButtonClicked: false
                 onClicked: {
-                    dockClicked()
-                    dockButtonClicked = true;
+                    if (homeXRobot === "-150" && homeYRobot === "-150" && homeX === -1 && homeY === -1) {
+                        noHomeDialog.open();
+                    } else {
+                        dockClicked()
+                        dockButtonClicked = true;
+                    }
                 }
+            }
+
+            CustomDialog {
+                id: noHomeDialog
+                parent: ApplicationWindow.overlay
+                x: (parent.width - width) / 2
+                y: (parent.height - height) / 2
+                height: 130
+                topMarginLabel: langue === "English" ? 20 : 10;
+                leftMarginLabel: langue === "English" ? 80 : 40;
+                title: langue == "English" ? "警告"  : "WARNING"
+                message: langue == "English" ? "自动充电前，请分配充电站给" + name : "Please assign charging station to " + name + " before auto docking."
+                acceptMessage: langue == "English" ? "确认" : "OK"
             }
 
             Image {

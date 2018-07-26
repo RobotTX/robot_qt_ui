@@ -26,7 +26,6 @@ Frame {
 
     property string mapSrc
     property string langue
-    property int _index: 0
 
     property Points pointModel
     property Paths pathModel
@@ -342,8 +341,8 @@ Frame {
 //                            _index = 0;
                             if(useTmpPathModel){
 
-//                                tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
-                                tmpPathModel.addPathPoint("P" + (_index + 1),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
+                                tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
+//                                tmpPathModel.addPathPoint("P" + (toto._index),  "tmpPath", "tmpGroup", mouseX, mouseY, 0, 0, "", "", 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
                                 canvas.requestPaint();
                             }
@@ -428,10 +427,10 @@ Frame {
                                 property string nameCoordinates: Math.round(posX) + " " + Math.round(posY);
 
                                 _name: {
-                                    _index = index;
+                                    toto._index = index + 1;
                                     console.log("index = " + index + " _index = " + _index);
-//                                    name === nameCoordinates ? "P"+(index+1) : name;
-                                    "P" + (_index + 1)
+                                    name === nameCoordinates ? "P"+(index+1) : name;
+//                                    "P" + (_index + 1)
                                 }
 //                                _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _isVisible : pathIsVisible /// display paths on map in robotview while hovering over pathName

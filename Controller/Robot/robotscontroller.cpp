@@ -102,6 +102,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
     QObject* robotMenuFrame = applicationWindow->findChild<QObject*>("robotMenuFrame");
     if(robotMenuFrame){
+        connect(this, SIGNAL(homePosition(QVariant, QVariant)), robotMenuFrame, SLOT(homePosition(QVariant, QVariant)));
         connect(robotMenuFrame, SIGNAL(startDockingRobot(QString)), this, SLOT(startDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(stopDockingRobot(QString)), this, SLOT(stopDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
@@ -491,6 +492,8 @@ void RobotsController::updateRobotInfoSlot(QString ip, QString robotInfo){
         QString mapDate = strList.takeFirst();
         double homeX = static_cast<QString>(strList.takeFirst()).toDouble();
         double homeY = static_cast<QString>(strList.takeFirst()).toDouble();
+        qDebug() << "homeX = " << homeX << " homeY = " << homeY;
+        emit homePosition(homeX, homeY);
         double homeOri = static_cast<QString>(strList.takeFirst()).toDouble();
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();

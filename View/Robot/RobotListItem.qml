@@ -13,6 +13,8 @@ Frame {
     property Points pointModel
     property Paths pathModel
     property Robots robotModel
+    property string homeXRobot
+    property string homeYRobot
     property real batteryWarningThreshold
     property string langue
     property int menuIndex: -1
@@ -280,7 +282,7 @@ Frame {
         id: decreaseSound
         objectName: "decreaseSound"
         imgSrc: "qrc:/icons/decrease10"
-        tooltip: "Decrease"
+        tooltip: langue === "English" ? "减小音量" : "Decrease"
 
         anchors {
             top: muteButton.bottom
@@ -296,7 +298,7 @@ Frame {
         id: increaseSound
         objectName: "increaseSound"
         imgSrc: "qrc:/icons/increase10"
-        tooltip: "Increase"
+        tooltip: langue === "English" ? "增大音量" : "Increase"
         anchors {
             top: muteButton.bottom
             left: muteButton.right
@@ -922,6 +924,8 @@ Frame {
         robotModel: frame.robotModel
         pathModel: frame.pathModel
         langue: frame.langue
+        homeXRobot: frame.homeXRobot
+        homeYRobot: frame.homeYRobot
         consoleWhole: frame.consoleWhole
         consoleWholeReverse: frame.consoleWholeReverse
         consoleString: frame.consoleString

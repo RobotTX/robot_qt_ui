@@ -194,6 +194,7 @@ private slots:
     void interruptDelay(QString ip);
 
 signals:
+    void homePosition(QVariant homeX, QVariant homeY);
     void stopRobotServerWorker(void);
     void addRobot(QVariant name, QVariant ip, QVariant stage, QVariant battery);
     void removeRobot(QVariant ip);
