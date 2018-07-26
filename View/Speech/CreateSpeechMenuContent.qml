@@ -97,6 +97,10 @@ Frame {
             right: parent.right
             topMargin: 8
         }
+        onVisibleChanged: {
+            if (visible)
+                speechTextField.forceActiveFocus()
+        }
 
         background: Rectangle {
             radius: 2

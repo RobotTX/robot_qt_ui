@@ -135,6 +135,11 @@ Frame {
             right: parent.right
             topMargin: 8
         }
+        onVisibleChanged: {
+            if (visible)
+                pointTextField.forceActiveFocus()
+        }
+
 /*
         onEditingFinished: {
             if(saveButton.canSave)

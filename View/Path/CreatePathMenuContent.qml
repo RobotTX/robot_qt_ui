@@ -1,6 +1,5 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
-import QtQuick.Dialogs 1.2
 import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
@@ -18,8 +17,8 @@ Frame {
     property string oldGroup // when editing
    // property bool test1 : true
     property string errorMsg
-//    property string hello1234 : "P1"
-//    property string codingProblem : "P1"
+   property string hello1234 : "P1"
+    property string codingProblem : "P1"
     property string robotPathName // when creating a new path from robot
     property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
@@ -30,14 +29,12 @@ Frame {
     property Speechs speechModel
     property string langue
     property int menuIndex: 0
-    property string mp3FileName: ""
 
     signal backToMenu()
     signal createPath(string groupName, string name)
     signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation, string speechName, string speechContent, int speechTime)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
-    signal createSpeech(string name, string groupName, string tts, string oldName, string oldGroup)
 
     Connections {
         target: tmpPathModel
@@ -168,7 +165,6 @@ Frame {
             selectByMouse: true
             placeholderText: langue == "English" ? "Enter Name" : qsTr("输入路径名称")
             verticalAlignment: TextInput.AlignVCenter
-            activeFocusOnPress: true
             anchors {
                 left: parent.left
                 top: pathLabel.bottom
@@ -183,6 +179,10 @@ Frame {
                     saveButton.released()
             }
 */
+            onVisibleChanged: {
+             if (visible)
+                pathTextField.forceActiveFocus()
+            }
             wrapMode: Text.WordWrap
             background: Rectangle {
                 radius: 2
@@ -270,7 +270,6 @@ Frame {
             y: addSavedPoint.y
             menuIndex: createPathMenuFrame.menuIndex
             onPointSelected: {
-                console.log("name pointListInPopup = " + name);
                 tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0, orientation, "", "", 0);
                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
                 tmpPathModel.visiblePathChanged();
@@ -341,7 +340,7 @@ Frame {
                         verticalCenter: parent.verticalCenter
                     }
                     width: dragArea.width
-                    height: 270
+                    height: 230
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
@@ -396,16 +395,16 @@ Frame {
                         id: nameId
                         text: {
                             if (name === nameCoordinates) {
-                                pointModel.hello1234 = "P"+(index+1);
+                               hello1234 = "P"+(index+1);
 
                                 qsTr("P"+(index+1));
                             } else {
-                                pointModel.hello1234 = name;
+                                hello1234 = name;
 
                                 qsTr(name);
                             }
 
-//                            name === nameCoordinates ?  "P"+(index+1)  :  name
+                           // name === nameCoordinates ?  "P"+(index+1)  :  name
                         }
                         //validator: RegExpValidator { regExp:  /^(?:[0-9]+[a-z]|[a-z]+[0-9])[a-z0-9]*$/i }
                         selectByMouse: true
@@ -430,14 +429,14 @@ Frame {
                         {
 
                             name = text
-                            pointModel.codingProblem = name
-                            //hello1234 = ""
+                            codingProblem = name
+                            hello1234 = ""
                             console.log("Why never change " + name)
                             if(name === "")
                             {
-                                testinghello = false
-                               //codingProblem = ""
-                                console.log("New text = " + pointModel.codingProblem)
+                              //  testinghello = false
+                               codingProblem = ""
+                                console.log("New text = " + codingProblem)
                             }
 
 
@@ -493,17 +492,18 @@ Frame {
                         }
                     }
 
+
+
                     TextField {
                         id: waitTextField
                         selectByMouse: true
                         text: waitTime
                         height: 20
-                        width: 45
+                        width: 40
                         padding: 2
-                        font.pointSize: 10
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 9999;}
+                        validator: IntValidator{bottom: 0; top: 20;}
                         anchors {
                             left: waitFor.right
                             verticalCenter: waitFor.verticalCenter
@@ -612,7 +612,7 @@ Frame {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: TextInput.AlignRight
                         placeholderText: "0"
-                        font.pointSize: 10
+
                         text: orientation
                         Component.onCompleted: slider.value = orientation
 
@@ -724,33 +724,6 @@ Frame {
                         }
                     }
 
-                    NormalButton {
-                        id: addMP3
-                        txt: langue == "English" ? "加载MP3文件" : "Load Audio File"
-                        imgSrc: "qrc:/icons/add_mp3"
-                        anchors {
-                            left: parent.left
-                            top: addSpeech.bottom
-                            right: parent.right
-//                            topMargin: 8
-                        }
-                        font.pointSize: 11
-                        onClicked: loadMP3FileDialog.open()
-                    }
-
-                    FileDialog {
-                        id: loadMP3FileDialog
-                        // allow only mp3 and wav files to be selected
-                        nameFilters: "*.mp3 *.wav"
-                        title: langue == "English" ? "导入地图" : "Import an audio file"
-                        onRejected: {
-                        }
-                        onAccepted: {
-                            speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
-                            tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
-                        }
-                    }
-
                     Label {
                         id: speechLabel
                         visible: speechName !== ""
@@ -759,7 +732,7 @@ Frame {
                         color: Style.greyText
                         anchors {
                             left: waitFor.left
-                            top: addMP3.bottom
+                            top: addSpeech.bottom
                             topMargin: 8
                         }
                     }
@@ -767,21 +740,7 @@ Frame {
                     Label {
                         id: speechNameLabel
                         visible: speechName !== ""
-                        text: {
-                            var indexLastSlash = "";
-//                            if (loadMP3FileDialog.fileUrl.toString().indexOf("/") !== -1) {
-//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
-//                            } /*else {
-//                                indexLastSlash = loadMP3FileDialog.fileUrl.toString().lastIndexOf("/");
-//                            }*/
-
-//                            qsTr(loadMP3FileDialog.fileUrl.toString().substring(indexLastSlash + 1))
-                            if (speechName.indexOf("/") !== -1) {
-                                qsTr(speechName.substring(speechName.lastIndexOf("/") + 1));
-                            } else {
-                                qsTr(speechName);
-                            }
-                        }
+                        text: speechName
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -825,12 +784,11 @@ Frame {
                         selectByMouse: true
                         text: speechTime
                         height: 20
-                        width: 45
-                        font.pointSize: 10
+                        width: 40
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
-
-                        validator: IntValidator{bottom: 0; top: 9999;}
+                        // change back
+                        validator: IntValidator{bottom: 0; top: 999;}
                         anchors {
                             left: speechTimeLabel.right
                             verticalCenter: speechTimeLabel.verticalCenter
@@ -1034,7 +992,6 @@ Frame {
                 }
 
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++) {
-                    console.log("tmpPathModel.name = " + tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name);
                     createPathPoint(groupComboBox.displayText,
                                     newName,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,
@@ -1121,14 +1078,15 @@ Frame {
 
 
         // take here out if boolean == false, then save == false
+        /*
         if(testinghello == false){
             error = true;
             //testinghello = true
         }
+*/
 
-        /*
-        var checkName = pointModel.hello1234;
-        var checkName1 = pointModel.codingProblem;
+        var checkName = hello1234;
+        var checkName1 = codingProblem;
         console.log("checkName = " + checkName);
         console.log("checkName1 = " + checkName1);
         var mess5 = ''
@@ -1146,7 +1104,7 @@ Frame {
                errorMsg = mess5
                error = true
             }
- */
+
         setMessageTop(1, errorMsg);
         console.log("testingHello = " + testinghello);
         console.log("!error = " + !error);

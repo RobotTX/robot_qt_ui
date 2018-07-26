@@ -66,6 +66,11 @@ Frame {
                 saveButton.released()
         }
 */
+        onVisibleChanged: {
+            if (visible)
+                groupTextField.forceActiveFocus()
+        }
+
         background: Rectangle {
             radius: 2
             border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
