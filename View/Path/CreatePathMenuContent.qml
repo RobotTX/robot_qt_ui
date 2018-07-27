@@ -21,7 +21,10 @@ Frame {
     property string robotPathName // when creating a new path from robot
     property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
-    property bool testinghello   : true
+    property bool pathpointnameError : true
+  //  property bool testinghello   : true
+    property string hello1234 : "P1"
+    property string codingProblem : "P1"
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
@@ -185,7 +188,11 @@ Frame {
             wrapMode: Text.WordWrap
             background: Rectangle {
                 radius: 2
-                border.color: nameError ? Style.errorColor : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.color: {
+
+                    nameError ? Style.errorColor : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+
+                }
                 border.width: pathTextField.activeFocus || nameError ? 3 : 1
             }
             onTextChanged: enableSave()
@@ -390,15 +397,22 @@ Frame {
 
                     TextField {
 
-                        property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
+                    //    property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
                         text: {
                             console.log("namePoint = " + name);
-                            if (name === nameCoordinates) {
+                      //      if (name === nameCoordinates) {
+                                console.log("hello1234 = " + hello1234)
+                                hello1234 = "P"+(index+1);
                                 qsTr("P"+(index+1));
-                            } else {
+
+                        //    } else {
+
+                            //    hello1234 = name;
+                                console.log("hello1234 = " + hello1234)
                                 qsTr(name);
-                            }
+                          //  }
+
                         }
                         selectByMouse: true
                         color: "#262626"
@@ -421,8 +435,19 @@ Frame {
                         onTextChanged:
                         {
                             name = text
-                            enableSave();
+                            codingProblem = name
+                            pathpointnameError = true;
+                            console.log("codingProblem = " + codingProblem)
+                            if(name === "")
+                            {
+                            codingProblem = ""
+                            pathpointnameError = false;
+                            console.log("codingProblem = " + codingProblem)
+
                         }
+
+                            enableSave();
+                       }
 
                     }
 
@@ -924,8 +949,10 @@ Frame {
                     delegate: dragDelegate
 
                     spacing: 10
+
                 }
             }
+
         }
     }
 
@@ -1081,6 +1108,29 @@ Frame {
                 error = true;
             }
         }
+
+        var mess5 = ''
+        var checkName = hello1234;
+        var checkName1 = codingProblem;
+        var error1 =  ((checkName === "" || checkName1 === "") /*|| pathpointnameError == false*/)
+        if(langue == "English"){
+            mess5 = "The path point cannot be empty"
+        }
+        else
+        {
+            mess5 = "路径名不能为空"
+        }
+        if(error1)
+        {
+            errorMsg = mess5
+            error = true;
+            console.log("error = " + error);
+        }
+        console.log("checkName = " + checkName);
+        console.log("checkName1 = " + checkName1);
+        console.log("nameError = " + nameError);
+        console.log("pathpointnameError = " + pathpointnameError);
+
 
         setMessageTop(1, errorMsg);
         saveButton.canSave = !error;

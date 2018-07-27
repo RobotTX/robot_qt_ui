@@ -896,8 +896,8 @@ Frame {
                 x: (parent.width - width) / 2
                 y: (parent.height - height) / 2
                 height: 130
-                topMarginLabel: langue === "English" ? 20 : 10;
-                leftMarginLabel: langue === "English" ? 80 : 40;
+                topMarginLabel: langue === "English" ? 10 : 20;
+                leftMarginLabel: langue === "English" ? 40 : 80;
                 title: langue == "English" ? "WARNING" : "警告"
                 message: langue == "English" ? "Please assign charging station to " + name + " before auto docking." : "自动充电前，请分配充电站给" + name
                 acceptMessage: langue == "English" ? "OK" : "确认"
