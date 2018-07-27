@@ -48,7 +48,7 @@ Dialog {
 
         font.bold: true
         text: qsTr(title)
-        color: (title === "WARNING" || title === "警告") ? "#ff6600" : textColor
+        color: (title === "WARNING" || title === "警告") ? textColor : textColor
     }
 
     contentItem: Rectangle {

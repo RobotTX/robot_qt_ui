@@ -87,7 +87,6 @@ ApplicationWindow {
             checkable: true
             text: "Login"
 
-
             objectName: "loginBtn"
             signal checkLogin()
 
@@ -108,7 +107,7 @@ ApplicationWindow {
                 left: userIdTextField.left
                 top: pwd.bottom
             }
-            anchors.leftMargin: 45
+            anchors.leftMargin: 30
             anchors.topMargin: 15
 
             onClicked: {
