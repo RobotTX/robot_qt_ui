@@ -1072,10 +1072,9 @@ Frame {
             height: 130
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 20;
-            leftMarginLabel: langue === "English" ? 40 : 120;
-            rightMarginLabel: langue === "English" ? 40 : 120
+            leftMarginLabel: langue === "English" ? 50 : 120;
             title: langue == "English" ? "Warning"  : "警告"
-            message: langue == "English" ? "\nDo you want to exit the application ？" : "\n你想退出应用程序吗?"
+            message: langue == "English" ? "\nDo you want to exit the application？" : "\n你想退出应用程序吗?"
             acceptMessage: langue == "English" ? "Yes" : "确认"
             rejectMessage: langue == "English" ? "Cancel" : "取消"
             onAccepted: {

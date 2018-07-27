@@ -186,17 +186,17 @@ void CommandController::cmdAnswerSlot(QString answer){
                 default:
                     /// Unknown/unused command
                      qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;
-                    Q_UNREACHABLE();
+//                    Q_UNREACHABLE();
                 break;
             }
         } else {
              qDebug() << "CommandController::cmdAnswerSlot The command failed or the robot is busy : " << list;
             /// TODO debug or handle the busy case
-            Q_UNREACHABLE();
+//            Q_UNREACHABLE();
         }
     } else {
          qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
-        Q_UNREACHABLE();
+//        Q_UNREACHABLE();
     }
 
     // qDebug() << "CommandController::cmdAnswerSlot in" << 15000 - timer.remainingTime();
