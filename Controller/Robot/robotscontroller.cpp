@@ -45,6 +45,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(savePlaceSignal(QString, QString, double, double, double, bool)), parent, SLOT(sendCommandSavePlace(QString, QString, double, double, double, bool)));
+        connect(robotModel, SIGNAL(trackObjectSignal(QString, double, double, double)), parent, SLOT(sendCommandTrackingObject(QString, double, double, double)));
         connect(robotModel, SIGNAL(sendTtsToRobot(QString, QString)), parent, SLOT(sendCommandTtsToRobot(QString, QString)));
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));

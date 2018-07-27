@@ -28,6 +28,7 @@ ListModel {
 
     signal sendTtsToRobot(string ip, string tts)
     signal savePlaceSignal(string ip, string name, double x, double y, double orientation, bool home)
+    signal trackObjectSignal(string ip, double x, double y, double orientation)
     signal newHomeSignal(string ip, double homeX, double homeY, int homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
     signal newNameSignal(string ip, string newName)

@@ -302,6 +302,17 @@ private slots:
      */
     void saveWifi(QString ip, QString wifi, QString pwd);
     /**
+     * @brief sendCommandTrackingObject
+     * @param ip
+     * @param wifi
+     * @param posX
+     * @param posY
+     * @param orientation
+     * @param home
+     * Save robot's home
+     */
+    void sendCommandTrackingObject(QString ip, double posX, double posY, double orientation);
+    /**
      * @brief sendCommandSavePlace
      * @param ip
      * @param wifi

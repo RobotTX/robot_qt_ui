@@ -48,7 +48,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     Q_UNREACHABLE();
                 break;*/
                 case 'c':
-                    /// Sent the robot to a new goal
+                    /// Sent the robot tracking object
                     /// nothing is needed on the qml side
                 break;
                 case 'd':

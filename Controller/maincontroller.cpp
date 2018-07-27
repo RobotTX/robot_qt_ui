@@ -667,6 +667,23 @@ void MainController::sendCommandSavePlace(QString ip, QString name, double posX,
 //    XMLParser::save(pointController, location + "/point_command_sent.xml");
 }
 
+void MainController::sendCommandTrackingObject(QString ip, double posX, double posY, double orientation) {
+//    QString location = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + "Gobot";
+
+    QPointF pointReal = Helper::Convert::pixelCoordToRobotCoord(
+                QPointF(posX,posY),
+                mapController->getOrigin().x(),
+                mapController->getOrigin().y(),
+                mapController->getResolution(),
+                mapController->getHeight());
+    QString cmd;
+    cmd = QString("c") + QChar(31) + QString::number(pointReal.x()) + QChar(31) + QString::number(pointReal.y()) + QChar(31) + QString::number(orientation);
+    // qDebug() << cmd;
+    robotsController->sendCommand(ip, cmd);
+//    XMLParser::save(pointController, location + "/point_command_sent.xml");
+}
+
+
 void MainController::sendCommandTtsToRobot(QString ip, QString tts) {
     QString cmd = QString("4") + QChar(31) + tts;
     robotsController->sendCommand(ip, cmd);
