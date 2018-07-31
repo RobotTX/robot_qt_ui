@@ -38,7 +38,7 @@ signals:
      * @param battery
      * notifies the robots controller that a new robot has connected
      */
-    void robotIsAlive(QString hostname, QString ip, int stage, int battery, bool charging, int dockStatus, int robotMode);
+    void robotIsAlive(QString hostname, QString ip, int stage, int battery, bool charging, int dockStatus, int robotMode, bool lockTrail);
 
 private:
     int port;

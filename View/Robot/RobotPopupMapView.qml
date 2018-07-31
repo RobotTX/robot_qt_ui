@@ -32,6 +32,7 @@ Menu {
     signal soundOff(string ip)
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
+    signal magenetLock(string ip)
 
     background: Rectangle {
         color: Style.lightGreyBackground

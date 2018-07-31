@@ -43,8 +43,21 @@ void RobotServerWorker::newConnectionSlot(){
                               static_cast<QString> (strList.at(2)).toInt(),
                               static_cast<QString> (strList.at(3)).toInt(),
                               static_cast<QString> (strList.at(4)).toInt(),
-                              static_cast<QString> (strList.at(5)).toInt());
-        } else {}
+                              static_cast<QString> (strList.at(5)).toInt(),
+                              false);
+        }
+        else if(strList.size() == 7){
+            //// qDebug() << "(RobotServerWorker) robotIsAlive" << strList;
+            /// name, ip, pathstage, battery, charging, docking status
+            emit robotIsAlive(strList.at(0), socket->peerAddress().toString().remove(0, 7),
+                              static_cast<QString> (strList.at(1)).toInt(),
+                              static_cast<QString> (strList.at(2)).toInt(),
+                              static_cast<QString> (strList.at(3)).toInt(),
+                              static_cast<QString> (strList.at(4)).toInt(),
+                              static_cast<QString> (strList.at(5)).toInt(),
+                              static_cast<QString> (strList.at(6)).toInt());
+        }
+        else {}
             // qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive" << strList;
     }
 

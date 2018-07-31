@@ -1112,7 +1112,7 @@ Frame {
             rightMarginLabel: langue === "English" ? 20 : 80;
             title: langue == "English" ? "Warning"  : "警告"
             message: langue == "English" ? "\nPlease select a robot or fill the WiFi name" : "\n请选择机器人或输入WiFi名称"
-            acceptMessage: langue == "English" ? "Ok" : "是"
+            acceptMessage: langue == "English" ? "OK" : "是"
         }
 
         CustomDialog {
@@ -1127,7 +1127,7 @@ Frame {
             rightMarginLabel: langue === "English" ? 100 : 80
             title: langue == "English" ? "Warning"  : "警告";
             message: langue == "English" ? "\nPlease select a robot" : "\n请选择机器人或输入WiFi名称"
-            acceptMessage: langue == "English" ? "Ok" : "是"
+            acceptMessage: langue == "English" ? "OK" : "是"
 
         }
     }

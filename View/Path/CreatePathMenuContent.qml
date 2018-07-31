@@ -8,6 +8,7 @@ import "../../Model/Path"
 import "../../Model/Point"
 import "../../Model/Speech"
 import "../Point"
+import "../MapView"
 import "../Speech"
 import "../Custom"
 
@@ -22,6 +23,7 @@ Frame {
     property ListModel robotPathPoints // when creating a new path from robot
     property bool nameError: true
     property bool pathpointnameError : true
+    property bool testingbool : false;
   //  property bool testinghello   : true
     property string hello1234 : "P1"
     property string codingProblem : "P1"
@@ -346,7 +348,7 @@ Frame {
                         verticalCenter: parent.verticalCenter
                     }
                     width: dragArea.width
-                    height: 230
+                    height: 250
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
 
@@ -396,24 +398,24 @@ Frame {
 
 
                     TextField {
-
-                    //    property string nameCoordinates: Math.round(posX) + " " + Math.round(posY)
                         id: nameId
                         text: {
+                            console.log("ind3x - " + index);
                             console.log("namePoint = " + name);
-                      //      if (name === nameCoordinates) {
-                                console.log("hello1234 = " + hello1234)
-                                hello1234 = "P"+(index+1);
+
+
+
+                                hello1234 = (index+1);
+                              //  console.log("testinbool = " + testingbool)
                                 qsTr("P"+(index+1));
+                            for(var j = 0 ; j <= index; j++){
+                              //  console.log("best name ========= " + name)
+                            }
 
-                        //    } else {
-
-                            //    hello1234 = name;
-                                console.log("hello1234 = " + hello1234)
                                 qsTr(name);
-                          //  }
 
                         }
+
                         selectByMouse: true
                         color: "#262626"
                         padding: 2
@@ -436,17 +438,36 @@ Frame {
                         {
                             name = text
                             codingProblem = name
-                            pathpointnameError = true;
-                            console.log("codingProblem = " + codingProblem)
-                            if(name === "")
-                            {
-                            codingProblem = ""
-                            pathpointnameError = false;
-                            console.log("codingProblem = " + codingProblem)
+                        //    console.log("hello1234 inside loop " + hello1234);
 
-                        }
+                            testingbool = true
+
+                            for(var i = 0; i <= index;i ++){
+                                for(var j = 0; j < 1; j++){
+                                if(name === ""){
+                                    codingProblem = ""
+                                    //console.log("codingProblem = " + codingProblem)
+                                     console.log("NAME =============== " + name)
+                                     testingbool = false
+                                     console.log("testingbool = " + testingbool)
+
+                                console.log("i = " + index)
+
+                            }
+                                else{
+                                    console.log("You save")
+                                }
+                            }
+
+
+
+                            }
+
+
+
 
                             enableSave();
+
                        }
 
                     }
@@ -503,11 +524,11 @@ Frame {
                         selectByMouse: true
                         text: waitTime
                         height: 20
-                        width: 40
+                        width: 45
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
 
-                        validator: IntValidator{bottom: 0; top: 20;}
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: waitFor.right
                             verticalCenter: waitFor.verticalCenter
@@ -746,7 +767,7 @@ Frame {
                         id: loadMP3FileDialog
                         // allow only mp3 and wav files to be selected
                         nameFilters: "*.mp3 *.wav"
-                        title: langue == "English" ? "Import an audio file" : "导入地图"
+                        title: langue == "English" ? "Import an audio file" : "导入音频文件"
                         onRejected: {
                         }
                         onAccepted: {
@@ -756,6 +777,7 @@ Frame {
                     }
 
                     Label {
+
                         id: speechLabel
                         visible: speechName !== ""
                         text: langue == "English" ? "Name : " : "名称 : "
@@ -763,7 +785,7 @@ Frame {
                         color: Style.greyText
                         anchors {
                             left: waitFor.left
-                            top: addSpeech.bottom
+                            top: addMP3.bottom
                             topMargin: 8
                         }
                     }
@@ -771,7 +793,16 @@ Frame {
                     Label {
                         id: speechNameLabel
                         visible: speechName !== ""
-                        text: speechName
+                        text:{
+
+                            var indexLastSlash = "";
+                            if (speechName.indexOf("/") !== -1) {
+                                    indexLastSlash = speechName.lastIndexOf("/");
+                              } else {
+                                  indexLastSlash = speechName.lastIndexOf("\\");
+                              }
+                            qsTr(speechName.substring(indexLastSlash + 1));
+                        }
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -815,11 +846,11 @@ Frame {
                         selectByMouse: true
                         text: speechTime
                         height: 20
-                        width: 40
+                        width: 45
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
                         // change back
-                        validator: IntValidator{bottom: 0; top: 999;}
+                        validator: IntValidator{bottom: 0; top: 9999;}
                         anchors {
                             left: speechTimeLabel.right
                             verticalCenter: speechTimeLabel.verticalCenter
@@ -1047,6 +1078,10 @@ Frame {
         }
     }
 
+    function testing321123(){
+        console.log("Hello it is working");
+    }
+
     function enableSave(){
         var newName = Helper.formatName(pathTextField.text);
 
@@ -1112,7 +1147,8 @@ Frame {
         var mess5 = ''
         var checkName = hello1234;
         var checkName1 = codingProblem;
-        var error1 =  ((checkName === "" || checkName1 === "") /*|| pathpointnameError == false*/)
+        //var error1 =  ((checkName === "" || checkName1 === "") )
+       // var error1 = (testingbool = false)
         if(langue == "English"){
             mess5 = "The path point cannot be empty"
         }
@@ -1120,7 +1156,7 @@ Frame {
         {
             mess5 = "路径名不能为空"
         }
-        if(error1)
+        if(testingbool == false || checkName1 == "")
         {
             errorMsg = mess5
             error = true;
@@ -1129,11 +1165,12 @@ Frame {
         console.log("checkName = " + checkName);
         console.log("checkName1 = " + checkName1);
         console.log("nameError = " + nameError);
-        console.log("pathpointnameError = " + pathpointnameError);
+//        console.log("pathpointnameError = " + pathpointnameError);
 
 
         setMessageTop(1, errorMsg);
         saveButton.canSave = !error;
+        testingbool = true;
 
 
 

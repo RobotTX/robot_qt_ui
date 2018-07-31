@@ -10,6 +10,7 @@ ListModel {
     property variant tmp: []
     property bool assignPathClicked
 
+
     property string msg: ""
     property string test: ""
     property int statusColor: -1
@@ -50,6 +51,8 @@ ListModel {
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
 
+    signal magnetLock(string ip)
+
 
     function addRobot(name, ip, stage, battery){
         var message = ''
@@ -79,6 +82,7 @@ ListModel {
             "looping": false,
             "batteryLevel": 0,
             "robotMode" : 0,
+             "lockTrail" : false,
         });
         robotConnection(ip);
         if (langue == "English") {
@@ -459,6 +463,14 @@ ListModel {
         }
 
 }
+    function setMagnetLock(ip,lockTrail){
+        for(var i = 0 ; i < count ; i++){
+            if(get(i).ip === ip){
+                setProperty(i, "lockTrail", lockTrail);
+                console.log("lockTrail = " + lockTrail);
+            }
+        }
+    }
 
     function reverse(arr1, arr2, len) {
         for (var i = len-1; i >=0; i--) {

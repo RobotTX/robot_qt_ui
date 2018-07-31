@@ -14,6 +14,7 @@ Item {
     property int mapOrientation: 0
     property int sizePointView: 10
 
+
     visible: _isVisible
 
 
@@ -42,6 +43,7 @@ Item {
         visible: img
         font.pointSize: sizePointView
         text: tooltipText
+     //   color: hovered ? "black" : "white"
 
         anchors {
             horizontalCenter: img.horizontalCenter
@@ -65,17 +67,28 @@ Item {
             height: tooltip.paintedHeight + 8
             radius: 8
             border.color: Style.darkSkyBlue
-            color: "white"
+            //color: hovered ? "white" : "orange"
+            color : "white"
         }
     }
 
     MouseArea {
         id: mArea
 
-        hoverEnabled: true
-        anchors.fill: img
+       hoverEnabled: true
+       anchors.fill: tooltip
 
-        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
+        //onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
+         onEntered: {
+              tooltip.color = "red"
+
+         }
+
+         onExited: {
+             tooltip.color = "black"
+
+         }
+
 //       oxnClicked: if(_isVisible) tooltip.visible = !tooltip.visible /// android
     }
 

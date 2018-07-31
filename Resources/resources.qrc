@@ -26,9 +26,10 @@
         <file alias="restart">icons/restart.png</file>
         <file alias="muteOn">icons/muteBtnOn.png</file>
         <file alias="muteOff">icons/muteBtnOff.png</file>
-        <file alias="decrease">icons/Btn_Decrease_10.png</file>
-        <file alias="increase">icons/Btn_Increase_10.png</file>
+        <file alias="decrease10">icons/Btn_Decrease_10.png</file>
+        <file alias="increase10">icons/Btn_Increase_10.png</file>   
         <file alias="battery">icons/battery.png</file>
+        <file alias="lockTrail">icons/mag_link.png</file>
         <file alias="speed_linear">icons/Speed_linear.png</file>
         <file alias="speed_angular">icons/Speed_angular.png</file>
         <file alias="path_checked">icons/icPath_checked.png</file>

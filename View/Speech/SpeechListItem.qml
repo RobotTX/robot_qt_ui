@@ -243,7 +243,7 @@ Column {
                 }
 
                 CustomLabel {
-                    text:langue == "English" ? "text " +tts :"正文：: " + tts
+                    text:langue == "English" ? "text: " +tts :"正文: " + tts
                     height: 15
                     font.pixelSize: 14
                     wrapMode: Label.WordWrap

@@ -28,7 +28,7 @@ Frame {
 
     MenuButton {
         id: robotButton
-        txt: langue == "English" ? "Robot" :  "机器人"
+        txt: langue == "English" ? "ROBOT" :  "机器人"
         imgSrc: "qrc:/icons/robot"
         anchors {
             left: parent.left
@@ -40,7 +40,7 @@ Frame {
 
     MenuButton {
         id: pathButton
-        txt: langue == "English" ? "Path" : "路径"
+        txt: langue == "English" ? "PATH" : "路径"
         imgSrc: "qrc:/icons/path"
         anchors.top: robotButton.bottom
         onClicked: checked ? selectMenu(1) : selectMenu(-1)
@@ -49,7 +49,7 @@ Frame {
 
     MenuButton {
         id: pointButton
-        txt: langue == "English" ? "Point" : "目标点"
+        txt: langue == "English" ? "POINT" : "目标点"
         imgSrc: "qrc:/icons/point"
         anchors.top: pathButton.bottom
         onClicked: checked ? selectMenu(2) : selectMenu(-1)
@@ -58,7 +58,7 @@ Frame {
 
     MenuButton {
         id: speechButton
-        txt: langue == "English" ? "Speech" : "语音"
+        txt: langue == "English" ? "SPEECH" : "语音"
         imgSrc: "qrc:/icons/speech"
         anchors.top: pointButton.bottom
         onClicked: checked ? selectMenu(3) : selectMenu(-1)
@@ -67,7 +67,7 @@ Frame {
 
     MenuButton {
         id: mapButton
-        txt: langue == "English" ? "Map" : "地图"
+        txt: langue == "English" ? "MAP" : "地图"
         imgSrc: "qrc:/icons/map"
         anchors.top: speechButton.bottom
         onClicked: checked ? selectMenu(4) : selectMenu(-1)
@@ -85,7 +85,7 @@ Frame {
 
     MenuButton {
         id: settingsButton
-        txt: langue == "English" ? "Settings" : "设置"
+        txt: langue == "English" ? "SETTING" : "设置"
         imgSrc: "qrc:/icons/settings"
         anchors.bottom: parent.bottom
         onClicked: checked ? selectMenu(6) : selectMenu(-1)

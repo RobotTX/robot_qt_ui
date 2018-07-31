@@ -12,6 +12,7 @@ import "../MainMenu"
 import "../Point"
 import "../Robot"
 import "../Custom"
+import "../Path"
 import "../"
 
 Frame {
@@ -578,6 +579,7 @@ Frame {
             }
         }
     }
+
 
     function setMap(_mapSrc){
         // little trick as the binding property does not allow the map to be reloaded unless the filename changes

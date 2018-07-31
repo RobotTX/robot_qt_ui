@@ -97,7 +97,7 @@ Dialog {
                 height: 23
                 width: 60
 
-                text: langue == "English" ? "Ok" : "是"
+                text: langue == "English" ? "OK" : "是"
 
                 onClicked: {
                     box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)

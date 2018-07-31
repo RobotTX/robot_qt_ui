@@ -42,6 +42,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(updateSound(QVariant, QVariant)), robotModel, SLOT(setSound(QVariant, QVariant)));
         connect(this, SIGNAL(updateRobotMode(QVariant,QVariant)), robotModel, SLOT(setRobotMode(QVariant, QVariant)));
         connect(this, SIGNAL(setBatteryWarning(QVariant,QVariant)), robotModel, SLOT(setBatteryWarning(QVariant, QVariant)));
+        connect(this,SIGNAL(magnetLock(QVariant,QVariant)),robotModel,SLOT(setMagnetLock(QVariant,QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(savePlaceSignal(QString, QString, double, double, double, bool)), parent, SLOT(sendCommandSavePlace(QString, QString, double, double, double, bool)));
@@ -111,6 +112,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotMenuFrame, SIGNAL(increaseSound(QString)),this, SLOT(increaseSound(QString)));
         connect(robotMenuFrame, SIGNAL(soundOff(QString)), this, SLOT(soundOff(QString)));
         connect(robotMenuFrame, SIGNAL(interruptDelay(QString)), this, SLOT(interruptDelay(QString)));
+        connect(robotMenuFrame,SIGNAL(magnetLock(QString)),this,SLOT(magnetLock(QString)));
     } else {
 //        // qDebug() << "could not find robot menu frame";
         Q_UNREACHABLE();
@@ -141,21 +143,22 @@ RobotsController::~RobotsController(){
 
 void RobotsController::launchServer(void){
     robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, int, int, bool, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, int, int, bool, int, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, int, int, bool, int, int,bool)), this, SLOT(robotIsAliveSlot(QString, QString, int, int, bool, int, int,bool)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
 }
 
-void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus, const int robotMode) {
+void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const int stage, const int battery, const bool charging, const int dockStatus, const int robotMode , const bool lockTrail) {
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
         emit setBattery(ip, battery, charging);
         emit updateDockStatus(ip, dockStatus);
         emit updateSound(ip, charging);
         emit updateRobotMode(ip, robotMode);
-//         qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus << " robotMode = " << robotMode;
+        emit magnetLock(ip,lockTrail);
+         qDebug() << "name = " << name << " stage = " << stage << " battery = " << battery << " charging = " << charging << " dockStatus = " << dockStatus << " robotMode = " << robotMode << " lockTrail =" << lockTrail;
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
@@ -180,7 +183,7 @@ void RobotsController::shortcutAddRobot(void){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, 0, (robots.size()*10)%100, false, 0, 0);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, 0, (robots.size()*10)%100, false, 0, 0,false);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
@@ -455,7 +458,10 @@ void RobotsController::soundOn(QString ip) {
 //    // qDebug() << "\nWE ARE IN RobotsController::soundOn()";
     sendCommand(ip, QString("w"));
 }
+void RobotsController::magnetLock(QString ip){
+    sendCommand(ip,QString("b"));
 
+}
 void RobotsController::decreaseSound(QString ip){
     sendCommand(ip, QString("r") + QChar(31) + QString("0"));
 }

@@ -32,6 +32,7 @@ Frame {
     signal soundOff(string ip)
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
+    signal magnetLock(string ip)
 
     height: 260 + robotPathListItem.height//105 + robotPathListItem.height
     enabled: !processingCmd
@@ -335,14 +336,28 @@ Frame {
     SmallButton {
         id: decreaseButton
         objectName: "increaseSound"
-        imgSrc: "qrc:/icons/increase"
+        imgSrc: "qrc:/icons/increase10"
         tooltip: langue === "English" ? "Increase" : "增大音量"
         anchors {
             top: muteButton.bottom
             left: muteButton.right
+            rightMargin: 5
         }
         onReleased:  {
             frame.increaseSound(ip);
+        }
+    }
+    SmallButton{
+        id: magnetButton
+        imgSrc: "qrc:/icons/lockTrail"
+        visible: lockTrail != false
+        anchors{
+            verticalCenter: nameLabel.verticalCenter
+            right: muteButton.left
+            rightMargin: 5
+        }
+        onReleased: {
+            frame.magnetLock(ip);
         }
     }
 

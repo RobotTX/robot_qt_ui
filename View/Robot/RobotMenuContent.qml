@@ -29,6 +29,8 @@ Frame {
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
 
+    signal magnetLock(string ip)
+
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -72,6 +74,7 @@ Frame {
                     onInterruptDelay: robotMenuFrame.interruptDelay(ip)
                     onDecreaseSound: robotMenuFrame.decreaseSound(ip)
                     onIncreaseSound: robotMenuFrame.increaseSound(ip)
+                    onMagnetLock: robotMenuFrame.magnetLock(ip)
                 }
             }
         }
@@ -83,6 +86,7 @@ Frame {
         onSoundOff: robotMenuFrame.soundOff(ip)
         onDecreaseSound : robotMenuFrame.decreaseSound(ip)
         onIncreaseSound : robotMenuFrame.increaseSound(ip)
+        onMagnetLock : robotMenuFrame.magnetLock(ip)
     }
 
     function homePosition(homeX, homeY) {

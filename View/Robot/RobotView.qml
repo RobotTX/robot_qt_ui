@@ -22,6 +22,7 @@ Image {
     signal soundOff(string ip)
     signal decreaseSound(string ip)
     signal increaseSound(string ip)
+    signal magnetLock(string ip)
 
     transform: Rotation {
         origin.x: width / 2

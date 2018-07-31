@@ -42,11 +42,9 @@ void CommandController::cmdAnswerSlot(QString answer){
 //                    emit setMessageTop(2, "Renamed robot \"" + robotName + "\" to \"" + list.at(2) + "\"");
                     robotName = list.at(2);
                 break;
-                /*case 'b':
-                    /// Changed the wifi information of a robot
-                    /// NOT USED ANYMORE
-                    Q_UNREACHABLE();
-                break;*/
+                case 'b':
+                    /// Detach magnet
+                break;
                 case 'c':
                     /// Sent the robot to a new goal
                     /// nothing is needed on the qml side

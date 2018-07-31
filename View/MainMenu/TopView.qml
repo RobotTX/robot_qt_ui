@@ -159,6 +159,7 @@ Frame {
         onClicked: topViewFrame.centerMapTopView()
     }
 
+
     property string mapFileName: mapSrc.toString()
 
     CustomLabel {
