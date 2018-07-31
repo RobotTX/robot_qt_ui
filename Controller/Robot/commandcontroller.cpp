@@ -46,7 +46,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Detach magnet
                 break;
                 case 'c':
-                    /// Sent the robot to a new goal
+                    /// Sent the robot tracking object
                     /// nothing is needed on the qml side
                 break;
                 case 'd':
