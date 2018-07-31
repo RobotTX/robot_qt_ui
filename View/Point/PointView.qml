@@ -76,7 +76,7 @@ Item {
         id: mArea
 
        hoverEnabled: true
-       anchors.fill: tooltip
+       anchors.fill: img
 
         //onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible /// desktop
          onEntered: {

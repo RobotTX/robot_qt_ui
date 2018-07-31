@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQml 2.2
+import QtQuick.Window 2.2
 import "../../Helper/style.js" as Style
 import "../Custom"
 import "../../Model/Robot"
@@ -1060,10 +1061,110 @@ Frame {
 //                topMargin: 20
                 bottom: parent.bottom
                 left: parent.left
-                right: parent.right
+                right: HelpButton.left
             }
         }
 
+        HelpButton {
+            height: 20
+            width: 20
+            anchors {
+                left: versionApp.right
+                leftMargin: 5
+                verticalCenter: versionApp.verticalCenter
+            }
+           onClicked: {
+           myMainWindow.open();
+           }
+        }
+
+        Dialog{
+         id: myMainWindow
+         height: 400
+         width: 400
+         x:(parent.width - width) /2
+         y:(parent.height - height)/2
+        parent: ApplicationWindow.overlay
+         header: Label {
+             id: customHeader
+             background: Rectangle {
+                 color: "transparent"
+             }
+             anchors {
+                 top: parent.top
+                 left: parent.left
+                 topMargin: 10
+                 leftMargin: 10
+             }
+
+             font.bold: true
+             text: qsTr("What's new in Version 1.04")
+         }
+         contentItem: Rectangle {
+
+             anchors.fill: parent
+             color: "transparent"
+
+             Label {
+                 id: label
+                 anchors {
+                     top: parent.top
+                     left: parent.left
+                     right: parent.right
+                     bottom: rect.top
+                     topMargin: customHeader.height + 20
+                     leftMargin: 10
+                     rightMargin: 10
+                 }
+                 text: qsTr(tutoMessage)
+                 font.pointSize: 12
+                 wrapMode: Text.WordWrap
+             }
+
+
+        }
+         Rectangle {
+             id: rect
+             height: 85
+             color: "transparent"
+             anchors {
+                 bottom: parent.bottom
+                 left: parent.left
+                 right: parent.right
+             }
+         }
+         Button {
+             id: button
+             background: Rectangle {
+                 radius: 3
+                 color: Style.darkSkyBlue
+                 border.width: 1
+                 border.color: Style.darkSkyBlueBorder
+             }
+            /*
+             anchors {
+                 right: parent.right
+                 rightMargin: 20
+                 verticalCenter: parent.verticalCenter
+
+
+
+             }
+             */
+             height: 23
+             width: 60
+             y : 350
+             x : 320
+
+
+
+             text: langue == "English" ? "OK" : "是"
+
+             onClicked: {
+                 myMainWindow.close();
+             }
+         }
+        }
         CustomDialog {
             id: exitDialog
             parent: ApplicationWindow.overlay

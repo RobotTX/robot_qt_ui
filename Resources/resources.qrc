@@ -115,6 +115,7 @@
         <file alias="outline">icons/Btn_Outline.png</file>
         <file alias="solid">icons/Btn_Solid.png</file>
         <file alias="increase">icons/Btn_Increase.png</file>
+        <file alias="decrease">icons/Btn_Decrease.png</file>
         <file alias="save">icons/Btn_Save.png</file>
         <file alias="line1">icons/Line_1.png</file>
         <file alias="line2">icons/Line_2.png</file>

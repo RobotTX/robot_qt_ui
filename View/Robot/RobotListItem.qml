@@ -321,12 +321,13 @@ Frame {
     SmallButton {
         id: increaseButton
         objectName: "decreaseSound"
-        imgSrc: "qrc:/icons/decrease"
+        imgSrc: "qrc:/icons/decrease10"
         tooltip: langue === "English" ? "Decrease" : "减小音量"
 
         anchors {
             top: muteButton.bottom
-            left: muteButton.left
+            right: muteButton.right
+            rightMargin: 15
         }
         onReleased:  {
             frame.decreaseSound(ip);
@@ -340,8 +341,9 @@ Frame {
         tooltip: langue === "English" ? "Increase" : "增大音量"
         anchors {
             top: muteButton.bottom
-            left: muteButton.right
-            rightMargin: 5
+            left: muteButton.left
+            leftMargin: 10
+
         }
         onReleased:  {
             frame.increaseSound(ip);
@@ -350,7 +352,8 @@ Frame {
     SmallButton{
         id: magnetButton
         imgSrc: "qrc:/icons/lockTrail"
-        visible: lockTrail != false
+        tooltip: langue === "English" ? "Detach Object" : "分离目标"
+      //  visible: lockTrail != false
         anchors{
             verticalCenter: nameLabel.verticalCenter
             right: muteButton.left
