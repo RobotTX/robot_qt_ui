@@ -33,6 +33,7 @@ Dialog{
      }
 
      font.bold: true
+     font.pointSize: 12
      text:{
          if(countIndex == 1)
          {
@@ -70,7 +71,7 @@ Dialog{
          }
          text: qsTr(versMessage)
          color: Style.midGrey2
-         font.pointSize: 12
+         font.pointSize: 10
          wrapMode: Text.WordWrap
      }
 

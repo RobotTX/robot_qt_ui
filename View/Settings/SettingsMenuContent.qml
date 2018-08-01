@@ -89,7 +89,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 11
+            font.pointSize: 14
             text: langue === "English" ? qsTr("Robot Settings") : qsTr("机器人设置")
         }
 
@@ -197,7 +197,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 11
+            font.pointSize: 14
             text: langue === "English" ? qsTr("WiFi Settings") : qsTr("无线网设置")
         }
 
@@ -205,7 +205,7 @@ Frame {
             id: nameWifi
             text: langue === "English" ? qsTr("Name WiFi : ") : qsTr("无线网名称")
             color: Style.greyText
-            font.pointSize: 10
+            font.pointSize: 11
             anchors {
                 left: parent.left
                 top: wifiLabel.bottom
@@ -287,7 +287,7 @@ Frame {
             id: pwdWifi
             text: langue === "English" ? qsTr("Password : ") : qsTr("密码 : ")
             color: Style.greyText
-            font.pointSize: 10
+            font.pointSize: 11
             anchors {
                 left: nameWifi.left
                 top: userInputWifiName.bottom
@@ -362,7 +362,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 11
+            font.pointSize: 14
             text: langue === "English" ? qsTr("Velocity Settings") : qsTr("速度设置")
         }
 
@@ -387,7 +387,7 @@ Frame {
 
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
-                font.pointSize: 10
+                font.pointSize: 11
                 text: langue === "English" ? qsTr("Linear velocity") : qsTr("线速度")
             }
 
@@ -487,7 +487,7 @@ Frame {
 
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
-                font.pointSize: 10
+                font.pointSize: 11
                 text: langue === "English" ? qsTr("Angular Velocity") : qsTr("角速度")
             }
 
@@ -640,7 +640,7 @@ Frame {
                 }
 
                 color: Style.darkSkyBlue
-                font.pointSize: 11
+                font.pointSize: 14
                 text: langue === "English" ? qsTr("Low Battery Settings") : qsTr("低电量设置")
             }
 
@@ -777,7 +777,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 11
+            font.pointSize: 14
             text: langue === "English" ? qsTr("Map Sync. Settings") : qsTr("地图同步设置")
         }
 
@@ -895,7 +895,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 11
+            font.pointSize: 14
             text: langue === "English" ? qsTr("Language Settings") : qsTr("语言设置")
         }
 
@@ -1020,7 +1020,7 @@ Frame {
 
             CustomLabel {
                 text: langue == "English" ? "Exit Application" : "退出程序"
-                font.pointSize: 11
+                font.pointSize: 14
                 color: Style.darkSkyBlue
                 verticalAlignment: Text.AlignVCenter
                 anchors {
@@ -1059,7 +1059,7 @@ Frame {
 
         Label {
             id: versionApp
-            text: "Version 1.04 updated on 24/07/2018"
+            text: langue == "English" ? "Version 1.10 released on 01/08/2019" : "版本 1.10 发布于 01/08/2018"
             color: Style.midGrey
             font.italic: true
             font.pointSize: 8
@@ -1097,7 +1097,7 @@ Frame {
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 20;
             leftMarginLabel: langue === "English" ? 50 : 120;
-            title: langue == "English" ? "Warning"  : "警告"
+            title: langue == "English" ? "WARNING"  : "警告"
             message: langue == "English" ? "\nDo you want to exit the application？" : "\n你想退出应用程序吗?"
             acceptMessage: langue == "English" ? "Yes" : "确认"
             rejectMessage: langue == "English" ? "Cancel" : "取消"
@@ -1181,7 +1181,7 @@ Frame {
             bottomMarginLabel: langue === "English" ? 10 : 0;
             leftMarginLabel: langue === "English" ? 20 : 80;
             rightMarginLabel: langue === "English" ? 20 : 80;
-            title: langue == "English" ? "Warning"  : "警告"
+            title: langue == "English" ? "WARNING"  : "警告"
             message: langue == "English" ? "\nPlease select a robot or fill the WiFi name" : "\n请选择机器人或输入WiFi名称"
             acceptMessage: langue == "English" ? "OK" : "是"
         }
@@ -1196,7 +1196,7 @@ Frame {
             bottomMarginLabel: langue === "English" ? 10 : 20;
             leftMarginLabel: langue === "English" ? 100 : 80;
             rightMarginLabel: langue === "English" ? 100 : 80
-            title: langue == "English" ? "Warning"  : "警告";
+            title: langue == "English" ? "WARNING"  : "警告";
             message: langue == "English" ? "\nPlease select a robot" : "\n请选择机器人或输入WiFi名称"
             acceptMessage: langue == "English" ? "OK" : "是"
 
