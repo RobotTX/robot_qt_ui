@@ -20,6 +20,7 @@ ApplicationWindow {
     minimumWidth: 350
     minimumHeight: 120
     title: qsTr("Authentification Mobot Studio")
+
     Component.onCompleted: {
         setX(Screen.width / 2 - width / 2);
         setY(Screen.height / 2 - height / 2);

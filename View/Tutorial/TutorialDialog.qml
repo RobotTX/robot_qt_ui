@@ -104,6 +104,55 @@ Dialog {
                     tutorialDialog.close()
                 }
             }
+            Button {
+                id: nextButton
+                background: Rectangle {
+                    radius: 3
+                    color: Style.darkSkyBlue
+                    border.width: 1
+                    border.color: Style.darkSkyBlueBorder
+                }
+
+                anchors {
+                    right: parent.right
+                    rightMargin: 20
+                    verticalCenter: parent.verticalCenter
+                }
+                height: 23
+                width: 60
+
+                text: langue == "English" ? "OK" : "是"
+
+                onClicked: {
+                    box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
+                    tutorialDialog.close()
+                }
+            }
+            Button {
+                id: previousButton
+                background: Rectangle {
+                    radius: 3
+                    color: Style.darkSkyBlue
+                    border.width: 1
+                    border.color: Style.darkSkyBlueBorder
+
+                }
+
+                anchors {
+                    right: parent.right
+                    rightMargin: 20
+                    verticalCenter: parent.verticalCenter
+                }
+                height: 23
+                width: 60
+
+                text: langue == "English" ? "OK" : "是"
+
+                onClicked: {
+                    box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
+                    tutorialDialog.close()
+                }
+            }
         }
 
     }

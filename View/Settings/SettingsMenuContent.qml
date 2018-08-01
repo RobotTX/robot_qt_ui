@@ -8,6 +8,9 @@ import "../../Model/Robot"
 import "../../View/Custom/"
 import "../../Model/Path"
 import "../../Model/Tutorial"
+import "../../Model/Version"
+import "../Settings"
+import "../Version"
 import "../Robot"
 
 Frame {
@@ -39,9 +42,13 @@ Frame {
     property int oriMapChoice
     property int oriLanguageChoice
 
+    property int countIndex: 1
     property Robots robotModel
     property Tutorial tutorial
     property Paths pathModel
+    property Version version
+
+
 
     background: Rectangle {
         anchors.fill: parent
@@ -1074,97 +1081,13 @@ Frame {
                 verticalCenter: versionApp.verticalCenter
             }
            onClicked: {
-           myMainWindow.open();
+               countIndex = 1;
+           versionID.open()
+
            }
         }
 
-        Dialog{
-         id: myMainWindow
-         height: 400
-         width: 400
-         x:(parent.width - width) /2
-         y:(parent.height - height)/2
-        parent: ApplicationWindow.overlay
-         header: Label {
-             id: customHeader
-             background: Rectangle {
-                 color: "transparent"
-             }
-             anchors {
-                 top: parent.top
-                 left: parent.left
-                 topMargin: 10
-                 leftMargin: 10
-             }
 
-             font.bold: true
-             text: qsTr("What's new in Version 1.04")
-         }
-         contentItem: Rectangle {
-
-             anchors.fill: parent
-             color: "transparent"
-
-             Label {
-                 id: label
-                 anchors {
-                     top: parent.top
-                     left: parent.left
-                     right: parent.right
-                     bottom: rect.top
-                     topMargin: customHeader.height + 20
-                     leftMargin: 10
-                     rightMargin: 10
-                 }
-                 text: qsTr(tutoMessage)
-                 font.pointSize: 12
-                 wrapMode: Text.WordWrap
-             }
-
-
-        }
-         Rectangle {
-             id: rect
-             height: 85
-             color: "transparent"
-             anchors {
-                 bottom: parent.bottom
-                 left: parent.left
-                 right: parent.right
-             }
-         }
-         Button {
-             id: button
-             background: Rectangle {
-                 radius: 3
-                 color: Style.darkSkyBlue
-                 border.width: 1
-                 border.color: Style.darkSkyBlueBorder
-             }
-            /*
-             anchors {
-                 right: parent.right
-                 rightMargin: 20
-                 verticalCenter: parent.verticalCenter
-
-
-
-             }
-             */
-             height: 23
-             width: 60
-             y : 350
-             x : 320
-
-
-
-             text: langue == "English" ? "OK" : "是"
-
-             onClicked: {
-                 myMainWindow.close();
-             }
-         }
-        }
         CustomDialog {
             id: exitDialog
             parent: ApplicationWindow.overlay
@@ -1200,6 +1123,53 @@ Frame {
 //                settingsPage.close()
 //            }
 //        }
+            VersionDialog{
+            id: versionID
+            height: 400
+            x: parent.width / 2 - width / 2
+            y: parent.height / 2 - height / 2
+            feature: "NEWESTVERSION"
+            version: settingsPage.version
+            Component.onCompleted: versMessage = version.getMessage("NEWESTVERSION");
+            }
+
+            VersionDialog{
+            id: versionIDNext
+            height: 400
+            x: parent.width / 2 - width / 2
+            y: parent.height / 2 - height / 2
+            feature: "NEXTVERSION"
+            version: settingsPage.version
+            Component.onCompleted: versMessage = version.getMessage("NEXTVERSION");
+            }
+            VersionDialog{
+            id: versionIDNext1
+            height: 400
+            x: parent.width / 2 - width / 2
+            y: parent.height / 2 - height / 2
+            feature: "NEXTVERSION1"
+            version: settingsPage.version
+            Component.onCompleted: versMessage = version.getMessage("NEXTVERSION1");
+            }
+            VersionDialog{
+            id: versionIDNext2
+            height: 400
+            x: parent.width / 2 - width / 2
+            y: parent.height / 2 - height / 2
+            feature: "NEXTVERSION2"
+            version: settingsPage.version
+            Component.onCompleted: versMessage = version.getMessage("NEXTVERSION2");
+            }
+            VersionDialog{
+            id: versionIDNext3
+            height: 400
+            x: parent.width / 2 - width / 2
+            y: parent.height / 2 - height / 2
+            feature: "NEXTVERSION3"
+            version: settingsPage.version
+            Component.onCompleted: versMessage = version.getMessage("NEXTVERSION3");
+            }
+
 
         CustomDialog {
             id: wifiDialog

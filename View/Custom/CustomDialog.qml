@@ -36,19 +36,25 @@ Dialog {
     header: Label {
         id: customHeader
         background: Rectangle {
-            color: colorBackground
-            width: parent.width - 20
+//            color: colorBackground
+
+            color: Style.warningHeaderColor
+            width: parent.width - 5
+            radius: 3
         }
         anchors {
             top: parent.top
             left: parent.left
-            topMargin: 5
-            leftMargin: 5
+            topMargin: 2
+            leftMargin: 2
+            rightMargin: 1
+
         }
 
-        font.bold: true
-        text: qsTr(title)
-        color: (title === "WARNING" || title === "警告") ? textColor : textColor
+       //font.bold: true
+        text:qsTr(title)
+
+        color: (title === "WARNING" || title === "警告") ? "white" : "white"
     }
 
     contentItem: Rectangle {

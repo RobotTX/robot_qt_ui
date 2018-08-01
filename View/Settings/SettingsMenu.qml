@@ -4,6 +4,8 @@ import "../Custom"
 import "../../Model/Robot"
 import "../../Model/Path"
 import "../../Model/Tutorial/"
+import "../../Model/Version/"
+import "../Settings"
 
 Page {
 
@@ -14,6 +16,7 @@ Page {
     property Robots robotModel
     property Tutorial tutorial
     property Paths pathModel
+    property Version versionModel
     property real batteryWarningThreshold
     property string langue
     property string inputNameWifi
@@ -35,6 +38,7 @@ Page {
         tutorial: page.tutorial
         langue: page.langue
         inputNameWifi: page.inputNameWifi
+        version: page.versionModel
 
         oriBatteryWarningThreshold: page.batteryWarningThreshold
 

@@ -110,5 +110,7 @@
         <file>View/Custom/SaveButtonGolden.qml</file>
         <file>View/Custom/CancelButtonGolden.qml</file>
         <file>View/Custom/CustomDialogGolden.qml</file>
+        <file>Model/Version/Version.qml</file>
+        <file>View/Version/VersionDialog.qml</file>
     </qresource>
 </RCC>

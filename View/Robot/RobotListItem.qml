@@ -353,7 +353,7 @@ Frame {
         id: magnetButton
         imgSrc: "qrc:/icons/lockTrail"
         tooltip: langue === "English" ? "Detach Object" : "分离目标"
-      //  visible: lockTrail != false
+        visible: lockTrail != false
         anchors{
             verticalCenter: nameLabel.verticalCenter
             right: muteButton.left

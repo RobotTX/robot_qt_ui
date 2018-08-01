@@ -6,6 +6,7 @@ import "../Point"
 import "../Speech"
 import "../Map"
 import "../Guide"
+import "../Version"
 import "../../Model/"
 import "../Settings"
 import "../../Helper/style.js" as Style
@@ -14,6 +15,7 @@ import "../../Model/Speech"
 import "../../Model/Path"
 import "../../Model/Robot"
 import "../../Model/Tutorial/"
+import "../../Model/Version"
 
 /**
   * The left panel displaying the opened menu
@@ -31,6 +33,7 @@ Frame {
     property Paths tmpPathModel
     property Robots robotModel
     property Tutorial tutorial
+    property Version version
     property real batteryWarningThreshold
     property string langue
     property string inputNameWifi
@@ -130,6 +133,7 @@ Frame {
         visible: currentMenu == 6
         onCloseMenu: mainMenuViewsFrame.closeMenu()
         inputNameWifi: mainMenuViewsFrame.inputNameWifi
+        versionModel: mainMenuViewsFrame.version
     }
 
     function doubleClickedOnMap(mouseX, mouseY){

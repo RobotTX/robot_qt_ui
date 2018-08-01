@@ -53,3 +53,5 @@ var goldenColorNormal = "#bb9c6c"
 var loginBlue = "#6788e0"
 var warColor = "#666699"
 var TomatoRed = "#ff3300"
+var warningHeaderColor = "#a0a0a0"
+

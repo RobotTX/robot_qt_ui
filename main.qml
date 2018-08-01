@@ -8,6 +8,7 @@ import "Model/Path"
 import "Model/Robot"
 import "Model/Speech"
 import "Model/Tutorial/"
+import "Model/Version/"
 import "View/Custom"
 import "View/MainMenu"
 import "View/MapView"
@@ -127,6 +128,14 @@ ApplicationWindow {
             }
         }
 
+        Version {
+            id: _version
+            objectName: "versionModel"
+            langue: {
+                applicationWindow.langue
+            }
+        }
+
         /// NOTE Just for testing, to remove later
         Shortcut {
             sequence: "."
@@ -194,6 +203,7 @@ ApplicationWindow {
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
             tutorial: _tutorial
+            version: _version
             currentMenu: mainFrame.currentMenu
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
             langue: {

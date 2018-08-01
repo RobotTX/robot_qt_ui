@@ -954,7 +954,7 @@ Frame {
                         left: parent.let
                         right: parent.right
                         top: content.bottom
-                        topMargin: langue === "English" ? 15 : 10
+                        topMargin: langue === "English" ? 15 : 20
                     }
                 }
             }
