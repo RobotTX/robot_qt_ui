@@ -892,6 +892,7 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
 }
 
 void MainController::requestOrSendMap(QString ip, bool request){
+    qDebug() << "MainController::requestOrSendMap";
     if(request)
         robotsController->requestMap(ip);
     else{

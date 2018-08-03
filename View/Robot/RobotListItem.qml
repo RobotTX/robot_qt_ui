@@ -134,7 +134,7 @@ Frame {
         id: nameLabel
         text: qsTr(name)
         height: 20
-        font.pointSize: Style.ubuntuTitleSize
+        font.pointSize: Style.ubuntuHeadingSize
 
         anchors {
             left: restartButton.right

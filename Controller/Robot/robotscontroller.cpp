@@ -309,7 +309,7 @@ void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray ma
 }
 
 void RobotsController::requestMap(const QString ip){
-//    // qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
+     qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
     if(!receivingMap){
         if(sendCommand(ip, QString("s") + QChar(31) + QString::number(1))){
             receivingMap = true;
@@ -317,7 +317,7 @@ void RobotsController::requestMap(const QString ip){
         }
     } else {
         /// TODO some queue to request the map ?
-        // qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
+         qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
     }
 }
 

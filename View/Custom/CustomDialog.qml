@@ -53,6 +53,7 @@ Dialog {
 
        //font.bold: true
         text:qsTr(title)
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: (title === "WARNING" || title === "警告") ? "white" : "white"
     }
 
@@ -83,6 +84,7 @@ Dialog {
             text: qsTr(message)
             wrapMode: Text.WordWrap
             color: textColor
+           font.pointSize: Style.ubuntuHeadingSize
         }
 
         RowLayout {
@@ -97,7 +99,7 @@ Dialog {
             CancelButton {
                 id: robotButton
                 visible: rejectMessage !== ""
-                txt: qsTr(rejectMessage)
+                txt:qsTr(rejectMessage)
                 onClicked: dialog.reject()
                 Layout.preferredHeight: height
                 Layout.fillWidth: true

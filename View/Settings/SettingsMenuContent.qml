@@ -871,6 +871,7 @@ Frame {
                     topMargin: langue == "English" ? 16 : 11
                     verticalCenter: mapChoice2.verticalCenter
 
+
                  }
                   text: langue === "English" ? qsTr("The application's map") : qsTr("本地地图")
                   font.pointSize: Style.ubuntuTextSize

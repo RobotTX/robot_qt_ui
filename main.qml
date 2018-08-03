@@ -247,20 +247,65 @@ ApplicationWindow {
             }
         }
     }
+// here
+
+    /*
+  CustomDialog{
+  id: confirmdialog
+  parubuntuTitleSize/ent : ApplicationWindow.overlay
+  x: (applicationWindow.width - width) / 2
+  y: (applicationWindow.height - height) / 2
+  onAccepted: requestOrSendMap(ip,false)
+  onRejected: requestOrSendMap(ip,true)
+}
+*/
 
     CustomDialog {
-        id: dialog
+        id: confirmDialog
         parent: ApplicationWindow.overlay
         x: (applicationWindow.width - width) / 2
         y: (applicationWindow.height - height) / 2
-        onAccepted: requestOrSendMap(ip, false)
-        onRejected: requestOrSendMap(ip, true)
+        onAccepted: applicationDialog.open()
+        onRejected: robotDialog.open()
     }
 
     CustomDialog {
         id: warningDialog
         x: applicationWindow.width / 2 - width / 2
         y: applicationWindow.height / 2 - height / 2
+    }
+
+    CustomDialog {
+        id: robotDialog
+        parent: ApplicationWindow.overlay
+        x: (applicationWindow.width - width) / 2
+        y: (applicationWindow.height - height) / 2
+        font.pointSize: Style.ubuntuSubHeadingSize
+        title: langue == "English" ? "ROBOT"  : "机器人"
+        message: langue == "English" ? "\nAre you sure to choose Robot's map?\n(This operation will overwrite Application's map)" : "确定要选择机器人的地图吗?\n (这项操作会覆盖应用的地图)"
+        acceptMessage: langue == "English" ? "Yes" : "确认"
+        rejectMessage: langue == "English" ? "Cancel" : "取消"
+        onAccepted:{
+            console.log("ipRequestMap = " + ip);
+            requestOrSendMap(ip, true)
+        }
+        onRejected:confirmDialog.open()
+    }
+    // 确定要选择 机器人/应用 的地图吗？(这项操作会覆盖 应用/机器人的地图)
+    //   Cancel/Yes     取消/确认
+
+    CustomDialog {
+        id: applicationDialog
+        parent: ApplicationWindow.overlay
+        x: (applicationWindow.width - width) / 2
+        y: (applicationWindow.height - height) / 2
+        font.pointSize: Style.ubuntuSubHeadingSize
+        title: langue == "English" ? "APPLICATION"  : "应用"
+        message: langue == "English" ? "\nAre you sure to choose Application's map?\n(This operation will overwrite Robot's map)" : "\n确定要选择应用的地图吗? \n(这项操作会覆盖机器人的地图)"
+        acceptMessage: langue == "English" ? "Yes" : "确认"
+        rejectMessage: langue == "English" ? "Cancel" : "取消"
+        onAccepted:requestOrSendMap(ip,false)
+        onRejected:confirmDialog.open()
     }
 
 //    TextField {
@@ -304,7 +349,7 @@ ApplicationWindow {
         var message2 = ''
         var rejectMessage_ = ''
         var acceptMessage_ = ''
-        if(dialog.visible){
+        if(confirmDialog.visible){
             /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot), MORE ROBOTS NEEDED
             console.log("We are already choosing a map for the robot, try again later");
         } else {
@@ -323,15 +368,49 @@ ApplicationWindow {
              }
 
 
-            dialog.title = title_;
-            dialog.ip = ip;
-            dialog.message = robotIsOlder ? message1 : message2;
-            dialog.rejectMessage = rejectMessage_;
-            dialog.acceptMessage = acceptMessage_;
-            dialog.open();
+            confirmDialog.title = title_;
+            confirmDialog.ip = ip;
+            robotDialog.ip = ip;
+            applicationDialog.ip = ip;
+            confirmDialog.message = robotIsOlder ? message1 : message2;
+            confirmDialog.rejectMessage = rejectMessage_;
+            confirmDialog.acceptMessage = acceptMessage_;
+            confirmDialog.open();
         }
     }
+    /*
+    function openrobotChoiceMessageDialog(ip, robotIsOlder){
+        var title_ = ''
+        var message1 = ''
+        var message2 = ''
+        var rejectMessage_ = ''
+        var acceptMessage_ = ''
+        if(confirmDialog.visible){
+            /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot), MORE ROBOTS NEEDED
+            console.log("We are already choosing a map for the robot, try again later");
+        } else {
+            if (langue == "English") {
+                title_ = "Robot"
+                message1 = "You have chosen robot, are you sure?"
+                rejectMessage_ = "Yes"
+                acceptMessage_ = "no"
+             } else {
+                title_ = "机器人"
+                message1 = ""
+                rejectMessage_ = "yes"
+                acceptMessage_ = "no"
+             }
 
+
+            robotDialog.title = title_;
+            robotDialog.ip = ip;
+            robotDialog.message = message1
+            robotDialog.rejectMessage = rejectMessage_;
+            robotDialog.acceptMessage = acceptMessage_;
+            robotDialog.open();
+        }
+    }
+    */
     function openWarningDialog(title, msg){
         warningDialog.title = title;
         warningDialog.message = msg;
