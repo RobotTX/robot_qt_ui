@@ -50,6 +50,7 @@ Button {
         y: btn.height
         visible: btn.hovered && tooltip !== "" && timerTriggered
         text: tooltip
+        font.pointSize: Style.ubuntuSubTextSize
     }
 
     Timer {

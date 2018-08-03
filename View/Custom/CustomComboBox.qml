@@ -8,7 +8,6 @@ ComboBox {
     id: groupComboBox
     height: 30
     currentIndex: 0
-
     property string langue
     property string txt: langue == "English" ? "English" : "中文"
 
@@ -41,6 +40,7 @@ ComboBox {
     delegate: ItemDelegate {
         width: groupComboBox.width
         contentItem: CustomLabel {
+            font.pointSize: Style.ubuntuSubHeadingSize
             text: {
                 if (txt == "English" && groupName === Helper.noGroup) {
                     Helper.noGroupChinese

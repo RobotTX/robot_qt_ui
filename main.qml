@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.0
+import "Helper/style.js" as Style
 import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
@@ -20,6 +21,7 @@ import "View/Robot"
 import "View/ScanMap"
 import "View/Tutorial/"
 import "View/Settings"
+
 
 ApplicationWindow {
     id: applicationWindow
@@ -282,7 +284,7 @@ ApplicationWindow {
         text: "old map"
         color: "red"
         font.bold: true
-        font.pointSize: 13
+        font.pointSize: Style.ubuntuSubHeadingSize
         visible: false
     }
 
@@ -291,7 +293,7 @@ ApplicationWindow {
         text: "new map"
         color: "green"
         font.bold: true
-        font.pointSize: 13
+        font.pointSize: Style.ubuntuSubHeadingSize
         visible: false
     }
 

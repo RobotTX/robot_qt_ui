@@ -33,11 +33,11 @@ Dialog{
      }
 
      font.bold: true
-     font.pointSize: 12
+     font.pointSize: Style.ubuntuSubHeadingSize
      text:{
          if(countIndex == 1)
          {
-         qsTr("What's new in Version 1.05")
+         qsTr("What's new in Version 1.10")
          }
          else if (countIndex ==2){
          qsTr("What's new in Version 1.04")
@@ -71,18 +71,65 @@ Dialog{
          }
          text: qsTr(versMessage)
          color: Style.midGrey2
-         font.pointSize: 10
+         font.pointSize: Style.ubuntuTextSize
          wrapMode: Text.WordWrap
      }
 
 
 }
 
+// Button {
+//     id: nextbutton
+//     visible: !(countIndex == 5)
+////     background: Rectangle {
+////         radius: 3
+////         color: Style.darkSkyBlue
+////         border.width: 1
+////         border.color: Style.darkSkyBlueBorder
+////     }
+
+//     background: Rectangle {
+//         color: "red"
+//         border.width: 1
+//         border.color: "yellow"
+//     }
+
+//     height: 23
+//     width: 60
+//     y : 350
+//     x : 320
+//     contentItem: Text{
+//         text:"NEXT"
+//         color:"white"
+//         horizontalAlignment: Text.AlignHCenter
+//         verticalAlignment: Text.AlignVCenter
+//     }
+
+//     onClicked: {
+//        countIndex = countIndex + 1;
+//         console.log("NEXT ======= " + countIndex)
+//         console.log("Next button visible =" + visible)
+//         if(countIndex == 1){
+//             versionID.open()
+//         }
+//         else if(countIndex == 2){
+//             versionIDNext.open()
+//         }
+//         else if(countIndex == 3){
+//             versionIDNext1.open()
+//         }
+//         else if(countIndex == 4){
+//             versionIDNext2.open()
+//         }
+//         else if(countIndex == 5){
+//             versionIDNext3.open()
+//         }
+//     }
+// }
  Button {
      id: nextbutton
 
      visible: !(countIndex == 5)
-
 
      background: Rectangle {
          radius: 3
@@ -91,36 +138,46 @@ Dialog{
          border.color: Style.darkSkyBlueBorder
 
      }
+
+     anchors {
+         right: parent.right
+         rightMargin: 20
+     }
+
      height: 23
      width: 60
-     y : 350
-     x : 320
+     y:350
+     x:320
      contentItem: Text{
          text:"NEXT"
          color:"white"
          horizontalAlignment: Text.AlignHCenter
          verticalAlignment: Text.AlignVCenter
+         font.pointSize: Style.ubuntuTextSize
      }
 
-     onClicked: {
-        countIndex = countIndex + 1;
-         if(countIndex == 1){
-             versionID.open()
-         }
-         else if(countIndex == 2){
-             versionIDNext.open()
-         }
-         else if(countIndex == 3){
-             versionIDNext1.open()
-         }
-         else if(countIndex == 4){
-             versionIDNext2.open()
-         }
-         else if(countIndex == 5){
-             versionIDNext3.open()
-         }
-     }
+          onClicked: {
+             countIndex = countIndex + 1;
+              console.log("NEXT ======= " + countIndex)
+              console.log("Next button visible =" + visible)
+              if(countIndex == 1){
+                  versionID.open()
+              }
+              else if(countIndex == 2){
+                  versionIDNext.open()
+              }
+              else if(countIndex == 3){
+                  versionIDNext1.open()
+              }
+              else if(countIndex == 4){
+                  versionIDNext2.open()
+              }
+              else if(countIndex == 5){
+                  versionIDNext3.open()
+              }
+          }
  }
+
  Button {
      id: backbutton
 
@@ -146,6 +203,7 @@ Dialog{
      contentItem: Text{
          text:"BACK"
          color:"white"
+         font.pointSize: Style.ubuntuTextSize
          horizontalAlignment: Text.AlignHCenter
          verticalAlignment: Text.AlignVCenter
      }

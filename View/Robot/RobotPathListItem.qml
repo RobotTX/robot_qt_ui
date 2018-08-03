@@ -246,7 +246,7 @@ Frame {
                 text: qsTr(pathName)
                 height: parent.height
                 color: Style.blackMenuTextColor
-
+                font.pointSize: Style.ubuntuHeading2Size
                 verticalAlignment: Text.AlignVCenter
 
                 anchors {
@@ -375,7 +375,7 @@ Frame {
                             CustomLabel {
                                 id: customLabelPathPointName
                                 text: qsTr(pathPointName)
-                                font.pixelSize: 14
+                                font.pointSize: Style.ubuntuTextSize
                                 color: Style.midGrey2
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: rect.right
@@ -411,7 +411,7 @@ Frame {
                                     id: textButton
                                     text: customLabelWaitTime.setWaitTimeText()
                                     color: Style.midGrey2
-                                    font.pointSize: 10
+                                    font.pointSize: Style.ubuntuTextSize
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
@@ -421,7 +421,7 @@ Frame {
                                 }
 
                                 height: 20
-                                font.pixelSize: 14
+                                font.pointSize: Style.ubuntuTitleSize
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.right: parent.right
                                 anchors.rightMargin: 5

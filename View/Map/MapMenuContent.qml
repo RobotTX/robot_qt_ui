@@ -180,6 +180,7 @@ Frame {
 
     CustomDialog {
         id: messageDialog
+        font.pointSize: Style.ubuntuSubHeadingSize
         title: langue == "English" ? "Importing an existing map" : "导入已经存在的地图"
         message: langue == "English" ? "\nDo you wish to save the current map before importing a new one ?" : "\n在读取新地图之前，是否保存当前地图 ?"
         rejectMessage: langue == "English" ? "Cancel" : "取消"

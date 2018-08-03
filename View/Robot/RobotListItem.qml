@@ -111,13 +111,13 @@ Frame {
         CustomDialog {
             id: rebootRobotDialog
             parent: ApplicationWindow.overlay
+            font.pointSize: Style.ubuntuSubHeadingSize
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
             topMarginLabel: langue === "English" ? 10 : 20;
             leftMarginLabel: langue === "English" ? 40 : 80;
             colorBackground: "white"
-            font: bold
             title: langue == "English" ? "WARNING"  : "警告"
             message: langue == "English" ? "\nDo you want to power off robot " + name + "?" : "你想关闭机器人 " + name + "吗?"
             acceptMessage: langue == "English" ? "Yes" : "确认"
@@ -134,7 +134,7 @@ Frame {
         id: nameLabel
         text: qsTr(name)
         height: 20
-        font.pixelSize: 16
+        font.pointSize: Style.ubuntuTitleSize
 
         anchors {
             left: restartButton.right
@@ -325,7 +325,7 @@ Frame {
         anchors {
             top: muteButton.bottom
             right: muteButton.right
-            rightMargin: 15
+            rightMargin: 8
         }
         onReleased:  {
             frame.decreaseSound(ip);
@@ -717,7 +717,7 @@ Frame {
                 }
                 color: Style.orangeColor
                 text: Math.round(robotModel.getBatteryWarning(ip)) + "%"
-                font.pixelSize: 11
+                font.pointSize: Style.ubuntuSubHeadingSize
             }
 
             Text {
@@ -731,7 +731,7 @@ Frame {
                 }
                 color: Style.darkSkyBlue
                 text: battery + '%'
-                font.pixelSize: 11
+                font.pointSize: Style.ubuntuTextSize
             }
         }
     }
@@ -775,7 +775,7 @@ Frame {
                 color: Style.darkSkyBlue
                 horizontalAlignment: Text.Center
                 verticalAlignment: Text.Center
-                font.pointSize: 10
+                font.pointSize: Style.ubuntuTextSize
                 anchors {
                     top: linearSpeedLabel.bottom
                     left: linearSpeedLabel.left
@@ -802,7 +802,7 @@ Frame {
                 color: Style.darkSkyBlue
                 horizontalAlignment: Text.Center
                 verticalAlignment: Text.Center
-                font.pointSize: 10
+                font.pointSize: Style.ubuntuTextSize
                 anchors {
                     top: linearSpeed.top
                     left:angularSpeedLabel.left
@@ -940,7 +940,7 @@ Frame {
                 langue == "English" ? qsTr("No Path Assigned") : qsTr("尚未设置路径");
             }
         }
-        font.pointSize: 10
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: {
             if(pathName !== "" && pathPoints.count > 0){
                 if(stage >= 0) {
@@ -1202,7 +1202,7 @@ Frame {
                     text: {
                         consoleString
                     }
-                    font.pixelSize: 14
+                    font.pointSize: Style.ubuntuTitleSize
                     color: Style.midGrey2
                 }
             }

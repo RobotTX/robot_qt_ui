@@ -116,6 +116,7 @@ Frame {
     Label {
         id: pointLabel
         text: langue == "English" ? qsTr("Point Name") : qsTr("目标点名称")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -127,6 +128,7 @@ Frame {
         id: pointTextField
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("Enter name") : qsTr("输入目标点名称")
+        font.pointSize: Style.ubuntuSubHeadingSize
         text: oldName
         verticalAlignment: TextInput.AlignVCenter
         anchors {
@@ -160,6 +162,7 @@ Frame {
     Label {
         id: groupLabel
         text: langue == "English" ? qsTr("Choose Group") : qsTr("选择分组")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -172,6 +175,7 @@ Frame {
     CustomComboBox {
         id: groupComboBox
         model: pointModel
+        font.pointSize: Style.ubuntuSubHeadingSize
 //        displayText: {
 //            if (oldname) {
 //                oldGroup
@@ -215,6 +219,7 @@ Frame {
     Label {
         id: homeLabel
         text: langue == "English" ? qsTr("Charging Station") : qsTr("充电站")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -226,19 +231,35 @@ Frame {
 
     SquareCheckBox {
         id: homeCheckBox
+        width:10
+        focusPolicy: Qt.WheelFocus
         anchors {
             left: parent.left
             top: homeLabel.bottom
-            right: parent.right
-            topMargin: 10
+            topMargin: 12
+           // right: parent.right
         }
-        text: langue == "English" ? "Set to charging station" : "设置为充电站"
+
+
+
         onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
+    }
+    CustomLabel{
+        text: langue == "English" ? "Set to charging station" : "设置为充电站"
+         anchors.verticalCenterOffset: 1
+         anchors.leftMargin: 15
+         font.pointSize: Style.ubuntuSubTextSize
+         color:Style.midGrey2
+         anchors{
+             left: homeCheckBox.right
+             verticalCenter: homeCheckBox.verticalCenter
+         }
     }
 
     Label {
         id: oriLabel
         text: langue == "English" ? qsTr("Orientation") : qsTr("方向")
+        font.pointSize: Style.ubuntuTextSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -256,7 +277,7 @@ Frame {
             border.width: 2
         }
 
-        font.pointSize: 10
+        font.pointSize: Style.ubuntuSubHeadingSize
         width: 40
         height: 21
 //        visible: homeCheckBox.checked
@@ -357,6 +378,7 @@ Frame {
     Label {
         id: pointLocationLabel
         text: langue == "English" ? qsTr("Point Location") : qsTr("P目标点位置")
+        font.pointSize: Style.ubuntuSubTextSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -369,6 +391,7 @@ Frame {
     Label {
         id: xLabel
         text: qsTr("X : " + Math.round(tmpPointView.x))
+        font.pointSize: Style.ubuntuTextSize
         anchors {
             left: parent.left
             top: pointLocationLabel.bottom
@@ -379,6 +402,7 @@ Frame {
 
     Label {
         text: qsTr("Y : " + Math.round(tmpPointView.y))
+        font.pointSize: Style.ubuntuTextSize
         anchors {
             left: parent.left
             top: xLabel.bottom

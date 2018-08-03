@@ -12,7 +12,8 @@ ListModel {
 - Fix some typo in Chinese translation\n
 - Popup warning window if command robot to auto docking without assigning a home in ROBOT\n
 - Auto-focus on inputting name text field when creating new path/point/speech\n
-- Add update log in SETTING"
+- Add update log in SETTING\n
+- Standardize font size for all text"
             show:true
         }
         ListElement{

@@ -89,7 +89,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 14
+            font.pointSize: Style.ubuntuHeadingSize
             text: langue === "English" ? qsTr("Robot Settings") : qsTr("机器人设置")
         }
 
@@ -97,12 +97,22 @@ Frame {
             id: robotList
             height: Style.menuItemHeight
             width: parent.width
-            labelText: {
-                if (nameRobot === "") {
-                    langue === "English" ? "Select a robot" : "选择机器人"
-                } else {
-                    langue === "English" ? "Robot " + nameRobot + " selected" : "选择了 " + nameRobot + " 机器人"
+            CustomLabel {
+                anchors{
+                    left:parent.left
+                    leftMargin: 20
+
                 }
+
+               text:{
+                if(nameRobot === ""){
+                    langue === "English" ? "Select a robot" : "选择机器人"
+                }
+                else{
+                langue === "English" ? "Robot " + nameRobot + " selected" : "选择了 " + nameRobot + " 机器人"
+                 }
+               }
+               font.pointSize: Style.ubuntuTextSize
             }
 
             anchors.left: parent.left
@@ -197,7 +207,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 14
+            font.pointSize: Style.ubuntuHeadingSize
             text: langue === "English" ? qsTr("WiFi Settings") : qsTr("无线网设置")
         }
 
@@ -205,7 +215,7 @@ Frame {
             id: nameWifi
             text: langue === "English" ? qsTr("Name WiFi : ") : qsTr("无线网名称")
             color: Style.greyText
-            font.pointSize: 11
+            font.pointSize: Style.ubuntuTextSize
             anchors {
                 left: parent.left
                 top: wifiLabel.bottom
@@ -218,12 +228,20 @@ Frame {
             id: userInputWifiName
             height: Style.menuItemHeight
             width: parent.width
-            labelText: {
+            CustomLabel {
+                anchors{
+                    left:parent.left
+                    leftMargin: 20
+                }
+
+                text: {
                 if (inputNameWifi === "") {
                     langue === "English" ? "Select a WiFi" : "选择无线网"
                 } else {
                     langue === "English" ?  inputNameWifi :  inputNameWifi
                 }
+               }
+                font.pointSize: Style.ubuntuTextSize
             }
 
             anchors.left: parent.left
@@ -287,7 +305,7 @@ Frame {
             id: pwdWifi
             text: langue === "English" ? qsTr("Password : ") : qsTr("密码 : ")
             color: Style.greyText
-            font.pointSize: 11
+            font.pointSize:Style.ubuntuTextSize
             anchors {
                 left: nameWifi.left
                 top: userInputWifiName.bottom
@@ -301,12 +319,12 @@ Frame {
             objectName: "wifiPwd"
             selectByMouse: true
             placeholderText: langue === "English" ? qsTr("Enter Password") : qsTr("输入无线网密码")
+            font.pointSize: Style.ubuntuTextSize
             background: Rectangle {
                     implicitWidth: 174
                     implicitHeight: 15
                     border.color: Style.midGrey
             }
-            font.pointSize: 10
             text: inputPwdWifi
             echoMode: TextInput.Password
             anchors {
@@ -326,7 +344,7 @@ Frame {
                langue: settingsPage.langue
                txt: langue == "English" ? "Apply" : "应用"
                width: 70
-               font.pointSize: 11
+               font.pointSize: Style.ubuntuTextSize
 
                anchors.top: userInputWifiPwd.bottom
                anchors.topMargin: 15
@@ -362,7 +380,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 14
+            font.pointSize: Style.ubuntuHeadingSize
             text: langue === "English" ? qsTr("Velocity Settings") : qsTr("速度设置")
         }
 
@@ -387,7 +405,7 @@ Frame {
 
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
-                font.pointSize: 11
+                font.pointSize: Style.ubuntuTextSize
                 text: langue === "English" ? qsTr("Linear velocity") : qsTr("线速度")
             }
 
@@ -487,7 +505,7 @@ Frame {
 
 //                color: "#8F8E94"
                 color: Style.blackMenuTextColor
-                font.pointSize: 11
+                font.pointSize: Style.ubuntuTextSize
                 text: langue === "English" ? qsTr("Angular Velocity") : qsTr("角速度")
             }
 
@@ -571,7 +589,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "Apply" : "应用"
                 width: 70
-                font.pointSize: 11
+                font.pointSize: Style.ubuntuTextSize
 
                 anchors.top: lineMeasurement52.bottom
                 anchors.topMargin: 15
@@ -640,7 +658,7 @@ Frame {
                 }
 
                 color: Style.darkSkyBlue
-                font.pointSize: 14
+                font.pointSize: Style.ubuntuHeadingSize
                 text: langue === "English" ? qsTr("Low Battery Settings") : qsTr("低电量设置")
             }
 
@@ -729,7 +747,7 @@ Frame {
                 langue: settingsPage.langue
                 txt: langue == "English" ? "Apply" : "应用"
                 width: 70
-                font.pointSize: 11
+                font.pointSize: Style.ubuntuTextSize
 
                 anchors.top: lineMeasurement5.bottom
                 anchors.topMargin: 15
@@ -777,7 +795,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 14
+            font.pointSize: Style.ubuntuHeadingSize
             text: langue === "English" ? qsTr("Map Sync. Settings") : qsTr("地图同步设置")
         }
 
@@ -814,8 +832,18 @@ Frame {
                 id: mapChoice1
                 ButtonGroup.group: mapChoiceGroup
                 checked: mapChoice == 0
-                text: langue === "English" ? qsTr("The robot's map") : qsTr("机器人地图")
                 onClicked: mapChoice = 0
+            }
+           Label{
+               id: robotmapLabel
+                anchors{
+                   left:mapChoice1.right
+                   leftMargin: -5
+                   verticalCenter: mapChoice1.verticalCenter
+                }
+                 text: langue === "English" ? qsTr("The robot's map") : qsTr("机器人地图")
+                 font.pointSize: Style.ubuntuTextSize
+                 color: Style.darkGrey2
             }
 
             RoundCheckBox {
@@ -828,14 +856,26 @@ Frame {
                     top: mapChoice1.bottom
                     topMargin: 12
                 }
-
-                text: langue === "English" ? qsTr("The application's map") : qsTr("本地地图")
                 onClicked: {
                     mapChoice = 1
                     batteryWarningThreshold = batterySlider.value;
                     saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                 }
             }
+            Label{
+                id: applicationMapLabel
+                 anchors{
+                    left:mapChoice2.right
+                    leftMargin: -5
+                    top: robotmapLabel.bottom
+                    topMargin: langue == "English" ? 16 : 11
+                    verticalCenter: mapChoice2.verticalCenter
+
+                 }
+                  text: langue === "English" ? qsTr("The application's map") : qsTr("本地地图")
+                  font.pointSize: Style.ubuntuTextSize
+                  color: Style.darkGrey2
+             }
 
             RoundCheckBox {
                 id: mapChoice3
@@ -847,15 +887,28 @@ Frame {
                     top: mapChoice2.bottom
                     topMargin: 12
                 }
-
-                text: langue === "English" ? qsTr("Always ask me") : qsTr("总是询问我")
                 onClicked: {
                     mapChoice = 2
                     batteryWarningThreshold = batterySlider.value;
                     saveSettingsSignal(mapChoice, batterySlider.value, languageChoice);
                 }
             }
+            Label{
+                id: alwaysAskMeLabel
+                 anchors{
+                    left:mapChoice3.right
+                    leftMargin: -5
+                    top: applicationMapLabel.bottom
+                    topMargin: langue == "English" ? 16 : 11
+                    verticalCenter: mapChoice3.verticalCenter
+
+                 }
+                 text: langue === "English" ? qsTr("Always ask me") : qsTr("总是询问我")
+                  font.pointSize: Style.ubuntuTextSize
+                  color: Style.darkGrey2
+             }
         }
+
 
 //        SaveButton {
 //               id: applyButtonMapChoice
@@ -895,7 +948,7 @@ Frame {
             }
 
             color: Style.darkSkyBlue
-            font.pointSize: 14
+            font.pointSize: Style.ubuntuHeadingSize
             text: langue === "English" ? qsTr("Language Settings") : qsTr("语言设置")
         }
 
@@ -921,7 +974,6 @@ Frame {
                 id: languageChoice1
                 ButtonGroup.group: languageChoiceGroup
                 checked: languageChoice == 0
-                text: qsTr("中文")
                 anchors {
                     left: parent.left
                 }
@@ -935,6 +987,19 @@ Frame {
                     saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
                 }
             }
+            Label {
+                id: chineseChoiceLabel
+                anchors {
+                    left: languageChoice1.right
+                    leftMargin: -5
+                    verticalCenter: languageChoice1.verticalCenter
+                }
+
+                text: qsTr("中文")
+                color: Style.darkGrey2
+                font.pointSize: Style.ubuntuTextSize
+
+            }
 
             RoundCheckBox {
                 id: languageChoice2
@@ -946,7 +1011,6 @@ Frame {
                     top: languageChoice1.bottom
                     topMargin: 12
                 }
-                text: qsTr("English")
 
                 onClicked: {
                     languageChoice = 1;
@@ -957,6 +1021,20 @@ Frame {
                     saveSettingsSignal(settingsPage.mapChoice, batterySlider.value, languageChoice);
                 }
             }
+            Label {
+                id: englishChoiceLabel
+                anchors {
+                    left: languageChoice2.right
+                    leftMargin: -5
+                    verticalCenter: languageChoice2.verticalCenter
+                }
+
+                text: qsTr("English")
+                color: Style.darkGrey2
+                font.pointSize: Style.ubuntuTextSize
+
+            }
+
         }
 
         ToolSeparator {
@@ -1020,7 +1098,7 @@ Frame {
 
             CustomLabel {
                 text: langue == "English" ? "Exit Application" : "退出程序"
-                font.pointSize: 14
+                font.pointSize: Style.ubuntuHeadingSize
                 color: Style.darkSkyBlue
                 verticalAlignment: Text.AlignVCenter
                 anchors {
@@ -1062,7 +1140,7 @@ Frame {
             text: langue == "English" ? "Version 1.10 released on 01/08/2019" : "版本 1.10 发布于 01/08/2018"
             color: Style.midGrey
             font.italic: true
-            font.pointSize: 8
+            font.pointSize: Style.ubuntuSubTextSize
             anchors {
 //                top: horizontalSeparation11.bottom
 //                topMargin: 20
@@ -1083,6 +1161,7 @@ Frame {
            onClicked: {
                countIndex = 1;
            versionID.open()
+               console.log("Count index == " + countIndex)
 
            }
         }
@@ -1094,6 +1173,7 @@ Frame {
             x: (parent.width - width) / 2
             y: (parent.height - height) / 2
             height: 130
+            font.pointSize: Style.ubuntuSubHeadingSize
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 20;
             leftMarginLabel: langue === "English" ? 50 : 120;

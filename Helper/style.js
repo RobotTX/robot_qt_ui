@@ -13,6 +13,14 @@ var smallBtnWidth = 20
 var smallBtnHeight = 20
 var widthGuideMenu = 600
 
+/// New architecture for size
+var ubuntuTitleSize = 14
+var ubuntuHeadingSize = 12
+var ubuntuHeading2Size = 11
+var ubuntuSubHeadingSize = 10
+var ubuntuTextSize = 9
+var ubuntuSubTextSize = 8
+
 /// Colors
 var darkSkyBlue = "#6788e0"
 var darkSkyBlueBorder = "#5372de"
@@ -54,4 +62,5 @@ var loginBlue = "#6788e0"
 var warColor = "#666699"
 var TomatoRed = "#ff3300"
 var warningHeaderColor = "#a0a0a0"
+var groupNameBold = "#000099"
 

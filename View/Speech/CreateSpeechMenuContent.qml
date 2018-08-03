@@ -24,6 +24,7 @@ Frame {
     signal setMessageTop(int status, string msg)
     signal checkSpeech(string name, string oldname)
 
+
     onVisibleChanged: {
         ttsTextField.text = ""; /// initialized value of textfield when creating new speech
         if(!visible){
@@ -72,11 +73,13 @@ Frame {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         border.width: 1
+
     }
 
     Label {
         id: speechLabel
         text: langue == "English" ? qsTr("Speech Label") : qsTr("语音名称")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -88,7 +91,7 @@ Frame {
         id: speechTextField
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("Enter Label") : qsTr("输入语音名称")
-
+        font.pointSize: Style.ubuntuSubHeadingSize
         text: oldName
         verticalAlignment: TextInput.AlignVCenter
         anchors {
@@ -114,6 +117,7 @@ Frame {
     Label {
         id: groupLabel
         text: langue == "English" ? qsTr("Choose Group") : qsTr("选择分组")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -126,6 +130,7 @@ Frame {
     CustomComboBox {
         id: groupComboBox
         model: speechModel
+        font.pointSize: Style.ubuntuSubHeadingSize
         displayText: {
             if (oldName) {
                 oldGroup
@@ -145,6 +150,7 @@ Frame {
     Label {
         id: ttsLabel
         text: langue == "English" ? qsTr("Text") : qsTr("正文")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -192,6 +198,7 @@ Frame {
         id: ttsTextField
 //        anchors.fill: parent
         placeholderText: langue == "English" ? "Enter Text" : "输入正文"
+        font.pointSize: Style.ubuntuSubHeadingSize
         wrapMode: "WrapAtWordBoundaryOrAnywhere"
         text: tts
         selectByMouse: true

@@ -26,7 +26,7 @@ CheckBox {
 
     contentItem: CustomLabel {
         text: control.text
-        font.pointSize: 10
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.greyText
         verticalAlignment: Text.AlignVCenter
         anchors {

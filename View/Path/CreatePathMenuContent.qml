@@ -153,6 +153,7 @@ Frame {
         Label {
             id: pathLabel
             text: langue == "English" ? "Path Name" : qsTr("路径名称")
+            font.pointSize: Style.ubuntuSubHeadingSize
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -168,6 +169,7 @@ Frame {
             id: pathTextField
             selectByMouse: true
             placeholderText: langue == "English" ? "Enter Name" : qsTr("输入路径名称")
+            font.pointSize: Style.ubuntuSubHeadingSize
             verticalAlignment: TextInput.AlignVCenter
             anchors {
                 left: parent.left
@@ -203,6 +205,7 @@ Frame {
         Label {
             id: groupLabel
             text: langue == "English" ? "Choose Group" : qsTr("选择分组")
+            font.pointSize: Style.ubuntuSubHeadingSize
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -218,6 +221,7 @@ Frame {
             id: groupComboBox
             model: pathModel
             langue: createPathMenuFrame.langue
+            font.pointSize: Style.ubuntuSubHeadingSize
             displayText: {
                 if (oldname) {
                     oldGroup
@@ -238,7 +242,7 @@ Frame {
         Label {
             id: pathPointsLabel
             text: langue == "English" ? qsTr("Path Points") : qsTr("路径目标点")
-            font.pointSize: 12
+            font.pointSize: Style.ubuntuSubHeadingSize
             color: Style.midGrey2
             anchors {
                 left: parent.left
@@ -253,7 +257,7 @@ Frame {
         NormalButton {
             id: addSavedPoint
             txt: langue == "English" ? "Add Saved Point" : "加入已有目标点"
-            sizeTxt: "11"
+            font.pointSize: Style.ubuntuSubHeadingSize
             imgSrc: "qrc:/icons/point_checked_2525"
             anchors {
                 left: parent.left
@@ -346,6 +350,7 @@ Frame {
                     anchors {
                         horizontalCenter: parent.horizontalCenter
                         verticalCenter: parent.verticalCenter
+                        topMargin: 15
                     }
                     width: dragArea.width
                     height: 250
@@ -388,6 +393,7 @@ Frame {
                         id: indexId
                         text: index + 1 + "."
                         color: "#262626"
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         anchors {
                             left: validBtn.right
                             verticalCenter: validBtn.verticalCenter
@@ -399,6 +405,7 @@ Frame {
 
                     TextField {
                         id: nameId
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         text: {
                             console.log("ind3x - " + index);
                             console.log("namePoint = " + name);
@@ -488,7 +495,6 @@ Frame {
 
                     RoundCheckBox {
                         id: humanAction
-                        text: langue == "English" ? qsTr("Human Action") : qsTr("人为干预")
                         checked: waitTime < 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -500,10 +506,19 @@ Frame {
                             waitFor.checked = !humanAction.checked;
                         }
                     }
+                    CustomLabel{
+                         text: langue == "English" ? qsTr("Human Action") : qsTr("人为干预")
+                         font.pointSize: Style.ubuntuSubTextSize
+                         color:Style.darkGrey2
+                         anchors{
+                             left:humanAction.right
+                             verticalCenter: humanAction.verticalCenter
+                             leftMargin: -5
+                         }
+                    }
 
                     RoundCheckBox {
                         id: waitFor
-                        text: langue == "English" ? qsTr("Wait for") : qsTr("等待")
                         checked: waitTime >= 0 ? true : false
                         anchors {
                             left: indexId.left
@@ -516,7 +531,17 @@ Frame {
                                waitTextField.text = "0"
                         }
                     }
-
+                    CustomLabel{
+                        id:waitforLabel
+                         text: langue == "English" ? qsTr("Wait for") : qsTr("等待")
+                         font.pointSize: Style.ubuntuSubTextSize
+                         color:Style.darkGrey2
+                         anchors{
+                             left:waitFor.right
+                             verticalCenter: waitFor.verticalCenter
+                             leftMargin: -5
+                         }
+                    }
 
 
                     TextField {
@@ -527,11 +552,13 @@ Frame {
                         width: 45
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
-
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         validator: IntValidator{bottom: 0; top: 9999;}
+                        color:Style.darkSkyBlue
                         anchors {
-                            left: waitFor.right
+                            left: waitforLabel.right
                             verticalCenter: waitFor.verticalCenter
+                            leftMargin: 5
                         }
                         enabled: waitFor.checked
 
@@ -595,7 +622,7 @@ Frame {
                     Label {
                         id: minText
                         text: langue == "English" ? "sec(s)" : "秒"
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuSubTextSize
                         color: Style.greyText
                         anchors {
                             left: incButton.right
@@ -609,7 +636,7 @@ Frame {
                     Label {
                         id: oriLabel
                         text: langue == "English" ? qsTr("Orientation") : qsTr("方向")
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuSubTextSize
                         color: Style.greyText
                         anchors {
                             left: indexId.left
@@ -637,10 +664,10 @@ Frame {
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: TextInput.AlignRight
                         placeholderText: "0"
-
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         text: orientation
                         Component.onCompleted: slider.value = orientation
-
+                        color:Style.darkSkyBlue
                         anchors {
                             left: waitTextField.left
                             verticalCenter: oriLabel.verticalCenter
@@ -732,9 +759,9 @@ Frame {
                             left: parent.left
                             top: slider.bottom
                             right: parent.right
-                            topMargin: 8
+                            topMargin: langue == "English" ? 3 : -3
                         }
-                        font.pointSize: 11
+                        font.pointSize: Style.ubuntuTextSize
                         onClicked: speechList.open()
                     }
 
@@ -757,9 +784,9 @@ Frame {
                             left: parent.left
                             top: addSpeech.bottom
                             right: parent.right
-//                            topMargin: 8
+                            topMargin: 3
                         }
-                        font.pointSize: 11
+                        font.pointSize: Style.ubuntuTextSize
                         onClicked: loadMP3FileDialog.open()
                     }
 
@@ -781,7 +808,7 @@ Frame {
                         id: speechLabel
                         visible: speechName !== ""
                         text: langue == "English" ? "Name : " : "名称 : "
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         color: Style.greyText
                         anchors {
                             left: waitFor.left
@@ -803,7 +830,7 @@ Frame {
                               }
                             qsTr(speechName.substring(indexLastSlash + 1));
                         }
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         color: Style.greyText
                         anchors {
                             left: speechLabel.right
@@ -837,7 +864,7 @@ Frame {
                             left: speechLabel.left
                             topMargin: 10
                         }
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuTextSize
                     }
 
                     TextField {
@@ -849,8 +876,9 @@ Frame {
                         width: 45
                         padding: 2
                         horizontalAlignment: TextInput.AlignRight
-                        // change back
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         validator: IntValidator{bottom: 0; top: 9999;}
+                        color:Style.darkSkyBlue
                         anchors {
                             left: speechTimeLabel.right
                             verticalCenter: speechTimeLabel.verticalCenter
@@ -919,12 +947,14 @@ Frame {
                         id: secText
                         visible: speechName !== ""
                         text: langue == "English" ? "sec(s)" : "秒"
-                        font.pointSize: 10
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         color: Style.greyText
                         anchors {
                             left: incButton2.right
                             verticalCenter: incButton2.verticalCenter
                             leftMargin: 4
+                            bottom:innerSpace.top
+                            bottomMargin: 5
                         }
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
@@ -954,7 +984,8 @@ Frame {
                         left: parent.let
                         right: parent.right
                         top: content.bottom
-                        topMargin: langue === "English" ? 15 : 20
+                        topMargin: langue === "English" ? 15 :20
+
                     }
                 }
             }
@@ -974,6 +1005,7 @@ Frame {
                     anchors {
                         fill: parent
                         margins: 2
+
                     }
 
                     model: pathPoints

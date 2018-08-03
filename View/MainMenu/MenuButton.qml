@@ -45,7 +45,7 @@ Button {
     Label {
         color: checked ? Style.darkSkyBlue : Style.midGrey
         text: (txt == "Settings") ? qsTr("") : qsTr(txt)
-        font.pointSize: 9
+        font.pointSize: langue == "English" ? 8 : 9
         anchors.top: image.bottom // Placing text in bottom
         anchors.topMargin: 4 // Leaving space between text and borders
         anchors.horizontalCenter: parent.horizontalCenter // Centering text

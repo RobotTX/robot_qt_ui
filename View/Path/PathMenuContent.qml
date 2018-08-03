@@ -26,6 +26,7 @@ Frame {
         visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
         txt: langue == "English" ? "No path created.\nPelase click + button to create a path." : "没有任何路径.\n请点击 + 按钮，创建路径"
         imgSrc: "qrc:/icons/big_path"
+        font.pointSize: Style.ubuntuSubHeadingSize
     }
 
     Component {

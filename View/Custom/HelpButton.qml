@@ -23,7 +23,7 @@ Button {
         id: tooltip
         visible: parent.hovered && tooltipText !== ""
         text: tooltipText
-        font.pointSize: 10
+        font.pointSize: Style.ubuntuTextSize
         x: helpButton.width + 5
         y: (helpButton.width - tooltip.height) / 2
 
@@ -37,7 +37,7 @@ Button {
 
     contentItem: Text {
         text: "?"
-        font.pointSize: 14
+        font.pointSize: Style.ubuntuTextSize
         font.bold: true
         color: Style.darkSkyBlue
         verticalAlignment: Text.AlignVCenter

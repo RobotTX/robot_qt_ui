@@ -41,7 +41,7 @@ Frame {
     Label {
         color: Style.midGrey2
         text: langue == "English" ? qsTr("Manage " + txt) : qsTr("管理 " + txt)
-        font.pointSize: 16
+        font.pointSize: Style.ubuntuHeadingSize
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

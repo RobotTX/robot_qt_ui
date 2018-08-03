@@ -61,7 +61,8 @@ Column {
         /// The item displaying the name of the point/group
         CustomLabel {
             text: qsTr(groupName)
-            color: Style.blackMenuTextColor
+            font.pointSize: Style.ubuntuHeading2Size
+            color: Style.groupNameBold
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: leftButton.right
             anchors.right: rightButton.left
@@ -164,6 +165,7 @@ Column {
                 text: {
                     qsTr(name)
                 }
+                font.pointSize: Style.ubuntuHeading2Size
                 color: Style.blackMenuTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: leftButton2.right

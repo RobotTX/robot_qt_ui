@@ -43,6 +43,7 @@ Frame {
         visible: robotModel.count === 0
         txt: langue == "English" ? "No robot connected.\nMake sure that the robot and your computer are connected to the same WIFI network." : "未连接机器人.\n请确保机器人和电脑在同一个WIFI网络"
         imgSrc: "qrc:/icons/big_robot"
+        font.pointSize: Style.ubuntuSubHeadingSize
     }
 
     Flickable {

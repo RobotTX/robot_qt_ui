@@ -6,7 +6,7 @@ Button {
 
     property string txt
     property string imgSrc
-    property string sizeTxt: "11"
+    property string sizeTxt: Style.ubuntuSubHeadingSize
 
     height: 40
 

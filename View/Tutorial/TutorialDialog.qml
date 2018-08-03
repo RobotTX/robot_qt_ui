@@ -23,6 +23,7 @@ Dialog {
 
     header: Label {
         id: customHeader
+        font.pointSize: Style.ubuntuSubHeadingSize
         background: Rectangle {
             color: "transparent"
         }
@@ -54,7 +55,8 @@ Dialog {
                 rightMargin: 10
             }
             text: qsTr(tutoMessage)
-            font.pointSize: 12
+            font.pointSize: Style.ubuntuTextSize
+            color: Style.midGrey2
             wrapMode: Text.WordWrap
         }
 
@@ -78,7 +80,9 @@ Dialog {
                 }
 
                 text: langue == "English" ? "Do not show this message again" : "不在显示此条信息"
-            }
+                font.pointSize: Style.ubuntuSubHeadingSize
+                }
+
 
             Button {
                 id: button
@@ -96,8 +100,8 @@ Dialog {
                 }
                 height: 23
                 width: 60
-
-                text: langue == "English" ? "OK" : "是"
+                visible: false
+                text: langue == "English" ? "sdasasasd" : "是"
 
                 onClicked: {
                     box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
@@ -120,7 +124,7 @@ Dialog {
                 }
                 height: 23
                 width: 60
-
+                visible: false
                 text: langue == "English" ? "OK" : "是"
 
                 onClicked: {
@@ -145,8 +149,14 @@ Dialog {
                 }
                 height: 23
                 width: 60
+                contentItem: Text {
+                    text: langue == "English" ? "OK" : "是"
+                    color:"white"
+                    font.pointSize: Style.ubuntuSubHeadingSize
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
 
-                text: langue == "English" ? "OK" : "是"
 
                 onClicked: {
                     box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)

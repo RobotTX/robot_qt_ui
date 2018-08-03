@@ -62,7 +62,7 @@ Dialog {
             }
             text: qsTr(message)
             wrapMode: Text.WordWrap
-            font.pointSize: 17
+            font.pointSize: Style.ubuntuTitleSize
             color: Style.goldenColor
             font.bold: true
         }

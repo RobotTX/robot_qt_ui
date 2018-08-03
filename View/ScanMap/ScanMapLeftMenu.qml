@@ -204,7 +204,7 @@ Frame {
                 left: icon.right
                 leftMargin: 5
             }
-            font.pointSize: 11
+            font.pointSize: Style.ubuntuSubHeadingSize
         }
 
         HelpButton {

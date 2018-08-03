@@ -32,6 +32,7 @@ Frame {
         visible: (speechModel.count === 1 && speechModel.get(0).speechs.count === 0) || speechModel.count === 0
         txt: langue == "English" ? "No speech created.\nPlease click + button to create a speech.": "没有任何语音文本.\n请点击 + 按钮，创建语音文本"
         imgSrc: "qrc:/icons/big_speech"
+        font.pointSize: Style.ubuntuSubHeadingSize
 
     }
 

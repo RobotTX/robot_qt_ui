@@ -179,7 +179,7 @@ Frame {
             topMargin: 4
             rightMargin: 10
         }
-        font.pointSize: 8
+        font.pointSize: Style.ubuntuSubTextSize
         color: Style.midGrey
         font.italic: true
 

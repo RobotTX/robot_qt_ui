@@ -21,7 +21,8 @@ MenuItem {
     contentItem: CustomLabel {
         color: enabled ? "black" : "lightgrey"
         text: qsTr(labelText)
-        font.pointSize: 10
+        // change here
+        font.pointSize: Style.ubuntuSubHeadingSize
         enabled: menuItem.enabled
         anchors {
             left: parent.left

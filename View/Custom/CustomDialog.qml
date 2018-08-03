@@ -53,7 +53,6 @@ Dialog {
 
        //font.bold: true
         text:qsTr(title)
-
         color: (title === "WARNING" || title === "警告") ? "white" : "white"
     }
 

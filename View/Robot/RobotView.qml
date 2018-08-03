@@ -41,7 +41,7 @@ Image {
 
 //        visible: img.hover
         visible: img
-        font.pointSize: 10
+        font.pointSize: Style.ubuntuSubHeadingSize
         text: _name
         color: "White"
         anchors {

@@ -13,6 +13,7 @@ Button {
 
     CustomLabel {
         text:  qsTr(txt)
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: "white"
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

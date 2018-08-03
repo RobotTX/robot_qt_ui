@@ -41,6 +41,7 @@ Frame {
     Label {
         id: groupLabel
         text: langue == "English" ? qsTr("Group Name") : qsTr("组名称")
+        font.pointSize: Style.ubuntuSubHeadingSize
         color: Style.midGrey2
         anchors {
             left: parent.left
@@ -53,6 +54,7 @@ Frame {
         id: groupTextField
         selectByMouse: true
         placeholderText: langue == "English" ? qsTr("Enter name") : qsTr("输入组名称")
+        font.pointSize: Style.ubuntuSubHeadingSize
         verticalAlignment: TextInput.AlignVCenter
         anchors {
             left: parent.left

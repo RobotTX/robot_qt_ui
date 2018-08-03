@@ -35,6 +35,7 @@ Frame {
         visible: (pointModel.count === 1 && pointModel.get(0).points.count === 0) || pointModel.count === 0
         txt: langue == "English" ? "No point created.\n Please click + buton or double click the map to create a point." : "没有任何目标点.\n请点击 + 按钮或者双击地图，创建目标点"
         imgSrc: "qrc:/icons/big_point"
+        font.pointSize: Style.ubuntuSubHeadingSize
 
     }
 

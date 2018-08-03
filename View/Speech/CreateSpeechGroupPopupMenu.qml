@@ -34,7 +34,7 @@ Menu {
     }
 
     PopupMenuItem {
-        labelText: langue == "English" ? "New Group" : "创建语音"
+        labelText: langue == "English" ? "New Group" : "创建组"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

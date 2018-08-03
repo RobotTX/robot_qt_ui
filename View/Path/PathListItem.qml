@@ -64,7 +64,9 @@ Column {
         /// The item displaying the name of the path/group
         CustomLabel {
             text: qsTr(groupName)
-            color: Style.blackMenuTextColor
+            font.pointSize: Style.ubuntuHeading2Size
+           // font.bold: true
+            color: Style.groupNameBold
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: leftButton.right
             anchors.right: rightButton.left
@@ -155,6 +157,7 @@ Column {
                 /// The item displaying the name of the path/group
                 CustomLabel {
                     text: qsTr(pathName)
+                    font.pointSize: Style.ubuntuHeading2Size
                     color: Style.blackMenuTextColor
                     anchors {
                         verticalCenter: parent.verticalCenter
@@ -287,7 +290,7 @@ Column {
                             console.log("name = " + name)
                             qsTr(name)
                         }
-                        font.pixelSize: 14
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         color: Style.midGrey2
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: rect.right
@@ -300,7 +303,7 @@ Column {
                         id: customLabelWaitTime
                         text: waitTime === -1 ? qsTr(langue == "English" ? "Human Action" : "人为干预") : qsTr(langue == "English" ? "Delay: " + waitTime + "s" :  "等待 : "+ waitTime + "秒")
                         horizontalAlignment: Text.AlignRight
-                        font.pixelSize: 14
+                        font.pointSize: Style.ubuntuSubHeadingSize
                         color: Style.midGrey2
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right

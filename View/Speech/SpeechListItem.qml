@@ -64,7 +64,8 @@ Column {
         /// The item displaying the name of the speech/group
         CustomLabel {
             text: qsTr(groupName)
-            color: Style.blackMenuTextColor
+            color: Style.groupNameBold
+            font.pointSize: Style.ubuntuHeading2Size
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: leftButton.right
             anchors.right: rightButton.left
@@ -133,6 +134,7 @@ Column {
                 /// The item displaying the name of the speech/group
                 CustomLabel {
                     text: qsTr(name)
+                    font.pointSize: Style.ubuntuHeading2Size
                     visible: name.indexOf("file:") !== -1 ? false : true
                     color: Style.blackMenuTextColor
                     anchors {
@@ -245,7 +247,7 @@ Column {
                 CustomLabel {
                     text:langue == "English" ? "text: " +tts :"正文: " + tts
                     height: 15
-                    font.pixelSize: 14
+                    font.pointSize: Style.ubuntuSubHeadingSize
                     wrapMode: Label.WordWrap
                     width: parent.width
                     color: Style.midGrey2

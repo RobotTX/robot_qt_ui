@@ -9,6 +9,7 @@ Rectangle {
     height: 22
     color: "transparent"
 
+
     Rectangle {
 
         id: rectangle
@@ -26,6 +27,8 @@ Rectangle {
             horizontalCenter: parent.horizontalCenter
             top: rectangle.bottom
             topMargin: 10
+
+
         }
 
         Label {
@@ -34,8 +37,10 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             text: txt
-            font.pointSize: 8
-        }
+            font.pointSize: 7
+
+
+          }
     }
 }
 
