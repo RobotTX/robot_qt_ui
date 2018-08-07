@@ -324,7 +324,8 @@ Frame {
                             padding: 0
                             background: Rectangle {
                                 anchors.fill: parent
-                                color: Style.lightGreyBackground
+                               color: Style.lightGreyBackground
+
                             }
 
                             Rectangle {
@@ -393,6 +394,7 @@ Frame {
                                         elapsed += interval;
                                     }
                                 }
+
 
                             Timer  {
                                     id: elapsedTimer2

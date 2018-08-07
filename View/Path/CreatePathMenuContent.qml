@@ -802,7 +802,7 @@ Frame {
                         onRejected: {
                         }
                         onAccepted: {
-                          //  speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
+                           // speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
                             saveName = fileUrl.toString();
                             console.log("saveName = " + fileUrl.toString());
@@ -1107,7 +1107,7 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechTime
                                     );
 
-                    speechModel.deleteSpeech("Default", tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechName);
+                  // speechModel.deleteSpeech("Default", tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechName);
                 }
 //                if(saveName.indexOf("file:") == 0 ){
 //                    console.log("name = " + saveName);

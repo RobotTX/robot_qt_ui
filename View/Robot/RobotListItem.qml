@@ -1202,7 +1202,7 @@ Frame {
                     text: {
                         consoleString
                     }
-                    font.pointSize: Style.ubuntuTitleSize
+                    font.pointSize:Style.ubuntuSubHeadingSize
                     color: Style.midGrey2
                 }
             }

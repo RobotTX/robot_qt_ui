@@ -108,7 +108,8 @@ Column {
         id: delegateSpeechs
         Column {
             Frame {
-                visible: isOpen && name.indexOf("file:") !== -1 ? false : true
+               //visible: isOpen && name.indexOf("file:") !== -1 ? false : true
+                visible: isOpen ? true : false;
                 height: visible ? 37 : 0
                 width : groupListItem.width
                 padding: 0
