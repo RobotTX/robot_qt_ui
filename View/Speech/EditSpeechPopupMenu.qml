@@ -191,6 +191,10 @@ Menu {
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
         onHoveredChanged: if (visible) { currentMenuIndex = 3}
-        onTriggered: deleteSpeech(name) // called here
+        onTriggered: {
+            console.log("called deleteSpeech with 1 param");
+            deleteSpeech(name) // called here
+
+        }
     }
 }

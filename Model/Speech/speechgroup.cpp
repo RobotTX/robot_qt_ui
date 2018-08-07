@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "speechgroup.h"
 #include "Model/Speech/speech.h"
 
@@ -12,6 +13,7 @@ void SpeechGroup::addSpeech(const QPointer<Speech> speech) {
 }
 
 void SpeechGroup::deleteSpeech(const QString name) {
+    qDebug() << "SpeechGroup::deleteSpeech " << name;
     for (int i = 0; i < speechVector.size(); i++) {
         if (speechVector.at(i)->getName().compare(name) == 0)
             speechVector.remove(i);

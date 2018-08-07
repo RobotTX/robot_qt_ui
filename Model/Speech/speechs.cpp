@@ -19,6 +19,7 @@ void Speechs::addSpeech(const QString groupName, const QString name, const QStri
 }
 
 void Speechs::deleteSpeech(const QString groupName, const QString name){
+    qDebug() << "Speechs::deleteSpeech" << groupName << name;
     groups.value(groupName)->deleteSpeech(name);
 }
 

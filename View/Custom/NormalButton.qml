@@ -6,7 +6,7 @@ Button {
 
     property string txt
     property string imgSrc
-    property string sizeTxt: Style.ubuntuHeading2Size
+    property string sizeTxt: Style.ubuntuTextSize
 
     height: 40
 

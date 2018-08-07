@@ -33,12 +33,16 @@ Frame {
     property Speechs speechModel
     property string langue
     property int menuIndex: 0
+    property string saveName
 
     signal backToMenu()
     signal createPath(string groupName, string name)
     signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime, int orientation, string speechName, string speechContent, int speechTime)
     signal useTmpPathModel(bool use)
     signal setMessageTop(int status, string msg)
+    signal deleteSpeech(string groupName, string name)
+ //   signal deleteSpeech(string name)
+
 
     Connections {
         target: tmpPathModel
@@ -798,8 +802,10 @@ Frame {
                         onRejected: {
                         }
                         onAccepted: {
-                            speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
+                          //  speechModel.createSpeech(fileUrl.toString(), "Default", fileUrl.toString(), "", "");
                             tmpPathModel.setSpeechInfos("tmpGroup", "tmpPath", index, fileUrl.toString(), fileUrl.toString());
+                            saveName = fileUrl.toString();
+                            console.log("saveName = " + fileUrl.toString());
                         }
                     }
 
@@ -1049,7 +1055,7 @@ Frame {
                 bottomMargin: 20
             }
             onClicked: {
-                backToMenu();
+               backToMenu();
             }
         }
 
@@ -1072,7 +1078,6 @@ Frame {
                 if (groupComboBox.displayText === Helper.noGroupChinese) {
                     groupComboBox.displayText = Helper.noGroup;
                 }
-
                 if(oldName !== "") {
                     pathModel.deletePath(oldGroup, oldName);
 //                    console.log("oldname != '' ", oldName)
@@ -1101,7 +1106,17 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechContent,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechTime
                                     );
+
+                    speechModel.deleteSpeech("Default", tmpPathModel.get(0).paths.get(0).pathPoints.get(i).speechName);
                 }
+//                if(saveName.indexOf("file:") == 0 ){
+//                    console.log("name = " + saveName);
+//                    speechModel.deleteSpeech("Default",saveName)
+//                    console.log("saveName.index =========== " + saveName.indexOf("file:"))
+//                }
+
+
+
 
 //                setMessageTop(3, oldName === "" ? mess1 : mess2)
                 setMessageTop(3, mess1);
@@ -1204,8 +1219,10 @@ Frame {
         saveButton.canSave = !error;
         testingbool = true;
 
-
-
     }
 
+    Connections {
+        target: speechModel
+        onDeleteSpeech: speechModel.deleteSpeech(myGroup, name)
+    }
 }

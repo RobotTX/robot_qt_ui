@@ -72,6 +72,8 @@ ListModel {
                        } else {
                            message = "删除目标点 \"" + name + "\" 在 \"" + groupName + "\""
                        }
+                       console.log("Speechs.qml " + message);
+                       console.log("speech.name = " + get(i).speechs.get(j).name + "\n" + get(i).speechs.get(j).tts);
                         get(i).speechs.remove(j);
                         setMessageTop(3, message);
                     }

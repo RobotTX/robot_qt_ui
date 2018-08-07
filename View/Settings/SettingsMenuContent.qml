@@ -936,7 +936,7 @@ Frame {
                 top: mapChoices.bottom
                 left: parent.left
                 right: parent.right
-                topMargin: 10
+                topMargin: langue == "English" ? 10 : - 3
             }
         }
 
@@ -945,7 +945,7 @@ Frame {
             anchors {
                 left: parent.left
                 top: horizontalSeparation4.bottom
-                topMargin: 20
+                topMargin: langue == "English" ? 20 : 5
             }
 
             color: Style.darkSkyBlue
@@ -1046,6 +1046,7 @@ Frame {
                 left: parent.left
                 right: parent.right
                 topMargin: 5
+                bottomMargin: langue == "English" ? 0 : 3
             }
         }
 
@@ -1095,7 +1096,7 @@ Frame {
 
         Button {
             id: btnExit
-            height: 23
+            height: 15
 
             CustomLabel {
                 text: langue == "English" ? "Exit Application" : "退出程序"
@@ -1105,6 +1106,7 @@ Frame {
                 anchors {
                     left: parent.left
                     leftMargin: 0
+                    top:horizontalSeparation10.bottom
                 }
             }
 
@@ -1118,7 +1120,7 @@ Frame {
 
             anchors.top: horizontalSeparation10.bottom
             anchors.left: parent.left
-            anchors.topMargin: 10
+            anchors.topMargin: langue == "English" ? 10 : 0
 
             onClicked: {
                 exitDialog.open();
@@ -1135,10 +1137,22 @@ Frame {
                 topMargin: 10
             }
         }
-
+        Image {
+            id: gobotPicture
+            asynchronous: true
+            fillMode: Image.Pad
+            source: "qrc:/icons/Gobot"
+            anchors {
+                top:horizontalSeparation11.bottom
+                topMargin: langue == "English" ? 0 : 10
+                bottom: versionApp.top
+                bottomMargin: langue == "English" ? 5 : 8
+                left:parent.left
+            }
+        }
         Label {
             id: versionApp
-            text: langue == "English" ? "Version 1.10 released on 01/08/2019" : "版本 1.10 发布于 01/08/2018"
+            text: langue == "English" ? "Version 1.10 released on 01/08/2018" : "版本 1.10 发布于 01/08/2018"
             color: Style.midGrey
             font.italic: true
             font.pointSize: Style.ubuntuSubTextSize
@@ -1260,7 +1274,7 @@ Frame {
             height: 130
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 0;
-            leftMarginLabel: langue === "English" ? 20 : 80;
+            leftMarginLabel: langue === "English" ? 30 : 90;
             rightMarginLabel: langue === "English" ? 20 : 80;
             title: langue == "English" ? "WARNING"  : "警告"
             message: langue == "English" ? "\nPlease select a robot or fill the WiFi name" : "\n请选择机器人或输入WiFi名称"
@@ -1275,7 +1289,7 @@ Frame {
             height: 130
             topMarginLabel: langue === "English" ? 10 : 5;
             bottomMarginLabel: langue === "English" ? 10 : 20;
-            leftMarginLabel: langue === "English" ? 100 : 80;
+            leftMarginLabel: langue === "English" ? 115 : 95;
             rightMarginLabel: langue === "English" ? 100 : 80
             title: langue == "English" ? "WARNING"  : "警告";
             message: langue == "English" ? "\nPlease select a robot" : "\n请选择机器人或输入WiFi名称"

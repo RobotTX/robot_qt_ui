@@ -265,6 +265,9 @@ ApplicationWindow {
         parent: ApplicationWindow.overlay
         x: (applicationWindow.width - width) / 2
         y: (applicationWindow.height - height) / 2
+        topMarginLabel: langue === "English" ? 45 : 35;
+        bottomMarginLabel: langue === "English" ? 10 : 10;
+        leftMarginLabel: langue === "English" ? 55 : 83;
         onAccepted: applicationDialog.open()
         onRejected: robotDialog.open()
     }
@@ -281,8 +284,9 @@ ApplicationWindow {
         x: (applicationWindow.width - width) / 2
         y: (applicationWindow.height - height) / 2
         font.pointSize: Style.ubuntuSubHeadingSize
+        leftMarginLabel: langue === "English" ? 57 : 95;
         title: langue == "English" ? "ROBOT"  : "机器人"
-        message: langue == "English" ? "\nAre you sure to choose Robot's map?\n(This operation will overwrite Application's map)" : "确定要选择机器人的地图吗?\n (这项操作会覆盖应用的地图)"
+        message: langue == "English" ? "\nAre you sure to choose Robot's map?\n(This operation will overwrite Application's map)" : "\n确定要选择机器人的地图吗?\n(这项操作会覆盖应用的地图)"
         acceptMessage: langue == "English" ? "Yes" : "确认"
         rejectMessage: langue == "English" ? "Cancel" : "取消"
         onAccepted:{
@@ -300,8 +304,10 @@ ApplicationWindow {
         x: (applicationWindow.width - width) / 2
         y: (applicationWindow.height - height) / 2
         font.pointSize: Style.ubuntuSubHeadingSize
+        leftMarginLabel: langue === "English" ? 55 : 90;
+        topMarginLabel: langue === "English" ? 15 : 25
         title: langue == "English" ? "APPLICATION"  : "应用"
-        message: langue == "English" ? "\nAre you sure to choose Application's map?\n(This operation will overwrite Robot's map)" : "\n确定要选择应用的地图吗? \n(这项操作会覆盖机器人的地图)"
+        message: langue == "English" ? "Are you sure to choose Application's map?\n(This operation will overwrite Robot's map)" : "确定要选择应用的地图吗? \n(这项操作将会覆盖机器人的地图)"
         acceptMessage: langue == "English" ? "Yes" : "确认"
         rejectMessage: langue == "English" ? "Cancel" : "取消"
         onAccepted:requestOrSendMap(ip,false)
