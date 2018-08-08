@@ -113,6 +113,7 @@ Frame {
                  }
                }
                font.pointSize: Style.ubuntuTextSize
+
             }
 
             anchors.left: parent.left
@@ -318,7 +319,9 @@ Frame {
             id: userInputWifiPwd
             objectName: "wifiPwd"
             selectByMouse: true
-            placeholderText: langue === "English" ? qsTr("Enter Password") : qsTr("输入无线网密码")
+            placeholderText: {
+                langue === "English" ? qsTr("Enter Password") : qsTr("输入无线网密码")
+            }
             font.pointSize: Style.ubuntuTextSize
             background: Rectangle {
                     implicitWidth: 174

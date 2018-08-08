@@ -184,7 +184,12 @@ Frame {
                 anchors.verticalCenter: parent.verticalCenter
             }
             onClicked: {
-                dockClicked()
+                console.log("homeXRobot = " + homeXRobot + "homeYRobot = " + homeYRobot + " homeX = " + homeX + " homeY = " + homeY);
+                if (homeXRobot === "-150" && homeYRobot === "-150" && homeX === -1 && homeY === -1) {
+                    noHomeDialog.open();
+                } else {
+                    dockClicked()
+                }
             }
         }
     }
@@ -883,6 +888,7 @@ Frame {
                 enabled: dockStatus != -2
                 property bool dockButtonClicked: false
                 onClicked: {
+                    console.log("homeXRobot = " + homeXRobot + " homeYRobot = " + homeYRobot + " homeX = " + homeX + " homeY = " + homeY);
                     if (homeXRobot === "-150" && homeYRobot === "-150" && homeX === -1 && homeY === -1) {
                         noHomeDialog.open();
                     } else {

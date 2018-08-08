@@ -362,7 +362,7 @@ ApplicationWindow {
             if (langue == "English") {
                 title_ = "Choose which map to use"
                 message1 = "The robot " +  _robotModel.getName(ip) + " has an old map"
-                message2 = "The robot " +  _robotModel.getName(ip) + " has a new map.\n\n\tWhich map do you want to use?"
+                message2 = "The robot " +  _robotModel.getName(ip) + " has a new map"
                 rejectMessage_ = "Robot"
                 acceptMessage_ = "Application"
              } else {

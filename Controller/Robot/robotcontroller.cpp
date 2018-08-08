@@ -155,16 +155,16 @@ void RobotController::launchWorkers(void){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-//    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
-////    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker("192.168.1.19", PORT_MP3));
-//    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
-//    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
-//    connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-//    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
-//    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
-//    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
-//    newMapWorker->moveToThread(&newMapThread);
-//    newMapThread.start();
+    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
+//    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker("192.168.1.19", PORT_MP3));
+    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
+    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
+    connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
+    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
+    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
+    newMapWorker->moveToThread(&newMapThread);
+    newMapThread.start();
 
     /// testing loading mp3 file
 //    newMP3Worker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_MP3));
